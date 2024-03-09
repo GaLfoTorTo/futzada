@@ -7,12 +7,12 @@
   </a>
   <a href="https://github.com/GaLfoTorTo/futzada/stargazers">
     <img alt="Stargazers" src="https://img.shields.io/github/stars/GaLfoTorTo/futzada?style=social">
+	  
   </a>  
+
 </p>
 
-<h1 align="center">
-    <img alt="Futzada" title="Futzada" src="./assets/img/banner_linkedin.png" />
-</h1>
+![Capa LinkedIn Futzada](https://github.com/GaLfoTorTo/futzada/assets/72894623/b15c02f7-78e6-48b2-bd0a-fefd0d7dec04)
 
 <h2 align="center"> 
 	Seu Futebol entre amigos
@@ -45,9 +45,12 @@ O Futzada oferece uma ampla variedade de funcionalidades para que você possa or
 
 O layout do APP está disponível no Figma:
 
-<a href="">
+<a href="https://www.figma.com/file/Ob2HrHvkg5NRCl953flIbo/Futzada?type=design&node-id=116%3A275&mode=design&t=9CfQRtvb3SuByiL5-1">
   <img alt="Capa Futzada" src="https://img.shields.io/badge/Acessar%20Layout%20-Figma-%2304D361">
 </a>
+
+![Capa](https://github.com/GaLfoTorTo/futzada/assets/72894623/14734646-9341-4544-854d-dd2176d3a3e8)
+
 
 ## 🛠 Tecnologias
 
