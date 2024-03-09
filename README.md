@@ -2,10 +2,10 @@
 <p align="center">
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/GaLfoTorTo/futzada?color=%2304D361">
   <img alt="Repository size" src="https://img.shields.io/github/repo-size/GaLfoTorTo/futzada">
-  <a href="https://github.com/GaLfoTorTo/futzada/commits/main">
+  <a href="https://github.com/GaLfoTorTo/futzada/commits/main" target="_blank">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/GaLfoTorTo/futzada">
   </a>
-  <a href="https://github.com/GaLfoTorTo/futzada/stargazers">
+  <a href="https://github.com/GaLfoTorTo/futzada/stargazers" target="_blank">
     <img alt="Stargazers" src="https://img.shields.io/github/stars/GaLfoTorTo/futzada?style=social">
 	  
   </a>  
@@ -45,7 +45,7 @@ O Futzada oferece uma ampla variedade de funcionalidades para que você possa or
 
 O layout do APP está disponível no Figma:
 
-<a href="https://www.figma.com/file/Ob2HrHvkg5NRCl953flIbo/Futzada?type=design&node-id=116%3A275&mode=design&t=9CfQRtvb3SuByiL5-1">
+<a href="https://www.figma.com/file/Ob2HrHvkg5NRCl953flIbo/Futzada?type=design&node-id=116%3A275&mode=design&t=9CfQRtvb3SuByiL5-1" target="_blank">
   <img alt="Capa Futzada" src="https://img.shields.io/badge/Acessar%20Layout%20-Figma-%2304D361">
 </a>
 
