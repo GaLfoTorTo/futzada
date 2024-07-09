@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "974765527307",
+    "project_id": "futzada-fc3bf",
+    "storage_bucket": "futzada-fc3bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974765527307:android:30eff61f9a0dd65ca3d20e",
+        "android_client_info": {
+          "package_name": "com.example.futzada"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974765527307-kkdmste80t4bd8fcmub78k6ia9t5lgap.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.futzada",
+            "certificate_hash": "fdfc4f58c3044c52dac7232e1f4eb8ad6e7c7ae1"
+          }
+        },
+        {
+          "client_id": "974765527307-avcsm1kimbf69hmqn4ib84qap3jn9dl8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgDiYFNqsBArubvC7WZYGwIFaHrnjbSIw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974765527307-avcsm1kimbf69hmqn4ib84qap3jn9dl8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
