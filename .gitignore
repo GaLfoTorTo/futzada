@@ -41,3 +41,62 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+build/
+flutter_*.png
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code related
+.vscode/
+
+# Mac related
+*.DS_Store
+
+# Windows related
+*.exe
+*.dll
+*.bat
+*.pdb
+*.tmp
+*.log
+
+# Linux related
+*.so
+
+# Android related
+local.properties
+*.gradle
+*.idea/
+*.gradlew
+*.gradlew.bat
+.gradle/
+build/
+outputs/
+captures/
+.google_play_services.json
+
+# iOS related
+**/Pods/
+**/Podfile.lock
+**/Podfile
+**/xcuserdata/
+**/DerivedData/
+**/*.pbxuser
+**/*.mode1v3
+**/*.mode2v3
+**/*.perspectivev3
+**/xcuserdata
+**/project.xcworkspace
+!**/Flutter/Flutter.framework
+!**/Flutter/App.framework
+**/.symlinks/
+**/flutter_export_environment.sh
+**/.ios/
