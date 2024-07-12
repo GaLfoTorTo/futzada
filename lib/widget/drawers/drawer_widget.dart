@@ -8,12 +8,94 @@ import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/login_bg.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 
-class DrawerWidget extends StatelessWidget {
+class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
 
   @override
+  State<DrawerWidget> createState() => _DrawerWidgetState();
+}
+
+class _DrawerWidgetState extends State<DrawerWidget> {
+  //INSTANCIAR CONTROLLER DE AUTENTICAÇÃO
+  final controller = AuthController();
+  //VARIAVEL DE MENSAGEM DE ERRO
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void completeLogout(statusLogout) async {
+    //DELAY DE 1 SEGUNDO
+    await Future.delayed(Duration(milliseconds: 50));
+    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
+    if(!statusLogout){
+      //FECHAR MODAL
+      Navigator.of(context).pop();
+      setState(() {});
+    }
+  }
+
+  //FUNÇÃO PARA EFETUAR LOGIN
+  void logout() async{
+    setState(() {
+      errorMessage = null;
+    });
+    //TENTAR EFETUAR LOGIN
+    var response = controller.logout(context);
+    //MODAL DE STATUS DE REGISTRO DO USUARIO
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(150.0),
+          ),
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: response,
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  width: 300,
+                  height: 300,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.green_300,
+                    )
+                  )
+                );
+              }else if(snapshot.hasError) {
+                //FECHAR MODAL
+                completeLogout(false);
+                //ADICIONAR MENSAGEM DE ERRO
+                errorMessage = 'Houve um erro ao efetuar login.';
+              }else if(snapshot.hasData) {
+                //RESGATAR RETORNO DO SERVIDOR
+                var data = snapshot.data!;
+                //VERIFICAR SE OPERAÇÃO FOI BEM SUCEDIDA
+                if (data['status'] != 200) {
+                  //FECHAR MODAL
+                  completeLogout(false);
+                  //ADICIONAR MENSAGEM DE ERRO
+                  errorMessage = data['message'];
+                }
+              }
+              return Container(
+                width: 300,
+                height: 300,
+              );
+            }
+          )
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = AuthController();
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
       {'type': 'section', 'title': 'Perfil de Usuário',},
@@ -132,7 +214,7 @@ class DrawerWidget extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  controller.removeUser(context);
+                  logout();
                 },
               ),
             ),

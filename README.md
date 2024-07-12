@@ -73,4 +73,3 @@ Futzada é impulsionado por uma combinação poderosa de tecnologias de ponta, v
 [![Twitter Badge](https://img.shields.io/badge/-@GaLfoTorTo-1ca0f1?style=flat-square&labelColor=1ca0f1&logo=twitter&logoColor=white&link=https://twitter.com/GaLfoTorTo)](https://twitter.com/GaLfoTorTo) [![Linkedin Badge](https://img.shields.io/badge/-Leonardo-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/leonardo-moreira-995842200)](https://www.linkedin.com/in/leonardo-moreira-995842200) [![Gmail Badge](https://img.shields.io/badge/-leonardovl117@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=mailto:leonardovl117@gmail.com)](mailto:leonardovl117@gmail.com)
 
 Feito com ❤️ por Leonardo Moreira 👋🏽 [Entre em contato!](https://www.linkedin.com/in/leonardo-moreira-995842200)
->>>>>>> origin/main

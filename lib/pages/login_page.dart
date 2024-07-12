@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/login_controller.dart';
+import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/alerts/alert_widget.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
@@ -18,10 +19,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
-  final controller = LoginController();
+  final controller = AuthController();
   //CONTROLLERS DE CADA CAMPO
-  final TextEditingController emailController = TextEditingController(text: '');
-  final TextEditingController senhaController = TextEditingController(text: '');
+  final TextEditingController userController = TextEditingController(text: '');
+  final TextEditingController passwordController = TextEditingController(text: '');
   //VARIAVEL DE MENSAGEM DE ERRO
   String? errorMessage;
 
@@ -30,20 +31,15 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  //FUNÇÃO PARA RESGATAR OS VALORES DE EMAIL E SENHA
-  void onSaved(Map<String, dynamic> updates) {  
-    
-  }
-
-  //VALIDAÇÃO DE EMAIL E SENHA
+  //VALIDAÇÃO DE EMAIL E password
   String? validateLogin(){
     //VERIFICAR SE EMAIL OU USUÁRIO NÃO ESTÁ VAZIO
-    if(emailController.text.isEmpty){
+    if(userController.text.isEmpty){
       return "O e-mail ou nome de usuário deve ser preenchido(a)!";
     }
-    //VERIFICAR SE SENHA NÃO ESTÁ VAZIO
-    if(senhaController.text.isEmpty){
-      return "Senha deve ser preenchido(a)!";
+    //VERIFICAR SE password NÃO ESTÁ VAZIO
+    if(passwordController.text.isEmpty){
+      return "password deve ser preenchido(a)!";
     }
     return null;
   }
@@ -60,11 +56,38 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO
+  void showCustomSnackBar(message) {
+    final snackBar = AlertMessageWidget.createSnackBar(
+      message: message,
+      type: 'Error'
+    );
+    //EXIBIR ALERTA
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void notCompleteLogin(statusLogin) async {
+    //DELAY DE 1 SEGUNDO
+    await Future.delayed(Duration(milliseconds: 50));
+    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
+    if(!statusLogin){
+      //FECHAR MODAL
+      Navigator.of(context).pop();
+      setState(() {});
+      showCustomSnackBar(errorMessage);
+    }
+  }
+
+  //FUNÇÃO PARA EFETUAR LOGIN
   void login() async{
+    setState(() {
+      errorMessage = null;
+    });
     //TENTAR EFETUAR LOGIN
     var response = controller.login(
-      emailController.text,
-      senhaController.text
+      context,
+      userController.text,
+      passwordController.text
     );
     //MODAL DE STATUS DE REGISTRO DO USUARIO
     showDialog(
@@ -90,16 +113,17 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 );
               }else if(snapshot.hasError) {
+                //FECHAR MODAL
+                notCompleteLogin(false);
                 //ADICIONAR MENSAGEM DE ERRO
                 errorMessage = 'Houve um erro ao efetuar login.';
               }else if(snapshot.hasData) {
                 //RESGATAR RETORNO DO SERVIDOR
                 var data = snapshot.data!;
                 //VERIFICAR SE OPERAÇÃO FOI BEM SUCEDIDA
-                if (data['status'] == 200) {
-                  //NAVEGAR PARA HOME PAGE
-                  //Navigator.pushReplacementNamed(context, "/home");
-                }else{
+                if (data['status'] != 200) {
+                  //FECHAR MODAL
+                  notCompleteLogin(false);
                   //ADICIONAR MENSAGEM DE ERRO
                   errorMessage = data['message'];
                 }
@@ -113,13 +137,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
-    //ESPERAR POR 5 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
-    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
-    if(errorMessage != null){
-      Navigator.of(context).pop();
-      setState(() {});
-    }
   }
 
   @override
@@ -127,17 +144,17 @@ class _LoginPageState extends State<LoginPage> {
     //LISTA DE CAMPOS
     final List<Map<String, dynamic>> inputs = [
       {
-        'name': 'email',
+        'name': 'user',
         'label': 'Usuário ou E-mail',
         'icon' : AppIcones.user["far"],
-        'controller': emailController,
+        'controller': userController,
         'validator': validateLogin
       },
       {
-        'name':'senha',
+        'name':'password',
         'label': 'Senha',
         'icon' : AppIcones.lock["far"],
-        'controller': senhaController,
+        'controller': passwordController,
         'validator': validateLogin,
         'type' : TextInputType.visiblePassword,
       },
@@ -189,19 +206,6 @@ class _LoginPageState extends State<LoginPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              if(errorMessage != null)
-                                Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.red_300,
-                                    borderRadius: BorderRadius.circular(5)
-                                  ),
-                                  child: Text(
-                                    errorMessage!,
-                                    style: const TextStyle(color: AppColors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
                               for(var input in inputs)
                                 InputTextWidget(
                                   name: input['name'],
@@ -209,7 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                                   icon: input['icon'],
                                   textController: input['controller'],
                                   controller: controller,
-                                  onSaved: onSaved,
                                   validator: input['validator'],
                                   type: input['type'],
                                 ),
@@ -228,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: double.maxFinite,
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: const Text(
-                          'Esqueceu sua senha ?',
+                          'Esqueceu sua senha?',
                           style: TextStyle(
                             color: AppColors.blue_500,
                             fontSize: 15,
@@ -306,8 +309,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     //DISPOSE DOS CONTROLLERS
-    emailController.dispose();
-    senhaController.dispose();
+    userController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 }

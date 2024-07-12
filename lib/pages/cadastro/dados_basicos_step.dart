@@ -38,6 +38,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
   late final MaskedTextController telefoneController;
   late final MaskedTextController dataNascimentoController;
   late final TextEditingController visibilidadeController;
+  late final TextEditingController fotoController;
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
@@ -56,6 +57,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     telefoneController = MaskedTextController(text: widget.controller.model.telefone, mask: "(00) 00000-0000");
     dataNascimentoController = MaskedTextController(text: widget.controller.model.dataNascimento, mask: "00/00/0000");
     visibilidadeController = TextEditingController(text: widget.controller.model.visibilidade);
+    fotoController = TextEditingController(text: widget.controller.model.foto);
   }
 
   //FUNÇÃO PARA BUSCAR IMAGEM
@@ -65,6 +67,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     if (image != null) {
       setState(() {
         imageFile = File(image.path);
+        widget.controller.onSaved({'foto': image.path});
       });
     }
   }

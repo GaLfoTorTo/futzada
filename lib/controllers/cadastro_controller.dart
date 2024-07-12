@@ -1,9 +1,8 @@
 import 'dart:convert';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
 import 'package:futzada/models/casdastro_model.dart';
-import 'package:http/http.dart' as http;
 
 class CadastroController extends ChangeNotifier {
   CadastroModel model = CadastroModel();
@@ -22,16 +21,28 @@ class CadastroController extends ChangeNotifier {
 
   Future<Map<String, dynamic>> sendForm() async {
     //BUSCAR URL BASICA
-    var url = Uri.parse(AppApi.url+AppApi.createUser);
+    var url = AppApi.url+AppApi.createUser;
     //TENTAR SALVAR USUÁRIO
     try {
+      //INSTANCIAR DIO
+      var dio = Dio();
+      //RESGATAR DADOS DE USUARIO NO FORMATO DE MAP
+      var formDataMap = model.toMap();
+      //CRIAR OBJETO FORMDATA
+      var formData = FormData.fromMap(formDataMap);
+      //VERIFICAR SE EXISTE FOTO NA REQUISIÇÃO
+      if (model.foto != null) {
+        //ADICIONAR IMAGEM NO FORMDATA
+        formData.files.add(MapEntry(
+          'foto',
+          await MultipartFile.fromFile(model.foto!, filename: model.foto),
+        ));
+      }
       //INICIALIZAR REQUISIÇÃO
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(model.toJson()),
+      var response = await dio.post(
+        url, 
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        data: formData,
       );
       //VERIFICAR RESPOSTA DO SERVIDOR
       if(response.statusCode == 200) {
@@ -41,7 +52,7 @@ class CadastroController extends ChangeNotifier {
         };
       } else {
         //RESGATAR MENSAGEM DE ERRO
-        var errorMessage = jsonDecode(response.body);
+        var errorMessage = jsonDecode(response.data);
         //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
         return {
           'status': 400,
@@ -49,6 +60,7 @@ class CadastroController extends ChangeNotifier {
         };
       }
     } catch (e) {
+      print(e);
       //RETORNAR MENSAGEM DE ERRO NO ENVIO DOS DADOS
       return {
         'status': 400,

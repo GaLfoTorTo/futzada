@@ -1,9 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
-
 class CadastroModel {
   final String? nome;
   final String? sobrenome;
@@ -12,13 +9,13 @@ class CadastroModel {
   final String? dataNascimento;
   final String? telefone;
   final String? visibilidade;
-  //final XFile? foto;
-  final String? senha;
+  final String? foto;
+  final String? password;
   final String? confirmacao;
   final String? equipe;
   final String? sigla;
-  final String? primary;
-  final String? secondary;
+  final String? primaria;
+  final String? secundaria;
   final String? emblema;
   final String? uniforme;
   final String? posicoes;
@@ -33,13 +30,13 @@ class CadastroModel {
     this.dataNascimento,
     this.telefone,
     this.visibilidade,
-    //this.foto,
-    this.senha, 
+    this.foto,
+    this.password, 
     this.confirmacao, 
     this.equipe,
     this.sigla,
-    this.primary,
-    this.secondary,
+    this.primaria,
+    this.secundaria,
     this.emblema,
     this.uniforme,
     this.posicoes,
@@ -58,13 +55,13 @@ class CadastroModel {
       dataNascimento: updates?['dataNascimento'] ?? this.dataNascimento,
       telefone: updates?['telefone'] ?? this.telefone,
       visibilidade: updates?['visibilidade'] ?? this.visibilidade,
-      //foto: foto updatesfoto:nome'] ?? ?? this.foto,
-      senha: updates?['senha'] ?? this.senha,
+      foto: updates?['foto'] ?? this.foto,
+      password: updates?['password'] ?? this.password,
       confirmacao: updates?['confirmacao'] ?? this.confirmacao,
       equipe: updates?['equipe'] ?? this.equipe,
       sigla: updates?['sigla'] ?? this.sigla,
-      primary: updates?['primary'] ?? this.primary,
-      secondary: updates?['secondary'] ?? this.secondary,
+      primaria: updates?['primaria'] ?? this.primaria,
+      secundaria: updates?['secundaria'] ?? this.secundaria,
       emblema: updates?['emblema'] ?? this.emblema,
       uniforme: updates?['uniforme'] ?? this.uniforme,
       posicoes: updates?['posicoes'] ?? this.posicoes,
@@ -82,16 +79,17 @@ class CadastroModel {
       'dataNascimento': dataNascimento,
       'telefone': telefone,
       'visibilidade': visibilidade,
-      //'foto': foto?.toMap(),
-      'senha': senha,
+      'foto': foto,
+      'password': password,
       'confirmacao': confirmacao,
       'equipe': equipe,
       'sigla': sigla,
-      'primary': primary,
-      'secondary': secondary,
+      'primaria': primaria,
+      'secundaria': secundaria,
       'emblema': emblema,
       'uniforme': uniforme,
       'posicoes': posicoes,
+      'melhorPe': melhorPe,
       'arquetipo': arquetipo,
     };
   }
@@ -105,13 +103,13 @@ class CadastroModel {
       dataNascimento: map['dataNascimento'] != null ? map['dataNascimento'] as String : null,
       telefone: map['telefone'] != null ? map['telefone'] as String : null,
       visibilidade: map['visibilidade'] != null ? map['visibilidade'] as String : null,
-      //foto: map['foto'] != null ? XFile.fromMap(map['foto'] as Map<String,dynamic>) : null,
-      senha: map['senha'] != null ? map['senha'] as String : null,
+      foto: map['foto'] != null ? map['foto'] as String : null,
+      password: map['password'] != null ? map['password'] as String : null,
       confirmacao: map['confirmacao'] != null ? map['confirmacao'] as String : null,
       equipe: map['equipe'] != null ? map['equipe'] as String : null,
       sigla: map['sigla'] != null ? map['sigla'] as String : null,
-      primary: map['primary'] != null ? map['primary'] as String : null,
-      secondary: map['secondary'] != null ? map['secondary'] as String : null,
+      primaria: map['primaria'] != null ? map['primaria'] as String : null,
+      secundaria: map['secundaria'] != null ? map['secundaria'] as String : null,
       emblema: map['emblema'] != null ? map['emblema'] as String : null,
       uniforme: map['uniforme'] != null ? map['uniforme'] as String : null,
       posicoes: map['posicoes'] != null ? map['posicoes'] as String : null,
@@ -126,7 +124,7 @@ class CadastroModel {
 
   @override
   String toString() {
-    return 'CadastroModel(nome: $nome, sobrenome: $sobrenome, userName: $userName, email: $email, dataNascimento: $dataNascimento, telefone: $telefone, visibilidade: $visibilidade,  senha: $senha, confirmacao: $confirmacao, equipe: $equipe, sigla: $sigla, primary: $primary, secondary: $secondary, emblema: $emblema, uniforme: $uniforme, posicoes: $posicoes, melhorPe: $melhorPe, arquetipo: $arquetipo)';//ADICIONAR FOTO
+    return 'CadastroModel(nome: $nome, sobrenome: $sobrenome, userName: $userName, email: $email, dataNascimento: $dataNascimento, telefone: $telefone, visibilidade: $visibilidade, foto: $foto, password: $password, confirmacao: $confirmacao, equipe: $equipe, sigla: $sigla, primaria: $primaria, secundaria: $secundaria, emblema: $emblema, uniforme: $uniforme, posicoes: $posicoes, melhorPe: $melhorPe, arquetipo: $arquetipo)';
   }
 
   @override
@@ -141,13 +139,13 @@ class CadastroModel {
       other.dataNascimento == dataNascimento &&
       other.telefone == telefone &&
       other.visibilidade == visibilidade &&
-      //other.foto == foto &&
-      other.senha == senha &&
+      other.foto == foto &&
+      other.password == password &&
       other.confirmacao == confirmacao &&
       other.equipe == equipe &&
       other.sigla == sigla &&
-      other.primary == primary &&
-      other.secondary == secondary &&
+      other.primaria == primaria &&
+      other.secundaria == secundaria &&
       other.emblema == emblema &&
       other.uniforme == uniforme &&
       other.posicoes == posicoes &&
@@ -164,13 +162,13 @@ class CadastroModel {
       dataNascimento.hashCode ^
       telefone.hashCode ^
       visibilidade.hashCode ^
-      //foto.hashCode ^
-      senha.hashCode ^
+      foto.hashCode ^
+      password.hashCode ^
       confirmacao.hashCode ^
       equipe.hashCode ^
       sigla.hashCode ^
-      primary.hashCode ^
-      secondary.hashCode ^
+      primaria.hashCode ^
+      secundaria.hashCode ^
       emblema.hashCode ^
       uniforme.hashCode ^
       posicoes.hashCode ^

@@ -6,8 +6,8 @@ import 'package:futzada/widget/pickers/picker_color_widget.dart';
 class PickerEmblemaWidget extends StatelessWidget {
   final Function selectEstampa;
   final Function selectColor;
-  final Color primaryColor;
-  final Color secondaryColor;
+  final Color primariaColor;
+  final Color secundariaColor;
   //CONTROLLADORES DE CORES DAS ESTAMPAS
   final Map<String, dynamic> confEstampa;
   
@@ -15,8 +15,8 @@ class PickerEmblemaWidget extends StatelessWidget {
     super.key, 
     required this.selectEstampa,
     required this.selectColor,
-    required this.primaryColor,
-    required this.secondaryColor,
+    required this.primariaColor,
+    required this.secundariaColor,
     required this.confEstampa,
   });
 
@@ -31,13 +31,13 @@ class PickerEmblemaWidget extends StatelessWidget {
     Map<String, dynamic> lvConfig = confEstampa['lv'];
     Map<String, dynamic> lhConfig = confEstampa['lh'];
     //CONFIGURAR COR INICIAL 
-    bgConfig['color'] = bgConfig['color'] ?? secondaryColor;
-    mtConfig['color'] = mtConfig['color'] ?? secondaryColor;
-    mbConfig['color'] = mbConfig['color'] ?? secondaryColor;
-    mlConfig['color'] = mlConfig['color'] ?? secondaryColor;
-    mrConfig['color'] = mrConfig['color'] ?? secondaryColor;
-    lvConfig['color'] = lvConfig['color'] ?? secondaryColor;
-    lhConfig['color'] = lhConfig['color'] ?? secondaryColor;
+    bgConfig['color'] = bgConfig['color'] ?? secundariaColor;
+    mtConfig['color'] = mtConfig['color'] ?? secundariaColor;
+    mbConfig['color'] = mbConfig['color'] ?? secundariaColor;
+    mlConfig['color'] = mlConfig['color'] ?? secundariaColor;
+    mrConfig['color'] = mrConfig['color'] ?? secundariaColor;
+    lvConfig['color'] = lvConfig['color'] ?? secundariaColor;
+    lhConfig['color'] = lhConfig['color'] ?? secundariaColor;
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> estampas = [
       {

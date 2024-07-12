@@ -38,16 +38,16 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
   // CONTROLLERS DE CADA CAMPO
   late final TextEditingController equipeController;
   late final TextEditingController siglaController;
-  late final TextEditingController primaryController;
-  late final TextEditingController secondaryController;
+  late final TextEditingController primariaController;
+  late final TextEditingController secundariaController;
   late final TextEditingController emblemaController;
   late final TextEditingController uniformeController;
   //CONTROLADORES DE PICKER DE COR
-  late Color primary;
-  late Color secondary;
-  bool selectedPrimary = false;
-  bool selectedSecondary = false;
-  String currentColor = "Primary";
+  late Color primaria;
+  late Color secundaria;
+  bool selectedPrimaria = false;
+  bool selectedSecundaria = false;
+  String currentColor = "Primaria";
   String selectedColor = "";
   //CONTROLLADOR DO EMBLEMA
   late Map<String, Map<String, dynamic>> confEmblema = {};
@@ -70,16 +70,16 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
     //INICIALIZAÇÃO DE CONTROLLERS
     equipeController = TextEditingController(text: widget.controller.model.equipe);
     siglaController = TextEditingController(text: widget.controller.model.sigla);
-    primaryController = TextEditingController(text: widget.controller.model.primary);
-    secondaryController = TextEditingController(text: widget.controller.model.secondary);
+    primariaController = TextEditingController(text: widget.controller.model.primaria);
+    secundariaController = TextEditingController(text: widget.controller.model.secundaria);
     emblemaController = TextEditingController(text: widget.controller.model.emblema);
     uniformeController = TextEditingController(text: widget.controller.model.uniforme);
     //INICIALIZAR CORES
-    primary = widget.controller.model.primary != null 
-              ? AppColors.colors[widget.controller.model.primary]! 
+    primaria = widget.controller.model.primaria != null 
+              ? AppColors.colors[widget.controller.model.primaria]! 
               : AppColors.green_300;
-    secondary = widget.controller.model.secondary != null 
-              ? AppColors.colors[widget.controller.model.secondary]! 
+    secundaria = widget.controller.model.secundaria != null 
+              ? AppColors.colors[widget.controller.model.secundaria]! 
               : AppColors.blue_500;
     //INICIALIZAR PERSONALIZAÇÃO DOS EMBLEMAS
     if(widget.controller.model.emblema != null){
@@ -99,7 +99,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
         },
         'bg': {
           'checked': true,
-          'color': primary,
+          'color': primaria,
         },
         'mt': {
           'checked': false,
@@ -140,7 +140,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       confUniforme = {
         'bg': {
           'checked': true,
-          'color': primary,
+          'color': primaria,
         },
         'mt': {
           'checked': false,
@@ -259,11 +259,11 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
               config[key]!['color'] = AppColors.colors[colorKey];
             }else{
               //RESGATAR COR DEFINIDA COMO PRIMÁRIA CASO NÃO ENCONTRE CHAVE
-              config[key]!['color'] = primary;
+              config[key]!['color'] = primaria;
             }
           }else{
             //RESGATAR COR DEFINIDA COMO SECUNDÁRIA CASO NÃO ENCONTRE CHAVE
-            config[key]!['color'] = secondary;
+            config[key]!['color'] = secundaria;
           }
         }
       });
@@ -293,20 +293,20 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       //ALTERNAR ENTRE PICKERS
       if(label == 'Primária'){
         currentColor = "Primária";
-        selectedPrimary = true;
-        selectedSecondary = false;
+        selectedPrimaria = true;
+        selectedSecundaria = false;
       }else if(label == 'Secundária'){
         currentColor = "Secundária";
-        selectedPrimary = false;
-        selectedSecondary = true;
+        selectedPrimaria = false;
+        selectedSecundaria = true;
       }
       //ALTERAR CORES DO PICKER ATUAL
       if(currentColor == 'Primária'){
-        primary = color;
-        primaryController.text = label;
+        primaria = color;
+        primariaController.text = label;
       }else{
-        secondary = color;
-        secondaryController.text = label;
+        secundaria = color;
+        secundariaController.text = label;
       }
       //ALTERAR COR SELECIONADA
       selectedColor = label;
@@ -376,8 +376,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
     if (formData?.validate() ?? false) {
       //SALVAR CORES E UNIFORME
       widget.controller.onSaved({
-        "primary": AppColors.colors.entries.firstWhere((entry) => entry.value == primary, orElse: () => const MapEntry('green_300', AppColors.green_300)).key,
-        "secondary": AppColors.colors.entries.firstWhere((entry) => entry.value == secondary, orElse: () => const MapEntry('blue_500', AppColors.blue_500)).key,
+        "primaria": AppColors.colors.entries.firstWhere((entry) => entry.value == primaria, orElse: () => const MapEntry('green_300', AppColors.green_300)).key,
+        "secundaria": AppColors.colors.entries.firstWhere((entry) => entry.value == secundaria, orElse: () => const MapEntry('blue_500', AppColors.blue_500)).key,
         "emblema": jsonEncode(confEmblema),
         "uniforme": jsonEncode(confUniforme),
       });
@@ -512,18 +512,18 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           PickerColorWidget(
-                            color: primary,
+                            color: primaria,
                             id: "Primária",
                             label: "Primária",
-                            checked: selectedPrimary,
+                            checked: selectedPrimaria,
                             selectColor: selectColor,
                             tipo: 'Color',
                           ),
                           PickerColorWidget(
-                            color: secondary,
+                            color: secundaria,
                             id: "Secundária",
                             label: "Secundária",
-                            checked: selectedSecondary,
+                            checked: selectedSecundaria,
                             selectColor: selectColor,
                             tipo: 'Color',
                           )
@@ -619,8 +619,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                               PickerEmblemaWidget(
                                 selectEstampa: selectEstampa,
                                 selectColor: selectEstampaColor,
-                                primaryColor: primary,
-                                secondaryColor: secondary,
+                                primariaColor: primaria,
+                                secundariaColor: secundaria,
                                 confEstampa: confEmblema,
                               ),
                             ],
@@ -698,8 +698,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                                 PickerUniformeWidget(
                                   selectEstampa: selectEstampa,
                                   selectColor: selectEstampaColor,
-                                  primaryColor: primary,
-                                  secondaryColor: secondary,
+                                  primariaColor: primaria,
+                                  secundariaColor: secundaria,
                                   confEstampa: confUniforme,
                                 ),
                               ]
@@ -748,8 +748,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
     // DISPENSAR CONTROLLERS
     equipeController.dispose();
     siglaController.dispose();
-    primaryController.dispose();
-    secondaryController.dispose();
+    primariaController.dispose();
+    secundariaController.dispose();
     emblemaController.dispose();
     uniformeController.dispose();
     super.dispose();

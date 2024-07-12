@@ -47,7 +47,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     obscure = widget.type != null && widget.type == TextInputType.visiblePassword;
     visible = widget.type != null && widget.type == TextInputType.visiblePassword;
     //VARIAVEL DE EXIBIÇÃO DE PLACEHOLDER
-    hint = widget.name == 'email' || widget.name == 'senha' ? true : false;
+    hint = widget.name == 'user' || widget.name == 'password' ? true : false;
   }
 
   //ALTERAR A EXIBIÇÃO DE SENHA
@@ -87,7 +87,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           hintText: hint ? widget.label : null,
           hintStyle: const TextStyle(
             color: AppColors.gray_500,
-            fontSize: 12,
+            fontSize: 15,
           ),
           labelText: !hint ? widget.label : null,
           labelStyle: const TextStyle(

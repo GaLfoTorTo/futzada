@@ -50,6 +50,21 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
     saveChecked = false;
   }
 
+  void onCompleteAnimation(statusRequest) async {
+    //ESPERAR 5 SEGUNDOS
+    await Future.delayed(Duration(seconds: 5));
+    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
+    if(statusRequest == true){
+      //NAVEGAR PARA LOGIN
+      Navigator.pushReplacementNamed(context, "/login");
+    }else{
+      //FECHAR MODAL
+      setState(() {
+        Navigator.of(context).pop();
+      });
+    }
+  }
+
   void registerUser() async{
     var response = widget.controller.sendForm();
     //MODAL DE STATUS DE REGISTRO DO USUARIO
@@ -90,6 +105,10 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                       Lottie.asset(
                         AppAnimations.errorCheck,
                         fit: BoxFit.contain,
+                        onLoaded: (composition) {
+                          //REMOVER MODAL
+                          onCompleteAnimation(false);
+                        },
                       ),
                     ],
                   )
@@ -108,6 +127,10 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                         Lottie.asset(
                           AppAnimations.successCheck,
                           fit: BoxFit.contain,
+                          onLoaded: (composition) {
+                            //REMOVER MODAL
+                            onCompleteAnimation(true);
+                          },
                         ),
                       ],
                     )
@@ -124,6 +147,10 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                         Lottie.asset(
                           AppAnimations.errorCheck,
                           fit: BoxFit.contain,
+                          onLoaded: (composition) {
+                            //REMOVER MODAL
+                            onCompleteAnimation(false);
+                          },
                         ),
                       ],
                     )
@@ -139,16 +166,6 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
         );
       },
     );
-    //ESPERAR POR 5 SEGUNDOS
-    await Future.delayed(Duration(seconds: 5));
-    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
-    if(errorMessage != null){
-      setState(() {
-        Navigator.of(context).pop();
-      });
-    }else{
-      Navigator.pushReplacementNamed(context, "/login");
-    }
   }
 
   //FUNÇÃO PARA HABILITAR OU DESABILITAR BOTÃO DE SALVAMENTO

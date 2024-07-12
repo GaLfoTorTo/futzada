@@ -27,7 +27,7 @@ class DadosLoginStepState extends StatefulWidget {
 class __DadosLoginStepStateState extends State<DadosLoginStepState> {
   final formKey = GlobalKey<FormState>();
   //CONTROLLERS DE CADA CAMPO
-  late final TextEditingController senhaController;
+  late final TextEditingController passwordController;
   late final TextEditingController confirmacaoController;
 
   @override
@@ -36,7 +36,7 @@ class __DadosLoginStepStateState extends State<DadosLoginStepState> {
     //INICIALIZAR LISTENER
     widget.controller.addListener((){});
     //INICIALIZAÇÃO DE CONTROLLERS
-    senhaController = TextEditingController(text: widget.controller.model.senha);
+    passwordController = TextEditingController(text: widget.controller.model.password);
     confirmacaoController = TextEditingController(text: widget.controller.model.confirmacao);
   }
 
@@ -47,7 +47,7 @@ class __DadosLoginStepStateState extends State<DadosLoginStepState> {
       return "Confirmação de Senha deve ser preenchido(a)!";
     }
     //VERIFICAR SE SENHAS COMBINAM
-    if(senhaController.text != confirmacaoController.text){
+    if(passwordController.text != confirmacaoController.text){
       return "Senha e Confirmação de senha devem ser iguais!";
     }
     return null;
@@ -76,9 +76,9 @@ class __DadosLoginStepStateState extends State<DadosLoginStepState> {
     //LISTA DE CAMPOS
     final List<Map<String, dynamic>> inputs = [
       {
-        'name':'senha',
+        'name':'password',
         'label': 'Senha',
-        'controller': senhaController,
+        'controller': passwordController,
       },
       {
         'name': 'confirmacao',
@@ -226,7 +226,7 @@ class __DadosLoginStepStateState extends State<DadosLoginStepState> {
     //REMOVER LISTENER
     widget.controller.removeListener((){});
     //DISPOSE DOS CONTROLLERS
-    senhaController.dispose();
+    passwordController.dispose();
     confirmacaoController.dispose();
     super.dispose();
   }
