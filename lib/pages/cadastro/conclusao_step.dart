@@ -1,8 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
@@ -62,6 +61,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
       setState(() {
         Navigator.of(context).pop();
       });
+      AppHelper.erroMessage(context, errorMessage);
     }
   }
 
@@ -74,9 +74,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(150.0),
-          ),
+          elevation: 1,
           child: FutureBuilder<Map<String, dynamic>>(
             future: response,
             builder: (context, snapshot) {
@@ -84,10 +82,11 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                 return Container(
                   width: 300,
                   height: 300,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.green_300,
-                    )
+                  child: Center(
+                    child: Lottie.asset(
+                      AppAnimations.loading,
+                      fit: BoxFit.contain,
+                    ),
                   )
                 );
               }else if(snapshot.hasError) {
@@ -193,6 +192,10 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
       if(validateTermos){
         //CHAMAR FUNÇÃO DE SALVAMENTO
         registerUser();
+      }else{
+        //ALERTAR ERRO
+        errorMessage = 'Aceite os termos de uso e políticas para finalizar o cadastro';
+        AppHelper.erroMessage(context, errorMessage);
       }
     });
   }
@@ -355,24 +358,6 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                 ],
               ),
             ),
-            if(validateTermos == false)
-              const Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: Text(
-                  'Aceite os termos de uso e políticas para finalizar o cadastro',
-                  style: TextStyle(color: AppColors.red_300),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            if(errorMessage != null)
-              Padding(
-                padding: EdgeInsets.only(top: 16.0),
-                child: Text(
-                  errorMessage!,
-                  style: const TextStyle(color: AppColors.red_300),
-                  textAlign: TextAlign.center,
-                ),
-              ),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Row(

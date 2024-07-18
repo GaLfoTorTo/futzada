@@ -46,6 +46,7 @@ class _ModalidadesStepState extends State<ModalidadesStep> {
   Widget build(BuildContext context) {
     return Container(
       width: double.maxFinite,
+      height: double.maxFinite,
       alignment: Alignment.center,
       child: PageView(
         controller: _pageModalidade,

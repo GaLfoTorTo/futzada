@@ -124,12 +124,14 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
         'label': 'Telefone',
         'controller': telefoneController,
         'type': TextInputType.phone,
+        'validator':(){}
       },
       {
         'name': 'dataNascimento',
         'label': 'Data de Nascimento',
         'controller': dataNascimentoController,
         'type': TextInputType.datetime,
+        'validator':(){}
       },
     ];
     //LISTA DE INPUTS RADIO
@@ -194,6 +196,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
                   controller: widget.controller,
                   onSaved: widget.controller.onSaved,
                   type: input['type'],
+                  validator: input['validator'],
                 ),
               const Padding(
                 padding: EdgeInsets.all(10),

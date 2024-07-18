@@ -3,19 +3,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class HeaderWidget extends StatelessWidget {
-  final String? title;
-  final String? iconLeft;
-  final String? iconRight;
-  final VoidCallback? actionLeft;
-  final VoidCallback? actionRight;
+  final String title;
+  final VoidCallback action;
 
   const HeaderWidget({
     super.key, 
-    this.title = "", 
-    this.iconLeft = "", 
-    this.iconRight = "", 
-    required this.actionLeft,
-    this.actionRight
+    required this.title, 
+    required this.action, 
   });
 
   @override
@@ -23,59 +17,16 @@ class HeaderWidget extends StatelessWidget {
     return AppBar(
       backgroundColor: AppColors.green_300,
       title: Text(
-        title!,
+        title,
         style: const TextStyle(
+          fontSize: 20,
           color: AppColors.blue_500,
           fontWeight: FontWeight.normal
         ),
       ),
-      leading: iconLeft == null
-      ? 
-        BackButton(
-            color: AppColors.blue_500,
-        )
-      :
-        InkWell(
-          onTap: actionLeft,
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: SvgPicture.asset(
-                iconLeft!,
-                width: double.maxFinite,
-                height: double.maxFinite,
-                color: AppColors.blue_500,
-              ),
-            ),
-          ),
-        ),
-      actions: [
-        if(iconRight != "")
-          InkWell(
-            onTap: actionRight,
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: SvgPicture.asset(
-                  iconRight!,
-                  width: double.maxFinite,
-                  height: double.maxFinite,
-                  color: AppColors.blue_500,
-                ),
-              ),
-            ),
-          ),
-      ],
+      leading: BackButton(
+        onPressed: action,
+      ),
       elevation: 8,
       shadowColor: const Color.fromARGB(255, 0, 0, 0),
     );

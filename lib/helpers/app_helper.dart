@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/alerts/alert_widget.dart';
 
 class AppHelper {
   //VERIFICAÇÃO DE COMPLEXIDADE DE SENHAS
@@ -98,5 +102,67 @@ class AppHelper {
     //BUSCAR SVG
     svg = svg.replaceAll('id="main" fill="none"', 'fill="$goldColor"');
     return svg;
+  }
+
+  static String saudacaoPeriodo(){
+    //BUSCAR HORA ATUAL
+    DateTime now = DateTime.now();
+    //TRANSFORMAR HORA EM INTEIRO
+    int hour = now.hour;
+    //VERIFICAR PERIDO DO DIA (MANHÃ,TARDE, NOITE)
+    if (hour >= 5 && hour < 12) {
+      return 'Bom Dia';
+    } else if (hour >= 12 && hour < 18) {
+      return 'Boa Tarde';
+    } else {
+      return 'Boa Noite';
+    }
+  }
+
+  //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO
+  static void erroMessage(context, message) {
+    final snackBar = AlertMessageWidget.createSnackBar(
+      message: message,
+      type: 'Error'
+    );
+    //EXIBIR ALERTA
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  static Map<String, dynamic> tratamentoErros(DioException error) {
+    switch (error) {
+      case DioExceptionType.cancel:
+        //RETORNO PARA CONEXÃO CANCELADA
+        return {
+          'status': 504,
+          'message':'Operação cancelada!'
+        };
+      case DioExceptionType.connectionTimeout || DioExceptionType.sendTimeout || DioExceptionType.receiveTimeout:
+        //RETORNO PARA TEMPO EXPIRADO
+        return {
+          'status': 408,
+          'message':'Conexão expirada!'
+        };
+      case DioExceptionType.badResponse:
+        //RESGATAR  MENSAGEM DE ERRO
+        var errorMessage = error.response?.data['message'];
+        //RETORNO PARA TEMPO EXPIRADO
+        return {
+          'status': 400,
+          'message': errorMessage
+        };
+      case DioExceptionType.unknown:
+        //RETORNO PARA ERRO DESCONHECIDO
+        return {
+          'status': 500,
+          'message':'Erro no servidor!'
+        };
+      default:
+        //RETORNO PARA ERRO DESCONHECIDO
+        return {
+          'status': 504,
+          'message':'Erro no servidor!'
+        };
+    }
   }
 }

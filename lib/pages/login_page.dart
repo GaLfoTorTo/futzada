@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/auth_controller.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/alerts/alert_widget.dart';
@@ -9,6 +11,7 @@ import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/login_bg.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -32,14 +35,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   //VALIDAÇÃO DE EMAIL E password
-  String? validateLogin(){
+  String? validateUser(){
     //VERIFICAR SE EMAIL OU USUÁRIO NÃO ESTÁ VAZIO
     if(userController.text.isEmpty){
-      return "O e-mail ou nome de usuário deve ser preenchido(a)!";
+      return "O e-mail ou nome de usuário deve ser informados!";
     }
+    return null;
+  }
+
+  String? validatePassword(){
     //VERIFICAR SE password NÃO ESTÁ VAZIO
     if(passwordController.text.isEmpty){
-      return "password deve ser preenchido(a)!";
+      return "A senha deve ser Informada!";
     }
     return null;
   }
@@ -56,16 +63,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO
-  void showCustomSnackBar(message) {
-    final snackBar = AlertMessageWidget.createSnackBar(
-      message: message,
-      type: 'Error'
-    );
-    //EXIBIR ALERTA
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   void notCompleteLogin(statusLogin) async {
     //DELAY DE 1 SEGUNDO
     await Future.delayed(Duration(milliseconds: 50));
@@ -74,7 +71,8 @@ class _LoginPageState extends State<LoginPage> {
       //FECHAR MODAL
       Navigator.of(context).pop();
       setState(() {});
-      showCustomSnackBar(errorMessage);
+      //EXIBIR MENSAGEM DE ERRO
+      AppHelper.erroMessage(context, errorMessage);
     }
   }
 
@@ -96,9 +94,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(150.0),
-          ),
+          elevation: 1,
           child: FutureBuilder<Map<String, dynamic>>(
             future: response,
             builder: (context, snapshot) {
@@ -106,10 +102,11 @@ class _LoginPageState extends State<LoginPage> {
                 return Container(
                   width: 300,
                   height: 300,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.green_300,
-                    )
+                  child: Center(
+                    child: Lottie.asset(
+                      AppAnimations.loading,
+                      fit: BoxFit.contain,
+                    ),
                   )
                 );
               }else if(snapshot.hasError) {
@@ -148,14 +145,14 @@ class _LoginPageState extends State<LoginPage> {
         'label': 'Usuário ou E-mail',
         'icon' : AppIcones.user["far"],
         'controller': userController,
-        'validator': validateLogin
+        'validator': validateUser
       },
       {
         'name':'password',
         'label': 'Senha',
         'icon' : AppIcones.lock["far"],
         'controller': passwordController,
-        'validator': validateLogin,
+        'validator': validatePassword,
         'type' : TextInputType.visiblePassword,
       },
     ];

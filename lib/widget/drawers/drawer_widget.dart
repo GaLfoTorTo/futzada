@@ -1,12 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/auth_controller.dart';
+import 'package:futzada/providers/usuario_provider.dart';
+import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/login_bg.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -28,7 +31,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   void completeLogout(statusLogout) async {
     //DELAY DE 1 SEGUNDO
-    await Future.delayed(Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 50));
     //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
     if(!statusLogout){
       //FECHAR MODAL
@@ -51,9 +54,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(150.0),
-          ),
+          elevation: 1,
           child: FutureBuilder<Map<String, dynamic>>(
             future: response,
             builder: (context, snapshot) {
@@ -61,10 +62,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 return Container(
                   width: 300,
                   height: 300,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.green_300,
-                    )
+                  child: Center(
+                    child: Lottie.asset(
+                      AppAnimations.loading,
+                      fit: BoxFit.contain,
+                    ),
                   )
                 );
               }else if(snapshot.hasError) {
@@ -96,6 +98,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    //BUSCAR DADOS SALVOS DO USUARIO
+    UsuarioProvider usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
+    var usuario = usuarioProvider.usuario;
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
       {'type': 'section', 'title': 'Perfil de Usuário',},
@@ -115,42 +120,49 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          const DrawerHeader(
+          DrawerHeader(
             padding: EdgeInsets.zero,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.green_300,
             ),
             child: Stack(
               children: [
-                LoginBg(),
-                Padding(
-                  padding: EdgeInsets.all(10),
+                const LoginBg(),
+                Container(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.all(5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      ImgCircularWidget(width: 70, height: 70, image: AppImages.user_default),
+                      ImgCircularWidget(
+                        width: 80, 
+                        height: 80, 
+                        image: usuario!.foto
+                      ),
                       Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Nome do Usuário",//ADICIONAR NOME DO USUARIO
-                              style: TextStyle(
+                              '${usuario.nome} ${usuario.sobrenome}',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
                                 color: AppColors.blue_500,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
-                              "@nome_usuario",//ADICIONAR @ DO USUARIO
-                              style: TextStyle(
-                                color: AppColors.blue_500,
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            )
+                            if(usuario.userName != null)
+                              Text(
+                                '@${usuario.userName}',
+                                style: const TextStyle(
+                                  color: AppColors.blue_500,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              )
                           ],
                         ),
                       ),

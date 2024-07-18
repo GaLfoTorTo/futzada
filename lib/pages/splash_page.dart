@@ -9,9 +9,10 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //INICIALIZAR CONTROLLER DE AUTENTICAÇÃO
     final authController = AuthController();
-
-    authController.hasUser(context);
+    //VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
+    authController.hasUsuario(context);
 
     return Scaffold(
       backgroundColor: AppColors.green_300,

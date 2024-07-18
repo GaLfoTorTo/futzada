@@ -1,7 +1,6 @@
 class AppIcones {
   //LOGOS
   static const logo = "assets/icones/logo.svg";
-  static const pelada = "assets/icones/pelada.svg";
   //UNIFORMES
   static const uniforme = "assets/icones/kits/uniforme.svg";
   //EMBLEMAS
@@ -127,6 +126,15 @@ class AppIcones {
     "direito": "assets/icones/pe_direito.svg",
   };
   //DEMAIS
+  static const pelada = "assets/icones/fas_pelada.svg";
+  static const Map<String, String> home = {
+    "fas": "assets/icones/fas_home.svg",
+    "far": "assets/icones/far_home.svg",
+  };
+  static const Map<String, String> map = {
+    "fas": "assets/icones/fas_map.svg",
+    "far": "assets/icones/far_map.svg",
+  };
   static const Map<String, String> alvo = {
     "fas": "assets/icones/fas_alvo.svg",
     "far": "assets/icones/far_alvo.svg",

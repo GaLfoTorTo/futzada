@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/casdastro_model.dart';
 
 class CadastroController extends ChangeNotifier {
@@ -35,7 +36,10 @@ class CadastroController extends ChangeNotifier {
         //ADICIONAR IMAGEM NO FORMDATA
         formData.files.add(MapEntry(
           'foto',
-          await MultipartFile.fromFile(model.foto!, filename: model.foto),
+          await MultipartFile.fromFile(
+            model.foto!, 
+            filename: model.foto!.split('/').last,
+          ),
         ));
       }
       //INICIALIZAR REQUISIÇÃO
@@ -59,13 +63,9 @@ class CadastroController extends ChangeNotifier {
           'message': errorMessage['message'],
         };
       }
-    } catch (e) {
-      print(e);
-      //RETORNAR MENSAGEM DE ERRO NO ENVIO DOS DADOS
-      return {
-        'status': 400,
-        'message':'Erro ao registrar o usuário.'
-      };
+    } on DioException catch (e) {
+      //TRATAR ERROS
+      return AppHelper.tratamentoErros(e);
     }
   }
 }

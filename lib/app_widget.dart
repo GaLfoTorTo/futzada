@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/routes/app_routes.dart';
+import 'package:provider/provider.dart';
 import 'theme/app_colors.dart';
 
 class AppWidget extends StatelessWidget {
@@ -7,14 +9,22 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Futzada',
-      theme: ThemeData(
-        primaryColor: AppColors.green_300,
-        fontFamily: 'Nunito'
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UsuarioProvider(),
+          lazy: false,
+        )
+      ],
+      child: MaterialApp(
+        title: 'Futzada',
+        theme: ThemeData(
+          primaryColor: AppColors.green_300,
+          fontFamily: 'Nunito'
+        ),
+        initialRoute: "/splash",
+        routes: AppRoutes.routes,
       ),
-      initialRoute: "/splash",
-      routes: AppRoutes.routes,
     );
   }
 }

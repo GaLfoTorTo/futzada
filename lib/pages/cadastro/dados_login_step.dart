@@ -93,6 +93,7 @@ class __DadosLoginStepStateState extends State<DadosLoginStepState> {
         key: formKey,
         child: Container(
           width: double.maxFinite,
+          height: double.maxFinite,
           padding: const EdgeInsets.all(15),
           alignment: Alignment.center,
           child: Column(
