@@ -135,10 +135,6 @@ class AppIcones {
     "fas": "assets/icones/fas_map.svg",
     "far": "assets/icones/far_map.svg",
   };
-  static const Map<String, String> alvo = {
-    "fas": "assets/icones/fas_alvo.svg",
-    "far": "assets/icones/far_alvo.svg",
-  };
   static const Map<String, String> apito = {
     "fas": "assets/icones/fas_apito.svg",
     "far": "assets/icones/far_apito.svg",

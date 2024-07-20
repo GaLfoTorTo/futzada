@@ -37,7 +37,7 @@ class ImgCircularWidget extends StatelessWidget {
           image: image != null 
               ? CachedNetworkImageProvider(urlImage) 
               : AssetImage(urlImage) as ImageProvider,
-          fit: BoxFit.fill
+          fit: BoxFit.cover
         ),
         color: AppColors.gray_300,
         border: Border.all(

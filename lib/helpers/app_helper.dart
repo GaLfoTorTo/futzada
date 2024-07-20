@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -130,7 +128,7 @@ class AppHelper {
   }
 
   static Map<String, dynamic> tratamentoErros(DioException error) {
-    switch (error) {
+    switch (error.type) {
       case DioExceptionType.cancel:
         //RETORNO PARA CONEXÃO CANCELADA
         return {
