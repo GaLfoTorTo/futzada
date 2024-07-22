@@ -413,8 +413,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       child: Form(
         key: formKey,
         child: Container(
-          width: double.maxFinite,
-          height: double.maxFinite,
+          width: dimensions.width,
           padding: const EdgeInsets.all(15),
           alignment: Alignment.center,
           child: Column(

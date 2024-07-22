@@ -91,17 +91,9 @@ class AppIcones {
     "far": "assets/icones/far_ceta.svg",
   };
   //MEDALHAS
-  static const Map<String, String> medal_bronze = {
-    "fas": "assets/icones/fas_medal_bronze.svg",
-    "far": "assets/icones/far_medal_bronze.svg",
-  };
-  static const Map<String, String> medal_gold = {
-    "fas": "assets/icones/fas_medal_gold.svg",
-    "far": "assets/icones/far_medal_gold.svg",
-  };
-  static const Map<String, String> medal_silver = {
-    "fas": "assets/icones/fas_medal_silver.svg",
-    "far": "assets/icones/far_medal_silver.svg",
+  static const Map<String, String> medalha = {
+    "fas": "assets/icones/fas_medalha.svg",
+    "far": "assets/icones/far_medalha.svg",
   };
   //BOLAS
   static const Map<String, String> futebol_ball_2 = {

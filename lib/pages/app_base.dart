@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/pages/escalacao/escalacao_page.dart';
 import 'package:futzada/pages/explore/explore_page.dart';
-import 'package:futzada/pages/home_page.dart';
+import 'package:futzada/pages/home/home_page.dart';
 import 'package:futzada/pages/notificacoes/notificacoes_page.dart';
 import 'package:futzada/pages/pelada/pelada_page.dart';
 import 'package:futzada/providers/usuario_provider.dart';
@@ -10,8 +10,6 @@ import 'package:futzada/widget/drawers/drawer_widget.dart';
 import 'package:futzada/widget/tabs/tab_bar_widget.dart';
 import 'package:provider/provider.dart';
 import '/theme/app_colors.dart';
-import '/theme/app_icones.dart';
-import '/widget/bars/header_widget.dart';
 
 class AppBase extends StatefulWidget {
   const AppBase({super.key});
@@ -86,6 +84,7 @@ class _AppBaseState extends State<AppBase> with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: tabController,
+        physics: NeverScrollableScrollPhysics(),
         children: [
           HomePage(menuFunction: toggleDrawerMenu, chatFunction: toggleDrawerMenu,),
           EscalacaoPageState(

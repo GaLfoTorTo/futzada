@@ -159,13 +159,13 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
     final List<String> arquetipos = [
       "Goleiro Clássico","Goleador","Capitão","Artilheiro","Driblador","Carrasco das Bolas Paradas","Mestre da Defesa","Talento em Ascensão","Estrategista do Meio-Campo","Atacante Veloz","Firme na Marcação","Líder Nato","Motor do Time","Veterano","Versátil","Raçudo","Incansável","Gênio da Assistência","Muralha","Destruidor de Jogadas","Garçom","Estrategista Tático","Finalizador","Gênio","Lenda","Caçador","Guerreiro","Mágico","Bruxo","Lutador","Especialista em Cruzamentos","Maestro","Camisa 10 Clássico","Sem Freio","Acelerador","Dono da Area","Expert na Recuperação","Sem Pressão","Articulador","Estrategista","Imbatível","Mestre da Comunicação","Especialista em Desarmes","Controlador do Ritmo","Mito da Torcida","Lançador","Determinado","Jogador de Classe","Joga de terno","Velocista","Inteligente","Ídolo","Marcador","Vai e Volta","Trator","Retranqueiro","Experiente","Protetor do Gol","Dono do Campo","Gelado",
     ];
+    var dimensions = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
       child: Form(
         key: formKey,
         child: Container(
-          width: double.maxFinite,
-          height: double.maxFinite,
+          width: dimensions.width,
           padding: const EdgeInsets.all(15),
           alignment: Alignment.center,
           child: Column(

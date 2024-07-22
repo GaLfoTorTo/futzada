@@ -8,12 +8,14 @@ class ImgCircularWidget extends StatelessWidget {
   final double width;
   final double height;
   final String? image;
+  final Color? borderColor;
 
   const ImgCircularWidget({
     super.key, 
     required this.width, 
     required this.height,
-    required this.image
+    required this.image,
+    this.borderColor
   });
 
   @override
@@ -41,8 +43,8 @@ class ImgCircularWidget extends StatelessWidget {
         ),
         color: AppColors.gray_300,
         border: Border.all(
-          color: AppColors.gray_500,
-          width: 3,
+          color: borderColor != null ? borderColor! : AppColors.gray_500,
+          width: 2,
         ),
         borderRadius: BorderRadius.circular(width / 2),
       ),

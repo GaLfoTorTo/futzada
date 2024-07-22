@@ -152,11 +152,13 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
       },
     ];
 
+    var dimensions = MediaQuery.of(context).size;
+
     return SingleChildScrollView(
       child: Form(
         key: formKey,
         child: Container(
-          width: double.maxFinite,
+          width: dimensions.width,
           padding: const EdgeInsets.all(15),
           alignment: Alignment.center,
           child: Column(

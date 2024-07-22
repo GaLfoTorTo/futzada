@@ -202,9 +202,11 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
 
   @override
   Widget build(BuildContext context) {
+    var dimensions = MediaQuery.of(context).size;
+
     return SingleChildScrollView(
       child: Container(
-        width: double.maxFinite,
+        width: dimensions.width,
         padding: const EdgeInsets.all(15),
         alignment: Alignment.center,
         child: Column(

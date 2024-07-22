@@ -94,11 +94,16 @@ class AppHelper {
     return svg;
   }
 
+  //FUNÇÃO PARA DEFINIR POSIÇÃO PRINCIPAL DO USUARIO
   static String setMainPosition(String svg){
     //FORMATAR COR DE INDICADOR DE POSIÇÃO PRINCIPAL
     String goldColor = convertColor(AppColors.yellow_500);
-    //BUSCAR SVG
-    svg = svg.replaceAll('id="main" fill="none"', 'fill="$goldColor"');
+    //ADICIONAR FUNÇÃO PRINCIPAL DA POSIÇÃO
+    svg = svg.replaceAll(
+      'id="main" fill="none"',
+      'id="main" fill="#$goldColor"'
+    );
+    //RETORNAR NOVO SVG
     return svg;
   }
 

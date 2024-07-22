@@ -44,9 +44,10 @@ class _ModalidadesStepState extends State<ModalidadesStep> {
 
   @override
   Widget build(BuildContext context) {
+    var dimensions = MediaQuery.of(context).size;
+
     return Container(
-      width: double.maxFinite,
-      height: double.maxFinite,
+      width: dimensions.width,
       alignment: Alignment.center,
       child: PageView(
         controller: _pageModalidade,

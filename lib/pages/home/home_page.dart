@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/providers/usuario_provider.dart';
-import 'package:futzada/widget/cards/card_recomendacao_widget.dart';
+import 'package:futzada/pages/home/secao/secao_home_widget.dart';
+import 'package:futzada/widget/cards/card_para_voce_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
@@ -39,8 +40,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       end: Alignment.bottomCenter,
                 );
   Color textColorsDefault = AppColors.white;
-  //LISTA DE OPTIONS PARA O CARD
-  List<Map<String, dynamic>> options = [];
+  //LISTA DE OPTIONS PARA O CARD PERTO DE VOCE
+  List<Map<String, dynamic>> peladas = [];
+  //LISTA DE OPTIONS PARA O CARD TOP RANKING
+  List<Map<String, dynamic>> ranking = [];
 
   @override
   void initState() {
@@ -48,10 +51,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   //SIMNULAR BUSCA DE RECOMENDAÇÕES NO SERVIDOR
-  Future<void> fetchRecomendacoes() async {
+  Future<void> fetchPertoVoce() async {
+    //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
-    //INICIALIZAR OPTIONS
-    options = [
+    //INICIALIZAR PELADAS
+    peladas = [
       {
         'titulo':'Pelada 1',
         'distancia':'1 Km',
@@ -89,7 +93,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
     ];
     //RESGATAR COR PREDOMINANTE DAS IMAGENS DOS CARDS
-    for (var item in options) {
+    for (var item in peladas) {
       var colorSelected = await getDominantColor(item['image']!);
       //ATUALIZAR O GRADIENTE DOS CARDS APARTIR DAS CORES OBTIDAS
       item['gradient'] = LinearGradient(
@@ -103,6 +107,113 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       //VERIFCAR SE LUMINOSIDADE DA COR OBTIDA E RETORNAR COR PARA TEXTO NO CARD
       item['textColor'] = colorSelected.computeLuminance() > 0.5 ? AppColors.dark_500 : AppColors.white;
     }
+  }
+
+  Future<void>fecthTopRanking() async {
+    //DELAY DE 2 SEGUNDOS
+    await Future.delayed(Duration(seconds: 2));
+    //INICIALIZAR TOP RANKING
+    ranking = [
+      {
+        'ranking':'Média',
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 1'
+        },
+        'jogadores': [
+          {
+            'nome':'jogador 2',
+            'user_name':'user_name',
+            'posicao':'mei',
+            'colocacao':'2',
+            'media': '5.91',
+            'image': 'https://conteudo.imguol.com.br/c/esporte/f6/2018/12/14/especial---futebol-raiz-vista-de-regiao-da-mooca-com-o-estadio-conde-rodolfo-crespi-do-juventus-na-rua-javari-1544836797933_v2_956x500.jpg'
+          },
+          {
+            'nome':'jogador 1',
+            'user_name':'user_name',
+            'posicao':'ata',
+            'colocacao':'1',
+            'media': '5.91',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_TKnLeWu0hXkL_Hn5V8Cbht0EoJcp1qpkUg&s'
+          },
+          {
+            'nome':'jogador 3',
+            'user_name':'user_name',
+            'posicao':'zag',
+            'colocacao':'3',
+            'media': '5.91',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpvAPs7hide0pK8nHFQWOGIevZYGjBz7tmg74I6Yne2lTyFV3E8PfqPUyoxRTh4-rjGAc&usqp=CAU'
+          },
+        ]
+      },
+      {
+        'ranking':'Gols',
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 2'
+        },
+        'jogadores': [
+          {
+            'nome':'jogador 2',
+            'user_name':'user_name',
+            'posicao':'ata',
+            'colocacao':'2',
+            'media': '12',
+            'image': 'https://conteudo.imguol.com.br/c/esporte/f6/2018/12/14/especial---futebol-raiz-vista-de-regiao-da-mooca-com-o-estadio-conde-rodolfo-crespi-do-juventus-na-rua-javari-1544836797933_v2_956x500.jpg'
+          },
+          {
+            'nome':'jogador 1',
+            'user_name':'user_name',
+            'posicao':'ata',
+            'colocacao':'1',
+            'media': '15',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_TKnLeWu0hXkL_Hn5V8Cbht0EoJcp1qpkUg&s'
+          },
+          {
+            'nome':'jogador 3',
+            'user_name':'user_name',
+            'posicao':'mei',
+            'colocacao':'3',
+            'media': '9',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpvAPs7hide0pK8nHFQWOGIevZYGjBz7tmg74I6Yne2lTyFV3E8PfqPUyoxRTh4-rjGAc&usqp=CAU'
+          },
+        ]
+      },
+      {
+        'ranking':'Assistências',
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 3'
+        },
+        'jogadores': [
+          {
+            'nome':'jogador 2',
+            'user_name':'user_name',
+            'posicao':'ata',
+            'colocacao':'2',
+            'media': '5',
+            'image': 'https://conteudo.imguol.com.br/c/esporte/f6/2018/12/14/especial---futebol-raiz-vista-de-regiao-da-mooca-com-o-estadio-conde-rodolfo-crespi-do-juventus-na-rua-javari-1544836797933_v2_956x500.jpg'
+          },
+          {
+            'nome':'jogador 1',
+            'user_name':'user_name',
+            'posicao':'mei',
+            'colocacao':'1',
+            'media': '11',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_TKnLeWu0hXkL_Hn5V8Cbht0EoJcp1qpkUg&s'
+          },
+          {
+            'nome':'jogador 3',
+            'user_name':'user_name',
+            'posicao':'zag',
+            'colocacao':'3',
+            'media': '4',
+            'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpvAPs7hide0pK8nHFQWOGIevZYGjBz7tmg74I6Yne2lTyFV3E8PfqPUyoxRTh4-rjGAc&usqp=CAU'
+          },
+        ]
+      }
+    ];
   }
 
   Future<UsuarioProvider>fetchUsuario(BuildContext context) async {
@@ -192,9 +303,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(10),
           child: FutureBuilder<List<dynamic>>(
-            future: Future.wait([fetchUsuario(context), fetchRecomendacoes()]),
+            future: Future.wait([fetchUsuario(context), fetchPertoVoce(), fecthTopRanking()]),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SkeletonHomeWidget();
@@ -255,8 +366,13 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         ],
                       ),
                     ),
-                    CardRecomendacaoWidget(
-                      options: options,
+                    SecaoHomeWidget(
+                      titulo: "Perto de Você",
+                      options: peladas,
+                    ),
+                    SecaoHomeWidget(
+                      titulo: "Top Ranking",
+                      options: ranking,
                     ),
                   ]
                 );
