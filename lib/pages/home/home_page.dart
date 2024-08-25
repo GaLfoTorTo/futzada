@@ -5,6 +5,7 @@ import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/pages/home/secao/secao_home_widget.dart';
 import 'package:futzada/widget/cards/card_para_voce_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import '/theme/app_colors.dart';
@@ -44,6 +45,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   List<Map<String, dynamic>> peladas = [];
   //LISTA DE OPTIONS PARA O CARD TOP RANKING
   List<Map<String, dynamic>> ranking = [];
+  //LISTA DE OPTIONS PARA O CARD POPULAR
+  List<Map<String, dynamic>> popular = [];
+  //LISTA DE OPTIONS PARA O CARD POPULAR
+  List<Map<String, dynamic>> partidas = [];
 
   @override
   void initState() {
@@ -215,6 +220,161 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       }
     ];
   }
+  
+  Future<void>fecthPopular() async {
+    //DELAY DE 2 SEGUNDOS
+    await Future.delayed(Duration(seconds: 2));
+    //INICIALIZAR TOP RANKING
+    popular = [
+      {
+        'titulo':'Pelada da Ciclovia',
+        'descricao': 'Melhor pelada da metropolitana, todas as quintas e sábados a partir das 16h. Contate o administrador para faz',
+        'image': 'https://conteudo.imguol.com.br/c/esporte/f6/2018/12/14/especial---futebol-raiz-vista-de-regiao-da-mooca-com-o-estadio-conde-rodolfo-crespi-do-juventus-na-rua-javari-1544836797933_v2_956x500.jpg',
+        'avaliacao' : 4.5
+      },
+      {
+        'titulo':'Lá no 2',
+        'descricao': 'Futebol todo sábado das 19h até as 22h. Leia sobres as regras de participação da pelada antes de chegar para jogar',
+        'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_TKnLeWu0hXkL_Hn5V8Cbht0EoJcp1qpkUg&s',
+        'avaliacao' : 3.0
+      },
+      {
+        'titulo':'Pelada da Candanga',
+        'descricao': 'Diversão e esporte para criançada na quadra poliesportiva da escola classe 5. Todos os dias de 18h as 21h - para crianças de 5 a 13 anos. asjdghoiasndognasdngioasndgnoaisndagnoiasdnguiased',
+        'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpvAPs7hide0pK8nHFQWOGIevZYGjBz7tmg74I6Yne2lTyFV3E8PfqPUyoxRTh4-rjGAc&usqp=CAU',
+        'avaliacao' : 5.0
+      },
+      {
+        'titulo':'Pelada da Vila',
+        'descricao': 'Diversão e esporte para criançada na quadra poliesportiva da escola classe 5. Todos os dias de 18h as 21h - para crianças de 5 a 13 anos. asjdghoiasndognasdngioasndgnoaisndagnoiasdnguiased',
+        'image': 'https://pbs.twimg.com/media/DV2GFCuXUAABORU?format=jpg&name=small',
+        'avaliacao' : 2.0
+      },
+      {
+        'titulo':'Fut da Vagem',
+        'descricao': 'Diversão e esporte para criançada na quadra poliesportiva da escola classe 5. Todos os dias de 18h as 21h - para crianças de 5 a 13 anos. asjdghoiasndognasdngioasndgnoaisndagnoiasdnguiased',
+        'image': 'https://conteudo.imguol.com.br/c/esporte/10/2018/12/17/especial---futebol-raiz-varzea-1545078822417_v2_1920x1080.jpg',
+        'avaliacao' : 5.0
+      }
+    ];
+  }
+  
+  Future<void>fecthUltimosJogos() async {
+    //DELAY DE 2 SEGUNDOS
+    await Future.delayed(Duration(seconds: 2));
+    //INICIALIZAR TOP RANKING
+    partidas = [
+      {
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 1',
+          'data':'Sex - 03/08/2024',
+          'local':'Quadra Divineia',
+          'hora':'16:00 - 16:07',
+        },
+        'equipes': [
+          {
+            'equipe':'equipe_a',
+            'placar': 2,
+            'artilheiros': [
+              {'nome':'Jogador A','foto':null}, 
+              {'nome':'Jogador B','foto':null},
+            ],
+            'assistentes': [
+              {'nome':'Jogador C','foto':null}
+            ]
+          },
+          {
+            'equipe':'equipe_b',
+            'placar': 1,
+            'artilheiros': [
+              {'nome':'Jogador A','foto':null}
+            ],
+            'assistentes': [
+              {'nome':'Jogador C','foto':null}
+            ]
+          },
+        ]
+      },
+      {
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 1',
+          'data':'Sex - 03/08/2024',
+          'local':'Quadra Divineia',
+          'hora':'16:10 - 16:05',
+        },
+        'equipes': [
+          {
+            'equipe':'equipe_a',
+            'placar': 2,
+            'artilheiros': [
+              {'nome':'Jogador A','foto':null}, 
+              {'nome':'Jogador B','foto':null}
+            ],
+            'assistentes': [
+              {'nome':'Jogador C','foto':null}
+            ]
+          },
+          {
+            'equipe':'equipe_c',
+            'placar': 0,
+            'artilheiros': [],
+            'assistentes': []
+          },
+        ]
+      },
+      {
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 1',
+          'data':'Sex - 03/08/2024',
+          'local':'Quadra Divineia',
+          'hora':'16:15 - 16:25',
+        },
+        'equipes': [
+          {
+            'equipe':'equipe_c',
+            'placar': 0,
+            'artilheiros': [],
+            'assistentes': []
+          },
+          {
+            'equipe':'equipe_b',
+            'placar': 0,
+            'artilheiros': [],
+            'assistentes': []
+          },
+        ]
+      },
+      {
+        'pelada':{
+          'image':null,
+          'titulo': 'Pelada 1',
+          'data':'Sex - 03/08/2024',
+          'local':'Quadra Divineia',
+          'hora':'16:26 - 16:33',
+        },
+        'equipes': [
+          {
+            'equipe':'equipe_a',
+            'placar': 0,
+            'artilheiros': [],
+            'assistentes': []
+          },
+          {
+            'equipe':'equipe_b',
+            'placar': 2,
+            'artilheiros': [
+              {'nome':'Jogador A','foto':null},
+              {'nome':'Jogador B','foto':null}
+            ],
+            'assistentes': []
+          },
+        ]
+      },
+    ];
+  }
 
   Future<UsuarioProvider>fetchUsuario(BuildContext context) async {
     //ADICIONAR DELAY DE 2 SEGUNDOS
@@ -266,12 +426,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
             decoration: const BoxDecoration(
               color: Colors.transparent,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: SvgPicture.asset(
-                AppIcones.menu["fas"]!,
-                width: double.maxFinite,
-                height: double.maxFinite,
+            child: const Padding(
+              padding: EdgeInsets.all(18),
+              child: Icon(
+                LineAwesomeIcons.bars_solid,
                 color: AppColors.blue_500,
               ),
             ),
@@ -286,12 +444,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
               decoration: const BoxDecoration(
                 color: Colors.transparent,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: SvgPicture.asset(
-                  AppIcones.direct["fas"]!,
-                  width: double.maxFinite,
-                  height: double.maxFinite,
+              child: const Padding(
+                padding: EdgeInsets.all(18),
+                child: Icon(
+                  LineAwesomeIcons.plane_solid,
                   color: AppColors.blue_500,
                 ),
               ),
@@ -305,7 +461,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         child: Container(
           padding: const EdgeInsets.all(10),
           child: FutureBuilder<List<dynamic>>(
-            future: Future.wait([fetchUsuario(context), fetchPertoVoce(), fecthTopRanking()]),
+            future: Future.wait([fetchUsuario(context), /* fetchPertoVoce(), fecthTopRanking(), fecthPopular(), fecthUltimosJogos() */]),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SkeletonHomeWidget();
@@ -313,6 +469,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
               } else if (snapshot.hasData) {
                 return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 10),
@@ -366,7 +524,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         ],
                       ),
                     ),
-                    SecaoHomeWidget(
+                    /* SecaoHomeWidget(
                       titulo: "Perto de Você",
                       options: peladas,
                     ),
@@ -374,6 +532,14 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       titulo: "Top Ranking",
                       options: ranking,
                     ),
+                    SecaoHomeWidget(
+                      titulo: "Mais Populares",
+                      options: popular,
+                    ),
+                    SecaoHomeWidget(
+                      titulo: "Últimos Jogos",
+                      options: partidas,
+                    ), */
                   ]
                 );
               } else {

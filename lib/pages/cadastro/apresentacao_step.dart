@@ -36,7 +36,7 @@ class ApresentacaoStep extends StatelessWidget {
             ),
             Center(
               child: Image.asset(
-                AppImages.silhueta_cadastro,
+                AppImages.silhuetaCadastro,
                 width: 350,
                 height: 300,
               ),

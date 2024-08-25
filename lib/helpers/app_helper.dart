@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -132,6 +134,7 @@ class AppHelper {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  //FUNÇÃO PARA TRATAMENTO DE ERROS
   static Map<String, dynamic> tratamentoErros(DioException error) {
     switch (error.type) {
       case DioExceptionType.cancel:
@@ -167,5 +170,87 @@ class AppHelper {
           'message':'Erro no servidor!'
         };
     }
+  }
+  //FUNÇÃO PARA RESGATAR ALTURA DO DISPOSITIVO
+  static Map<String, double> getDimensions(BuildContext context){
+    var dimensions = MediaQuery.of(context).size;
+    return{
+      'width': dimensions.width,
+      'height': dimensions.height,
+    };
+  }
+
+  //ESCOLHER TOM MAIS CLARO DA COR
+  static Color brightnessColor(color){
+    var newKey; 
+    //LOOP NAS CORES
+    AppColors.colors.forEach((key, value){
+      //FILTRAR CORES DO TIPO 100
+      if(value == color){
+        newKey = key.split('_');
+      }
+    });
+    return AppColors.colors['${newKey[0]}']!;
+  }
+
+  //ESCOLHER A COR DO CARD ALEATORIAMENTE
+   static Color randomColor(){
+      //DEFINIR ARRAY DE ITEMS
+      List items = [];
+      //LOOP NAS CORES
+      AppColors.colors.forEach((key, value){
+        //FILTRAR CORES DO TIPO 100
+        if(key.contains('100')){
+          items.add(value);
+        }
+      });
+      //INSTANCIAR RANDOM
+      Random random = Random();
+      //SELECIONAR ITEM ALEATORIAMENTE
+      int i = random.nextInt(items.length);
+      //RETORNAR COR ALEATORIA
+      return items[i];
+    }
+
+  //FUNÇÃO PARA RESGATAR A ALTURA DA TELA
+  static double screenHeight(BuildContext context){
+    return MediaQuery.of(context).size.height;
+  }
+  
+  //FUNÇÃO PARA RESGATAR A LARGURA DA TELA
+  static double screenWidth(BuildContext context){
+    return MediaQuery.of(context).size.width;
+  }
+
+  //FUNÇÃO PARA ESCONDER O TECLADO
+  static void hideKeyboard(BuildContext context){
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  //FUNÇÃO PARA DEFINIR COR DO STATUS BAR
+  static Future<void>setStatusBarColor(Color color) async{
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: color)
+    );
+  }
+
+  //FUNÇÃO PARA ALTERAR HORIENTAÇÃO DO CELULRA
+  static bool alterOrientation(BuildContext context, bool orientation){
+    final viewInsert = View.of(context).viewInsets;
+    if(orientation){
+      return viewInsert.bottom == 0;
+    }else{
+      return viewInsert.bottom != 0;
+    }
+  }
+
+  //FUNÇÃO PARA EXIBIR TELA CHEIA
+  static void setFullScreen(bool enable){
+    SystemChrome.setEnabledSystemUIMode(enable ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge);
+  }
+
+  //ALTERAR A EXIBIÇÃO DE SENHA
+  static bool toggleVisibility(bool visible) {
+    return visible = !visible;
   }
 }

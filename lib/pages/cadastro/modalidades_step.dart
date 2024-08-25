@@ -4,9 +4,11 @@ import 'package:futzada/pages/cadastro/modalidade_jogador_step.dart';
 import 'package:futzada/pages/cadastro/modalidade_tecnico_step.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/buttons/button_circular_widget.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ModalidadesStep extends StatefulWidget {
   final VoidCallback proximo;
@@ -103,7 +105,7 @@ class _ModalidadesStepState extends State<ModalidadesStep> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: ButtonIconWidget(
+                            child: ButtonCircularWidget(
                               icon: AppIcones.chuteiras['campo']!,
                               color: AppColors.green_300,
                               dimensions: 120,
@@ -137,8 +139,8 @@ class _ModalidadesStepState extends State<ModalidadesStep> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: ButtonIconWidget(
-                              icon: AppIcones.prancheta['fas'],
+                            child: ButtonCircularWidget(
+                              icon: LineAwesomeIcons.clipboard,
                               iconWidth: 10,
                               iconColor: AppColors.white,
                               color: AppColors.green_300,

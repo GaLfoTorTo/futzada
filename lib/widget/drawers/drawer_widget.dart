@@ -8,6 +8,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/login_bg.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -104,16 +105,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
       {'type': 'section', 'title': 'Perfil de Usuário',},
-      {'type': 'option', 'title': 'Minha Conta', 'icon': AppIcones.user["far"], 'strokeWidth': 1.0, 'route': '/minha_conta'},
-      {'type': 'option', 'title': 'Favoritos', 'icon': AppIcones.favorito["far"], 'strokeWidth': 1.5, 'route': '/favoritos'},
-      {'type': 'option', 'title': 'Amigos', 'icon': AppIcones.users["far"], 'strokeWidth': 1.0, 'route': '/amigos'},
-      {'type': 'option', 'title': 'Modalidades', 'icon': AppIcones.modalidade["far"], 'strokeWidth': 1.0, 'route': '/modalidades'},
-      {'type': 'option', 'title': 'Minhas Peladas', 'icon': AppIcones.futebol_ball["far"], 'strokeWidth': 1.0, 'route': '/minhas_peladas'},
+      {'type': 'option', 'title': 'Minha Conta', 'icon': LineAwesomeIcons.user, 'strokeWidth': 1.0, 'route': '/minha_conta'},
+      {'type': 'option', 'title': 'Favoritos', 'icon': LineAwesomeIcons.bookmark, 'strokeWidth': 1.5, 'route': '/favoritos'},
+      {'type': 'option', 'title': 'Amigos', 'icon': LineAwesomeIcons.users_solid, 'strokeWidth': 1.0, 'route': '/amigos'},
+      {'type': 'option', 'title': 'Modalidades', 'icon': LineAwesomeIcons.futbol, 'strokeWidth': 1.0, 'route': '/modalidades'},
+      {'type': 'option', 'title': 'Minhas Peladas', 'icon': LineAwesomeIcons.futbol, 'strokeWidth': 1.0, 'route': '/minhas_peladas'},
       {'type': 'section', 'title': 'Privacidade e Segurança',},
-      {'type': 'option', 'title': 'Configurações', 'icon': AppIcones.cog["far"], 'strokeWidth': 1.0, 'route': '/configuracoes'},
-      {'type': 'option', 'title': 'Central de Ajuda', 'icon': AppIcones.interrogacao["far"], 'strokeWidth': 1.0, 'route': '/central_ajuda'},
-      {'type': 'option', 'title': 'Sobre', 'icon': AppIcones.exclamacao["far"], 'strokeWidth': 1.0, 'route': '/sobre'},
-      {'type': 'option', 'title': 'Termos e Políticas', 'icon': AppIcones.book["far"], 'strokeWidth': 1.0, 'route': '/termos_politicas'},
+      {'type': 'option', 'title': 'Configurações', 'icon': LineAwesomeIcons.cog_solid, 'strokeWidth': 1.0, 'route': '/configuracoes'},
+      {'type': 'option', 'title': 'Central de Ajuda', 'icon': LineAwesomeIcons.question_circle_solid, 'strokeWidth': 1.0, 'route': '/central_ajuda'},
+      {'type': 'option', 'title': 'Sobre', 'icon': LineAwesomeIcons.exclamation_circle_solid, 'strokeWidth': 1.0, 'route': '/sobre'},
+      {'type': 'option', 'title': 'Termos e Políticas', 'icon': LineAwesomeIcons.atlas_solid, 'strokeWidth': 1.0, 'route': '/termos_politicas'},
     ];
 
     return Drawer(
@@ -175,10 +176,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           for (var option in drawerOptions)
             option['type'] == 'option' ? 
               ListTile(
-                leading:
-                SvgPicture.asset(
+                leading:Icon(
                   option["icon"],
-                  color: AppColors.dark_500,
+                  size: 35,
+                  color: AppColors.dark_300,
                 ),
                 title: Text(
                   option['title'],
@@ -213,9 +214,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: ListTile(
-                leading:
-                SvgPicture.asset(
-                  AppIcones.logout["far"]!,
+                leading:const Icon(
+                  Icons.logout,
+                  size: 35,
                   color: AppColors.dark_500,
                 ),
                 title: const Text(

@@ -145,6 +145,51 @@ class SkeletonHomeWidget extends StatelessWidget {
               ),
             ],
           ),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    width: 100,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.white,
+                    ),
+                  ),  
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 20),
+                    width: 100,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.white,
+                    ),
+                  ),  
+                ]
+              ),
+              Container(
+                height: 420,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.white,
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: 100,
+                  height: 20,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: AppColors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

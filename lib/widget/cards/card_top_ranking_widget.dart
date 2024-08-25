@@ -15,10 +15,12 @@ class CardTopRankingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dimensions = MediaQuery.of(context).size;
+
     return Center(
       child: Container(
         height: 380,
-        width: double.maxFinite,
+        width: dimensions.width,
         child: PageView(
           controller: controller,
           children: ranking.map((item) {
@@ -36,10 +38,10 @@ class CardTopRankingWidget extends StatelessWidget {
                 color: AppColors.green_300,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.gray_300.withOpacity(0.5),
-                    spreadRadius: 0.8,
-                    blurRadius: 7,
-                    offset: Offset(5, 5),
+                    color: AppColors.dark_500.withOpacity(0.5),
+                    spreadRadius: 0.5,
+                    blurRadius: 5,
+                    offset: Offset(2, 5),
                   ),
                 ],
               ),

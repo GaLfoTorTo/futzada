@@ -13,6 +13,7 @@ import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/pickers/picker_color_widget.dart';
 import 'package:futzada/widget/pickers/picker_emblema_widget.dart';
 import 'package:futzada/widget/pickers/picker_uniforme_widget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ModalidadeTecnicoStepState extends StatefulWidget {
   final VoidCallback proximo;
@@ -456,14 +457,12 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                         color: AppColors.green_300,
                         borderRadius: BorderRadius.circular(80),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: SvgPicture.asset(
-                          AppIcones.prancheta["fas"]!,
+                      child: const Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Icon(
+                          LineAwesomeIcons.clipboard,
                           color: AppColors.white,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ) 
+                        ),
                       ),
                     ),
                   ],
@@ -554,29 +553,27 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                           return const Center(child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
                           return Container(
-                                    width: double.maxFinite,
-                                    height: 250,
-                                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const Text(
-                                          "Não foi possível carregar os emblemas",
-                                          style: TextStyle(
-                                            color: AppColors.gray_300,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal
-                                          ),
-                                        ),
-                                        SvgPicture.asset(
-                                          AppIcones.image['fas']!,
-                                          width: 100,
-                                          height: 100,
-                                          color: AppColors.gray_300,
-                                        ),
-                                      ],
-                                    )
-                                  );
+                            width: double.maxFinite,
+                            height: 250,
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  "Não foi possível carregar os emblemas",
+                                  style: TextStyle(
+                                    color: AppColors.gray_300,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal
+                                  ),
+                                ),
+                                Icon(
+                                  LineAwesomeIcons.image,
+                                  color: AppColors.gray_300,
+                                ),
+                              ],
+                            )
+                          );
                         } else {
                           return Wrap(
                             spacing: 50, 
@@ -656,10 +653,10 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                                   width: double.maxFinite,
                                   height: 250,
                                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                                  child: Column(
+                                  child: const Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Não foi possível carregar o Uniforme",
                                         style: TextStyle(
                                           color: AppColors.gray_300,
@@ -667,10 +664,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
                                           fontWeight: FontWeight.normal
                                         ),
                                       ),
-                                      SvgPicture.asset(
-                                        AppIcones.image['fas']!,
-                                        width: 100,
-                                        height: 100,
+                                      Icon(
+                                        LineAwesomeIcons.image,
                                         color: AppColors.gray_300,
                                       ),
                                     ],

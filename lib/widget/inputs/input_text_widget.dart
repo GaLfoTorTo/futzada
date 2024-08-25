@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/helpers/app_helper.dart';
 
 class InputTextWidget extends StatefulWidget {
   final String name;
-  final String label;
-  final String? icon;
+  final String? label;
+  final String? hint;
+  final IconData? sufixIcon;
+  final IconData? prefixIcon;
   final String? placeholder;
-  final TextEditingController textController;
-  final dynamic controller;
   final Function? onSaved;
   final TextInputType? type;
-  final Function? validator;
   final int? maxLength;
+  final Function? validator;
+  final dynamic controller;
+  final TextEditingController textController;
 
   const InputTextWidget({
     super.key,
     required this.name, 
-    required this.label,
-    this.icon,
+    this.label,
+    this.hint,
+    this.sufixIcon,
+    this.prefixIcon,
     this.placeholder,
-    required this.textController, 
-    required this.controller, 
     this.onSaved,
     this.type,
-    this.validator,
     this.maxLength,
+    this.validator,
+    required this.textController, 
+    required this.controller, 
   });
 
   @override
@@ -37,8 +40,10 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   bool visible = false;
   //VARIAVEL DE EXIBIÇÃO DE BOTÃO DE VISIBILIDADE DE SENHA
   bool obscure = false;
-  //VARIAVEL PARA EXIBIÇÃO DE LABEL OU PLACEHOLDER
-  bool hint = false;
+  //VARIAVEL PARA CONTROLAR EXIBIÇÃO ICONE NO FIM DO INPUT
+  Icon? sufixIcon;
+  //VARIAVEL PARA CONTROLAR EXIBIÇÃO ICONE NO FIM DO INPUT
+  Icon? prefixIcon;
 
   @override
   void initState() {
@@ -46,20 +51,26 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     //INICIALIZR VISIBILIDADE DE SENHA CASO EXISTA
     obscure = widget.type != null && widget.type == TextInputType.visiblePassword;
     visible = widget.type != null && widget.type == TextInputType.visiblePassword;
-    //VARIAVEL DE EXIBIÇÃO DE PLACEHOLDER
-    hint = widget.name == 'user' || widget.name == 'password' ? true : false;
+    //INICIALIZAR SUFIXICON
+    sufixIcon = widget.sufixIcon != null
+      ? Icon(widget.sufixIcon) 
+      : null;
+    prefixIcon = widget.prefixIcon != null 
+      ? Icon(widget.prefixIcon) 
+      : null;
   }
 
-  //ALTERAR A EXIBIÇÃO DE SENHA
-  void toggleVisibility() {
+  void showText(){
     setState(() {
-      visible = !visible;
+      visible = AppHelper.toggleVisibility(visible);
+      sufixIcon = visible
+       ? Icon(Icons.visibility_off) 
+       : Icon(Icons.visibility);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
@@ -69,57 +80,17 @@ class _InputTextWidgetState extends State<InputTextWidget> {
         textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
         obscureText: visible,
         maxLength: widget.maxLength ?? widget.maxLength,
-        style: const TextStyle(
-          color: AppColors.dark_300,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
         decoration: InputDecoration(
-          filled: true,
-          fillColor: Colors.white,
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: AppColors.green_300),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          hintText: hint ? widget.label : null,
-          hintStyle: const TextStyle(
-            color: AppColors.gray_500,
-            fontSize: 15,
-          ),
-          labelText: !hint ? widget.label : null,
-          labelStyle: const TextStyle(
-            color: AppColors.gray_500,
-            fontSize: 15,
-          ),
-          floatingLabelStyle: const TextStyle(
-            color: AppColors.dark_500,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-          prefixIcon: widget.icon != null
-          ? Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-            child: SvgPicture.asset(
-              widget.icon!,
-              width: 25,
-              height: 25,
-              color: AppColors.gray_700,
-            ),
-          )
-          : null,
-          suffixIcon: obscure 
-          ? IconButton(
-              icon: Icon(
-                visible ? Icons.visibility_off : Icons.visibility,
-                color: AppColors.gray_300,
-              ),
-              onPressed: () => toggleVisibility() 
+          hintText: widget.hint,
+          labelText: widget.label,
+          prefixIcon: prefixIcon,
+          suffixIcon: sufixIcon != null 
+            ? IconButton(
+              icon: sufixIcon!,
+              onPressed: () => showText(),
             )
-          : null,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            : null
         ),
         onSaved: (value){
           if(widget.onSaved != null){

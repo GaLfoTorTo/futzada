@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/cards/card_para_voce_widget.dart';
+import 'package:futzada/widget/cards/card_popular_widget.dart';
 import 'package:futzada/widget/cards/card_top_ranking_widget.dart';
+import 'package:futzada/widget/cards/card_ultimos_jogos_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SecaoHomeWidget extends StatelessWidget {
@@ -29,6 +31,16 @@ class SecaoHomeWidget extends StatelessWidget {
         case "Top Ranking":
           return CardTopRankingWidget(
             ranking: options, 
+            controller: pageController
+          );
+        case "Mais Populares":
+          return CardPopularWidget(
+            popular: options, 
+            controller: pageController
+          );
+        case "Últimos Jogos":
+          return CardUltimosJogosWidget(
+            partidas: options, 
             controller: pageController
           );
         default:

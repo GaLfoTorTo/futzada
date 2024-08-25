@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class TabBarWidget extends StatefulWidget {
   final TabController controller;
@@ -29,26 +30,26 @@ class _TabBarWidgetState extends State<TabBarWidget> {
     final List<Map<String, dynamic>> tabIcones = [
       {
         'label':'Home',
-        'icone': AppIcones.home['far'],
+        'icone': AppIcones.home_outline,
         'active': widget.active == 0 ? AppColors.blue_500 : AppColors.gray_500
       },
       {
         'label':'Escalação',
-        'icone': AppIcones.escalacao['far'],
+        'icone': AppIcones.escalacao_outline,
         'active': widget.active == 1 ? AppColors.blue_500 : AppColors.gray_500
       },
       {
         'label':'Pelada',
-        'icone': AppIcones.pelada,
+        'icone': AppIcones.apito,
       },
       {
         'label':'Explore',
-        'icone': AppIcones.map['far'],
+        'icone': AppIcones.map_marked_outline,
         'active': widget.active == 3 ? AppColors.blue_500 : AppColors.gray_500
       },
       {
         'label':'Notificações',
-        'icone': AppIcones.bell['far'],
+        'icone': AppIcones.bell_outline,
         'active': widget.active == 4 ? AppColors.blue_500 : AppColors.gray_500
       },
     ];
@@ -76,12 +77,11 @@ class _TabBarWidgetState extends State<TabBarWidget> {
         tabs: [
           for (var icone in tabIcones) 
             Tab(
-              icon: SvgPicture.asset(
+              icon: Icon(
                 icone['icone'],
-                height: icone['label'] == 'Pelada' ? 60 : 28,
                 color: icone['active'],
               ),
-            ),
+            )
         ],
       ),
     );

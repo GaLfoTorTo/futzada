@@ -102,7 +102,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Lottie.asset(
-                        AppAnimations.errorCheck,
+                        AppAnimations.checkError,
                         fit: BoxFit.contain,
                         onLoaded: (composition) {
                           //REMOVER MODAL
@@ -124,7 +124,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Lottie.asset(
-                          AppAnimations.successCheck,
+                          AppAnimations.checkSuccess,
                           fit: BoxFit.contain,
                           onLoaded: (composition) {
                             //REMOVER MODAL
@@ -144,7 +144,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStepState>  with SingleTic
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Lottie.asset(
-                          AppAnimations.errorCheck,
+                          AppAnimations.checkError,
                           fit: BoxFit.contain,
                           onLoaded: (composition) {
                             //REMOVER MODAL

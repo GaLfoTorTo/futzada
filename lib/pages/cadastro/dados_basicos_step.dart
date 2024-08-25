@@ -10,6 +10,7 @@ import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class DadosBasicosStep extends StatefulWidget {
   final VoidCallback proximo;
@@ -140,14 +141,14 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
         'name': 'visibilidade',
         'placeholder' : 'Qualquer usuário pode visualizar suas informações.',
         'value': 'Publico',
-        'icon' : AppIcones.door_open['fas'],
+        'icon' : LineAwesomeIcons.door_open_solid,
         'controller': visibilidadeController,
       },
       {
         'name': 'visibilidade',
         'placeholder' : 'Apenas você e seus amigos podem visualizar suas informações..',
         'value': 'Privado',
-        'icon' : AppIcones.door_close['fas'],
+        'icon' : LineAwesomeIcons.door_closed_solid,
         'controller': visibilidadeController,
       },
     ];
@@ -275,7 +276,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
                 child: ButtonTextWidget(
                   type: "outline",
                   text: "Foto",
-                  icon: AppIcones.camera['fas'],
+                  icon: LineAwesomeIcons.camera_solid,
                   textColor: AppColors.blue_500,
                   color: AppColors.blue_500,
                   width: double.infinity,

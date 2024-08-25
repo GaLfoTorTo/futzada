@@ -23,7 +23,7 @@ class AuthController {
       saveUsuario(usuario);
       //INICIALIZAR DADOS DO PROVIDER 
       Provider.of<UsuarioProvider>(context, listen: false).loadUser(context);
-      //NAVEGAR PARA HOME PAGE
+      //NAVEGAR PARA APRESENTAÇÃO PAGE
       Navigator.pushReplacementNamed(context, "/home");
     }else{
       //NAVEGAR PARA LOGIN PAGE
@@ -86,15 +86,25 @@ class AuthController {
   //FUNÇÃO DE LOGIN COM GOOLGE
   Future<void>googleLogin(BuildContext context) async {
     //INICIALIZAR AUTHENTICAÇÃO COM GOOGLE PELO EMAIL
-    GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+    GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
+      'email',
+    ]);
     //TENTAR LOGAR
     try {
       //ENVIAR SOLICITAÇÃO AO GOOGLE
       final resp = await googleSignIn.signIn();
-      //RESGATAR DADOS DO USUARIO VINDOS DO GOOGLE
-      var nome_completo = resp!.displayName!.split(' ');
-      String nome = nome_completo[0];
-      String sobrenome = nome_completo[1];
+      String? nome;
+      String? sobrenome;
+      //VERIFICAR SE NOME DO USUARIO NÃO ESTA VAZIO
+      if(resp!.displayName != null){
+        //RESGATAR DADOS DO USUARIO VINDOS DO GOOGLE
+        var nome_completo = resp.displayName!.split(' ');
+        nome = nome_completo[0];
+        sobrenome = nome_completo.contains(1) ? nome_completo[1] : '';
+      }else{
+        nome = 'Usuario';
+        sobrenome = 'Anônimo';
+      }
       //RESGATAR DADOS DO USUÁRIO FORNECIDOS PELO GOOGLE
       final usuario = UsuarioModel(
         nome: nome,
@@ -217,6 +227,12 @@ class AuthController {
             'message': errorMessage['message'],
           };
         }
+      }else{
+        //INICIALIZAR GOOGLE SIGN IN
+        GoogleSignIn googleSignIn = GoogleSignIn();
+        //EFETUAR LOG OUT DA CONTA DO GOOGLE
+        await googleSignIn.signOut();
+    
       }
       return {
         'status': 200,

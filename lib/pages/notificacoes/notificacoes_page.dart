@@ -16,19 +16,47 @@ class NotificacaoPageState extends StatefulWidget {
 }
 
 class NotificacaoPageStateState extends State<NotificacaoPageState> {
+  //CONTROLADOR DE PAGINAS
+  final PageController _pageController = PageController(initialPage: 0);
+  //TITULO
+  String title = "";
+  //INDEX DE PAGINA
+  int currentPage = 0;
+  //FUNÇÃO PARA ALTERAÇÃO DE PÁGINAS
+  void _alterPage(context, String action) {
+    setState(() {
+      //ADICIONAR TITULO
+      currentPage = action == "Proximo" ? currentPage + 1 : currentPage - 1;
+    });
+    //ALTERAR PAGINA
+    _pageController.animateToPage(
+      currentPage,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.ease,
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.light,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: HeaderWidget(
-          title: 'Notificação',
+          title: 'Notificações',
           action: () => widget.actionButton(),
         )
       ),
-      body: Container(
-        color: AppColors.light,
-      ),
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          onPageChanged: (int page) {
+          },
+          children: [
+          ],
+        ),
+      ), 
     );
   }
 }

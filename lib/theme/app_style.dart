@@ -1,0 +1,322 @@
+import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_size.dart';
+
+class AppStyle {
+  AppStyle._();
+
+  //TEXT LIGHT THEME
+  static TextTheme lightTextTheme = TextTheme(
+    //HEAD/TITLES
+    headlineLarge: const TextStyle().copyWith(fontSize: AppSize.fontXxl, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    headlineMedium: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    headlineSmall: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    //TITLES
+    titleLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    titleMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    titleSmall: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    //BODY
+    bodyLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    bodyMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    bodySmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    //LABELS
+    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+  );
+
+  //TEXT DARK THEME
+  static TextTheme darkTextTheme = TextTheme(
+    //HEAD/TITLES
+    headlineLarge: const TextStyle().copyWith(fontSize: AppSize.fontXxl, fontWeight: FontWeight.bold, color: AppColors.white),
+    headlineMedium: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.bold, color: AppColors.white),
+    headlineSmall: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.white),
+    //TITLES
+    titleLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.bold, color: AppColors.white),
+    titleMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.white),
+    titleSmall: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.white),
+    //BODY
+    bodyLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.normal, color: AppColors.white),
+    bodyMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.white),
+    bodySmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.white),
+    //LABELS
+    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.white),
+    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.white),
+    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.bold, color: AppColors.white),
+  );
+
+  //TEXT BUTTON THEME
+  static final textButtonTheme = TextButtonThemeData(
+    style: TextButton.styleFrom(
+      elevation: 0,
+      foregroundColor: AppColors.green_300,
+      backgroundColor: AppColors.green_300,
+      disabledForegroundColor: AppColors.green_100,
+      disabledBackgroundColor: AppColors.green_100,
+      padding: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      textStyle: const TextStyle(
+        fontSize: AppSize.fontMd,
+        color: AppColors.blue_500,
+        fontWeight: FontWeight.bold
+      ),
+    )
+  );
+
+  //ELEVATED BUTTON LIGHT THEME
+  static final elevatedButtonTheme = ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      elevation: 0,
+      foregroundColor: AppColors.green_300,
+      backgroundColor: AppColors.green_300,
+      disabledForegroundColor: AppColors.green_100,
+      disabledBackgroundColor: AppColors.green_100,
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      textStyle: const TextStyle(
+        fontSize: 18,
+        color: AppColors.blue_500,
+        fontWeight: FontWeight.bold
+      ),
+    )
+  );
+  
+  //BUTTON LIGHT THEME
+  static OutlinedButtonThemeData lightOutlineButtonTheme = OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      elevation: 0,
+      foregroundColor: AppColors.white,
+      backgroundColor: AppColors.white,
+      disabledForegroundColor: AppColors.gray_300,
+      disabledBackgroundColor: AppColors.gray_300,
+      side: const BorderSide(color: AppColors.blue_500),
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      textStyle: const TextStyle(
+        fontSize: 18,
+        color: AppColors.blue_500,
+        fontWeight: FontWeight.normal
+      ),
+    )
+  );
+
+  //BUTTON DARK THEME
+  static OutlinedButtonThemeData darkOutlineButtonTheme = OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      elevation: 0,
+      foregroundColor: AppColors.dark_500,
+      backgroundColor: AppColors.dark_500,
+      disabledForegroundColor: AppColors.dark_300,
+      disabledBackgroundColor: AppColors.dark_300,
+      side: const BorderSide(color: AppColors.white),
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      textStyle: const TextStyle(
+        fontSize: 18,
+        color: AppColors.white,
+        fontWeight: FontWeight.normal
+      ),
+    )
+  );
+
+  //APP BAR THEME
+  static const appBarTheme = AppBarTheme(
+    elevation: 0,
+    centerTitle: false,
+    scrolledUnderElevation: 0,
+    backgroundColor: AppColors.green_300,//Colors.transparent default
+    surfaceTintColor: AppColors.green_300,//Colors.transparent default
+    iconTheme: IconThemeData(color: AppColors.blue_500, size: 24),
+    actionsIconTheme: IconThemeData(color: AppColors.blue_500, size: 24),
+    titleTextStyle: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal, color: AppColors.blue_500)
+  );
+
+  //BOTTOM SHEET LIGHT THEME
+  static BottomSheetThemeData lightBottomSheetTheme = BottomSheetThemeData(
+    showDragHandle: true,
+    backgroundColor: AppColors.white,
+    modalBackgroundColor: AppColors.white,
+    constraints: const BoxConstraints(minWidth: double.infinity),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+  );
+  //BOTTOM SHEET DARK THEME
+  static BottomSheetThemeData darkBottomSheetTheme = BottomSheetThemeData(
+    showDragHandle: true,
+    backgroundColor: AppColors.white,
+    modalBackgroundColor: AppColors.white,
+    constraints: const BoxConstraints(minWidth: double.infinity),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+  );
+
+  //CHECKBOX LIGHT/DARK THEME 
+  static CheckboxThemeData checkBoxTheme = CheckboxThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+    checkColor: MaterialStateColor.resolveWith((state){
+      if(state.contains(MaterialState.selected)){
+        return AppColors.white;
+      }else{
+        return AppColors.gray_500;
+      }
+    }),
+    fillColor: MaterialStateColor.resolveWith((state){
+      if(state.contains(MaterialState.selected)){
+        return AppColors.green_300;
+      }else{
+        return Colors.transparent;
+      }
+    }),
+  );
+
+  //INPUT LIGHT THEME
+  static InputDecorationTheme lightInputTheme = InputDecorationTheme(
+    filled: true,
+    fillColor: AppColors.white,
+    errorMaxLines: 3,
+    prefixIconColor: AppColors.gray_500,
+    suffixIconColor: AppColors.gray_500,
+    errorStyle: const TextStyle(
+      fontStyle: FontStyle.normal
+    ),
+    floatingLabelStyle: const TextStyle(
+      color: AppColors.dark_500, 
+      fontSize: AppSize.fontXl, 
+      fontWeight: FontWeight.bold
+    ),
+    labelStyle: const TextStyle(
+      color: AppColors.gray_500,
+      fontSize: AppSize.fontMd,
+    ),
+    hintStyle: const TextStyle(
+      color: AppColors.gray_300,
+      fontSize: AppSize.fontMd,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.green_300),
+    ),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+
+  );
+
+  //INPUT DARK THEME
+  static InputDecorationTheme darkInputTheme = InputDecorationTheme(
+    filled: true,
+    fillColor: AppColors.dark_500,
+    errorMaxLines: 3,
+    prefixIconColor: AppColors.white,
+    suffixIconColor: AppColors.white,
+    errorStyle: const TextStyle(
+      fontStyle: FontStyle.normal
+    ),
+    floatingLabelStyle: const TextStyle(
+      color: AppColors.white, 
+      fontSize: AppSize.fontXl, 
+      fontWeight: FontWeight.bold
+    ),
+    labelStyle: const TextStyle(
+      color: AppColors.white,
+      fontSize: AppSize.fontMd,
+    ),
+    hintStyle: const TextStyle(
+      color: AppColors.white,
+      fontSize: AppSize.fontMd,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.green_300),
+    ),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+  );
+
+  //DRAWER LIGHT THEME
+  static DrawerThemeData lightDrawerTheme = const DrawerThemeData(
+    backgroundColor: AppColors.white,
+    surfaceTintColor: AppColors.dark_500
+  );
+  
+  //DRAWER DARK THEME
+  static DrawerThemeData darkDrawerTheme = const DrawerThemeData(
+    backgroundColor: AppColors.dark_500,
+    surfaceTintColor: AppColors.white
+  );
+  
+  //BOTTON NAVIGATION BAR LIGHT THEME
+  static BottomNavigationBarThemeData lightBottomNavigationTheme = const BottomNavigationBarThemeData(
+    backgroundColor: AppColors.white,
+    enableFeedback: true,
+    selectedItemColor: AppColors.blue_500,
+    showSelectedLabels: false,
+    unselectedItemColor: AppColors.gray_300,
+    showUnselectedLabels: false,
+    type: BottomNavigationBarType.fixed,
+  );
+  
+  //BOTTON NAVIGATION BAR DARK THEME
+  static BottomNavigationBarThemeData darkBottomNavigationTheme = const BottomNavigationBarThemeData(
+    backgroundColor: AppColors.dark_500,
+    enableFeedback: true,
+    selectedItemColor: AppColors.white,
+    showSelectedLabels: false,
+    unselectedItemColor: AppColors.gray_300,
+    showUnselectedLabels: false,
+    type: BottomNavigationBarType.fixed,
+  );
+  
+  //TAB BAR LIGHT THEME
+  static TabBarTheme lightTabBarTheme = const TabBarTheme(
+    indicator: BoxDecoration(),
+  );
+  
+  //TAB BAR DARK THEME
+  static TabBarTheme darkTabBarTheme = const TabBarTheme(
+    indicator: BoxDecoration(),
+  );
+
+  /* //DATE PICKER LIGHT THEME
+  static DatePickerTheme lightDatePickerTheme = DatePickerTheme(
+    data: DatePickerThemeData(
+      backgroundColor: AppColors.white,
+      cancelButtonStyle: ButtonStyle(
+        enableFeedback: true,
+      ),
+      confirmButtonStyle: ButtonStyle(
+        backgroundColor: MaterialStatePropertyAll(AppColors.green_300)
+      )
+    ),      
+  );
+  
+  //DATE PICKER DARK THEME
+  static DatePickerTheme darkDatePickerTheme = DatePickerTheme(
+    data: DatePickerThemeData(
+      backgroundColor: AppColors.white,
+      cancelButtonStyle: ButtonStyle(
+        enableFeedback: true,
+      ),
+      confirmButtonStyle: ButtonStyle(
+        backgroundColor: MaterialStatePropertyAll(AppColors.green_300)
+      )
+    ),    
+  ); */
+}

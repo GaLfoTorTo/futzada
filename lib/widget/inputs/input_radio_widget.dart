@@ -10,7 +10,7 @@ class InputRadioWidget extends StatefulWidget {
   final String icon;
   final String placeholder;
   final TextEditingController textController;
-  final CadastroController controller;
+  final dynamic controller;
   final Function onChanged;
 
   InputRadioWidget({

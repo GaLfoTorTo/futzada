@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/routes/app_routes.dart';
+import 'package:futzada/theme/app_themes.dart';
 import 'package:provider/provider.dart';
-import 'theme/app_colors.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
@@ -18,10 +18,9 @@ class AppWidget extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Futzada',
-        theme: ThemeData(
-          primaryColor: AppColors.green_300,
-          fontFamily: 'Nunito'
-        ),
+        themeMode: ThemeMode.light,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
         initialRoute: "/splash",
         routes: AppRoutes.routes,
       ),

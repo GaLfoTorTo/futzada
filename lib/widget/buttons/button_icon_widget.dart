@@ -1,54 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class ButtonIconWidget extends StatelessWidget {
   final String? icon;
   final Color? iconColor;
-  final double? iconWidth;
   final Color? color;
-  final double? dimensions;
+  final double? width;
+  final double? height;
+  final bool? disabled;
   final VoidCallback action;
 
   const ButtonIconWidget({
     super.key,
     required this.icon,
     this.iconColor, 
-    this.iconWidth,
-    this.color = Colors.white, 
-    this.dimensions, 
+    this.color = AppColors.white, 
+    this.width = 55, 
+    this.height = 55, 
+    this.disabled = false, 
     required this.action, 
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: action,
+      onTap: disabled! ? null : action,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
       child: Container(
-        width: dimensions,
-        height: dimensions,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(dimensions != 60 ? dimensions! : 10),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: icon == "assets/icones/chuteiras/campo.svg" ?
-            Transform.rotate(
-              angle: - 45 * 3.14159 / 180,
-              child: SvgPicture.asset(
-                icon!,
-                width: double.infinity,
-                height: double.infinity,
-                color: iconColor,
-              ) 
-            ) 
-          :
-            SvgPicture.asset(
-              icon!,
-              width: double.infinity,
-              height: double.infinity,
-              color: iconColor,
-            ),
+          child: SvgPicture.asset(
+            icon!,
+            width: double.infinity,
+            height: double.infinity,
+            color: iconColor,
+          ),
         ),
       ),
     );

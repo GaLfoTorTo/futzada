@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class CardParaVoceWidget extends StatelessWidget {
   final List<Map<String, dynamic>> peladas;
@@ -28,10 +29,10 @@ class CardParaVoceWidget extends StatelessWidget {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.gray_300.withOpacity(0.5),
-                    spreadRadius: 0.8,
-                    blurRadius: 7,
-                    offset: Offset(5, 5),
+                    color: AppColors.dark_500.withOpacity(0.5),
+                    spreadRadius: 0.5,
+                    blurRadius: 5,
+                    offset: Offset(2, 5),
                   ),
                 ],
                 image: DecorationImage(
@@ -63,10 +64,8 @@ class CardParaVoceWidget extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        SvgPicture.asset(
-                          AppIcones.location['fas']!,
-                          width: 20,
-                          height: 20,
+                        Icon(
+                          LineAwesomeIcons.location_arrow_solid,
                           color: item['textColor'],
                         ),
                         Padding(

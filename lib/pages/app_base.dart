@@ -4,7 +4,7 @@ import 'package:futzada/pages/escalacao/escalacao_page.dart';
 import 'package:futzada/pages/explore/explore_page.dart';
 import 'package:futzada/pages/home/home_page.dart';
 import 'package:futzada/pages/notificacoes/notificacoes_page.dart';
-import 'package:futzada/pages/pelada/pelada_page.dart';
+import 'package:futzada/pages/pelada/registro/pelada_apresentacao.dart';
 import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/widget/drawers/drawer_widget.dart';
 import 'package:futzada/widget/tabs/tab_bar_widget.dart';
@@ -84,13 +84,13 @@ class _AppBaseState extends State<AppBase> with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: tabController,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           HomePage(menuFunction: toggleDrawerMenu, chatFunction: toggleDrawerMenu,),
           EscalacaoPageState(
             actionButton: alterTabs,
           ),
-          PeladaPageState(
+          PeladaApresentacaoState(
             actionButton: alterTabs,
           ),
           ExplorePageState(

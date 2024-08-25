@@ -21,7 +21,7 @@ class ImgCircularWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR URL DA IMAGEM DO USUARIO
-    String urlImage = AppImages.user_default;
+    String urlImage = AppImages.userDefault;
     //VERIFI CAR SE IMAGEM NÃO SETÁ VAZIA
     if(image != null){
       if (image!.contains('/storage')) {
