@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/pages/home/secao/secao_home_widget.dart';
 import 'package:futzada/widget/cards/card_para_voce_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import '/theme/app_colors.dart';
@@ -13,20 +14,15 @@ import '/theme/app_icones.dart';
 import '/widget/images/ImgCircularWidget.dart';
 
 class HomePage extends StatefulWidget {
-  final Function menuFunction;
-  final Function chatFunction;
-
-  const HomePage({
-    super.key,
-    required this.menuFunction,
-    required this.chatFunction,
-  });
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
+  //CONTROLLER DE BARRA NAVEGAÇÃO
+  final navigationController = Get.put(NavigationController());
   //BUSCAR USUARIO PROVIDER
   late UsuarioProvider usuarioProvider;
   late var usuario;
@@ -55,7 +51,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     super.initState();
   }
 
-  //SIMNULAR BUSCA DE RECOMENDAÇÕES NO SERVIDOR
+  //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
   Future<void> fetchPertoVoce() async {
     //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
@@ -113,7 +109,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       item['textColor'] = colorSelected.computeLuminance() > 0.5 ? AppColors.dark_500 : AppColors.white;
     }
   }
-
+  //FUNÇÃO PARA SIMULAR BUSCA DE TOP PELADAS
   Future<void>fecthTopRanking() async {
     //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
@@ -220,7 +216,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       }
     ];
   }
-  
+  //FUNÇÃO PARA SIMULAR BUSCA DE PELADAS MAIS POPULARES
   Future<void>fecthPopular() async {
     //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
@@ -258,7 +254,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       }
     ];
   }
-  
+  //FUNÇÃO PARA SIMULAR BUSCA DE ULTIMOS JOGOS DO USUARIO
   Future<void>fecthUltimosJogos() async {
     //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
@@ -375,7 +371,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       },
     ];
   }
-
+  //FUNÇÃO DE BUSCA DE USUÁRIO SALVO LOCALMENTE
   Future<UsuarioProvider>fetchUsuario(BuildContext context) async {
     //ADICIONAR DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
@@ -385,7 +381,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     usuario = usuarioProvider.usuario;
     return usuarioProvider;
   }
-
   //FUNÇÃO PARA RESGATAR COR PREDOMINANTE DA IMAGEM
   Future<Color> getDominantColor(String imageUrl) async {
     try {
@@ -418,142 +413,97 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       backgroundColor: AppColors.light,
       appBar: AppBar(
         backgroundColor: AppColors.green_300,
-        leading: InkWell(
-          onTap: () => widget.menuFunction(true),
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: const BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(18),
-              child: Icon(
-                LineAwesomeIcons.bars_solid,
-                color: AppColors.blue_500,
-              ),
-            ),
-          ),
+        leading: IconButton(
+          icon: const Icon(AppIcones.bars_solid),
+          onPressed: () => navigationController.scaffoldKey.currentState?.openEndDrawer()
         ),
         actions: [
-          InkWell(
-            onTap: () => widget.menuFunction(true),
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(18),
-                child: Icon(
-                  LineAwesomeIcons.plane_solid,
-                  color: AppColors.blue_500,
-                ),
-              ),
-            ),
+          IconButton(
+            icon: const Icon(AppIcones.paper_plane_solid),
+            onPressed: (){},
           ),
         ],
         elevation: 8,
         shadowColor: const Color.fromARGB(255, 0, 0, 0),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          child: FutureBuilder<List<dynamic>>(
-            future: Future.wait([fetchUsuario(context), /* fetchPertoVoce(), fecthTopRanking(), fecthPopular(), fecthUltimosJogos() */]),
-            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SkeletonHomeWidget();
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: [
-                          Stack(
-                            children: [
-                              ImgCircularWidget(
-                                width: 80, 
-                                height: 80, 
-                                image: usuario.foto
-                              ),
-                              Positioned(
-                                top: 60,
-                                left: 60,
-                                child: Container(
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.green_300,
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(15),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            child: FutureBuilder<List<dynamic>>(
+              future: Future.wait([fetchUsuario(context), /* fetchPertoVoce(), fecthTopRanking(), fecthPopular(), fecthUltimosJogos() */]),
+              builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SkeletonHomeWidget();
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          children: [
+                            Stack(
                               children: [
-                                Text(
-                                  AppHelper.saudacaoPeriodo(),
-                                  style: const TextStyle(
-                                    color: AppColors.blue_500,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                ImgCircularWidget(
+                                  width: 80, 
+                                  height: 80, 
+                                  image: usuario.foto
+                                ),
+                                Positioned(
+                                  top: 60,
+                                  left: 60,
+                                  child: Container(
+                                    width: 15,
+                                    height: 15,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.green_300,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  '${usuario.nome} ${usuario.sobrenome}',
-                                  style: const TextStyle(
-                                    color: AppColors.blue_500,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                )
                               ],
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: EdgeInsets.all(15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppHelper.saudacaoPeriodo(),
+                                    style: const TextStyle(
+                                      color: AppColors.blue_500,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${usuario.nome} ${usuario.sobrenome}',
+                                    style: const TextStyle(
+                                      color: AppColors.blue_500,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    /* SecaoHomeWidget(
-                      titulo: "Perto de Você",
-                      options: peladas,
-                    ),
-                    SecaoHomeWidget(
-                      titulo: "Top Ranking",
-                      options: ranking,
-                    ),
-                    SecaoHomeWidget(
-                      titulo: "Mais Populares",
-                      options: popular,
-                    ),
-                    SecaoHomeWidget(
-                      titulo: "Últimos Jogos",
-                      options: partidas,
-                    ), */
-                  ]
-                );
-              } else {
-                return const SkeletonHomeWidget();
-              }
-            },
+                    ]
+                  );
+                } else {
+                  return const SkeletonHomeWidget();
+                }
+              },
+            ),
           ),
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

@@ -74,7 +74,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
-        key: GlobalKey(),
+        //key: GlobalKey(),
         controller: widget.textController,
         keyboardType: widget.type,
         textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,

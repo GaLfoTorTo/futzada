@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
 
-class ButtonTextWidget extends StatelessWidget {
+class ButtonOutlineWidget extends StatelessWidget {
   final String? text;
   final Color? textColor;
   final Color? backgroundColor;
   final dynamic icon;
-  final double? iconSize;
   final bool iconAfter;
   final double? width;
   final double? height;
   final bool? disabled;
   final VoidCallback action;
   
-  const ButtonTextWidget({
+  const ButtonOutlineWidget({
     super.key,
     this.text,
     this.textColor,
     this.backgroundColor,
     this.icon,
-    this.iconSize,
     this.iconAfter = false,
     this.width = 40,
     this.height = 40,
@@ -28,7 +26,7 @@ class ButtonTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return OutlinedButton(
       onPressed: action,
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor ?? backgroundColor,
@@ -41,22 +39,12 @@ class ButtonTextWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: iconAfter
             ? [
-                if (text != null) 
-                  Text(text!),
-                if (icon != null) 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
+                if (text != null) Text(text!),
+                if (icon != null) Icon(icon!),
               ]
             : [
-                if (icon != null) 
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
-                if (text != null) 
-                  Text(text!),
+                if (icon != null) Icon(icon!),
+                if (text != null) Text(text!),
               ],
         ),
       ),

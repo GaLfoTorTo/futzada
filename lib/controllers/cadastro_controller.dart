@@ -1,13 +1,37 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' as getx;
 import 'package:futzada/api/api.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/casdastro_model.dart';
 
-class CadastroController extends ChangeNotifier {
+class CadastroController extends getx.GetxController {
   CadastroModel model = CadastroModel();
+  // CONTROLLERS DE DADOS BASICOS
+  final TextEditingController nomeController = TextEditingController();
+  final TextEditingController sobreNomeController = TextEditingController();
+  final MaskedTextController userNameController = MaskedTextController(mask: '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', translator: {"@": RegExp(r'[@\w]')});
+  final TextEditingController emailController = TextEditingController();
+  final MaskedTextController telefoneController = MaskedTextController(mask: "(00) 00000-0000");
+  final MaskedTextController dataNascimentoController = MaskedTextController(mask: "00/00/0000");
+  final TextEditingController visibilidadeController = TextEditingController();
+  final TextEditingController fotoController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmacaoController = TextEditingController();
+  // CONTROLLERS DE JOGADOR
+  final TextEditingController melhorPeController = TextEditingController();
+  final TextEditingController arquetipoController = TextEditingController();
+  // CONTROLLERS DE TÉNICO
+  final TextEditingController equipeController = TextEditingController();
+  final TextEditingController siglaController = TextEditingController();
+  final TextEditingController primariaController = TextEditingController();
+  final TextEditingController secundariaController = TextEditingController();
+  final TextEditingController emblemaController = TextEditingController();
+  final TextEditingController uniformeController = TextEditingController();
 
+  //VALIDAÇÃO DE CAMPOS
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){
       return "$label deve ser preenchido(a)!";
@@ -15,9 +39,21 @@ class CadastroController extends ChangeNotifier {
     return null;
   }
 
+  //VALIADÇÃO DE CONFIRMAÇÃO DE SENHA
+  String? validateConfirm(){
+    //VERIFICAR SE NÃO ESTÁ VAZIO
+    if(confirmacaoController.text.isEmpty){
+      return "Confirmação de Senha deve ser preenchido(a)!";
+    }
+    //VERIFICAR SE SENHAS COMBINAM
+    if(passwordController.text != confirmacaoController.text){
+      return "Senha e Confirmação de senha devem ser iguais!";
+    }
+    return null;
+  }
+
   void onSaved(Map<String, dynamic> updates) {
-    model = model.copyWith(updates: updates);
-    notifyListeners();
+    model = model.copyWithMap(updates: updates);
   }
 
   Future<Map<String, dynamic>> sendForm() async {

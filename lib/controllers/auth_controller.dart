@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as getx;
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'dart:convert';
@@ -24,10 +25,10 @@ class AuthController {
       //INICIALIZAR DADOS DO PROVIDER 
       Provider.of<UsuarioProvider>(context, listen: false).loadUser(context);
       //NAVEGAR PARA APRESENTAÇÃO PAGE
-      Navigator.pushReplacementNamed(context, "/home");
+      getx.Get.toNamed('/home');
     }else{
       //NAVEGAR PARA LOGIN PAGE
-      Navigator.pushReplacementNamed(context, "/login");
+      getx.Get.toNamed('/login');
     }
   }
 
@@ -84,7 +85,7 @@ class AuthController {
   }
 
   //FUNÇÃO DE LOGIN COM GOOLGE
-  Future<void>googleLogin(BuildContext context) async {
+  Future<Map<String, dynamic>>googleLogin(BuildContext context) async {
     //INICIALIZAR AUTHENTICAÇÃO COM GOOGLE PELO EMAIL
     GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
       'email',
@@ -114,8 +115,18 @@ class AuthController {
       );
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
       setUsuario(context, usuario);
+      //RETORNAR SUCESSO
+      return{
+        'status' : 200
+      };
     } catch (e) {
+      print(e);
       setUsuario(context, null);
+      //RETORNAR MENSAGEM DE ERRO NO LOGIN DO GOOGLE
+      return {
+        'status': 401,
+        'message': 'Não foi possível fazer login com o Google, tente novamente!',
+      };
     }
   }
 

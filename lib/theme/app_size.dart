@@ -6,11 +6,13 @@ class AppSize {
   static const double pLg = 20.0;
   static const double pXl = 25.0;
   //ICONE SIZE
+  static const double iconXxs = 10.0;
   static const double iconXs = 12.0;
-  static const double iconSm = 16.0;
-  static const double iconMd = 24.0;
-  static const double iconLg = 32.0;
-  static const double iconXl = 40.0;
+  static const double iconSm = 15.0;
+  static const double iconMd = 20.0;
+  static const double iconLg = 25.0;
+  static const double iconXl = 32.0;
+  static const double iconXxl = 40.0;
   //FONT SIZE
   static const double fontXxs = 8.0;
   static const double fontXs = 10.0;

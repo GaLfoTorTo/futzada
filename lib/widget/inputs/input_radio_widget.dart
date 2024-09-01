@@ -7,7 +7,7 @@ import 'package:futzada/theme/app_colors.dart';
 class InputRadioWidget extends StatefulWidget {
   final String name;
   final String value;
-  final String icon;
+  final IconData icon;
   final String placeholder;
   final TextEditingController textController;
   final dynamic controller;
@@ -62,12 +62,7 @@ class _InputRadioWidgetState extends State<InputRadioWidget> {
           ),
           Row(
             children: [
-              SvgPicture.asset(
-                widget.icon,
-                width: 25,
-                height: 25,
-                color: widget.value == widget.textController.text ? AppColors.green_300 : AppColors.gray_500,
-              ),
+              Icon(widget.icon, color: widget.value == widget.textController.text ? AppColors.green_300 : AppColors.gray_500,),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(

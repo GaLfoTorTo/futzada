@@ -5,10 +5,12 @@ import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/controllers/pelada_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
@@ -121,138 +123,131 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
 
     var dimensions = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Form(
-        key: formKey,
-        child: Container(
-          width: dimensions.width,
-          padding: const EdgeInsets.all(15),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IndicatorFormWidget(etapa: widget.etapa),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Dados Básicos",
-                  style: TextStyle(
-                    color: AppColors.dark_500,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Certo então vamos começar! Informe-nos os seus dados básicos para começarmos a criar seu perfil.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              for(var input in inputs)
-                InputTextWidget(
-                  name: input['name'],
-                  label: input['label'],
-                  textController: input['controller'],
-                  controller: widget.controller,
-                  onSaved: widget.controller.onSaved,
-                  type: input['type'],
-                  validator: input['validator'],
-                ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    Text(
-                      "Visibilidade da Pelada",
-                      style: Theme.of(context).textTheme.labelLarge,
-                    ),
-                  ],
-                ),
-              ),
-              Column(
+    return Scaffold(
+      backgroundColor: AppColors.light,
+      appBar: HeaderWidget(
+        title: "Cadastro", 
+        action: () => Get.toNamed('/cadastro/apresentacao')
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Container(
+              width: dimensions.width,
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.center,
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for(var radio in radios)
-                    InputRadioWidget(
-                      name: radio['name'],
-                      value: radio['value'],
-                      icon: radio['icon'],
-                      placeholder: radio['placeholder'],
-                      textController: radio['controller'],
-                      controller: widget.controller,
-                      onChanged: selectedVisibility,
-                    ),
-                ]
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        "Foto",
-                        style: TextStyle(
-                          color: AppColors.dark_500,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ),
-                  ]
-                ),
-              ),
-              if (imageFile != null)
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:  FileImage(
-                        imageFile!,
-                      ),
-                      fit: BoxFit.cover
-                    ),
-                    color: AppColors.green_300,
-                    border: Border.all(
-                      color: AppColors.gray_500,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(100),
+                  const IndicatorFormWidget(
+                    length: 3,
+                    etapa: 1
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: ButtonTextWidget(
-                  type: "outline",
-                  text: "Foto",
-                  icon: LineAwesomeIcons.camera_solid,
-                  textColor: AppColors.blue_500,
-                  color: AppColors.blue_500,
-                  width: double.infinity,
-                  action: _getImage,
-                ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Dados Básicos",
+                      style: TextStyle(
+                        color: AppColors.dark_500,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Certo então vamos começar! Informe-nos os seus dados básicos para começarmos a criar seu perfil.",
+                      style: TextStyle(
+                        color: AppColors.gray_500,
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  for(var input in inputs)
+                    InputTextWidget(
+                      name: input['name'],
+                      label: input['label'],
+                      textController: input['controller'],
+                      controller: widget.controller,
+                      onSaved: widget.controller.onSaved,
+                      type: input['type'],
+                      validator: input['validator'],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Visibilidade da Pelada",
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for(var radio in radios)
+                        InputRadioWidget(
+                          name: radio['name'],
+                          value: radio['value'],
+                          icon: radio['icon'],
+                          placeholder: radio['placeholder'],
+                          textController: radio['controller'],
+                          controller: widget.controller,
+                          onChanged: selectedVisibility,
+                        ),
+                    ]
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            "Foto",
+                            style: TextStyle(
+                              color: AppColors.dark_500,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                      ]
+                    ),
+                  ),
+                  if (imageFile != null)
+                    Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image:  FileImage(
+                            imageFile!,
+                          ),
+                          fit: BoxFit.cover
+                        ),
+                        color: AppColors.green_300,
+                        border: Border.all(
+                          color: AppColors.gray_500,
+                          width: 3,
+                        ),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                ],
               ),
-              ButtonTextWidget(
-                text: "Próximo",
-                textColor: AppColors.blue_500,
-                color: AppColors.green_300,
-                width: double.infinity,
-                action: submitForm
-              ),
-            ],
+            ),
           ),
         ),
       ),

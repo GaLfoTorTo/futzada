@@ -25,7 +25,7 @@ class CardRankingWidget extends StatefulWidget {
 
 class _CardRankingWidgetState extends State<CardRankingWidget> {
   //CONTROLADOR DE POSICAO PRINCIPAL
-  String posicao = AppIcones.noProgress;
+  String posicao = 'no progress';
 
   @override
   void initState() {
@@ -99,12 +99,13 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
                       ),
                     ],
                   ),
-                  child: SvgPicture.asset(
-                    AppIcones.medalha,
+                  child: /* SvgPicture.asset(
+                    AppIcones.trash_solid,
                     width: 20,
                     height: 20,
                     color: colocacao(widget.usuario['colocacao']),
-                  ),
+                  ), */
+                  Icon(AppIcones.trophy_solid),
                 ),
               ),
             ]

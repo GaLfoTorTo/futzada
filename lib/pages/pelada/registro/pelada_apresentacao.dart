@@ -61,21 +61,7 @@ class PeladaPageStateState extends State<PeladaApresentacaoState> {
           onPageChanged: (int page) {
           },
           children: [
-            ApresentacaoPageWiget(
-              image: AppImages.capaPelada,
-              titulo: 'Nunca foi tão facil organizar suas peladas',
-              subTitulo: 'Sua pelada agora está na palma da suas mãos! Organize e gerencie suas peladas entre os amigos de forma simples e colaborativa.',
-              buttonTitulo: 'Criar nova pelada',
-              buttonIcone: LineAwesomeIcons.plus_circle_solid,
-              viewTitulo: 'Ver minhas peladas',
-              createAction: () => _alterPage(context, "Proximo"),
-              viewAction: () => _alterPage(context, "Proximo"),
-            ),
-            DadosBasicosStep(
-              proximo: () => _alterPage(context, "Proximo"),
-              etapa: currentPage - 1,
-              controller: controller,
-            ),
+            Container()
           ],
         ),
       ), 

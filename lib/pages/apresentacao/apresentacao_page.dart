@@ -3,7 +3,9 @@ import 'package:futzada/pages/apresentacao/boas_vindas_view_page.dart';
 import 'package:futzada/pages/apresentacao/introducao_page.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ApresentacaoPage extends StatefulWidget {
@@ -100,12 +102,10 @@ class ApresentacaoPageStateState extends State<ApresentacaoPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ButtonTextWidget(
-                  text: "Pular", 
-                  textColor: AppColors.blue_500, 
-                  color: AppColors.white, 
-                  type: "outline",
-                  action: () => Navigator.pushReplacementNamed(context, "/home"),
+                ButtonOutlineWidget(
+                  text: "Pular",
+                  width: 100,
+                  action: () => Get.toNamed('/home'),
                 ),
                 SmoothPageIndicator(
                   controller: pageController,
@@ -118,27 +118,19 @@ class ApresentacaoPageStateState extends State<ApresentacaoPage> {
                     expansionFactor: 2,
                   ),
                 ),
-                currentPage == 4 
-                ? ButtonTextWidget(
-                    text: "Começar", 
-                    color: AppColors.blue_500, 
-                    textColor: AppColors.white,
-                    width: 80,
-                    action: () => Navigator.pushReplacementNamed(context, "/home"),
-                  )
-                : IconButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.all(15),
-                    shape:  RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: AppColors.blue_500,
-                  ),
-                  icon: const Icon(
-                    Icons.chevron_right, 
-                    color: AppColors.white,
-                  ),
-                  onPressed: () => alterPage(context, "Proximo"), 
+                ButtonTextWidget(
+                  text: currentPage != 4 ? "Começar" : null,
+                  textColor: AppColors.white,
+                  icon: currentPage == 4 ? Icons.chevron_right : null,
+                  backgroundColor: AppColors.blue_500,
+                  width: 100,
+                  action: () {
+                    if(currentPage == 4){
+                      alterPage(context, "Proximo");
+                    }else{
+                      Get.toNamed('/home');
+                    }
+                  }
                 ),
               ],
             ),

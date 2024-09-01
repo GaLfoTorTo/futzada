@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,42 +6,30 @@ import 'package:futzada/controllers/cadastro_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/buttons/button_circular_widget.dart';
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/pickers/picker_color_widget.dart';
 import 'package:futzada/widget/pickers/picker_emblema_widget.dart';
 import 'package:futzada/widget/pickers/picker_uniforme_widget.dart';
+import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class ModalidadeTecnicoStepState extends StatefulWidget {
-  final VoidCallback proximo;
-  final VoidCallback voltar;
-  final int etapa;
-  final CadastroController controller;
-  
-  const ModalidadeTecnicoStepState({
-    super.key, 
-    required this.proximo, 
-    required this.voltar, 
-    required this.etapa, 
-    required this.controller, 
-  });
+class ModalidadeTecnicoStep extends StatefulWidget {  
+  const ModalidadeTecnicoStep({super.key});
 
   @override
-  State<ModalidadeTecnicoStepState> createState() => ModalidadeTecnicoStepStateState();
+  State<ModalidadeTecnicoStep> createState() => ModalidadeTecnicoStepStateState();
 }
 
-class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> {
+class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
-  // CONTROLLERS DE CADA CAMPO
-  late final TextEditingController equipeController;
-  late final TextEditingController siglaController;
-  late final TextEditingController primariaController;
-  late final TextEditingController secundariaController;
-  late final TextEditingController emblemaController;
-  late final TextEditingController uniformeController;
+  //CONTROLADOR DOS INPUTS DO FORMULÁRIO
+  final CadastroController controller = Get.put(CadastroController());
   //CONTROLADORES DE PICKER DE COR
   late Color primaria;
   late Color secundaria;
@@ -66,26 +53,17 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR LISTENER
-    widget.controller.addListener((){});
-    //INICIALIZAÇÃO DE CONTROLLERS
-    equipeController = TextEditingController(text: widget.controller.model.equipe);
-    siglaController = TextEditingController(text: widget.controller.model.sigla);
-    primariaController = TextEditingController(text: widget.controller.model.primaria);
-    secundariaController = TextEditingController(text: widget.controller.model.secundaria);
-    emblemaController = TextEditingController(text: widget.controller.model.emblema);
-    uniformeController = TextEditingController(text: widget.controller.model.uniforme);
     //INICIALIZAR CORES
-    primaria = widget.controller.model.primaria != null 
-              ? AppColors.colors[widget.controller.model.primaria]! 
+    primaria = controller.model.primaria != null 
+              ? AppColors.colors[controller.model.primaria]! 
               : AppColors.green_300;
-    secundaria = widget.controller.model.secundaria != null 
-              ? AppColors.colors[widget.controller.model.secundaria]! 
+    secundaria = controller.model.secundaria != null 
+              ? AppColors.colors[controller.model.secundaria]! 
               : AppColors.blue_500;
     //INICIALIZAR PERSONALIZAÇÃO DOS EMBLEMAS
-    if(widget.controller.model.emblema != null){
+    if(controller.model.emblema != null){
       //RESGATAR CONFIGURAÇÕES DE EMBLEMA SALVAS
-      transformeMap(widget.controller.model.emblema!, confEmblema);
+      transformeMap(controller.model.emblema!, confEmblema);
       //RESGATAR CORES DAS ESTAMPAS APARTIR DAS CHAVES SALVAS
       getColorKey(confEmblema, 'inicializar');
       //RESGATAR INDEX DO EMBLEMA SELECIONADO PELO USUARIO
@@ -131,9 +109,9 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       indexEmblema = 0;
     }
     //INICIALIZAR UNIFOME
-    if(widget.controller.model.uniforme != null){
+    if(controller.model.uniforme != null){
       //RESGATAR CONFIGURAÇÕES DE EMBLEMA SALVAS
-      transformeMap(widget.controller.model.uniforme!, confUniforme);
+      transformeMap(controller.model.uniforme!, confUniforme);
       //RESGATAR CORES DAS ESTAMPAS APARTIR DAS CHAVES SALVAS
       getColorKey(confUniforme, 'inicializar');
     }else{
@@ -304,10 +282,10 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       //ALTERAR CORES DO PICKER ATUAL
       if(currentColor == 'Primária'){
         primaria = color;
-        primariaController.text = label;
+        controller.primariaController.text = label;
       }else{
         secundaria = color;
-        secundariaController.text = label;
+        controller.secundariaController.text = label;
       }
       //ALTERAR COR SELECIONADA
       selectedColor = label;
@@ -362,7 +340,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
   //FUNÇÃO PARA SELECIONAR O KIT
   void selectEmblema(emblema){
     //RESAGATAR EMBLEMA SELECIONADO
-    uniformeController.text = emblema;
+    controller.uniformeController.text = emblema;
     confEmblema['emblema']!['item'] = emblema;
   }
 
@@ -376,7 +354,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (formData?.validate() ?? false) {
       //SALVAR CORES E UNIFORME
-      widget.controller.onSaved({
+      controller.onSaved({
         "primaria": AppColors.colors.entries.firstWhere((entry) => entry.value == primaria, orElse: () => const MapEntry('green_300', AppColors.green_300)).key,
         "secundaria": AppColors.colors.entries.firstWhere((entry) => entry.value == secundaria, orElse: () => const MapEntry('blue_500', AppColors.blue_500)).key,
         "emblema": jsonEncode(confEmblema),
@@ -386,7 +364,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       //AJUSTAR CORES PARA ESTAMPAS DE EMBLEMA E UNIFORMES
       getColorKey(confEmblema, 'inicializar');
       getColorKey(confUniforme, 'inicializar');
-      widget.proximo();
+      //NAVEGAR PARA ROTA DE MODALIDADES
+      Get.toNamed('/cadastro/modalidades');
     }
   }
   
@@ -397,356 +376,329 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStepState> 
       {
         'name':'equipe',
         'label': 'Equipe',
-        'controller': equipeController,
+        'controller': controller.equipeController,
         'type': TextInputType.text
       },
       {
         'name': 'sigla',
         'label': 'Sigla',
-        'controller': siglaController,
+        'controller': controller.siglaController,
         'type': TextInputType.text,
         'maxLength' : 3,
       },
     ];
     var dimensions = MediaQuery.of(context).size;
      
-    return SingleChildScrollView(
-      child: Form(
-        key: formKey,
-        child: Container(
-          width: dimensions.width,
-          padding: const EdgeInsets.all(15),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const IndicatorFormWidget(etapa: 2),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "A modalidade técnico são para os usuários que desejam mostrar todo seu talento fora de campo escalando apenas os melhores para sua equipe.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
+    return Scaffold(
+      backgroundColor: AppColors.light,
+      appBar: HeaderWidget(
+        title: "Cadastro", 
+        action: () => Get.toNamed('/cadastro/modalidades')
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Container(
+              width: dimensions.width,
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const IndicatorFormWidget(
+                    length: 3,
+                    etapa: 1
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "Técnico",
-                        style: TextStyle(
-                          color: AppColors.blue_500,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        color: AppColors.green_300,
-                        borderRadius: BorderRadius.circular(80),
-                      ),
-                      child: const Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Icon(
-                          LineAwesomeIcons.clipboard,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "Defina o nome, a sigla, as cores, o emblema e o uniforme da sua futura equipe. Essas informações poderão ser alteradas a qualquer momento após o registro.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              for(var input in inputs)
-                InputTextWidget(
-                  name: input['name'],
-                  label: input['label'],
-                  textController: input['controller'],
-                  controller: widget.controller,
-                  onSaved: widget.controller.onSaved,
-                  type: input['type'],
-                  maxLength: input['maxLength']
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Cores:",
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "A modalidade técnico são para os usuários que desejam mostrar todo seu talento fora de campo escalando apenas os melhores para sua equipe.",
                       style: TextStyle(
-                        color: AppColors.dark_500,
+                        color: AppColors.gray_500,
                         fontSize: 15,
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.normal,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          PickerColorWidget(
-                            color: primaria,
-                            id: "Primária",
-                            label: "Primária",
-                            checked: selectedPrimaria,
-                            selectColor: selectColor,
-                            tipo: 'Color',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Técnico',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: ButtonCircularWidget(
+                            color: AppColors.green_300,
+                            icon: AppIcones.clipboard_solid,
+                            iconColor: AppColors.white,
+                            iconSize: 70.0,
+                            checked: true,
+                            size: 130,
+                            action: () => {},
                           ),
-                          PickerColorWidget(
-                            color: secundaria,
-                            id: "Secundária",
-                            label: "Secundária",
-                            checked: selectedSecundaria,
-                            selectColor: selectColor,
-                            tipo: 'Color',
-                          )
-                        ]
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Emblemas:",
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Defina o nome, a sigla, as cores, o emblema e o uniforme da sua futura equipe. Essas informações poderão ser alteradas a qualquer momento após o registro.",
                       style: TextStyle(
-                        color: AppColors.dark_500,
+                        color: AppColors.gray_500,
                         fontSize: 15,
-                        fontWeight: FontWeight.bold
+                        fontWeight: FontWeight.normal,
                       ),
+                      textAlign: TextAlign.center,
                     ),
-                    FutureBuilder<void>(
-                      future: svgIniti,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Container(
-                            width: double.maxFinite,
-                            height: 250,
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "Não foi possível carregar os emblemas",
-                                  style: TextStyle(
-                                    color: AppColors.gray_300,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.normal
-                                  ),
-                                ),
-                                Icon(
-                                  LineAwesomeIcons.image,
-                                  color: AppColors.gray_300,
-                                ),
-                              ],
-                            )
-                          );
-                        } else {
-                          return Wrap(
-                            spacing: 50, 
-                            runSpacing: 15,
+                  ),
+                  for(var input in inputs)
+                    InputTextWidget(
+                      name: input['name'],
+                      label: input['label'],
+                      textController: input['controller'],
+                      controller: controller,
+                      onSaved: controller.onSaved,
+                      type: input['type'],
+                      maxLength: input['maxLength']
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Cores:",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 250,
-                                  initialPage: indexEmblema,
-                                  enableInfiniteScroll: true,
-                                  autoPlay: false,
-                                  enlargeCenterPage: true,
-                                  enlargeFactor: 0.2,
-                                  scrollDirection: Axis.horizontal,
-                                  onPageChanged: (index, reason) {
-                                    var key = 'emblema_${index + 1}';
-                                    selectEmblema(key);
-                                  },
-                                ),
-                                items: emblemas.entries.map((item) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.string(
-                                              item.value,
-                                              width: 200,
-                                              height: 200,
-                                            ),
-                                          ],
-                                        )
-                                      );
-                                    },
-                                  );
-                                }).toList(),
+                              PickerColorWidget(
+                                color: primaria,
+                                id: "Primária",
+                                label: "Primária",
+                                checked: selectedPrimaria,
+                                selectColor: selectColor,
+                                tipo: 'Color',
                               ),
-                              PickerEmblemaWidget(
-                                selectEstampa: selectEstampa,
-                                selectColor: selectEstampaColor,
-                                primariaColor: primaria,
-                                secundariaColor: secundaria,
-                                confEstampa: confEmblema,
-                              ),
-                            ],
-                          );
-                        }
-                      }
+                              PickerColorWidget(
+                                color: secundaria,
+                                id: "Secundária",
+                                label: "Secundária",
+                                checked: selectedSecundaria,
+                                selectColor: selectColor,
+                                tipo: 'Color',
+                              )
+                            ]
+                          ),
+                        ),
+                      ],
                     ),
-                  ]
-                )
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Uniforme:",
-                      style: TextStyle(
-                        color: AppColors.dark_500,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    FutureBuilder<void>(
-                      future: svgIniti,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          print(snapshot.error);
-                          return Container(
-                                  width: double.maxFinite,
-                                  height: 250,
-                                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                                  child: const Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                        "Não foi possível carregar o Uniforme",
-                                        style: TextStyle(
-                                          color: AppColors.gray_300,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal
-                                        ),
-                                      ),
-                                      Icon(
-                                        LineAwesomeIcons.image,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Emblemas:",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        FutureBuilder<void>(
+                          future: svgIniti,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Container(
+                                width: double.maxFinite,
+                                height: 250,
+                                padding: const EdgeInsets.symmetric(horizontal: 15),
+                                child: const Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      "Não foi possível carregar os emblemas",
+                                      style: TextStyle(
                                         color: AppColors.gray_300,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal
                                       ),
-                                    ],
-                                  )
-                                );
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 10),
-                                  child: Container(
-                                    width: dimensions.width,
-                                    height: 300,
-                                    child: SvgPicture.string(
-                                      uniforme,
-                                      width: 300,
-                                      height: 300,
                                     ),
-                                  ), 
-                                ),
-                                PickerUniformeWidget(
-                                  selectEstampa: selectEstampa,
-                                  selectColor: selectEstampaColor,
-                                  primariaColor: primaria,
-                                  secundariaColor: secundaria,
-                                  confEstampa: confUniforme,
-                                ),
-                              ]
-                            )
-                          );
-                        }
-                      }
-                    ),
-                  ]
-                )
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ButtonTextWidget(
-                      type: "outline",
-                      text: "Voltar",
-                      textColor: AppColors.blue_500,
-                      color: AppColors.blue_500,
-                      width: 100,
-                      action: widget.voltar,
-                    ),
-                    ButtonTextWidget(
-                      text: "Definir",
-                      textColor: AppColors.blue_500,
-                      color: AppColors.green_300,
-                      width: 100,
-                      action: submitForm,
-                    ),
-                  ],
-                ),
-              ),
-            ]
+                                    Icon(
+                                      LineAwesomeIcons.image,
+                                      color: AppColors.gray_300,
+                                    ),
+                                  ],
+                                )
+                              );
+                            } else {
+                              return Wrap(
+                                spacing: 50, 
+                                runSpacing: 15,
+                                children: [
+                                  CarouselSlider(
+                                    options: CarouselOptions(
+                                      height: 250,
+                                      initialPage: indexEmblema,
+                                      enableInfiniteScroll: true,
+                                      autoPlay: false,
+                                      enlargeCenterPage: true,
+                                      enlargeFactor: 0.2,
+                                      scrollDirection: Axis.horizontal,
+                                      onPageChanged: (index, reason) {
+                                        var key = 'emblema_${index + 1}';
+                                        selectEmblema(key);
+                                      },
+                                    ),
+                                    items: emblemas.entries.map((item) {
+                                      return Builder(
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                SvgPicture.string(
+                                                  item.value,
+                                                  width: 200,
+                                                  height: 200,
+                                                ),
+                                              ],
+                                            )
+                                          );
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                  PickerEmblemaWidget(
+                                    selectEstampa: selectEstampa,
+                                    selectColor: selectEstampaColor,
+                                    primariaColor: primaria,
+                                    secundariaColor: secundaria,
+                                    confEstampa: confEmblema,
+                                  ),
+                                ],
+                              );
+                            }
+                          }
+                        ),
+                      ]
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Uniforme:",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        FutureBuilder<void>(
+                          future: svgIniti,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Container(
+                                      width: double.maxFinite,
+                                      height: 250,
+                                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                                      child: const Column(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          Text(
+                                            "Não foi possível carregar o Uniforme",
+                                            style: TextStyle(
+                                              color: AppColors.gray_300,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal
+                                            ),
+                                          ),
+                                          Icon(
+                                            LineAwesomeIcons.image,
+                                            color: AppColors.gray_300,
+                                          ),
+                                        ],
+                                      )
+                                    );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      child: Container(
+                                        width: dimensions.width,
+                                        height: 300,
+                                        child: SvgPicture.string(
+                                          uniforme,
+                                          width: 300,
+                                          height: 300,
+                                        ),
+                                      ), 
+                                    ),
+                                    PickerUniformeWidget(
+                                      selectEstampa: selectEstampa,
+                                      selectColor: selectEstampaColor,
+                                      primariaColor: primaria,
+                                      secundariaColor: secundaria,
+                                      confEstampa: confUniforme,
+                                    ),
+                                  ]
+                                )
+                              );
+                            }
+                          }
+                        ),
+                      ]
+                    )
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ButtonOutlineWidget(
+                        text: "Voltar",
+                        width: 100,
+                        action: () => Get.toNamed('/cadastro/modalidades')
+                      ),
+                      ButtonTextWidget(
+                        text: "Próximo",
+                        width: 100,
+                        action: submitForm
+                      ),
+                    ],
+                  ),
+                ]
+              )
+            ),
           )
         ),
-      )
+      ),
     );
   }
+
   @override
   void dispose() {
-    // REMOVER LISTENER
-    widget.controller.removeListener(() {});
-    // DISPENSAR CONTROLLERS
-    equipeController.dispose();
-    siglaController.dispose();
-    primariaController.dispose();
-    secundariaController.dispose();
-    emblemaController.dispose();
-    uniformeController.dispose();
     super.dispose();
   }
 }

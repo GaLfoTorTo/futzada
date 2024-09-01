@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 
-class HeaderWidget extends StatelessWidget {
-  final String title;
+class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
+  final String? title;
   final VoidCallback action;
 
   const HeaderWidget({
     super.key, 
-    required this.title, 
+    this.title, 
     required this.action, 
   });
 
@@ -16,19 +15,24 @@ class HeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: AppColors.green_300,
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          color: AppColors.blue_500,
-          fontWeight: FontWeight.normal
-        ),
-      ),
+      title: title != null 
+        ? Text(
+          title!,
+          style: const TextStyle(
+            fontSize: 20,
+            color: AppColors.blue_500,
+            fontWeight: FontWeight.normal
+          ),
+        )
+        : null ,
       leading: BackButton(
         onPressed: action,
       ),
       elevation: 8,
-      shadowColor: const Color.fromARGB(255, 0, 0, 0),
+      shadowColor: title != null ? AppColors.dark_500.withOpacity(0.5) : null,
     );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

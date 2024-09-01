@@ -1,41 +1,32 @@
 import 'dart:convert';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/cadastro_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/buttons/button_circular_widget.dart';
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/inputs/input_checkbox_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/select_widget.dart';
+import 'package:get/get.dart';
 
-class ModalidadeJogadorStepState extends StatefulWidget {
-  final VoidCallback proximo;
-  final VoidCallback voltar;
-  final int etapa;
-  final CadastroController controller;
-
-  const ModalidadeJogadorStepState({
-    super.key, 
-    required this.proximo, 
-    required this.voltar, 
-    required this.etapa, 
-    required this.controller
-  });
+class ModalidadeJogadorStep extends StatefulWidget {
+  const ModalidadeJogadorStep({super.key});
 
   @override
-  State<ModalidadeJogadorStepState> createState() => ModalidadeJogadorStepStateState();
+  State<ModalidadeJogadorStep> createState() => ModalidadeJogadorStepState();
 }
 
-class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> {
+class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
-  // CONTROLLERS DE CADA CAMPO
-  late final TextEditingController melhorPeController;
-  late final TextEditingController arquetipoController;
+  //CONTROLADOR DOS INPUTS DO FORMULÁRIO
+  final CadastroController controller = Get.put(CadastroController());
   //CONTROLLER DE POSIÇÕES
   late List<dynamic> posicoes;
   //CONTROLLERS DE POSIÇÕES
@@ -55,22 +46,18 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR LISTENER
-    widget.controller.addListener((){});
     //INICIALIZAR CONTROLLER DE POSIÇÃO E CONVERTER STRING PARA MAP
-    posicoes = widget.controller.model.posicoes != null ? jsonDecode(widget.controller.model.posicoes!) : [];
+    posicoes = controller.model.posicoes != null ? jsonDecode(controller.model.posicoes!) : [];
     //INICIALIZAÇÃO DE CONTROLLERS DE POSIÇÕES
     isCheckedAta = posicoes.contains('ATA') ? true : false;
     isCheckedMei = posicoes.contains('MEI') ? true : false;
     isCheckedZag = posicoes.contains('ZAG') ? true : false;
     isCheckedGol = posicoes.contains('GOL') ? true : false;
     //INICIALIZAÇÃO DE CONTROLLERS DE MELHOR PÉ
-    melhorPeController = TextEditingController(text: widget.controller.model.melhorPe);
-    arquetipoController = TextEditingController(text: widget.controller.model.arquetipo);
-    isCheckedDireito = melhorPeController.text != '' && melhorPeController.text == 'Direito' ? true : false;
-    isCheckedEsquerdo =  melhorPeController.text != '' && melhorPeController.text == 'Esquerdo' ? true : false;
+    isCheckedDireito = controller.model.melhorPe != null && controller.model.melhorPe == 'Direito' ? true : false;
+    isCheckedEsquerdo =  controller.model.melhorPe != null && controller.model.melhorPe == 'Esquerdo' ? true : false;
     //INICIALIZAR ARQUETIPO
-    selectedArquetipo = arquetipoController.text != '' ? arquetipoController.text : "Item";
+    selectedArquetipo = controller.model.arquetipo != null ? controller.model.arquetipo! : "Item";
     //INICIALIZAR VALIDADOR DE POSICOES
     validatePositions = true;
     validateFoot = true;
@@ -97,7 +84,7 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
       }
       //ADICIONAR OU REMOVER POSIÇÃO DO ARRAY DE POSIÇÕES
       checked == true ? posicoes.add(position) : posicoes.remove(position);
-      widget.controller.onSaved({"posicoes": jsonEncode(posicoes)});
+      controller.onSaved({"posicoes": jsonEncode(posicoes)});
     });
   }
 
@@ -105,8 +92,8 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
   void selectMelhorPe(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      melhorPeController.text = value;
-      widget.controller.onSaved({"melhorPe": value});
+      controller.melhorPeController.text = value;
+      controller.onSaved({"melhorPe": value});
       //VERIFICAR E ALTERAR PÉ SELECIONADO
       isCheckedEsquerdo = value == 'Esquerdo' ?  true : false;
       isCheckedDireito = value == 'Direito' ? true : false;
@@ -117,8 +104,8 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
   void selectArquetipo(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      arquetipoController.text = value;
-      widget.controller.onSaved({"arquetipo": value});
+      controller.arquetipoController.text = value;
+      controller.onSaved({"arquetipo": value});
     });
   }
 
@@ -131,13 +118,13 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
       //VERIFICAR SE AO MENOS 1 POSIÇÃO FOI SELECIONADA
       validatePositions = posicoes.length > 0 ? true : false;
       //VERIFICAR SE AO MENOS 1 PÉ FOI SELECIONADO
-      validateFoot = melhorPeController.text.isNotEmpty ? true : false;
+      validateFoot = controller.melhorPeController.text.isNotEmpty ? true : false;
     });
     //VALIDAR FORMULÁRIO
     if(validatePositions && validateFoot){
       //SALVAR DADOS CRUCIAIS DO FORMULÁRIO
       formData?.save();
-      widget.proximo();
+      Get.toNamed('/cadastro/modalidades');
     }
   }
 
@@ -152,8 +139,8 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
     ];
     //LISTA DE OPTIONS PARA O MELHOR PÉ
     final List<Map<String, dynamic>> melhorPe = [
-      {'value': 'Esquerdo', 'icon': AppIcones.pe["esquerdo"], 'checked': isCheckedEsquerdo},
-      {'value': 'Direito', 'icon': AppIcones.pe["direito"], 'checked': isCheckedDireito},
+      {'value': 'Esquerdo', 'icon': AppIcones.foot_left_solid, 'checked': isCheckedEsquerdo},
+      {'value': 'Direito', 'icon': AppIcones.foot_right_solid, 'checked': isCheckedDireito},
     ];
     //LISTA DE OPTIONS PARA O ARQUETIPO
     final List<String> arquetipos = [
@@ -161,241 +148,213 @@ class ModalidadeJogadorStepStateState extends State<ModalidadeJogadorStepState> 
     ];
     var dimensions = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Form(
-        key: formKey,
-        child: Container(
-          width: dimensions.width,
-          padding: const EdgeInsets.all(15),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const IndicatorFormWidget(etapa: 2),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "A modalidade jogador são para os atletas da pelada, aqueles que entregam tudo de si dentro de campo com suas atuações.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
+    return Scaffold(
+      backgroundColor: AppColors.light,
+      appBar: HeaderWidget(
+        title: "Cadastro", 
+        action: () => Get.toNamed('/cadastro/modalidades')
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Container(
+              width: dimensions.width,
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const IndicatorFormWidget(
+                    length: 3,
+                    etapa: 1
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        "Jogador",
-                        style: TextStyle(
-                          color: AppColors.blue_500,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "A modalidade jogador são para os atletas da pelada, aqueles que entregam tudo de si dentro de campo com suas atuações.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
                     ),
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        color: AppColors.green_300,
-                        borderRadius: BorderRadius.circular(80),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Transform.rotate(
-                          angle: - 45 * 3.14159 / 180,
-                          child: SvgPicture.asset(
-                            AppIcones.chuteiras['campo']!,
-                            width: double.infinity,
-                            height: double.infinity,
-                          ) 
-                        ) 
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "Informe em quais posições você costuma ou gosta de joga, seja no campo, quadra ou campos society. Você pode escolher mais de uma posição mas deve definir uma como sendo a principal.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        "Posições",
-                        style: TextStyle(
-                          color: AppColors.dark_500,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                        ),
-                      ),
-                    ),
-                    Wrap(
-                      spacing: 50, 
-                      runSpacing: 15,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
                       children: [
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: 560,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            autoPlay: false,
-                            enlargeCenterPage: true,
-                            enlargeFactor: 0.2,
-                            scrollDirection: Axis.horizontal,
-                          ),
-                          items: posicoes.map((item) {
-                            return Builder(
-                              builder: (BuildContext context) {
-                                return Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.white.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(10)
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SvgPicture.asset(
-                                        item['icon_posicao'],
-                                        width: 400,
-                                        height: 400,
-                                        color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
-                                      ),
-                                      InputCheckboxWidget(
-                                        title: item['posicao'],
-                                        sigla: item['sigla'],
-                                        isChecked: item['checked'],
-                                        icon: item['icon'],
-                                        onChanged: selectPosition,
-                                      ),
-                                    ],
-                                  )
-                                );
-                              },
-                            );
-                          }).toList(),
+                        Text(
+                          'Jogador',
+                          style: Theme.of(context).textTheme.headlineMedium,
+                          textAlign: TextAlign.center,
                         ),
-                        if (validatePositions == false)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: ButtonCircularWidget(
+                            color: AppColors.green_300,
+                            icon: AppIcones.foot_field_solid,
+                            iconColor: AppColors.white,
+                            iconSize: 40.0,
+                            checked: true,
+                            size: 130,
+                            action: () => {},
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Informe em quais posições você costuma ou gosta de joga, seja no campo, quadra ou campos society. Você pode escolher mais de uma posição mas deve definir uma como sendo a principal.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Text(
+                            "Posições",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        Wrap(
+                          spacing: 50, 
+                          runSpacing: 15,
+                          children: [
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 560,
+                                initialPage: 0,
+                                enableInfiniteScroll: true,
+                                autoPlay: false,
+                                enlargeCenterPage: true,
+                                enlargeFactor: 0.2,
+                                scrollDirection: Axis.horizontal,
+                              ),
+                              items: posicoes.map((item) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white.withOpacity(0.3),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          SvgPicture.asset(
+                                            item['icon_posicao'],
+                                            width: 400,
+                                            height: 400,
+                                            color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
+                                          ),
+                                          InputCheckboxWidget(
+                                            title: item['posicao'],
+                                            sigla: item['sigla'],
+                                            isChecked: item['checked'],
+                                            icon: item['icon'],
+                                            onChanged: selectPosition,
+                                          ),
+                                        ],
+                                      )
+                                    );
+                                  },
+                                );
+                              }).toList(),
+                            ),
+                            if (validatePositions == false)
+                              const Padding(
+                                padding: EdgeInsets.only(top: 16.0),
+                                child: Text(
+                                  'Ao menos 1 posição deve ser selecionada',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: Text(
+                            "Melhor pé",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            for(var item in melhorPe)
+                              SelectRoundedWidget(
+                                value: item['value'],
+                                icon: item['icon'],
+                                checked: item['checked'],
+                                controller: controller,
+                                onChanged: selectMelhorPe,
+                              )
+                          ],
+                        ),
+                        if (validateFoot == false)
                           const Padding(
                             padding: EdgeInsets.only(top: 16.0),
                             child: Text(
-                              'Ao menos 1 posição deve ser selecionada',
+                              'Informe qual o seu melhor pé!',
                               style: TextStyle(color: Colors.red),
                             ),
                           ),
-                      ],
+                      ]
+                    )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: SelectWidget(
+                      label: "Arquetipo", 
+                      options: arquetipos, 
+                      selected: selectedArquetipo,
+                      onChanged: selectArquetipo
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        "Melhor pé",
-                        style: TextStyle(
-                          color: AppColors.dark_500,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
-                        ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ButtonOutlineWidget(
+                        text: "Voltar",
+                        width: 100,
+                        action: () => Get.toNamed('/cadastro/modalidades')
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for(var pe in melhorPe)
-                          SelectRoundedWidget(
-                            value: pe['value'],
-                            icon: pe['icon'],
-                            checked: pe['checked'],
-                            controller: widget.controller,
-                            onChanged: selectMelhorPe,
-                          )
-                      ],
-                    ),
-                    if (validateFoot == false)
-                        const Padding(
-                          padding: EdgeInsets.only(top: 16.0),
-                          child: Text(
-                            'Informe qual o seu melhor pé!',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        ),
-                  ]
-                )
-              ),
-              SelectWidget(
-                label: "Arquetipo", 
-                options: arquetipos, 
-                selected: selectedArquetipo,
-                onChanged: selectArquetipo
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ButtonTextWidget(
-                      type: "outline",
-                      text: "Voltar",
-                      textColor: AppColors.blue_500,
-                      color: AppColors.blue_500,
-                      width: 100,
-                      action: widget.voltar,
-                    ),
-                    ButtonTextWidget(
-                      text: "Definir",
-                      textColor: AppColors.blue_500,
-                      color: AppColors.green_300,
-                      width: 100,
-                      action: submitForm,
-                    ),
-                  ],
-                ),
-              ),
-            ]
-          )
-        )
+                      ButtonTextWidget(
+                        text: "Próximo",
+                        width: 100,
+                        action: submitForm
+                      ),
+                    ],
+                  ),
+                ]
+              )
+            )
+          ),
+        ),
       ),
     );
   }
 
   @override
   void dispose() {
-    // REMOVER LISTENER
-    widget.controller.removeListener(() {});
-    // DISPENSAR CONTROLLERS
-    melhorPeController.dispose();
-    arquetipoController.dispose();
     super.dispose();
   }
 }

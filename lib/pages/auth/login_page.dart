@@ -5,11 +5,11 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
-import 'package:futzada/widget/login_bg.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
       {
         'name': 'user',
         'hint': 'Usuário ou E-mail',
-        'prefixIcon' : LineAwesomeIcons.user_solid,
+        'prefixIcon' : AppIcones.user_outline,
         'sufixIcon' : null,
         'controller': userController,
         'validator': validateUser
@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
       {
         'name':'password',
         'hint': 'Senha',
-        'prefixIcon' : LineAwesomeIcons.lock_solid,
+        'prefixIcon' : AppIcones.lock_outline,
         'sufixIcon' : Icons.visibility_off,
         'controller': passwordController,
         'validator': validatePassword,
@@ -163,7 +163,21 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            const LoginBg(),
+            Stack(
+              children: [
+                Image.asset(
+                  AppImages.gramado,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+                Container(
+                  color: AppColors.green_300.withOpacity(0.8),
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ],
+            ),
             Padding(
               padding: const EdgeInsets.all(15),
               child: Center(
@@ -218,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                               ButtonTextWidget(
                                 text: "Entrar",
                                 textColor: AppColors.white,
-                                color: AppColors.blue_500,
+                                backgroundColor: AppColors.blue_500,
                                 width: double.infinity,
                                 action: submitForm,
                               )
@@ -264,7 +278,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               onPressed: (){
-                                Navigator.pushNamed(context, "/cadastro");
+                                Get.toNamed('/cadastro/apresentacao');
                               },
                             ),
                           ],

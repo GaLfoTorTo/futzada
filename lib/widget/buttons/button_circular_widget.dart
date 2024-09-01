@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/theme/app_icones.dart';
 
 class ButtonCircularWidget extends StatelessWidget {
-  final dynamic? icon;
+  final dynamic icon;
   final Color? iconColor;
-  final double? iconWidth;
+  final double? iconSize;
   final Color? color;
-  final double dimensions;
+  final double size;
+  final bool? checked;
   final VoidCallback action;
 
   const ButtonCircularWidget({
     super.key,
-    required this.icon,
+    this.icon,
     this.iconColor, 
-    this.iconWidth, 
+    this.iconSize, 
+    this.checked, 
     this.color = Colors.white, 
-    required this.dimensions, 
+    required this.size, 
     required this.action, 
   });
 
@@ -26,28 +28,37 @@ class ButtonCircularWidget extends StatelessWidget {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: Container(
-        width: dimensions,
-        height: dimensions,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(dimensions),
+          borderRadius: BorderRadius.circular(size),
+          boxShadow: [
+            if (checked != null && checked == true )
+              BoxShadow(
+                color: color!.withOpacity(0.2),
+                spreadRadius: 8,
+                blurRadius: 1,
+                offset: Offset(0,0),
+              ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: icon == "assets/icones/chuteiras/campo.svg" ?
+          child: icon == AppIcones.foot_field_solid ?
             Transform.rotate(
-              angle: - 45 * 3.14159 / 180,
-              child: SvgPicture.asset(
+              angle: - 45 * 3.14159 / 200,
+              child: Icon(
                 icon!,
-                width: double.infinity,
-                height: double.infinity,
                 color: iconColor,
-              ) 
+                size: iconSize,
+              ),
             ) 
           :
             Icon(
               icon!,
               color: iconColor,
+              size: iconSize,
             ),
         ),
       ),

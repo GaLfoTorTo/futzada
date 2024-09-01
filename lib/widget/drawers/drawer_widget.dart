@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/login_bg.dart';
+import 'package:futzada/theme/app_images.dart';
+import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
@@ -105,16 +103,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
       {'type': 'section', 'title': 'Perfil de Usuário',},
-      {'type': 'option', 'title': 'Minha Conta', 'icon': LineAwesomeIcons.user, 'strokeWidth': 1.0, 'route': '/minha_conta'},
-      {'type': 'option', 'title': 'Favoritos', 'icon': LineAwesomeIcons.bookmark, 'strokeWidth': 1.5, 'route': '/favoritos'},
-      {'type': 'option', 'title': 'Amigos', 'icon': LineAwesomeIcons.users_solid, 'strokeWidth': 1.0, 'route': '/amigos'},
-      {'type': 'option', 'title': 'Modalidades', 'icon': LineAwesomeIcons.futbol, 'strokeWidth': 1.0, 'route': '/modalidades'},
-      {'type': 'option', 'title': 'Minhas Peladas', 'icon': LineAwesomeIcons.futbol, 'strokeWidth': 1.0, 'route': '/minhas_peladas'},
+      {'type': 'option', 'title': 'Minha Conta', 'icon': AppIcones.user_outline, 'route': '/minha_conta'},
+      {'type': 'option', 'title': 'Favoritos', 'icon': AppIcones.bookmark_outline, 'route': '/favoritos'},
+      {'type': 'option', 'title': 'Amigos', 'icon': AppIcones.users_outline, 'route': '/amigos'},
+      {'type': 'option', 'title': 'Modalidades', 'icon': AppIcones.modality_outline, 'route': '/modalidades'},
+      {'type': 'option', 'title': 'Minhas Peladas', 'icon': AppIcones.futbol_ball_outline, 'route': '/minhas_peladas'},
       {'type': 'section', 'title': 'Privacidade e Segurança',},
-      {'type': 'option', 'title': 'Configurações', 'icon': LineAwesomeIcons.cog_solid, 'strokeWidth': 1.0, 'route': '/configuracoes'},
-      {'type': 'option', 'title': 'Central de Ajuda', 'icon': LineAwesomeIcons.question_circle_solid, 'strokeWidth': 1.0, 'route': '/central_ajuda'},
-      {'type': 'option', 'title': 'Sobre', 'icon': LineAwesomeIcons.exclamation_circle_solid, 'strokeWidth': 1.0, 'route': '/sobre'},
-      {'type': 'option', 'title': 'Termos e Políticas', 'icon': LineAwesomeIcons.atlas_solid, 'strokeWidth': 1.0, 'route': '/termos_politicas'},
+      {'type': 'option', 'title': 'Configurações', 'icon': AppIcones.cog_outline, 'route': '/configuracoes'},
+      {'type': 'option', 'title': 'Central de Ajuda', 'icon': AppIcones.question_circle_outline, 'route': '/central_ajuda'},
+      {'type': 'option', 'title': 'Sobre', 'icon': AppIcones.exclamation_circle_outline, 'route': '/sobre'},
+      {'type': 'option', 'title': 'Termos e Políticas', 'icon': AppIcones.book_outline, 'route': '/termos_politicas'},
     ];
 
     return Drawer(
@@ -128,7 +126,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             child: Stack(
               children: [
-                const LoginBg(),
+                Stack(
+                  children: [
+                    Image.asset(
+                      AppImages.gramado,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                    Container(
+                      color: AppColors.green_300.withOpacity(0.8),
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ],
+                ),
                 Container(
                   width: double.maxFinite,
                   padding: const EdgeInsets.all(5),
@@ -178,28 +190,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ListTile(
                 leading:Icon(
                   option["icon"],
-                  size: 35,
-                  color: AppColors.dark_300,
+                  color: AppColors.gray_700,
+                  size: AppSize.iconLg,
                 ),
                 title: Text(
                   option['title'],
-                  style: const TextStyle(
-                    color: AppColors.dark_300,
-                    fontSize: 15,
-                  ),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_700),
                 ),
-                onTap: () {
-                  print('Navegar para ${option['route']}');
-                },
+                onTap: () => print('Navegar para ${option['route']}'),
               )
               :
               ListTile(
                 title: Text(
                   option['title'],
-                  style: const TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: AppColors.dark_300),
                 )
               ),
           Container(
@@ -214,21 +218,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: ListTile(
-                leading:const Icon(
-                  Icons.logout,
-                  size: 35,
-                  color: AppColors.dark_500,
+                leading: const Icon(
+                  AppIcones.sign_out_outline,
+                  color: AppColors.gray_700,
+                  size: AppSize.iconLg,
                 ),
-                title: const Text(
+                title: Text(
                   "Sair",
-                  style: TextStyle(
-                    color: AppColors.dark_300,
-                    fontSize: 15,
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColors.gray_700,),
                 ),
-                onTap: () {
-                  logout();
-                },
+                onTap: () => logout(),
               ),
             ),
           )            

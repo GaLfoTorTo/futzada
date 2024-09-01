@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class ButtonIconWidget extends StatelessWidget {
-  final String? icon;
+  final dynamic icon;
   final Color? iconColor;
   final Color? color;
   final double? width;
@@ -37,12 +37,14 @@ class ButtonIconWidget extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: SvgPicture.asset(
-            icon!,
-            width: double.infinity,
-            height: double.infinity,
-            color: iconColor,
-          ),
+          child: icon is String 
+            ? SvgPicture.asset(
+              icon!,
+              width: double.infinity,
+              height: double.infinity,
+              color: iconColor,
+            )
+            : Icon(icon!),
         ),
       ),
     );

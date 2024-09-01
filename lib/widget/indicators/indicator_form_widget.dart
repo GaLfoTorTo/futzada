@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class IndicatorFormWidget extends StatelessWidget {
+  final int length;
   final int etapa;
   const IndicatorFormWidget({
     super.key, 
+    required this.length,
     required this.etapa
   });
 
@@ -13,7 +15,7 @@ class IndicatorFormWidget extends StatelessWidget {
     return SizedBox(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(4, (i) {
+        children: List.generate(length, (i) {
           bool isActive = i <= etapa;
           return Row(
             children: [
@@ -35,7 +37,7 @@ class IndicatorFormWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              if (i < 4 - 1)
+              if (i < length - 1)
                 Container(
                   height: 5,
                   width: 30,

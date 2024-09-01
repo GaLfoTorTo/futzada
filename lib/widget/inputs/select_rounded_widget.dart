@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/cadastro_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class SelectRoundedWidget extends StatelessWidget {
   final String value;
-  final String icon;
+  final IconData icon;
   final bool checked;
   final CadastroController controller;
   final Function onChanged;
@@ -31,7 +30,7 @@ class SelectRoundedWidget extends StatelessWidget {
             width: 130,
             height: 130,
             decoration: BoxDecoration(
-              color: checked == true ? AppColors.green_300 : AppColors.gray_500,
+              color: checked == true ? AppColors.green_300 : AppColors.gray_300,
               borderRadius: BorderRadius.circular(80),
               boxShadow: [
                 if (checked == true )
@@ -45,12 +44,11 @@ class SelectRoundedWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(15),
-              child: SvgPicture.asset(
+              child: Icon(
                 icon,
-                width: 50,
-                height: 50,
                 color: AppColors.white,
-              ) 
+                size: 100,
+              ), 
             ),
           ),
           Padding(

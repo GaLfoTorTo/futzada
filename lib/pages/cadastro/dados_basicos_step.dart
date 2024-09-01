@@ -1,83 +1,63 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/controllers/cadastro_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/theme/app_images.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class DadosBasicosStep extends StatefulWidget {
-  final VoidCallback proximo;
-  final int etapa;
-  final CadastroController controller;
   
-  const DadosBasicosStep({
-    super.key, 
-    required this.proximo, 
-    required this.etapa,
-    required this.controller
-  });
+  const DadosBasicosStep({super.key});
 
   @override
   State<DadosBasicosStep> createState() => _DadosBasicosStepState();
 }
 
 class _DadosBasicosStepState extends State<DadosBasicosStep> {
-  //DEFINIR FORMkEY
+  //FORMKEY PARA FORMULARIO DE CADASTRO
   final formKey = GlobalKey<FormState>();
-  // CONTROLLERS DE CADA CAMPO
-  late final TextEditingController nomeController;
-  late final TextEditingController sobreNomeController;
-  late final MaskedTextController userNameController;
-  late final TextEditingController emailController;
-  late final MaskedTextController telefoneController;
-  late final MaskedTextController dataNascimentoController;
-  late final TextEditingController visibilidadeController;
-  late final TextEditingController fotoController;
-  //DEFINIR ARMAZENAMENTO DA IMAGEM
-  File? imageFile;
+  //CONTROLADOR DOS INPUTS DO FORMULÁRIO
+  final CadastroController controller = Get.put(CadastroController());
   //INICIALIZAR IMAGE PICKER
   final ImagePicker imagePicker = ImagePicker();
+  //VARIAVEL DE CONTROLE DE IMAGEM DO USUARIO
+  File? imageFile;
 
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR LISTENER
-    widget.controller.addListener((){});
-    //INICIALIZAÇÃO DE CONTROLLERS
-    nomeController = TextEditingController(text: widget.controller.model.nome);
-    sobreNomeController = TextEditingController(text: widget.controller.model.sobrenome);
-    userNameController = MaskedTextController(text: widget.controller.model.userName, mask: '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', translator: {"@": RegExp(r'[@\w]')});
-    emailController = TextEditingController(text: widget.controller.model.email);
-    telefoneController = MaskedTextController(text: widget.controller.model.telefone, mask: "(00) 00000-0000");
-    dataNascimentoController = MaskedTextController(text: widget.controller.model.dataNascimento, mask: "00/00/0000");
-    visibilidadeController = TextEditingController(text: widget.controller.model.visibilidade);
-    fotoController = TextEditingController(text: widget.controller.model.foto);
+    //VERIFICAR ALGUMA IMAGEM FOI SALVA PELO USUARIO
+    if (controller.model.foto != null) {
+      //CRIAR UM OBJETO FILE APARTIR DO CAMINHO SALVO
+      imageFile = File(controller.model.foto!); 
+    }
   }
-
+  
   //FUNÇÃO PARA BUSCAR IMAGEM
-  Future<void> _getImage() async {
+  Future<void> getImage() async {
     final image = await imagePicker.pickImage(source: ImageSource.gallery);
     //VERIFICAR SE IMAGEM FOI SELECIONADA
     if (image != null) {
       setState(() {
         imageFile = File(image.path);
-        widget.controller.onSaved({'foto': image.path});
+        controller.onSaved({'foto': image.path});
       });
     }
   }
 
-  //SELECIONAR A VISIBILIDADE
+  //SELECIONAR A VISIBILIDADE DO PERFIL
   void selectedVisibility(value){
     setState(() {
-      visibilidadeController.text = value;
-      widget.controller.onSaved({'visibilidade': value});
+      controller.visibilidadeController.text = value;
+      controller.onSaved({'visibilidade': value});
     });
   }
 
@@ -88,7 +68,8 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (formData?.validate() ?? false) {
       formData?.save();
-      widget.proximo();
+      //NAVEGAR PARA PROXIMA ETAPA
+      Get.toNamed('/cadastro/modalidades');
     }
   }
 
@@ -99,40 +80,61 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
       {
         'name':'nome',
         'label': 'Nome',
-        'controller': nomeController,
+        'prefixIcon' : AppIcones.user_outline,
+        'controller': controller.nomeController,
         'type': TextInputType.text
       },
       {
         'name': 'sobrenome',
         'label': 'Sobrenome',
-        'controller': sobreNomeController,
+        'prefixIcon' : AppIcones.user_outline,
+        'controller': controller.sobreNomeController,
         'type': TextInputType.text
       },
       {
         'name': 'userName',
         'label': 'Nome de Usuário',
-        'controller': userNameController,
+        'prefixIcon' : LineAwesomeIcons.at_solid,
+        'controller': controller.userNameController,
         'type': TextInputType.text
       },
       {
         'name': 'email',
         'label': 'E-mail',
-        'controller': emailController,
+        'prefixIcon' : LineAwesomeIcons.envelope,
+        'controller': controller.emailController,
         'type': TextInputType.emailAddress,
       },
       {
         'name': 'telefone',
         'label': 'Telefone',
-        'controller': telefoneController,
+        'prefixIcon' : LineAwesomeIcons.phone_alt_solid,
+        'controller': controller.telefoneController,
         'type': TextInputType.phone,
-        'validator':(){}
       },
       {
         'name': 'dataNascimento',
         'label': 'Data de Nascimento',
-        'controller': dataNascimentoController,
+        'prefixIcon' : AppIcones.calendar_outline,
+        'controller': controller.dataNascimentoController,
         'type': TextInputType.datetime,
-        'validator':(){}
+      },
+      {
+        'name':'password',
+        'label': 'Senha',
+        'prefixIcon' : AppIcones.lock_outline,
+        'sufixIcon' : Icons.visibility_off,
+        'controller': controller.passwordController,
+        'type': TextInputType.visiblePassword,
+      },
+      {
+        'name': 'confirmacao',
+        'label': 'Confirmação de Senha',
+        'prefixIcon' : AppIcones.lock_outline,
+        'sufixIcon' : Icons.visibility_off,
+        'controller': controller.confirmacaoController,
+        'type': TextInputType.visiblePassword,
+        'validator' : controller.validateConfirm,
       },
     ];
     //LISTA DE INPUTS RADIO
@@ -141,173 +143,168 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
         'name': 'visibilidade',
         'placeholder' : 'Qualquer usuário pode visualizar suas informações.',
         'value': 'Publico',
-        'icon' : LineAwesomeIcons.door_open_solid,
-        'controller': visibilidadeController,
+        'icon' : AppIcones.door_open_solid,
+        'controller': controller.visibilidadeController,
       },
       {
         'name': 'visibilidade',
         'placeholder' : 'Apenas você e seus amigos podem visualizar suas informações..',
         'value': 'Privado',
-        'icon' : LineAwesomeIcons.door_closed_solid,
-        'controller': visibilidadeController,
+        'icon' : AppIcones.door_close_solid,
+        'controller': controller.visibilidadeController,
       },
     ];
 
     var dimensions = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Form(
-        key: formKey,
-        child: Container(
-          width: dimensions.width,
-          padding: const EdgeInsets.all(15),
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IndicatorFormWidget(etapa: widget.etapa),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Dados Básicos",
-                  style: TextStyle(
-                    color: AppColors.dark_500,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  "Certo então vamos começar! Informe-nos os seus dados básicos para começarmos a criar seu perfil.",
-                  style: TextStyle(
-                    color: AppColors.gray_500,
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              for(var input in inputs)
-                InputTextWidget(
-                  name: input['name'],
-                  label: input['label'],
-                  textController: input['controller'],
-                  controller: widget.controller,
-                  onSaved: widget.controller.onSaved,
-                  type: input['type'],
-                  validator: input['validator'],
-                ),
-              const Padding(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    Text(
-                      "Visibilidade do Perfil",
-                      style: TextStyle(
-                        color: AppColors.dark_500,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
+    return Scaffold(
+      backgroundColor: AppColors.light,
+      appBar: HeaderWidget(
+        title: "Cadastro", 
+        action: () => Get.toNamed('/cadastro/apresentacao')
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Form(
+            key: formKey,
+            child: Container(
+              width: dimensions.width,
+              padding: const EdgeInsets.all(15),
+              alignment: Alignment.center,
+              child: Column(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for(var radio in radios)
-                  InputRadioWidget(
-                    name: radio['name'],
-                    value: radio['value'],
-                    icon: radio['icon'],
-                    placeholder: radio['placeholder'],
-                    textController: radio['controller'],
-                    controller: widget.controller,
-                    onChanged: selectedVisibility,
+                  const IndicatorFormWidget(
+                    length: 3,
+                    etapa: 0
                   ),
-                ]
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        "Foto de Perfil",
-                        style: TextStyle(
-                          color: AppColors.dark_500,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Dados Básicos",
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Text(
+                      "Certo então vamos começar! Informe-nos os seus dados básicos para começarmos a criar seu perfil.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Stack(
+                    children:[ 
+                      InkWell(
+                        onTap: getImage,
+                        enableFeedback: false,
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageFile != null 
+                                ? FileImage(imageFile!) as ImageProvider<Object>
+                                : const AssetImage(AppImages.userDefault) ,
+                              fit: BoxFit.cover
+                            ),
+                            color: AppColors.gray_300.withOpacity(0.5),
+                            border: Border.all(
+                              color: AppColors.gray_500,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
                         ),
-                        textAlign: TextAlign.left,
                       ),
-                    ),
-                  ]
-                ),
-              ),
-              if (imageFile != null)
-                Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image:  FileImage(
-                        imageFile!,
+                      Positioned(
+                        top: 125,
+                        left: 90,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.green_300,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Icon(
+                            AppIcones.camera_solid,
+                            color: AppColors.blue_500,
+                            size: 15,
+                          ),
+                        ),
                       ),
-                      fit: BoxFit.cover
-                    ),
-                    color: AppColors.green_300,
-                    border: Border.all(
-                      color: AppColors.gray_500,
-                      width: 3,
-                    ),
-                    borderRadius: BorderRadius.circular(100),
+                    ]
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: ButtonTextWidget(
-                  type: "outline",
-                  text: "Foto",
-                  icon: LineAwesomeIcons.camera_solid,
-                  textColor: AppColors.blue_500,
-                  color: AppColors.blue_500,
-                  width: double.infinity,
-                  action: _getImage,
-                ),
+                  for(var input in inputs)
+                    InputTextWidget(
+                      name: input['name'],
+                      label: input['label'],
+                      prefixIcon: input['prefixIcon'],
+                      sufixIcon: input['sufixIcon'],
+                      textController: input['controller'],
+                      controller: controller,
+                      onSaved: controller.onSaved,
+                      type: input['type'],
+                      validator: input['validator'],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Visibilidade do Perfil",
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Defina quem poderá visualizar suas informações de usuário. Esta informação pode ser alterada a qualquer momento.",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for(var radio in radios)
+                        InputRadioWidget(
+                          name: radio['name'],
+                          value: radio['value'],
+                          icon: radio['icon'],
+                          placeholder: radio['placeholder'],
+                          textController: radio['controller'],
+                          controller: controller,
+                          onChanged: selectedVisibility,
+                        ),
+                      ]
+                    ),
+                  ),
+                  ButtonTextWidget(
+                    text: "Próximo",
+                    width: double.infinity,
+                    action: submitForm
+                  ),
+                ],
               ),
-              ButtonTextWidget(
-                text: "Próximo",
-                textColor: AppColors.blue_500,
-                color: AppColors.green_300,
-                width: double.infinity,
-                action: submitForm
-              ),
-            ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 
   @override
   void dispose() {
-    //DISPOSE DOS CONTROLLERS
-    nomeController.dispose();
-    sobreNomeController.dispose();
-    userNameController.dispose();
-    emailController.dispose();
-    telefoneController.dispose();
-    dataNascimentoController.dispose();
     //REMOVER LISTENER
-    widget.controller.removeListener((){});
+    controller.removeListener((){});
     super.dispose();
   }
 }

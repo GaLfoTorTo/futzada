@@ -44,7 +44,49 @@ class CadastroModel {
     this.arquetipo,
   });
 
-  CadastroModel copyWith({
+  CadastroModel copyWith(
+    String? nome,
+    String? sobrenome,
+    String? userName,
+    String? email,
+    String? dataNascimento,
+    String? telefone,
+    String? visibilidade,
+    String? foto,
+    String? password,
+    String? confirmacao,
+    String? equipe,
+    String? sigla,
+    String? primaria,
+    String? secundaria,
+    String? emblema,
+    String? uniforme,
+    String? posicoes,
+    String? melhorPe,
+  ){
+    return CadastroModel(
+      nome: this.nome,
+      sobrenome: this.sobrenome,
+      userName: this.userName,
+      email: this.email,
+      dataNascimento: this.dataNascimento,
+      telefone: this.telefone,
+      visibilidade: this.visibilidade,
+      foto: this.foto,
+      password: this.password,
+      confirmacao: this.confirmacao,
+      equipe: this.equipe,
+      sigla: this.sigla,
+      primaria: this.primaria,
+      secundaria: this.secundaria,
+      emblema: this.emblema,
+      uniforme: this.uniforme,
+      posicoes: this.posicoes,
+      melhorPe: this.melhorPe,
+    );
+  }
+
+  CadastroModel copyWithMap({
     Map<String, dynamic>? updates,
   }) {
     return CadastroModel(

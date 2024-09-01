@@ -57,16 +57,7 @@ class ExplorePageStateState extends State<ExplorePageState> {
           onPageChanged: (int page) {
           },
           children: [
-            ApresentacaoPageWiget(
-              image: AppImages.capaExplore,
-              titulo: 'Encontre o Fut certo para você',
-              subTitulo: 'Buscando por um futebol ? Encontrar jogos que estão rolando em tempo real ou que acontecem regularmente no local indicado.',
-              buttonIcone: LineAwesomeIcons.compass,
-              buttonTitulo: 'Ver no Mapa',
-              viewTitulo: 'Pesquisar manualmente',
-              createAction: () => {},
-              viewAction: () => {},
-            ),
+            Container()
           ],
         ),
       ), 

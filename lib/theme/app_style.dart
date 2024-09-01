@@ -16,13 +16,13 @@ class AppStyle {
     titleMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.dark_500),
     titleSmall: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.dark_500),
     //BODY
-    bodyLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.normal, color: AppColors.dark_500),
-    bodyMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.dark_500),
-    bodySmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    bodyLarge: const TextStyle().copyWith(fontSize: AppSize.fontXl, fontWeight: FontWeight.normal, color: AppColors.gray_500),
+    bodyMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.gray_500),
+    bodySmall: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.normal, color: AppColors.gray_500),
     //LABELS
-    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.dark_500),
-    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.dark_500),
-    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.bold, color: AppColors.dark_500),
+    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.normal, color: AppColors.dark_500),
+    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.dark_500),
   );
 
   //TEXT DARK THEME
@@ -40,25 +40,25 @@ class AppStyle {
     bodyMedium: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.white),
     bodySmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.white),
     //LABELS
-    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.bold, color: AppColors.white),
-    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.bold, color: AppColors.white),
-    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.bold, color: AppColors.white),
+    labelLarge: const TextStyle().copyWith(fontSize: AppSize.fontMd, fontWeight: FontWeight.normal, color: AppColors.white),
+    labelMedium: const TextStyle().copyWith(fontSize: AppSize.fontSm, fontWeight: FontWeight.normal, color: AppColors.white),
+    labelSmall: const TextStyle().copyWith(fontSize: AppSize.fontXs, fontWeight: FontWeight.normal, color: AppColors.white),
   );
 
   //TEXT BUTTON THEME
   static final textButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
       elevation: 0,
-      foregroundColor: AppColors.green_300,
       backgroundColor: AppColors.green_300,
+      foregroundColor: AppColors.blue_500,
       disabledForegroundColor: AppColors.green_100,
-      disabledBackgroundColor: AppColors.green_100,
+      disabledBackgroundColor: AppColors.blue_100,
       padding: const EdgeInsets.all(10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       textStyle: const TextStyle(
         fontSize: AppSize.fontMd,
         color: AppColors.blue_500,
-        fontWeight: FontWeight.bold
+        fontWeight: FontWeight.normal
       ),
     )
   );
@@ -67,16 +67,16 @@ class AppStyle {
   static final elevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      foregroundColor: AppColors.green_300,
       backgroundColor: AppColors.green_300,
+      foregroundColor: AppColors.blue_500,
       disabledForegroundColor: AppColors.green_100,
-      disabledBackgroundColor: AppColors.green_100,
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      disabledBackgroundColor: AppColors.blue_100,
+      padding: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       textStyle: const TextStyle(
-        fontSize: 18,
+        fontSize: AppSize.fontMd,
         color: AppColors.blue_500,
-        fontWeight: FontWeight.bold
+        fontWeight: FontWeight.normal
       ),
     )
   );
@@ -85,38 +85,51 @@ class AppStyle {
   static OutlinedButtonThemeData lightOutlineButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       elevation: 0,
-      foregroundColor: AppColors.white,
+      foregroundColor: AppColors.blue_500,
       backgroundColor: AppColors.white,
-      disabledForegroundColor: AppColors.gray_300,
+      disabledForegroundColor: AppColors.blue_500,
       disabledBackgroundColor: AppColors.gray_300,
       side: const BorderSide(color: AppColors.blue_500),
-      padding: const EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       textStyle: const TextStyle(
-        fontSize: 18,
+        fontSize: AppSize.fontMd,
         color: AppColors.blue_500,
         fontWeight: FontWeight.normal
       ),
     )
   );
+  
 
   //BUTTON DARK THEME
   static OutlinedButtonThemeData darkOutlineButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       elevation: 0,
-      foregroundColor: AppColors.dark_500,
+      foregroundColor: AppColors.white,
       backgroundColor: AppColors.dark_500,
-      disabledForegroundColor: AppColors.dark_300,
+      disabledForegroundColor: AppColors.white,
       disabledBackgroundColor: AppColors.dark_300,
       side: const BorderSide(color: AppColors.white),
-      padding: const EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       textStyle: const TextStyle(
-        fontSize: 18,
+        fontSize: AppSize.fontMd,
         color: AppColors.white,
         fontWeight: FontWeight.normal
       ),
     )
+  );
+
+  //ICONE LIGHT THEME
+  static const IconThemeData iconLightTheme = IconThemeData(
+    color: AppColors.blue_500,
+    size: AppSize.iconMd,
+  );
+
+  //ICONE LIGHT THEME
+  static const IconThemeData iconDarkTheme = IconThemeData(
+    color: AppColors.white,
+    size: AppSize.iconMd,
   );
 
   //APP BAR THEME
@@ -205,8 +218,7 @@ class AppStyle {
     focusedErrorBorder: const OutlineInputBorder(
       borderSide: BorderSide(color: AppColors.red_300),
     ),
-    contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-
+    contentPadding: const EdgeInsets.all(15),
   );
 
   //INPUT DARK THEME
@@ -216,6 +228,85 @@ class AppStyle {
     errorMaxLines: 3,
     prefixIconColor: AppColors.white,
     suffixIconColor: AppColors.white,
+    errorStyle: const TextStyle(
+      fontStyle: FontStyle.normal
+    ),
+    floatingLabelStyle: const TextStyle(
+      color: AppColors.white, 
+      fontSize: AppSize.fontXl, 
+      fontWeight: FontWeight.bold
+    ),
+    labelStyle: const TextStyle(
+      color: AppColors.white,
+      fontSize: AppSize.fontMd,
+    ),
+    hintStyle: const TextStyle(
+      color: AppColors.white,
+      fontSize: AppSize.fontMd,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.green_300),
+    ),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+  );
+
+  //DROPDOWN MENU LIGHT THEME
+  static final InputDecoration lightDropdownMenuTheme =  InputDecoration(
+    filled: true,
+    fillColor: AppColors.white,
+    errorMaxLines: 3,
+    errorStyle: const TextStyle(
+      fontStyle: FontStyle.normal
+    ),
+    floatingLabelStyle: const TextStyle(
+      color: AppColors.dark_500, 
+      fontSize: AppSize.fontXl, 
+      fontWeight: FontWeight.bold
+    ),
+    labelStyle: const TextStyle(
+      color: AppColors.gray_500,
+      fontSize: AppSize.fontMd,
+    ),
+    hintStyle: const TextStyle(
+      color: AppColors.gray_300,
+      fontSize: AppSize.fontMd,
+      fontWeight: FontWeight.normal
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+    ),
+    focusedBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.green_300),
+    ),
+    errorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    focusedErrorBorder: const OutlineInputBorder(
+      borderSide: BorderSide(color: AppColors.red_300),
+    ),
+    contentPadding: const EdgeInsets.all(15),
+  );
+
+  //DROPDOWN MENU DARK THEME
+  static final InputDecoration darkDropdownMenuTheme = InputDecoration(
+    filled: true,
+    fillColor: AppColors.dark_500,
+    errorMaxLines: 3,
     errorStyle: const TextStyle(
       fontStyle: FontStyle.normal
     ),
@@ -262,26 +353,86 @@ class AppStyle {
     surfaceTintColor: AppColors.white
   );
   
+  //NAVIGATION BAR LIGHT THEME
+  static NavigationBarThemeData lightNavigationTheme = NavigationBarThemeData(
+    elevation: 8,
+    backgroundColor: AppColors.white,
+    indicatorColor: Colors.transparent,
+    shadowColor: AppColors.dark_500.withOpacity(0.5),
+    iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+      (Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return const IconThemeData(
+            color: AppColors.blue_500,
+            size: AppSize.iconXl,
+          );
+        }
+        return const IconThemeData(
+          color: AppColors.gray_300,
+          size: AppSize.iconLg,
+        );
+      },
+    ),
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+  );
+  
+  //NAVIGATION BAR LIGHT THEME
+  static NavigationBarThemeData darkNavigationTheme = NavigationBarThemeData(
+    elevation: 0,
+    backgroundColor: AppColors.white,
+    indicatorColor: Colors.transparent,
+    shadowColor: AppColors.dark_500.withOpacity(0.5),
+    iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+      (Set<WidgetState> states) {
+        if (states.contains(WidgetState.selected)) {
+          return const IconThemeData(
+            color: AppColors.white,
+            size: AppSize.iconXl,
+          );
+        }
+        return const IconThemeData(
+          color: AppColors.gray_300,
+          size: AppSize.iconLg,
+        );
+      },
+    ),
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+  );
+
   //BOTTON NAVIGATION BAR LIGHT THEME
   static BottomNavigationBarThemeData lightBottomNavigationTheme = const BottomNavigationBarThemeData(
+    elevation: 0,
     backgroundColor: AppColors.white,
     enableFeedback: true,
-    selectedItemColor: AppColors.blue_500,
+    selectedIconTheme: IconThemeData(
+      color: AppColors.blue_500,
+      size: AppSize.iconXl
+    ),
+    unselectedIconTheme: IconThemeData(
+      color: AppColors.gray_300,
+      size: AppSize.iconLg
+    ),
     showSelectedLabels: false,
-    unselectedItemColor: AppColors.gray_300,
     showUnselectedLabels: false,
     type: BottomNavigationBarType.fixed,
   );
   
   //BOTTON NAVIGATION BAR DARK THEME
   static BottomNavigationBarThemeData darkBottomNavigationTheme = const BottomNavigationBarThemeData(
+    elevation: 0,
     backgroundColor: AppColors.dark_500,
     enableFeedback: true,
-    selectedItemColor: AppColors.white,
+    selectedIconTheme: IconThemeData(
+      color: AppColors.white,
+      size: AppSize.iconXl
+    ),
+    unselectedIconTheme: IconThemeData(
+      color: AppColors.gray_300,
+      size: AppSize.iconLg
+    ),
     showSelectedLabels: false,
-    unselectedItemColor: AppColors.gray_300,
     showUnselectedLabels: false,
-    type: BottomNavigationBarType.fixed,
+    type: BottomNavigationBarType.shifting,
   );
   
   //TAB BAR LIGHT THEME
