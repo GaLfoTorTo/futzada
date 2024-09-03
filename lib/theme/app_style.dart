@@ -193,7 +193,7 @@ class AppStyle {
     floatingLabelStyle: const TextStyle(
       color: AppColors.dark_500, 
       fontSize: AppSize.fontXl, 
-      fontWeight: FontWeight.bold
+      fontWeight: FontWeight.bold,
     ),
     labelStyle: const TextStyle(
       color: AppColors.gray_500,

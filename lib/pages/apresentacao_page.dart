@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
@@ -13,8 +14,8 @@ class ApresentacaoPageWiget extends StatelessWidget {
   final String buttonTitulo;
   final IconData buttonIcone;
   final String viewTitulo;
-  final VoidCallback createAction;
-  final VoidCallback viewAction;
+  final VoidCallback buttonAction;
+  final VoidCallback outlineAction;
 
   const ApresentacaoPageWiget({
     super.key,
@@ -25,20 +26,22 @@ class ApresentacaoPageWiget extends StatelessWidget {
     required this.buttonTitulo,
     required this.buttonIcone,
     required this.viewTitulo, 
-    required this.createAction, 
-    required this.viewAction, 
+    required this.buttonAction, 
+    required this.outlineAction, 
   });
 
   @override
   Widget build(BuildContext context) {
-    
+    //RESGATAR CONTROLLERDE NAVEGACAO DE TABS
+    final navigationTab = Get.find<NavigationController>();
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: route,
-        action: () => Get.back(),
+        leftAction: () => navigationTab.directIndex(0),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -104,13 +107,13 @@ class ApresentacaoPageWiget extends StatelessWidget {
                             text: buttonTitulo,
                             width: dimensions.width,
                             icon: buttonIcone,
-                            action: createAction,
+                            action: buttonAction,
                           ),
-                          Padding(padding: EdgeInsets.all(10)),
+                          const Padding(padding: EdgeInsets.all(10)),
                           ButtonOutlineWidget(
                             text: viewTitulo,
                             width: dimensions.width,
-                            action: (){},
+                            action: outlineAction,
                           )
                         ],
                       )

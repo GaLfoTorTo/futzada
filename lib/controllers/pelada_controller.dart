@@ -6,7 +6,13 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/pelada_model.dart';
 
 class PeladaController extends ChangeNotifier {
+  //INSTANCIA DE PELADA MODEL
   PeladaModel model = PeladaModel();
+  // CONTROLLERS DE CADA CAMPO
+  late final TextEditingController nomeController = TextEditingController();
+  late final TextEditingController bioController = TextEditingController();
+  late final TextEditingController visibilidadeController = TextEditingController();
+  late final TextEditingController fotoController = TextEditingController();
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){

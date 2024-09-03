@@ -4,6 +4,7 @@ import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/providers/usuario_provider.dart';
 import 'package:futzada/pages/home/secao/secao_home_widget.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/cards/card_para_voce_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
 import 'package:get/get.dart';
@@ -411,20 +412,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       backgroundColor: AppColors.light,
-      appBar: AppBar(
-        backgroundColor: AppColors.green_300,
-        leading: IconButton(
-          icon: const Icon(AppIcones.bars_solid),
-          onPressed: () => navigationController.scaffoldKey.currentState?.openEndDrawer()
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(AppIcones.paper_plane_solid),
-            onPressed: (){},
-          ),
-        ],
-        elevation: 8,
-        shadowColor: const Color.fromARGB(255, 0, 0, 0),
+      appBar: HeaderWidget(
+        leftAction: () => navigationController.scaffoldKey.currentState?.openEndDrawer(),
+        leftIcon: AppIcones.bars_solid,
+        rightAction: () {},
+        rightIcon: AppIcones.paper_plane_solid,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

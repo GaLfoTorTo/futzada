@@ -47,19 +47,11 @@ class ExplorePageStateState extends State<ExplorePageState> {
         preferredSize: const Size.fromHeight(60),
         child: HeaderWidget(
           title: 'Explore',
-          action: () => widget.actionButton(),
+          leftAction: () => widget.actionButton(),
         )
       ),
       body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (int page) {
-          },
-          children: [
-            Container()
-          ],
-        ),
+        child: Container()
       ), 
     );
   }

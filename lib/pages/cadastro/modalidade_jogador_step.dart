@@ -124,7 +124,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
     if(validatePositions && validateFoot){
       //SALVAR DADOS CRUCIAIS DO FORMULÁRIO
       formData?.save();
-      Get.toNamed('/cadastro/modalidades');
+      Get.back();
     }
   }
 
@@ -152,7 +152,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
-        action: () => Get.toNamed('/cadastro/modalidades')
+        leftAction: () => Get.back()
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -335,7 +335,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.toNamed('/cadastro/modalidades')
+                        action: () => Get.back()
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

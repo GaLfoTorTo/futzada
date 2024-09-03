@@ -8,6 +8,7 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/casdastro_model.dart';
 
 class CadastroController extends getx.GetxController {
+  //INSTANCIA DE CADASTRO MODEL
   CadastroModel model = CadastroModel();
   // CONTROLLERS DE DADOS BASICOS
   final TextEditingController nomeController = TextEditingController();

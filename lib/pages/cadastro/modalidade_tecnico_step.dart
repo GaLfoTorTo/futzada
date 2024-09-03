@@ -393,7 +393,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
-        action: () => Get.toNamed('/cadastro/modalidades')
+        leftAction: () => Get.back()
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -679,7 +679,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.toNamed('/cadastro/modalidades')
+                        action: () => Get.back()
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

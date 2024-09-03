@@ -1,41 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
 
-class InputTextWidget extends StatefulWidget {
+class InputTextAreaWidget extends StatefulWidget {
   final String name;
   final String? label;
   final String? hint;
-  final IconData? sufixIcon;
-  final IconData? prefixIcon;
   final String? placeholder;
   final Function? onSaved;
-  final TextInputType? type;
-  final int? maxLength;
   final Function? validator;
   final dynamic controller;
   final TextEditingController textController;
 
-  const InputTextWidget({
+  const InputTextAreaWidget({
     super.key,
     required this.name, 
     this.label,
     this.hint,
-    this.sufixIcon,
-    this.prefixIcon,
     this.placeholder,
     this.onSaved,
-    this.type,
-    this.maxLength,
     this.validator,
     required this.textController, 
     required this.controller, 
   });
 
   @override
-  State<InputTextWidget> createState() => _InputTextWidgetState();
+  State<InputTextAreaWidget> createState() => _InputTextWidgetState();
 }
 
-class _InputTextWidgetState extends State<InputTextWidget> {
+class _InputTextWidgetState extends State<InputTextAreaWidget> {
   //VARIAVEL DE EXIBIÇÃO DE SENHA
   bool visible = false;
   //VARIAVEL DE EXIBIÇÃO DE BOTÃO DE VISIBILIDADE DE SENHA
@@ -48,16 +40,6 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   @override
   void initState() {
     super.initState();
-    //INICIALIZR VISIBILIDADE DE SENHA CASO EXISTA
-    obscure = widget.type != null && widget.type == TextInputType.visiblePassword;
-    visible = widget.type != null && widget.type == TextInputType.visiblePassword;
-    //INICIALIZAR SUFIXICON
-    sufixIcon = widget.sufixIcon != null
-      ? Icon(widget.sufixIcon) 
-      : null;
-    prefixIcon = widget.prefixIcon != null 
-      ? Icon(widget.prefixIcon) 
-      : null;
   }
 
   void showText(){
@@ -75,21 +57,16 @@ class _InputTextWidgetState extends State<InputTextWidget> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
         controller: widget.textController,
-        keyboardType: widget.type,
-        textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
+        keyboardType: TextInputType.text,
         obscureText: visible,
-        maxLength: widget.maxLength ?? widget.maxLength,
+        minLines: 3,
+        maxLines: null,
+        maxLength: null,
         style: Theme.of(context).textTheme.bodyMedium,
         decoration: InputDecoration(
           hintText: widget.hint,
           labelText: widget.label,
-          prefixIcon: prefixIcon,
-          suffixIcon: sufixIcon != null 
-            ? IconButton(
-              icon: sufixIcon!,
-              onPressed: () => showText(),
-            )
-            : null
+
         ),
         onSaved: (value){
           if(widget.onSaved != null){

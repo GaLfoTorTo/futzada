@@ -1,61 +1,95 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/pages/apresentacao_page.dart';
-import 'package:futzada/pages/home/home_page.dart';
+import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:get/get.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:futzada/pages/apresentacao_page.dart';
+import 'package:futzada/pages/home/home_page.dart';
 
 class NavigationController extends GetxController {
   //SCAFFOLD KEY
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   //CONTROLADOR DE INDEX NAVIGATION BAR
   final Rx<int> index = 0.obs; 
-  //CONTROLLER DE NAVEGAÇÃO DE HOME
-  final homeController = Get.put(HomeNavigationController());
-  //CONTROLLER DE NAVEGAÇÃO DE ESCALAÇÃO
-  final escalacaoController = Get.put(EscalacaoNavigationController());
-  //CONTROLLER DE NAVEGAÇÃO DE PELADA
-  final peladaController = Get.put(PeladaNavigationController());
-  //CONTROLLER DE NAVEGAÇÃO DE ESCALAÇÃO
-  final exploreController = Get.put(ExploreNavigationController());
-  //CONTROLLER DE NAVEGAÇÃO DE ESCALAÇÃO
-  final notificacaoController = Get.put(NotificacaoNavigationController());
-}
-
-class BaseNavigationController extends GetxController {
-  //CHAVE DE NAVEGAÇÃO DE ESCALAÇÃO
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION ESCALAÇÃO
-  final Rx<int> index = 0.obs; 
-  //TELAS DE ESCALAÇÃO
-  late final List<Widget> screens;
   //FUNÇÃO DE ATUALIZAÇÃO DE INDEX
-  void updateIndex(int newIndex) {
+  void directIndex(int newIndex) {
     index.value = newIndex;
   }
-}
-
-class HomeNavigationController extends BaseNavigationController {
-  //CHAVE DE NAVEGAÇÃO DE HOME
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION HOME
-  final Rx<int> index = 0.obs; 
-  //TELAS DE HOME
+  //FUNÇÃO DE INCREMENTAÇÃO DE INDEX
+  void nextIndex() {
+    index.value = index.value + 1;
+  }
+  //FUNÇÃO DE DECREMENTAÇÃO DE INDEX
+  void backIndex() {
+    index.value = index.value - 1;
+  }
+  //FUNÇÃO DE RETORNO PARA HOME
+  void backHome(BuildContext context) {
+    Get.dialog(
+      Dialog(
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  'Cancelar Cadastro',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Text(
+                  'Deseja cancelar o cadastro da pelada voltar para a página inicial ?',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ButtonTextWidget(
+                    text: "Não",
+                    width: 50,
+                    height: 20,
+                    action: () => Get.back(),
+                    backgroundColor: AppColors.red_300,
+                    textColor: AppColors.white,
+                  ),
+                  ButtonTextWidget(
+                    text: "Sim",
+                    width: 50,
+                    height: 20,
+                    action: () {
+                      index.value = 0;
+                      Get.offAllNamed('/home');
+                    },
+                    backgroundColor: AppColors.green_300,
+                    textColor: AppColors.white,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  //TELAS DE ESCALAÇÃO
   final screens = [
     //HOME PAGE
     const HomePage(),
-  ];
-}
-
-class EscalacaoNavigationController extends BaseNavigationController {
-  //CHAVE DE NAVEGAÇÃO DE ESCALAÇÃO
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION ESCALAÇÃO
-  final Rx<int> index = 0.obs; 
-  //TELAS DE ESCALAÇÃO
-  final screens = [
-    //APRENSENTAÇÃO PAGE ESCALAÇÃO
+    //APRENSENTAÇÃO PAGE ESCALAÇÕES
     ApresentacaoPageWiget(
       image: AppImages.capaEscalacao,
       route: 'Escalação',
@@ -64,25 +98,10 @@ class EscalacaoNavigationController extends BaseNavigationController {
       buttonTitulo: 'Começar Escalar',
       buttonIcone: AppIcones.clipboard_solid,
       viewTitulo: 'Ver minhas escalações',
-      createAction: () => {},
-      viewAction: () => {},
+      buttonAction: () => Get.toNamed('/escalacao'),
+      outlineAction: () => print('navegar para Minhas escalações'),
     ),
-    Container(color: Colors.red),
-    Container(color: Colors.blue),
-    Container(color: Colors.green),
-    Container(color: Colors.yellow)
-  ];
-}
-
-class PeladaNavigationController extends BaseNavigationController {
-  //CHAVE DE NAVEGAÇÃO DE ESCALAÇÃO
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION ESCALAÇÃO
-  final Rx<int> index = 0.obs; 
-
-  //TELAS DE ESCALAÇÃO
-  final screens = [
-    //APRENSENTAÇÃO PAGE PELADA
+    //APRENSENTAÇÃO PAGE PELADAS
     ApresentacaoPageWiget(
       image: AppImages.capaPelada,
       route: 'Peladas',
@@ -91,23 +110,9 @@ class PeladaNavigationController extends BaseNavigationController {
       buttonTitulo: 'Criar nova pelada',
       buttonIcone: LineAwesomeIcons.plus_circle_solid,
       viewTitulo: 'Ver minhas peladas',
-      createAction: () => {},
-      viewAction: () => {},
+      buttonAction: () => Get.toNamed('/pelada/cadastro/dados_pelada'),
+      outlineAction: () => print('navegar para Minhas peladas'),
     ),
-    Container(color: Colors.red),
-    Container(color: Colors.green),
-    Container(color: Colors.yellow)
-  ];
-}
-
-class ExploreNavigationController extends BaseNavigationController {
-  //CHAVE DE NAVEGAÇÃO DE ESCALAÇÃO
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION ESCALAÇÃO
-  final Rx<int> index = 0.obs; 
-
-  //TELAS DE ESCALAÇÃO
-  final screens = [
     //APRENSENTAÇÃO PAGE EXPLORE
     ApresentacaoPageWiget(
       image: AppImages.capaExplore,
@@ -117,23 +122,9 @@ class ExploreNavigationController extends BaseNavigationController {
       buttonIcone: AppIcones.compass_solid,
       buttonTitulo: 'Ver no Mapa',
       viewTitulo: 'Pesquisar manualmente',
-      createAction: () => {},
-      viewAction: () => {},
+      buttonAction: () => print('navegar para Explore no mapa'),
+      outlineAction: () => print('navegar para Pesquisa manual'),
     ),
-    Container(color: Colors.yellow),
-    Container(color: Colors.red),
-    Container(color: Colors.green),
-  ];
-}
-
-class NotificacaoNavigationController extends BaseNavigationController {
-  //CHAVE DE NAVEGAÇÃO DE ESCALAÇÃO
-  final navigatorKey = GlobalKey<NavigatorState>();
-  //CONTROLADOR DE INDEX NAVIGATION ESCALAÇÃO
-  final Rx<int> index = 0.obs; 
-
-  //TELAS DE ESCALAÇÃO
-  final screens = [
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO
     ApresentacaoPageWiget(
       image: AppImages.capaEscalacao,
@@ -143,11 +134,8 @@ class NotificacaoNavigationController extends BaseNavigationController {
       buttonTitulo: 'Começar Escalar',
       buttonIcone: AppIcones.clipboard_solid,
       viewTitulo: 'Ver minhas escalações',
-      createAction: () => {},
-      viewAction: () => {},
+      buttonAction: () => print('navegar para Notificações'),
+      outlineAction: () => print('navegar para Notificações'),
     ),
-    Container(color: Colors.yellow),
-    Container(color: Colors.red),
-    Container(color: Colors.green),
   ];
 }

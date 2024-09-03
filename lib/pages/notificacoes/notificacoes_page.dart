@@ -44,18 +44,11 @@ class NotificacaoPageStateState extends State<NotificacaoPageState> {
         preferredSize: const Size.fromHeight(60),
         child: HeaderWidget(
           title: 'Notificações',
-          action: () => widget.actionButton(),
+          leftAction: () => widget.actionButton(),
         )
       ),
       body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (int page) {
-          },
-          children: [
-          ],
-        ),
+        child: Container()
       ), 
     );
   }

@@ -26,7 +26,7 @@ class EscalacaoPageStateState extends State<EscalacaoPageState> {
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: 'Escalações',
-        action: () => Get.back(),
+        leftAction: () => Get.back(),
       ),
       body: SafeArea(
         child: Container(color: Colors.red,),

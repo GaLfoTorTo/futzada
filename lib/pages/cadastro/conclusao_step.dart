@@ -206,7 +206,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStep>  with SingleTickerPr
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
-        action: () => Get.toNamed('/cadastro/modalidades')
+        leftAction: () => Get.back()
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -375,7 +375,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStep>  with SingleTickerPr
                     ButtonOutlineWidget(
                       text: "Voltar",
                       width: 100,
-                      action: () => Get.toNamed('/cadastro/modalidades'),
+                      action: () => Get.back(),
                     ),
                     ButtonTextWidget(
                       text: "Salvar",

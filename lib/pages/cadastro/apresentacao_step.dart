@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
@@ -18,7 +19,7 @@ class ApresentacaoStep extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: HeaderWidget( 
-        action: () => Get.toNamed('/login')
+        leftAction: () => Get.toNamed('/login'),
       ),
       body: SafeArea(
         child: Container(

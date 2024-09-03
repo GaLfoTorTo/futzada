@@ -42,7 +42,7 @@ class ModalidadesStep extends StatelessWidget {
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
-        action: () => Get.toNamed('/cadastro/dados_basicos')
+        leftAction: () => Get.back()
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -130,7 +130,7 @@ class ModalidadesStep extends StatelessWidget {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.toNamed('/cadastro/dados_basicos'),
+                        action: () => Get.back(),
                       ),
                       ButtonTextWidget(
                         text: "Próximo",
