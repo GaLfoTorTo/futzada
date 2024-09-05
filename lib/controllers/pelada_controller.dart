@@ -1,11 +1,14 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as Dio;
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/pelada_model.dart';
 
 class PeladaController extends ChangeNotifier {
+  //DEFINIR CONTROLLER UNICO NO GETX
+  static PeladaController get instace => Get.find();
   //INSTANCIA DE PELADA MODEL
   PeladaModel model = PeladaModel();
   // CONTROLLERS DE CADA CAMPO
@@ -13,6 +16,8 @@ class PeladaController extends ChangeNotifier {
   late final TextEditingController bioController = TextEditingController();
   late final TextEditingController visibilidadeController = TextEditingController();
   late final TextEditingController fotoController = TextEditingController();
+  late final TextEditingController enderecoController = TextEditingController();
+  late final TextEditingController tipoCampoController = TextEditingController();
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){
@@ -32,17 +37,17 @@ class PeladaController extends ChangeNotifier {
     //TENTAR SALVAR USUÁRIO
     try {
       //INSTANCIAR DIO
-      var dio = Dio();
+      var dio = Dio.Dio();
       //RESGATAR DADOS DE USUARIO NO FORMATO DE MAP
       var formDataMap = model.toMap();
       //CRIAR OBJETO FORMDATA
-      var formData = FormData.fromMap(formDataMap);
+      var formData = Dio.FormData.fromMap(formDataMap);
       //VERIFICAR SE EXISTE FOTO NA REQUISIÇÃO
       if (model.foto != null) {
         //ADICIONAR IMAGEM NO FORMDATA
         formData.files.add(MapEntry(
           'foto',
-          await MultipartFile.fromFile(
+          await Dio.MultipartFile.fromFile(
             model.foto!, 
             filename: model.foto!.split('/').last,
           ),
@@ -51,7 +56,7 @@ class PeladaController extends ChangeNotifier {
       //INICIALIZAR REQUISIÇÃO
       var response = await dio.post(
         url, 
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        options: Dio.Options(headers: {'Content-Type': 'multipart/form-data'}),
         data: formData,
       );
       //VERIFICAR RESPOSTA DO SERVIDOR
@@ -69,7 +74,7 @@ class PeladaController extends ChangeNotifier {
           'message': errorMessage['message'],
         };
       }
-    } on DioException catch (e) {
+    } on Dio.DioException catch (e) {
       //TRATAR ERROS
       return AppHelper.tratamentoErros(e);
     }

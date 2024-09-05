@@ -12,6 +12,7 @@ class InputTextWidget extends StatefulWidget {
   final TextInputType? type;
   final int? maxLength;
   final Function? validator;
+  final Function? adressSearch;
   final dynamic controller;
   final TextEditingController textController;
 
@@ -27,6 +28,7 @@ class InputTextWidget extends StatefulWidget {
     this.type,
     this.maxLength,
     this.validator,
+    this.adressSearch,
     required this.textController, 
     required this.controller, 
   });
@@ -79,7 +81,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
         textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
         obscureText: visible,
         maxLength: widget.maxLength ?? widget.maxLength,
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context).textTheme.labelLarge,
         decoration: InputDecoration(
           hintText: widget.hint,
           labelText: widget.label,
@@ -107,7 +109,15 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           }
           //RETURNAR RESULTADO DA VALIDAÇÃO
           return result;
-        }
+        },
+        onTap: () {
+          if(widget.type == TextInputType.streetAddress){
+            //REMOVE FOCU DO INPUT 
+            FocusScope.of(context).unfocus();
+            //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
+            widget.adressSearch!();
+          }
+        },
       ),
     );
   }

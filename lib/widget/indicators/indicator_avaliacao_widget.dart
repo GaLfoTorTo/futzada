@@ -1,9 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class IndicatorAvaliacaoWidget extends StatelessWidget {
   final double estrelas;
@@ -32,14 +29,14 @@ class IndicatorAvaliacaoWidget extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(18),
                   child: Icon(
-                    LineAwesomeIcons.star,
+                    AppIcones.star_solid,
                     size: 20,
                     color: numEstrelas(i),
                   ),
                 ),
                 if(estrelas + 1 > i && estrelas.toInt() != 0)
                   const Icon(
-                    LineAwesomeIcons.star_half,
+                    AppIcones.star_half_solid,
                     size: 20,
                     color: AppColors.yellow_500,
                   ),

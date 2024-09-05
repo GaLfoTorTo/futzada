@@ -1,14 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/app_widget.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:futzada/theme/app_animations.dart';
+import 'package:lottie/lottie.dart';
 import 'firebase_options.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:futzada/app_widget.dart';
+import 'package:futzada/controllers/auth_controller.dart';
 
 void main() async {
   //INICIALIZAR OS BINDINGS DO FLUTTER
-  WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetBinding = WidgetsFlutterBinding.ensureInitialized();
+  //SEGURAR SPALSH ATÉ CARERGAMENTO DOS DEMAIS ITENS
+  FlutterNativeSplash.preserve(widgetsBinding: widgetBinding);
   //INICIALIZAR O GETSTORAGE
   await GetStorage.init();
+  //INICIALIZAR FIREBASE
   runApp(const AppFirebase());
 }
 
@@ -20,7 +28,7 @@ class AppFirebase extends StatefulWidget {
 }
 
 class _AppFirebaseState extends State<AppFirebase> {
-  final Future<FirebaseApp>_initialization = Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
+  final Future<FirebaseApp>_initialization = Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +45,21 @@ class _AppFirebaseState extends State<AppFirebase> {
             ),
           );
         } else if(snapshot.connectionState == ConnectionState.done){
+          //INICIALIZAR CONTROLLER DE AUTENTICAÇÃO
+          Get.put(AuthController());
           //CASO COMPLETO, EXIBIR APLICAÇÃO
           return const AppWidget();
         }else{
           //CASO QUALQUER OUTRA COISA EXIBIR LOADING
-          return const Material(
+          return Container(
+            width: 300,
+            height: 300,
             child: Center(
-              child: CircularProgressIndicator(),
-            ),
+              child: Lottie.asset(
+                AppAnimations.loading,
+                fit: BoxFit.contain,
+              ),
+            )
           );
         }
       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/home_controller.dart';
 import 'package:get/get.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/widget/drawers/drawer_widget.dart';
@@ -9,11 +10,12 @@ class AppBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE NAVEGAÇÃO
-    final controller = Get.put(NavigationController(), permanent: true);
+    final controller = NavigationController.instace;
+    //INICIALIZAR HOME CONTROLLER
+    Get.put(HomeController());
     
     return Scaffold(
       key: controller.scaffoldKey,
-      onDrawerChanged: (isOpened) => controller.scaffoldKey.currentState?.openEndDrawer(),
       drawer: const DrawerWidget(),
       body: Obx(() => controller.screens[controller.index.value]),
       bottomNavigationBar: const NavigationBarWidget(),

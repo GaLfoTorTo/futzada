@@ -37,28 +37,32 @@ class ButtonTextWidget extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: iconAfter
-            ? [
-                if (text != null) 
-                  Text(text!),
-                if (icon != null) 
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
-              ]
-            : [
-                if (icon != null) 
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
-                if (text != null) 
-                  Text(text!),
-              ],
-        ),
+        child: text != null
+        //CASO EXISTA TEXTO
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: iconAfter
+              ? [
+                  if (text != null) 
+                    Text(text!),
+                  if (icon != null) 
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Icon(icon!, size: iconSize),
+                    ),
+                ]
+              : [
+                  if (icon != null) 
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Icon(icon!, size: iconSize),
+                    ),
+                  if (text != null) 
+                    Text(text!),
+                ],
+          )
+        //CASO EXISTA APENAS ICONE
+        : Icon(icon!, size: iconSize),
       ),
     );
   }

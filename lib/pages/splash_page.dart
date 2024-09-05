@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
@@ -9,11 +8,6 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //INICIALIZAR CONTROLLER DE AUTENTICAÇÃO
-    final authController = AuthController();
-    //VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-    authController.hasUsuario(context);
-
     return Scaffold(
       backgroundColor: AppColors.green_300,
       body: Center(

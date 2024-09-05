@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:get/get.dart';
+import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:futzada/pages/apresentacao_page.dart';
 import 'package:futzada/pages/home/home_page.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class NavigationController extends GetxController {
+  //DEFINIR CONTROLLER UNICO NO GETX
+  static NavigationController get instace => Get.find();
   //SCAFFOLD KEY
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   //CONTROLADOR DE INDEX NAVIGATION BAR

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/providers/usuario_provider.dart';
+import 'package:futzada/models/usuario_model.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -19,13 +19,16 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   //INSTANCIAR CONTROLLER DE AUTENTICAÇÃO
-  final controller = AuthController();
+  final controller = Get.find<AuthController>();
+  //DADOS DO USUÁRIO
+  late UsuarioModel? usuario;
   //VARIAVEL DE MENSAGEM DE ERRO
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
+    usuario = controller.usuario;
   }
 
   void completeLogout(statusLogout) async {
@@ -34,7 +37,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
     if(!statusLogout){
       //FECHAR MODAL
-      Navigator.of(context).pop();
+      Get.back();
       setState(() {});
     }
   }
@@ -45,7 +48,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       errorMessage = null;
     });
     //TENTAR EFETUAR LOGIN
-    var response = controller.logout(context);
+    var response = controller.logout();
     //MODAL DE STATUS DE REGISTRO DO USUARIO
     showDialog(
       context: context,
@@ -97,9 +100,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //BUSCAR DADOS SALVOS DO USUARIO
-    UsuarioProvider usuarioProvider = Provider.of<UsuarioProvider>(context, listen: false);
-    var usuario = usuarioProvider.usuario;
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
       {'type': 'section', 'title': 'Perfil de Usuário',},
@@ -159,7 +159,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${usuario.nome} ${usuario.sobrenome}',
+                              '${usuario!.nome} ${usuario!.sobrenome}',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: AppColors.blue_500,
@@ -167,9 +167,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if(usuario.userName != null)
+                            if(usuario!.userName != null)
                               Text(
-                                '@${usuario.userName}',
+                                '@${usuario!.userName}',
                                 style: const TextStyle(
                                   color: AppColors.blue_500,
                                   fontSize: 12,

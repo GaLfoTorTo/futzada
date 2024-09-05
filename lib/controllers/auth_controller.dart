@@ -1,34 +1,55 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as getx;
+import 'package:get_storage/get_storage.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'dart:convert';
 import 'package:futzada/models/usuario_model.dart';
-import 'package:futzada/providers/usuario_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:futzada/api/api.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-class AuthController {
-  UsuarioModel? _usuario;
-
-  UsuarioModel get usuario => _usuario!;
+class AuthController extends getx.GetxController{
+  //DEFINIR CONTROLLER UNICO NO GETX
+  static AuthController get instance => getx.Get.find();
+  //INSTANCIA DE MODEL DE USUARIO
+  final _usuario = getx.Rxn<UsuarioModel>();
+  //GETTER DE MODEL DE USUARIO
+  UsuarioModel? get usuario => _usuario.value;
+  //INSTANCIAR STORAGE
+  final storage = GetStorage();
+  //ON READY
+  @override
+  void onReady(){
+    //REMOVER SPLASH
+    FlutterNativeSplash.remove();
+    //FLAG DE PRIMEIRO LOGIN DO USUARIO NO APP
+    storage.writeIfNull('firstLogin', true);
+    //VERIFICAR SE USUÁRIO JA ESTÁ LOGADO
+    hasUsuario();
+  }
 
   //FUNÇÃO DE CONFIGURAÇÕES DE USUÁRIO LOCALMENTE
-  void setUsuario(BuildContext context, UsuarioModel? usuario) {
+  void setUsuario(UsuarioModel? usuario) {
     //VERIFICAR SE USUÁRIO RECEBIDO NÃO ESTA VAZIO
     if(usuario != null){
-      _usuario = usuario;
+      _usuario.value = usuario;
       //SALVAR LOCALMENTE
       saveUsuario(usuario);
-      //INICIALIZAR DADOS DO PROVIDER 
-      Provider.of<UsuarioProvider>(context, listen: false).loadUser(context);
-      //NAVEGAR PARA APRESENTAÇÃO PAGE
-      getx.Get.toNamed('/home');
+      //VERIFICAR SE É O PRIMEIRO LOGIN
+      if(storage.read('firstLogin') == true){
+        //NAVEGAR PARA APRESENTAÇÃO PAGE
+        getx.Get.offAllNamed('/apresentacao');
+        //DEFINIR FIRST LOGIN PARA FALSE
+        storage.write('firstLogin', false);
+      }else{
+        //NAVEGAR PARA APRESENTAÇÃO PAGE
+        getx.Get.offAllNamed('/home');
+      }
     }else{
       //NAVEGAR PARA LOGIN PAGE
-      getx.Get.toNamed('/login');
+      getx.Get.offAllNamed('/login');
     }
   }
 
@@ -38,48 +59,48 @@ class AuthController {
     final storage = await SharedPreferences.getInstance();
     //SALVAR USUARIO LOCALMENTE
     await storage.setString('usuario', usuario.toJson());
-    return;
   }
 
   //FUNÇÃO DE REMOVER DE DADOS DO USUÁRIO LOCALMENTE
-  Future<void> removeUsuario(BuildContext context) async{
+  Future<void> removeUsuario() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
-    //VERIFICAR SE EXISTE A CHAVE USER LOCALMENTE
+    //VERIFICAR SE EXISTE A CHAVE USUARIO LOCALMENTE
     if(storage.containsKey("usuario")){
       //REMOVER USUARIO LOCALMENTE
       storage.remove("usuario");
-      setUsuario(context, null);
+      setUsuario(null);
     }
   }
   
   //FUNÇÃO PARA VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-  Future<void> hasUsuario(BuildContext context) async{
+  Future<void> hasUsuario() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     //VERIFICAR SE EXISTE A CHAVE USER LOCALMENTE
     if(storage.containsKey("usuario")){
       //RESGATAR DADOS SALVOS DO USUARIO
-      final usuario = storage.get('usuario') as String;
-      setUsuario(context, UsuarioModel.fromJson(usuario));
+      final usuarioData = storage.get('usuario') as String;
+      //DEFINIR USUARIO
+      setUsuario(UsuarioModel.fromJson(usuarioData));
     }else{
-      setUsuario(context, null);
+      //RETORNAR STATUS
+      setUsuario(null);
     }
-    return;
   }
   
   //FUNÇÃO PARA VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-  Future<UsuarioModel?> getUsuario(BuildContext context) async{
+  Future<UsuarioModel?> getUsuario() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
     await Future.delayed(Duration(seconds: 2));
     //VERIFICAR SE EXISTE A CHAVE USER LOCALMENTE
     if(storage.containsKey("usuario")){
       //RESGATAR DADOS SALVOS DO USUARIO
-      final usuario = storage.get('usuario') as String;
+      final usuarioData = storage.get('usuario') as String;
       //RETORNAR USUARIO EM FORMATO DE JSON
-      return UsuarioModel.fromJson(usuario);
+      return UsuarioModel.fromJson(usuarioData);
     }
     return null;
   }
@@ -87,41 +108,27 @@ class AuthController {
   //FUNÇÃO DE LOGIN COM GOOLGE
   Future<Map<String, dynamic>>googleLogin(BuildContext context) async {
     //INICIALIZAR AUTHENTICAÇÃO COM GOOGLE PELO EMAIL
-    GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
-      'email',
-    ]);
+    GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
     //TENTAR LOGAR
     try {
       //ENVIAR SOLICITAÇÃO AO GOOGLE
       final resp = await googleSignIn.signIn();
-      String? nome;
-      String? sobrenome;
-      //VERIFICAR SE NOME DO USUARIO NÃO ESTA VAZIO
-      if(resp!.displayName != null){
-        //RESGATAR DADOS DO USUARIO VINDOS DO GOOGLE
-        var nome_completo = resp.displayName!.split(' ');
-        nome = nome_completo[0];
-        sobrenome = nome_completo.contains(1) ? nome_completo[1] : '';
-      }else{
-        nome = 'Usuario';
-        sobrenome = 'Anônimo';
-      }
       //RESGATAR DADOS DO USUÁRIO FORNECIDOS PELO GOOGLE
+      String? nome = resp?.displayName?.split(' ')[0] ?? 'Usuario';
+      String? sobrenome = resp?.displayName?.split(' ').skip(1).join(' ') ?? 'Anônimo';
+      //CRIAR NOVA INSTANCIA DE USUARIO COM DADOS DO GOOGLE
       final usuario = UsuarioModel(
         nome: nome,
         sobrenome: sobrenome,
-        email: resp.email,
-        foto: resp.photoUrl
+        email: resp?.email,
+        foto: resp?.photoUrl,
       );
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
-      setUsuario(context, usuario);
+      setUsuario(usuario);
       //RETORNAR SUCESSO
-      return{
-        'status' : 200
-      };
+      return{'status' : 200};
     } catch (e) {
-      print(e);
-      setUsuario(context, null);
+      setUsuario(null);
       //RETORNAR MENSAGEM DE ERRO NO LOGIN DO GOOGLE
       return {
         'status': 401,
@@ -131,7 +138,7 @@ class AuthController {
   }
 
   //FUNÇÃO DE LOGIN 
-  Future<Map<String, dynamic>>login(BuildContext context, String user, String password) async {
+  Future<Map<String, dynamic>>login(String user, String password) async {
    //BUSCAR URL BASICA
     var url = '${AppApi.url}login';
     //TENTAR SALVAR USUÁRIO
@@ -141,10 +148,7 @@ class AuthController {
       dio.options.connectTimeout = const Duration(seconds: 30);
       dio.options.receiveTimeout = const Duration(seconds: 30);
       // CRIAR OBJETO JSON
-      var data = jsonEncode({
-        'user': user,
-        'password': password,
-      });
+      var data = jsonEncode({'user': user, 'password': password});
       // INICIALIZAR REQUISIÇÃO
       var response = await dio.post(
         url,
@@ -156,30 +160,18 @@ class AuthController {
       //VERIFICAR RESPOSTA DO SERVIDOR
       if(response.statusCode == 200) {
         //RESGATAR OS DADOS DE USUARIO
-        UsuarioModel usuario = UsuarioModel();
-        //RESGATAR DADOS RECEBIDOS
-        Map<String, dynamic> data = response.data is String
-          ? jsonDecode(response.data)
-          : response.data;
-        //GERAR MODEL DE USUARIO APARTIR DE DADOS RECEBIDOS
-        usuario = usuario.copyWithMap(updates: data['usuario']);
+        UsuarioModel usuario = UsuarioModel.fromMap(response.data['usuario']);
         //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
-        setUsuario(context, usuario);
+        setUsuario(usuario);
         //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
-        return {
-          'status': 200,
-        };
+        return {'status': 200};
       } else {
         //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
-        setUsuario(context, null);
-        //RESGATAR MENSAGEM DE ERRO
-        var errorMessage = response.data is String
-            ? jsonDecode(response.data)
-            : response.data;
+        setUsuario(null);
         //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
         return {
           'status': 401,
-          'message': errorMessage['message'],
+          'message': response.data['message'],
         };
       }
     } on DioException catch (e) {
@@ -189,68 +181,53 @@ class AuthController {
   }
   
   //FUNÇÃO DE LOGIN 
-  Future<Map<String, dynamic>>logout(BuildContext context) async {
+  Future<Map<String, dynamic>>logout() async {
     //BUSCAR URL BASICA
     var url = '${AppApi.url}logout';
     //TENTAR SALVAR USUÁRIO
     try {
-      //RESGATAR USUARIO SALVO LOCALMENTE
-      var usuario = await getUsuario(context);
-      //RESGATAR UUID DO USUARIO LOCALMENTE
-      String? uuid = usuario!.uuid;
-      //RESGATAR TOKEN JWT DO USUARIO LOCALMENTE
-      String? token = usuario.token;
-      //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
-      removeUsuario(context);
-      //VERIFICAR SE UUID E TOKEN EXISTEM NO LOCAL
-      if(uuid != null && token != null){ 
-        //INSTANCIAR DIO
+      //RESGATAR USUARIO SALVO LOCAMENTE
+      var usuario = await getUsuario();
+      //VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
+      if (usuario != null) {
+        //CONFIGURAR DIO
         var dio = Dio();
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(seconds: 5);
-        //INICIALIZAR REQUISIÇÃO
+        //ENVIAR REQUISIÇÃO DE LOGOUT
         var response = await dio.post(
-          url, 
+          url,
           options: Options(
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer $token'
+              'Authorization': 'Bearer ${usuario.token}'
             },
           ),
-          data: FormData.fromMap({
-            'uuid': uuid
-          }),
+          data: FormData.fromMap({'uuid': usuario.uuid}),
         );
-        //VERIFICAR RESPOSTA DO SERVIDOR
-        if(response.statusCode == 200) {
-          //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
-          return {
-            'status': 200,
-          };
+        //VERIFICAR STATUS DE RESPOSTA
+        if (response.statusCode == 200) {
+          //REMOVER USUÁRIO LOCAL
+          removeUsuario();
+          //RETORNAR STATUS DE SUCCESSO
+          return {'status': 200};
         } else {
-          //RESGATAR MENSAGEM DE ERRO
-          var errorMessage = response.data is String
-              ? jsonDecode(response.data)
-              : response.data;
-          //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
+          //RETORNAR STATUS DE ERRO
           return {
             'status': 500,
-            'message': errorMessage['message'],
+            'message': response.data['message'],
           };
         }
-      }else{
-        //INICIALIZAR GOOGLE SIGN IN
+      } else {
+        //EFETUAR LOGOUT DO GOOGLE
         GoogleSignIn googleSignIn = GoogleSignIn();
-        //EFETUAR LOG OUT DA CONTA DO GOOGLE
         await googleSignIn.signOut();
-    
+        //RETORNAR STATUS DE SUCCESSO
+        return {'status': 200};
       }
-      return {
-        'status': 200,
-      };
     } on DioException catch (e) {
       //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
-      removeUsuario(context);
+      removeUsuario();
       //TRATAR ERROS
       return AppHelper.tratamentoErros(e);
     }

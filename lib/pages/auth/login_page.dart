@@ -82,7 +82,6 @@ class _LoginPageState extends State<LoginPage> {
     });
     //TENTAR EFETUAR LOGIN
     var response = controller.login(
-      context,
       userController.text,
       passwordController.text
     );

@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_icones.dart';
 
 class SelectRoundedWidget extends StatelessWidget {
   final String value;
+  final Color? color;
+  final double? size;
   final IconData icon;
+  final Color? iconColor;
+  final double? iconSize;
   final bool checked;
-  final CadastroController controller;
+  final dynamic controller;
   final Function onChanged;
 
   const SelectRoundedWidget({
     super.key,
     required this.value,
+    this.color = AppColors.gray_300,
+    this.size = 130,
     required this.icon,
+    this.iconColor = AppColors.white,
+    this.iconSize = 100,
     required this.checked,
     required this.controller,
     required this.onChanged
@@ -20,6 +28,11 @@ class SelectRoundedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<IconData>list = [
+      AppIcones.foot_field_solid,
+      AppIcones.foot_society_solid,
+      AppIcones.foot_futsal_solid,
+    ];
     return InkWell(
       onTap: () => onChanged(value),
       highlightColor: Colors.transparent,
@@ -27,10 +40,10 @@ class SelectRoundedWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 130,
-            height: 130,
+            width: size,
+            height: size,
             decoration: BoxDecoration(
-              color: checked == true ? AppColors.green_300 : AppColors.gray_300,
+              color: checked ? AppColors.green_300 : color,
               borderRadius: BorderRadius.circular(80),
               boxShadow: [
                 if (checked == true )
@@ -44,11 +57,21 @@ class SelectRoundedWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(15),
+              child: list.contains(icon)?
+            Transform.rotate(
+              angle: - 45 * 3.14159 / 200,
               child: Icon(
                 icon,
-                color: AppColors.white,
-                size: 100,
-              ), 
+                color: iconColor,
+                size: iconSize,
+              ),
+            ) 
+          :
+            Icon(
+              icon,
+              color: iconColor,
+              size: iconSize,
+            ),
             ),
           ),
           Padding(

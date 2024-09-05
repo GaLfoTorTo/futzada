@@ -15,8 +15,8 @@ import 'package:futzada/pages/pelada/cadastro/dados_pelada_step.dart';
 class AppRoutes {
   static final routes = [
       GetPage(name: "/splash", page: () => const SplashPage()),
-      GetPage(name: "/apresentacao", page: () => const ApresentacaoPage()),
-      GetPage(name: "/login", page: () => const LoginPage()),
+      GetPage(name: "/apresentacao", page: () => const ApresentacaoPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/login", page: () => const LoginPage(), transition: Transition.leftToRight),
       //CADASTRO
       GetPage(name: "/cadastro/apresentacao", page: () =>  const ApresentacaoStep(), transition: Transition.rightToLeft),
       GetPage(name: "/cadastro/dados_basicos", page: () =>  const DadosBasicosStep(), transition: Transition.rightToLeft),

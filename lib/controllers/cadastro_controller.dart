@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
-import 'package:get/get.dart' as getx;
+import 'package:dio/dio.dart'as Dio;
+import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/casdastro_model.dart';
 
-class CadastroController extends getx.GetxController {
+class CadastroController extends GetxController {
+  //DEFINIR CONTROLLER UNICO NO GETX
+  static CadastroController get instace => Get.find();
   //INSTANCIA DE CADASTRO MODEL
   CadastroModel model = CadastroModel();
   // CONTROLLERS DE DADOS BASICOS
@@ -63,17 +65,17 @@ class CadastroController extends getx.GetxController {
     //TENTAR SALVAR USUÁRIO
     try {
       //INSTANCIAR DIO
-      var dio = Dio();
+      var dio = Dio.Dio();
       //RESGATAR DADOS DE USUARIO NO FORMATO DE MAP
       var formDataMap = model.toMap();
       //CRIAR OBJETO FORMDATA
-      var formData = FormData.fromMap(formDataMap);
+      var formData = Dio.FormData.fromMap(formDataMap);
       //VERIFICAR SE EXISTE FOTO NA REQUISIÇÃO
       if (model.foto != null) {
         //ADICIONAR IMAGEM NO FORMDATA
         formData.files.add(MapEntry(
           'foto',
-          await MultipartFile.fromFile(
+          await Dio.MultipartFile.fromFile(
             model.foto!, 
             filename: model.foto!.split('/').last,
           ),
@@ -82,7 +84,7 @@ class CadastroController extends getx.GetxController {
       //INICIALIZAR REQUISIÇÃO
       var response = await dio.post(
         url, 
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        options: Dio.Options(headers: {'Content-Type': 'multipart/form-data'}),
         data: formData,
       );
       //VERIFICAR RESPOSTA DO SERVIDOR
@@ -100,7 +102,7 @@ class CadastroController extends getx.GetxController {
           'message': errorMessage['message'],
         };
       }
-    } on DioException catch (e) {
+    } on Dio.DioException catch (e) {
       //TRATAR ERROS
       return AppHelper.tratamentoErros(e);
     }

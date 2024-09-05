@@ -119,13 +119,15 @@ class ApresentacaoPageStateState extends State<ApresentacaoPage> {
                   ),
                 ),
                 ButtonTextWidget(
-                  text: currentPage != 4 ? "Começar" : null,
+                  text: currentPage == 4 ? "Começar" : null,
                   textColor: AppColors.white,
-                  icon: currentPage == 4 ? Icons.chevron_right : null,
+                  icon: currentPage != 4 ? Icons.chevron_right : null,
+                  iconSize: 30,
+                  iconAfter: true,
                   backgroundColor: AppColors.blue_500,
-                  width: 100,
+                  width: currentPage == 4 ? 100 : null,
                   action: () {
-                    if(currentPage == 4){
+                    if(currentPage != 4){
                       alterPage(context, "Proximo");
                     }else{
                       Get.toNamed('/home');

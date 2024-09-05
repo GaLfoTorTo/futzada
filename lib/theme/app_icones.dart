@@ -159,8 +159,8 @@ class AppIcones {
   static const IconData male_solid = IconData(0xe86d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData map_marked_outline = IconData(0xe86e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData map_marked_solid = IconData(0xe86f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData map_marker_outline = IconData(0xe870, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData map_marker_solid = IconData(0xe871, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData marker_outline = IconData(0xe870, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData marker_solid = IconData(0xe871, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData medal_outline = IconData(0xe872, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData medal_solid = IconData(0xe873, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData minus_outline = IconData(0xe874, fontFamily: _kFontFam, fontPackage: _kFontPkg);

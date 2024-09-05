@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
