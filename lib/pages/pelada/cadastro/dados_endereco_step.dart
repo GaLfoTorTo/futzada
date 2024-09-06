@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/widget/inputs/input_date_widget.dart';
 import 'package:futzada/widget/inputs/select_days_week_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:get/get.dart';
@@ -150,7 +153,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
               controller: controller,
               onSaved: controller.onSaved,
               type: TextInputType.text,
-              adressSearch: openAdressSearch,
+              showModal: openAdressSearch,
             ),
             const Divider(),
             Expanded(
@@ -193,17 +196,14 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
         ),
       ),
       isScrollControlled: true,
-    ).whenComplete(() {
-      //REMOVER FOCO DO BOTÃO AO FECHAR BOTTOMSHEET
-      FocusScope.of(context).unfocus(); 
-    });
+    );
   }
 
   //SELECIONAR O MELHOR PÉ
   void selectTipoCampo(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      controller.tipoCampoController.text = value;
+      controller.categoriaController.text = value;
       controller.onSaved({"tipoCampo": value});
       //VERIFICAR E ALTERAR PÉ SELECIONADO
       checkedCampo = value == 'Campo' ?  true : false;
@@ -215,11 +215,33 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   //FUNÇÃO SELECIONAR DIA DA SEMANA
   void selectDaysWeek(String value){
     setState(() {
+      if(controller.diasSemana.contains(value)){
+        controller.diasSemana.remove(value);
+      }else{
+        controller.diasSemana.add(value);
+      }
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
       final day = diasSemana.firstWhere((item) => item['dia'] == value);
       //ATUALIZAR O VALOR DE CHECKED
       day['checked'] = !(day['checked'] as bool);
+      //ADICIONAR A MODEL DE PELADA
+      controller.onSaved({"diasSemana": jsonEncode(controller.diasSemana)});
     });
+  }
+
+  //FUNÇÃO PARA ABRIR PICKER DE DATA
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? dateSelected = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+      cancelText: "Cancelar",
+    );
+    if (dateSelected != null) {
+      //ATUALIZAR VALOR DO CONTROLER
+      controller.dataController.text = AppHelper.formatDate(dateSelected);
+    }
   }
 
   //VALIDAÇÃO DA ETAPA
@@ -242,9 +264,9 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     var dimensions = MediaQuery.of(context).size;
 
     //RESGATAR VALOR SELECIONADO
-    bool checkedCampo = controller.tipoCampoController.text == 'Campo' ? true : false;
-    bool checkedSociety = controller.tipoCampoController.text == 'Society' ? true : false;
-    bool checkedFutsal = controller.tipoCampoController.text == 'Futsal' ? true : false;
+    bool checkedCampo = controller.categoriaController.text == 'Campo' ? true : false;
+    bool checkedSociety = controller.categoriaController.text == 'Society' ? true : false;
+    bool checkedFutsal = controller.categoriaController.text == 'Futsal' ? true : false;
 
     //LISTA DE CATEGORIAS DE CAMPO
     final List<Map<String, dynamic>> melhorPe = [
@@ -289,9 +311,9 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     ),]
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      "Certo então vamos lá! Informe o Nome, a Bio, a Imagem de capa e a Visibilidade da pelada. Você também pode definir as configurações de colaboradores da pelada.",
+                      "Onde vamos jogar ? Informe os dados de endereço, categoria, data e horário de sua pelada.",
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -303,7 +325,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     controller: controller,
                     onSaved: controller.onSaved,
                     type: TextInputType.streetAddress,
-                    adressSearch: openAdressSearch,
+                    showModal: openAdressSearch,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
@@ -350,6 +372,14 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                         );
                       }).toList(),
                     ),
+                  ),
+                  InputDateWidget(
+                    name: 'data',
+                    label: 'Data',
+                    textController: controller.dataController,
+                    controller: controller,
+                    onSaved: controller.onSaved,
+                    showModal: () => selectDate(context),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),

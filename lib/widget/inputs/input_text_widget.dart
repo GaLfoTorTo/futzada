@@ -12,7 +12,7 @@ class InputTextWidget extends StatefulWidget {
   final TextInputType? type;
   final int? maxLength;
   final Function? validator;
-  final Function? adressSearch;
+  final Function? showModal;
   final dynamic controller;
   final TextEditingController textController;
 
@@ -28,7 +28,7 @@ class InputTextWidget extends StatefulWidget {
     this.type,
     this.maxLength,
     this.validator,
-    this.adressSearch,
+    this.showModal,
     required this.textController, 
     required this.controller, 
   });
@@ -115,7 +115,9 @@ class _InputTextWidgetState extends State<InputTextWidget> {
             //REMOVE FOCU DO INPUT 
             FocusScope.of(context).unfocus();
             //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
-            widget.adressSearch!();
+            widget.showModal!();
+            //REMOVER FOCO DO BOTÃO
+            FocusScope.of(context).requestFocus(FocusNode());
           }
         },
       ),

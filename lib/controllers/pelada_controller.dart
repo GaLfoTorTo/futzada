@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart' as Dio;
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
@@ -17,7 +18,11 @@ class PeladaController extends ChangeNotifier {
   late final TextEditingController visibilidadeController = TextEditingController();
   late final TextEditingController fotoController = TextEditingController();
   late final TextEditingController enderecoController = TextEditingController();
-  late final TextEditingController tipoCampoController = TextEditingController();
+  late final TextEditingController categoriaController = TextEditingController();
+  late final TextEditingController diasSemanaController = TextEditingController();
+  late final TextEditingController dataController = MaskedTextController(mask: "00/00/0000");
+  //CONTROLLER DE POSIÇÕES
+  final List<dynamic> diasSemana = [];
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){

@@ -172,15 +172,15 @@ class AppStyle {
   //CHECKBOX LIGHT/DARK THEME 
   static CheckboxThemeData checkBoxTheme = CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-    checkColor: MaterialStateColor.resolveWith((state){
-      if(state.contains(MaterialState.selected)){
+    checkColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
         return AppColors.white;
       }else{
         return AppColors.gray_500;
       }
     }),
-    fillColor: MaterialStateColor.resolveWith((state){
-      if(state.contains(MaterialState.selected)){
+    fillColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
         return AppColors.green_300;
       }else{
         return Colors.transparent;
@@ -347,6 +347,113 @@ class AppStyle {
       borderSide: BorderSide(color: AppColors.red_300),
     ),
     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+  );
+
+  //DATE PICKER LIGHT THEME
+  static final DatePickerThemeData lightDatePickerTheme = DatePickerThemeData(
+    headerBackgroundColor: AppColors.green_300,
+    headerForegroundColor: AppColors.white,
+    backgroundColor: AppColors.white,
+    rangePickerBackgroundColor: AppColors.white,
+    rangePickerHeaderBackgroundColor: AppColors.green_300,
+    rangePickerHeaderForegroundColor: AppColors.white,
+    rangeSelectionBackgroundColor: AppColors.green_300,
+    dayBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.white;
+    }),
+    dayForegroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.white;
+      }
+      return AppColors.dark_500;
+    }),
+    todayBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.white;
+    }),
+    todayForegroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.white;
+      }
+      return AppColors.dark_500;
+    }),
+    yearBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.white;
+    }),
+    yearForegroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.white;
+      }
+      return AppColors.dark_500;
+    }),
+    dayStyle: const TextStyle(
+      color: AppColors.green_300
+    ),
+    yearStyle: const TextStyle(
+      color: AppColors.green_300
+    ),
+    confirmButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(AppColors.green_300),
+      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+    ),
+    cancelButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(AppColors.red_300),
+      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+    )
+  );
+  
+  ////DATE PICKER LIGHT THEME
+  static final DatePickerThemeData darkDatePickerTheme = DatePickerThemeData(
+    headerBackgroundColor: AppColors.green_300,
+    headerForegroundColor: AppColors.dark_500,
+    backgroundColor: AppColors.dark_500,
+    rangePickerBackgroundColor: AppColors.dark_500,
+    rangePickerHeaderBackgroundColor: AppColors.green_300,
+    rangePickerHeaderForegroundColor: AppColors.white,
+    rangeSelectionBackgroundColor: AppColors.green_300,
+    dayBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.dark_500;
+    }),
+    dayForegroundColor: const WidgetStatePropertyAll(AppColors.white),
+    todayBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.dark_500;
+    }),
+    todayForegroundColor: const WidgetStatePropertyAll(AppColors.white),
+    yearBackgroundColor: WidgetStateProperty.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.dark_500;
+    }),
+    yearForegroundColor: const WidgetStatePropertyAll(AppColors.white),
+    dayStyle: const TextStyle(
+      color: AppColors.green_300
+    ),
+    yearStyle: const TextStyle(
+      color: AppColors.green_300
+    ),
+    confirmButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(AppColors.green_300),
+      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+    ),
+    cancelButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(AppColors.red_300),
+      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+    )
   );
 
   //DRAWER LIGHT THEME
