@@ -229,7 +229,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     });
   }
 
-  //FUNÇÃO PARA ABRIR PICKER DE DATA
+  //FUNÇÃO PARA PICKER DE DATA
   Future<void> selectDate(BuildContext context) async {
     final DateTime? dateSelected = await showDatePicker(
       context: context,
@@ -243,6 +243,27 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       controller.dataController.text = AppHelper.formatDate(dateSelected);
     }
   }
+
+  //FUNÇÃO PARA PICKER DE HORAS
+  Future<void> selectTime(BuildContext context, controller) async {
+    final TimeOfDay? timeSelected = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            alwaysUse24HourFormat: false,
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (timeSelected != null) {
+      //ATUALIZAR VALOR DO CONTROLER
+      controller.text = timeSelected.toString();
+    }
+  }
+
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
@@ -380,6 +401,37 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     controller: controller,
                     onSaved: controller.onSaved,
                     showModal: () => selectDate(context),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: dimensions.width / 2 - 20,
+                          child: InputDateWidget(
+                            name: 'hora_inicio',
+                            label: 'Hora de Início',
+                            textController: controller.horaInicioController,
+                            controller: controller,
+                            onSaved: controller.onSaved,
+                            showModal: () => selectTime(context, controller.horaInicioController),
+                          ),
+                        ),
+                        Container(
+                          width: dimensions.width / 2 - 20,
+                          child: InputDateWidget(
+                            name: 'hora_fim',
+                            label: 'Hora de Fim',
+                            textController: controller.horaFimController,
+                            controller: controller,
+                            onSaved: controller.onSaved,
+                            showModal: () => selectTime(context, controller.horaFimController),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),

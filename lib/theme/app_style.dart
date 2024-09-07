@@ -401,12 +401,12 @@ class AppStyle {
       color: AppColors.green_300
     ),
     confirmButtonStyle: const ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(AppColors.green_300),
-      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
     ),
     cancelButtonStyle: const ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(AppColors.red_300),
-      foregroundColor: WidgetStatePropertyAll(AppColors.white),
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
     )
   );
   
@@ -447,12 +447,86 @@ class AppStyle {
       color: AppColors.green_300
     ),
     confirmButtonStyle: const ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(AppColors.green_300),
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
       foregroundColor: WidgetStatePropertyAll(AppColors.white),
     ),
     cancelButtonStyle: const ButtonStyle(
-      backgroundColor: WidgetStatePropertyAll(AppColors.red_300),
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
       foregroundColor: WidgetStatePropertyAll(AppColors.white),
+    )
+  );
+
+  //TIME PICKER LIGHT THEME
+  static final TimePickerThemeData lightTimePickerTheme = TimePickerThemeData(
+    backgroundColor: AppColors.white,
+    dialBackgroundColor: AppColors.light,
+    dialHandColor: AppColors.green_300,
+    dialTextColor: AppColors.dark_500,
+    dayPeriodColor: WidgetStateColor.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.red_300;
+      }
+      return AppColors.white;
+    }),
+    dayPeriodTextColor:WidgetStateColor.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.white;
+      }
+      return AppColors.dark_500;
+    }),
+    hourMinuteColor: WidgetStateColor.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.green_100.withOpacity(0.5);
+    }),
+    hourMinuteTextStyle: const TextStyle(
+      fontSize: AppSize.fontXxl,
+      fontWeight: FontWeight.bold
+    ),
+    hourMinuteTextColor: AppColors.white,
+    entryModeIconColor: AppColors.dark_500,
+    confirmButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
+    ),
+    cancelButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
+    )
+  );
+  //TIME PICKER DARK THEME
+  static final TimePickerThemeData darkTimePickerTheme = TimePickerThemeData(
+    backgroundColor: AppColors.dark_500,
+    dialBackgroundColor: AppColors.dark_300,
+    dialHandColor: AppColors.green_300,
+    dialTextColor: AppColors.white,
+    dayPeriodColor: WidgetStateColor.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.red_300;
+      }
+      return AppColors.dark_500;
+    }),
+    dayPeriodTextColor: AppColors.white,
+    hourMinuteColor: WidgetStateColor.resolveWith((state){
+      if(state.contains(WidgetState.selected)){
+        return AppColors.green_300;
+      }
+      return AppColors.green_100.withOpacity(0.5);
+    }),
+    hourMinuteTextStyle: const TextStyle(
+      fontSize: AppSize.fontXxl,
+      fontWeight: FontWeight.bold
+    ),
+    hourMinuteTextColor: AppColors.white,
+    entryModeIconColor: AppColors.white,
+    confirmButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
+    ),
+    cancelButtonStyle: const ButtonStyle(
+      backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+      foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
     )
   );
 

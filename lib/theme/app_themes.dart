@@ -17,6 +17,7 @@ class AppTheme{
     navigationBarTheme: AppStyle.lightNavigationTheme,
     inputDecorationTheme: AppStyle.lightInputTheme,
     datePickerTheme: AppStyle.lightDatePickerTheme,
+    timePickerTheme: AppStyle.lightTimePickerTheme,
     checkboxTheme: AppStyle.checkBoxTheme,
     textButtonTheme: AppStyle.textButtonTheme,
     elevatedButtonTheme: AppStyle.elevatedButtonTheme,
@@ -25,7 +26,6 @@ class AppTheme{
     bottomSheetTheme: AppStyle.lightBottomSheetTheme,
     drawerTheme: AppStyle.lightDrawerTheme,
     tabBarTheme: AppStyle.lightTabBarTheme,
-    /* datePickerTheme: AppStyle.lightDatePickerTheme, */
   );
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
@@ -39,6 +39,7 @@ class AppTheme{
     navigationBarTheme: AppStyle.darkNavigationTheme,
     inputDecorationTheme: AppStyle.darkInputTheme,
     datePickerTheme: AppStyle.darkDatePickerTheme,
+    timePickerTheme: AppStyle.darkTimePickerTheme,
     checkboxTheme: AppStyle.checkBoxTheme,
     textButtonTheme: AppStyle.textButtonTheme,
     elevatedButtonTheme: AppStyle.elevatedButtonTheme,

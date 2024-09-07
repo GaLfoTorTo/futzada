@@ -21,6 +21,8 @@ class PeladaController extends ChangeNotifier {
   late final TextEditingController categoriaController = TextEditingController();
   late final TextEditingController diasSemanaController = TextEditingController();
   late final TextEditingController dataController = MaskedTextController(mask: "00/00/0000");
+  late final TextEditingController horaInicioController = MaskedTextController(mask: "00:00");
+  late final TextEditingController horaFimController = MaskedTextController(mask: "00:00");
   //CONTROLLER DE POSIÇÕES
   final List<dynamic> diasSemana = [];
 
