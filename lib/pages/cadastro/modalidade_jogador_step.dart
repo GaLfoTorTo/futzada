@@ -10,7 +10,7 @@ import 'package:futzada/widget/buttons/button_circular_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
-import 'package:futzada/widget/inputs/input_checkbox_widget.dart';
+import 'package:futzada/widget/inputs/input_posicao_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/select_widget.dart';
 import 'package:get/get.dart';
@@ -174,7 +174,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "A modalidade jogador são para os atletas da pelada, aqueles que entregam tudo de si dentro de campo com suas atuações.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -206,7 +206,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "Informe em quais posições você costuma ou gosta de joga, seja no campo, quadra ou campos society. Você pode escolher mais de uma posição mas deve definir uma como sendo a principal.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -255,7 +255,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                                             height: 400,
                                             color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
                                           ),
-                                          InputCheckboxWidget(
+                                          InputPosicaoWidget(
                                             title: item['posicao'],
                                             sigla: item['sigla'],
                                             isChecked: item['checked'],

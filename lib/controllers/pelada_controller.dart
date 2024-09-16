@@ -23,8 +23,20 @@ class PeladaController extends ChangeNotifier {
   late final TextEditingController dataController = MaskedTextController(mask: "00/00/0000");
   late final TextEditingController horaInicioController = MaskedTextController(mask: "00:00");
   late final TextEditingController horaFimController = MaskedTextController(mask: "00:00");
+  late final bool colaboradoresController;
+  late final TextEditingController permissoesController = TextEditingController();
+  late final double qtdJogadoresController;
   //CONTROLLER DE POSIÇÕES
   final List<dynamic> diasSemana = [];
+  //CONTROLLER DE PERMISSÕES
+  final List<dynamic> permissoes = [];
+  //CONTROLLER DE COLABORADORES
+  bool activeColaboradores = false;
+  //CONTROLLER DE SLIDER
+  double qtdJogadores = 11;
+  double minJogadores = 8;
+  double maxJogadores = 11;
+  int divisions = 3;
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){

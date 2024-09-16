@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 
-class InputCheckBoxWidget extends StatelessWidget {
-  final String name;
-  final bool? value;
+class InputPosicaoWidget extends StatelessWidget {
+  final String title;
+  final String? sigla;
+  final String? icon;
+  final bool? isChecked;
   final Function onChanged;
 
-  const InputCheckBoxWidget({
+  const InputPosicaoWidget({
     super.key,
-    required this.name, 
-    this.value = false,
+    required this.title, 
+    required this.sigla, 
+    this.icon,
+    this.isChecked = false,
     required this.onChanged 
   });
 
@@ -20,19 +25,28 @@ class InputCheckBoxWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: icon != null 
+            ? SvgPicture.asset(
+                icon!,
+                width: 30,
+                height: 30,
+              )
+            :null,
+          ),
           Transform.scale(
             scale: 2,
             child: Checkbox(
-              value: value,
+              value: isChecked,
               onChanged: (value) {
-                onChanged(name);
+                onChanged(value, sigla);
               },
               activeColor: AppColors.green_300,
-              side: const BorderSide(color: AppColors.gray_500, width: 2),
             ),
           ),
           Text(
-            name,
+            title,
             style: Theme.of(context).textTheme.titleSmall,
             textAlign: TextAlign.center,
           )

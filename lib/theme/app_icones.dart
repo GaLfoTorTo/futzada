@@ -45,6 +45,10 @@ class AppIcones {
   };
   //REDES SOCIAIS
   static const String google = "assets/icones/google.svg";
+  //LINHAS CAMPO
+  static const String linhasCampo = "assets/icones/linhas_campo.svg";
+  static const String linhasSociety = "assets/icones/linhas_society.svg";
+  static const String linhasQuadra = "assets/icones/linhas_quadra.svg";
 
   /* CUSTOM ICONE */
   static const IconData apito = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);

@@ -234,15 +234,11 @@ class _ConclusaoStepStateState extends State<ConclusaoStep>  with SingleTickerPr
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     "Estamos quase lá! Para finalizar seu registro, assinale que você aceita os termos de uso e as politicas de privacidade do app para concluir seu cadastro.",
-                    style: TextStyle(
-                      color: AppColors.gray_500,
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                     textAlign: TextAlign.center,
                   ),
                 ),

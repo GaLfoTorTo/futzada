@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/widget/inputs/input_date_widget.dart';
 import 'package:futzada/widget/inputs/select_days_week_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
+import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -15,7 +15,7 @@ import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class DadosEnderecoStep extends StatefulWidget {  
   const DadosEnderecoStep({super.key});
@@ -27,16 +27,17 @@ class DadosEnderecoStep extends StatefulWidget {
 class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
-  //CONTROLLER DE NAVEGAÇÃO DE HOME
-  final controller = Get.put(PeladaController());
-  //DEFINIR ARMAZENAMENTO DA IMAGEM
-  File? imageFile;
-  //INICIALIZAR IMAGE PICKER
-  final ImagePicker imagePicker = ImagePicker();
-  //DEFINIR TIPOS DE CAMPO
-  bool checkedCampo = false;
-  bool checkedSociety = false;
-  bool checkedFutsal = false;
+  //CONTROLLER DE REGISTRO DA PELADA
+  final controller = Get.find<PeladaController>();
+  // Lista de endereços fictícios para demonstração
+  final List<Map<String, String>> enderecos = [
+    {"logradouro":"1234 Market St, San Francisco, CA","complemento":"endereco 1 St, San Francisco, CA Complemento de endereço"},
+    {"logradouro":"5678 Mission St, San Francisco, CA","complemento":"endereco 2 St, San Francisco, CA Complemento de endereço"},
+    {"logradouro":"9101 Union St, San Francisco, CA","complemento":"endereco 3 St, San Francisco, CA Complemento de endereço"},
+    {"logradouro":"1123 Castro St, San Francisco, CA","complemento":"endereco 4 St, San Francisco, CA Complemento de endereço"},
+  ];
+  //DATA FIXA
+  bool dataFixa = false;
   //LISTA DE DIAS DA SEMANA
   final List<Map<String, dynamic>> diasSemana = [
     {'dia':'Dom', 'checked':false},
@@ -47,79 +48,14 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     {'dia':'Sex', 'checked':false},
     {'dia':'Sab', 'checked':false},
   ];
+  //CATEGORIA
+  String? categoria;
 
   @override
   void initState() {
     super.initState();
+    categoria = controller.categoriaController.text;
   }
-
-  //FUNÇÃO PARA BUSCAR IMAGEM
-  Future<void> getImage() async {
-    final image = await imagePicker.pickImage(source: ImageSource.gallery);
-    //VERIFICAR SE IMAGEM FOI SELECIONADA
-    if (image != null) {
-      setState(() {
-        imageFile = File(image.path);
-        controller.onSaved({'foto': image.path});
-      });
-    }
-  }
-
-  //FUNÇÃO DE EXIBIÇÃO DE CAPA DA PELADA
-  dynamic capaImage(imageFile){
-    if(imageFile != null){
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Container(
-          width: double.infinity,
-          height: 150,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: FileImage(imageFile!) as ImageProvider<Object>,
-              fit: BoxFit.cover
-            ),
-            border: Border.all(
-              color: AppColors.gray_500,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-    }else{
-      return Opacity(
-        opacity: 0.3,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Container(
-            width: double.infinity,
-            height: 150,
-            decoration: BoxDecoration(
-              color: AppColors.gray_700,
-              border: Border.all(
-                color: AppColors.gray_500,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              AppIcones.camera_solid,
-              color: AppColors.blue_500,
-              size: 50,
-            ),
-          ),
-        ),
-      );
-    }
-  }
-
-  // Lista de endereços fictícios para demonstração
-  final List<Map<String, String>> enderecos = [
-    {"logradouro":"1234 Market St, San Francisco, CA","complemento":"endereco 1 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"5678 Mission St, San Francisco, CA","complemento":"endereco 2 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"9101 Union St, San Francisco, CA","complemento":"endereco 3 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"1123 Castro St, San Francisco, CA","complemento":"endereco 4 St, San Francisco, CA Complemento de endereço"},
-  ];
 
   //FUNÇÃO PARA ABRIR BOTTOMSHEET
   void openAdressSearch() {
@@ -205,10 +141,27 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       //ATUALIZAR VALOR DO CONTROLER
       controller.categoriaController.text = value;
       controller.onSaved({"tipoCampo": value});
-      //VERIFICAR E ALTERAR PÉ SELECIONADO
-      checkedCampo = value == 'Campo' ?  true : false;
-      checkedSociety = value == 'Society' ? true : false;
-      checkedFutsal = value == 'Futsal' ? true : false;
+      categoria = value;
+      //SELECIONAR TIPO DE CAMPO
+      if(value == 'Campo'){
+        //DEFINIR VALOR PARA SLIDER
+        controller.qtdJogadores = 11;
+        controller.minJogadores =  9;
+        controller.maxJogadores = 11;
+        controller.divisions = 2;
+      }else if(value == 'Society'){
+        //DEFINIR VALOR PARA SLIDER
+        controller.qtdJogadores = 6;
+        controller.minJogadores = 4;
+        controller.maxJogadores = 8;
+        controller.divisions = 4;
+      }else if(value == 'Quadra'){
+        //DEFINIR VALOR PARA SLIDER
+        controller.qtdJogadores = 5;
+        controller.minJogadores = 4;
+        controller.maxJogadores = 6;
+        controller.divisions = 2;
+      }
     });
   }
 
@@ -226,6 +179,13 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       day['checked'] = !(day['checked'] as bool);
       //ADICIONAR A MODEL DE PELADA
       controller.onSaved({"diasSemana": jsonEncode(controller.diasSemana)});
+    });
+  }
+
+  //FUNÇÃO PARA ALTERAR DATA FIXA
+  void alterDataFixa(bool value){
+    setState(() {
+      dataFixa = ! dataFixa;
     });
   }
 
@@ -264,6 +224,12 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     }
   }
 
+  //FUNÇÃO PARA SELEICONAR QUANTIDADE DE JOGADORES
+  void selectQtdJogadores(value){
+    setState(() {
+      controller.qtdJogadores = value;
+    });
+  }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
@@ -273,7 +239,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/pelada/cadastro/dados_endereco');
+      Get.toNamed('/pelada/cadastro/dados_participantes');
     }
   }
 
@@ -283,17 +249,26 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     final navigationController = Get.find<NavigationController>();
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-
-    //RESGATAR VALOR SELECIONADO
-    bool checkedCampo = controller.categoriaController.text == 'Campo' ? true : false;
-    bool checkedSociety = controller.categoriaController.text == 'Society' ? true : false;
-    bool checkedFutsal = controller.categoriaController.text == 'Futsal' ? true : false;
-
     //LISTA DE CATEGORIAS DE CAMPO
-    final List<Map<String, dynamic>> melhorPe = [
-      {'value': 'Campo', 'icon': AppIcones.foot_field_solid, 'checked': checkedCampo},
-      {'value': 'Society', 'icon': AppIcones.foot_society_solid, 'checked': checkedSociety},
-      {'value': 'Futsal', 'icon': AppIcones.foot_futsal_solid, 'checked': checkedFutsal},
+    final List<Map<String, dynamic>> categorias = [
+      {
+        'value': 'Campo',
+        'icon': AppIcones.foot_field_solid,
+        'checked': controller.categoriaController.text == 'Campo' ? true : false,
+        'quantidade' : 11
+      },
+      {
+        'value': 'Society',
+        'icon': AppIcones.foot_society_solid,
+        'checked': controller.categoriaController.text == 'Society' ? true : false,
+        'quantidade' : 8
+      },
+      {
+        'value': 'Quadra',
+        'icon': AppIcones.foot_futsal_solid,
+        'checked': controller.categoriaController.text == 'Quadra' ? true : false,
+        'quantidade' : 5
+      },
     ];
 
     return Scaffold(
@@ -335,7 +310,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "Onde vamos jogar ? Informe os dados de endereço, categoria, data e horário de sua pelada.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -348,62 +323,59 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     type: TextInputType.streetAddress,
                     showModal: openAdressSearch,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child:Text(
-                      "Categoria",
-                      style: Theme.of(context).textTheme.titleSmall,
-                      textAlign: TextAlign.start,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  if(!dataFixa)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for(var item in melhorPe)
-                          SelectRoundedWidget(
-                            value: item['value'],
-                            icon: item['icon'],
-                            size: 120,
-                            iconSize: 40,
-                            checked: item['checked'],
-                            controller: controller,
-                            onChanged: selectTipoCampo,
-                          )
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child:Text(
+                            "Dia da Semana",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: diasSemana.map<Widget>((item) {
+                              return SelectDaysWeekWidget(
+                                value: item['dia'],
+                                checked: item['checked'],
+                                action: selectDaysWeek,
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child:Text(
-                      "Dia da Semana",
-                      style: Theme.of(context).textTheme.titleSmall,
+                  if(dataFixa)
+                    InputDateWidget(
+                      name: 'data',
+                      label: 'Data',
+                      textController: controller.dataController,
+                      controller: controller,
+                      onSaved: controller.onSaved,
+                      showModal: () => selectDate(context),
                     ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: ButtonTextWidget(
+                          text: !dataFixa ? "Escolher Data" : "Data Fixa",
+                          width: dimensions.width / 2 - 40,
+                          height: 20,
+                          icon: LineAwesomeIcons.exchange_alt_solid,
+                          action: () => alterDataFixa(!dataFixa),
+                        ),
+                      ),
+                    ],
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: diasSemana.map<Widget>((item) {
-                        return SelectDaysWeekWidget(
-                          value: item['dia'],
-                          checked: item['checked'],
-                          action: selectDaysWeek,
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  InputDateWidget(
-                    name: 'data',
-                    label: 'Data',
-                    textController: controller.dataController,
-                    controller: controller,
-                    onSaved: controller.onSaved,
-                    showModal: () => selectDate(context),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -434,6 +406,96 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     ),
                   ),
                   Padding(
+                    padding: const EdgeInsets.all(10),
+                    child:Text(
+                      "Categoria",
+                      style: Theme.of(context).textTheme.titleSmall,
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for(var item in categorias)
+                          SelectRoundedWidget(
+                            value: item['value'],
+                            icon: item['icon'],
+                            size: 120,
+                            iconSize: 40,
+                            checked: item['checked'],
+                            controller: controller,
+                            onChanged: selectTipoCampo,
+                          )
+                      ],
+                    ),
+                  ),
+                  if(categoria!.contains("Campo") || categoria!.contains("Society") || categoria!.contains("Quadra"))
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child:Text(
+                            "Quantidade de Jogadores",
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "Defina quantos jogadores atuaram em campo por cada equipe. Essa informação podera ser alterada a qualquer momento após o registro.",
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Slider(
+                          value: controller.qtdJogadores,
+                          min: controller.minJogadores,
+                          max: controller.maxJogadores,
+                          divisions: controller.divisions,
+                          label: controller.qtdJogadores.toInt().toString(),
+                          activeColor: AppColors.green_300,
+                          inactiveColor: AppColors.white,
+                          onChanged: (double newValue) => selectQtdJogadores(newValue),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 50,
+                                height: 50,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.green_300,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Text(
+                                  controller.qtdJogadores.toInt().toString(),
+                                  style: Theme.of(context).textTheme.titleLarge!.copyWith(color: AppColors.white),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Icon(AppIcones.users_solid),
+                              ),
+                              Text(
+                                "Jogadores por equipe",
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.blue_500),
+                                textAlign: TextAlign.center,
+                              ),
+                            ]
+                          ),
+                        ),
+                        CampoWidget(
+                          categoria: controller.categoriaController.text,
+                          qtd: controller.qtdJogadores,
+                        ),
+                      ],
+                    ),
+                  Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -447,7 +509,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                         ButtonTextWidget(
                           text: "Próximo",
                           width: 100,
-                          action: () => Get.toNamed('/cadastro/conclusao'),
+                          action: submitForm,
                         ),
                       ],
                     ),

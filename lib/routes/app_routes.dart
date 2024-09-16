@@ -1,5 +1,6 @@
 import 'package:futzada/pages/cadastro/conclusao_step.dart';
 import 'package:futzada/pages/pelada/cadastro/dados_endereco_step.dart';
+import 'package:futzada/pages/pelada/cadastro/dados_participantes_step.dart';
 import 'package:get/get.dart';
 import 'package:futzada/pages/app_base.dart';
 import 'package:futzada/pages/splash_page.dart';
@@ -31,5 +32,6 @@ class AppRoutes {
       //PELADAS - CADASTRO 
       GetPage(name: "/pelada/cadastro/dados_pelada", page: () => const DadosPeladaStep(), transition: Transition.rightToLeft),
       GetPage(name: "/pelada/cadastro/dados_endereco", page: () => const DadosEnderecoStep(), transition: Transition.rightToLeft),
+      GetPage(name: "/pelada/cadastro/dados_participantes", page: () => const DadosParticipantesStep(), transition: Transition.rightToLeft),
   ];
 }

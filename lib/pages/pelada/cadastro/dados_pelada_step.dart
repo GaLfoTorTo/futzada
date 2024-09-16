@@ -1,17 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/widget/inputs/input_textarea_widget.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/controllers/pelada_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/inputs/input_checkbox_widget.dart';
+import 'package:futzada/widget/inputs/input_textarea_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:futzada/controllers/navigation_controller.dart';
+import 'package:futzada/controllers/pelada_controller.dart';
 
 class DadosPeladaStep extends StatefulWidget {  
   const DadosPeladaStep({super.key});
@@ -23,16 +25,34 @@ class DadosPeladaStep extends StatefulWidget {
 class DadosPeladaStepState extends State<DadosPeladaStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
-  //CONTROLLER DE NAVEGAÇÃO DE HOME
+  //CONTROLLER DE REGISTRO DA PELADA
   final controller = Get.put(PeladaController());
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
   final ImagePicker imagePicker = ImagePicker();
+  //LISTA DE INPUTS CHECKBOX
+  final List<Map<String, dynamic>> permissoes = [
+    {
+      'name': 'Adicionar',
+      'value': false,
+    },
+    {
+      'name': 'Editar',
+      'value': false,
+    },
+    {
+      'name': 'Remover',
+      'value': false,
+    },
+  ];
+  //DEFINIR VARIAVEL DE CONTROLE DE COLABORADORES
+  late bool activeColaboradores = false;
 
   @override
   void initState() {
     super.initState();
+    activeColaboradores = controller.activeColaboradores;
   }
 
   //FUNÇÃO PARA BUSCAR IMAGEM
@@ -48,13 +68,13 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
   }
 
   //FUNÇÃO DE EXIBIÇÃO DE CAPA DA PELADA
-  dynamic capaImage(imageFile){
+  dynamic capaImage(imageFile, dimensions){
     if(imageFile != null){
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Container(
-          width: double.infinity,
-          height: 150,
+          width: dimensions.width,
+          height: dimensions.width - 100,
           decoration: BoxDecoration(
             image: DecorationImage(
               image: FileImage(imageFile!) as ImageProvider<Object>,
@@ -74,8 +94,8 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Container(
-            width: double.infinity,
-            height: 150,
+            width: dimensions.width,
+            height: dimensions.width - 100,
             decoration: BoxDecoration(
               color: AppColors.gray_700,
               border: Border.all(
@@ -102,10 +122,29 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
       controller.onSaved({'visibilidade': value});
     });
   }
+  //ATIVAR COLABORADORES
+  void selectColaboradores(){
+    setState(() {
+      activeColaboradores = !activeColaboradores;
+      controller.activeColaboradores = !activeColaboradores;
+    });
+  }
+
+  //SELECIONAR A VISIBILIDADE
+  void selectedPermissao(name){
+    setState(() {
+      //ENCONTRAR O DIA ESPECIFICO NO ARRAY
+      final permissao = permissoes.firstWhere((item) => item['name'] == name);
+      //ATUALIZAR O VALOR DE CHECKED
+      permissao['value'] = !(permissao['value'] as bool);
+      //ADICIONAR A MODEL DE PELADA
+      controller.onSaved({"permissoes": jsonEncode(controller.permissoes)});
+    });
+  }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
-      Get.toNamed('/pelada/cadastro/dados_endereco');
+    Get.toNamed('/pelada/cadastro/dados_endereco');
 
     /* //RESGATAR O FORMULÁRIO
     var formData = formKey.currentState;
@@ -177,14 +216,14 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
                       "Certo então vamos lá! Informe o Nome, a Bio, a Imagem de capa e a Visibilidade da pelada. Você também pode definir as configurações de colaboradores da pelada.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   InkWell(
                     onTap: getImage,
                     enableFeedback: false,
-                    child: capaImage(imageFile)
+                    child: capaImage(imageFile, dimensions)
                   ),
                   if(imageFile != null)
                     Row(
@@ -247,10 +286,91 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                         ),
                     ]
                   ),
-                  ButtonTextWidget(
-                    text: "Próximo",
-                    width: double.infinity,
-                    action: submitForm
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Colaboradores",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      "Defina se sua pelada contará con o auxilio de colaboradores. Colaboradores da pelada serão os participantes que contribuiram na organização da pelada.",
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: SwitchListTile(
+                      value: activeColaboradores,
+                      onChanged: (value) => selectColaboradores(),
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Ativar Colaboradores',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: const Icon(
+                        AppIcones.users_solid,
+                        color: AppColors.dark_300,
+                      ),
+
+                    ),
+                  ),
+                  if(activeColaboradores)
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Permissões",
+                                style: Theme.of(context).textTheme.headlineSmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            "Com as permissões ativadas, Defina o que os colaboradores estarão autorizados a fazer para ajudar a organizar a pelada.",
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for(var permissao in permissoes)
+                                InputCheckBoxWidget(
+                                  name: permissao['name'],
+                                  value: permissao['value'],
+                                  onChanged: selectedPermissao,
+                                ),
+                            ]
+                          ),
+                        ),
+                      ],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: ButtonTextWidget(
+                      text: "Próximo",
+                      width: double.infinity,
+                      action: submitForm
+                    ),
                   ),
                 ],
               ),

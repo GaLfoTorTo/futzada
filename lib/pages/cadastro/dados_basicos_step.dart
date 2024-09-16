@@ -191,7 +191,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Text(
                       "Certo então vamos começar! Informe-nos os seus dados básicos para começarmos a criar seu perfil.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -263,7 +263,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "Defina quem poderá visualizar suas informações de usuário. Esta informação pode ser alterada a qualquer momento.",
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -411,15 +411,11 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                     length: 3,
                     etapa: 1
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "A modalidade técnico são para os usuários que desejam mostrar todo seu talento fora de campo escalando apenas os melhores para sua equipe.",
-                      style: TextStyle(
-                        color: AppColors.gray_500,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -447,15 +443,11 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                       ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
                       "Defina o nome, a sigla, as cores, o emblema e o uniforme da sua futura equipe. Essas informações poderão ser alteradas a qualquer momento após o registro.",
-                      style: TextStyle(
-                        color: AppColors.gray_500,
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),

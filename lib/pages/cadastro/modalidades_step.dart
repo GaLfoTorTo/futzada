@@ -71,8 +71,8 @@ class ModalidadesStep extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
                     "Agora defina suas preferências para cada modalidade disponível. Escolha que tipo de atuação você terá dentro do app. Você também pode optar ambas.",
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                      textAlign: TextAlign.center,
                   ),
                 ),
                 Padding(
@@ -117,7 +117,7 @@ class ModalidadesStep extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
                     "A definição das modalidades podem ser feitas posteriores ao cadastro pórem suas ações no app serão limitadas até a conclusão.",
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                     textAlign: TextAlign.center,
                   ),
                 ),
