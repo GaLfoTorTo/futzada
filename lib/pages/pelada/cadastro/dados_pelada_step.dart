@@ -321,7 +321,6 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                         AppIcones.users_solid,
                         color: AppColors.dark_300,
                       ),
-
                     ),
                   ),
                   if(activeColaboradores)

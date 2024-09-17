@@ -14,7 +14,7 @@ class ImgCircularWidget extends StatelessWidget {
     super.key, 
     required this.width, 
     required this.height,
-    required this.image,
+    this.image,
     this.borderColor
   });
 

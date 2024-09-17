@@ -109,6 +109,15 @@ class AppHelper {
     return svg;
   }
 
+  static Future<String> mainPosition(posicao) async {
+    //CONVERTER SVG TO STRING
+    String posicaoString = await AppHelper.svgToString(posicao);
+    //ALTERAR COR DA ESTAMPA SELECIONADA NO EMBLEMA
+    posicaoString = AppHelper.setMainPosition(posicaoString);
+    //RETORNAR POSIÇÃO
+    return posicaoString;
+  }
+
   static String saudacaoPeriodo(){
     //BUSCAR HORA ATUAL
     DateTime now = DateTime.now();

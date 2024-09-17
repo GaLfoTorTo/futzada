@@ -31,7 +31,8 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
   void initState() {
     super.initState();
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
-    mainPosition(AppIcones.posicao[widget.usuario['posicao']]);
+    posicao = AppHelper.mainPosition(AppIcones.posicao[widget.usuario['posicao']]).toString();
+    
   }
 
   //FUNÇÃO PARA RESGATAR COR DA MEDALHA
@@ -46,17 +47,6 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
       default:
         return AppColors.gray_300;
     }
-  }
-
-  Future<void> mainPosition(posicao) async {
-    //CONVERTER SVG TO STRING
-    String posicaoString = await AppHelper.svgToString(posicao);
-    //ALTERAR COR DA ESTAMPA SELECIONADA NO EMBLEMA
-    posicaoString = AppHelper.setMainPosition(posicaoString);
-    //REATRIBUIR POSICAO
-    setState(() {
-      this.posicao = posicaoString;
-    });
   }
 
   @override

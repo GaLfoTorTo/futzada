@@ -107,13 +107,13 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           }else{
             result = widget.controller.validateEmpty(value, widget.label);
           }
+          //FOCAR INPUT 
+          FocusScope.of(context).autofocus(FocusNode());
           //RETURNAR RESULTADO DA VALIDAÇÃO
           return result;
         },
         onTap: () {
           if(widget.type == TextInputType.streetAddress){
-            //REMOVE FOCU DO INPUT 
-            FocusScope.of(context).unfocus();
             //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
             widget.showModal!();
             //REMOVER FOCO DO BOTÃO

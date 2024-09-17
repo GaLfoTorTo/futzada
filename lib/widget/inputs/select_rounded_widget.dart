@@ -57,21 +57,21 @@ class SelectRoundedWidget extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(15),
-              child: list.contains(icon)?
-            Transform.rotate(
-              angle: - 45 * 3.14159 / 200,
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: iconSize,
-              ),
-            ) 
-          :
-            Icon(
-              icon,
-              color: iconColor,
-              size: iconSize,
-            ),
+              child: list.contains(icon)
+              ? Transform.rotate(
+                  angle: - 45 * 3.14159 / 200,
+                  child: Icon(
+                    icon,
+                    color: iconColor,
+                    size: iconSize,
+                  ),
+                ) 
+              :
+                Icon(
+                  icon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
             ),
           ),
           Padding(

@@ -28,7 +28,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = Get.find<PeladaController>();
+  final controller = PeladaController.instace;
   // Lista de endereços fictícios para demonstração
   final List<Map<String, String>> enderecos = [
     {"logradouro":"1234 Market St, San Francisco, CA","complemento":"endereco 1 St, San Francisco, CA Complemento de endereço"},

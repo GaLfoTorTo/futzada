@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dio/dio.dart' as Dio;
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
@@ -37,6 +38,33 @@ class PeladaController extends ChangeNotifier {
   double minJogadores = 8;
   double maxJogadores = 11;
   int divisions = 3;
+  //CONFIGURAÇÕES DE CONVITE
+  final List<Map<String, dynamic>> convite = [
+    {
+      'label': 'Participar como Jogador',
+      'name': 'jogador',
+      'icon': AppIcones.foot_field_solid,
+      'checked': false,
+    },
+    {
+      'label': 'Participar como Técnico',
+      'name': 'tecnico',
+      'icon': AppIcones.clipboard_solid,
+      'checked': false,
+    },
+    {
+      'label': 'Participar como Árbitro',
+      'name': 'arbitro',
+      'icon': AppIcones.apito,
+      'checked': false,
+    },
+    {
+      'label': 'Participar como Colaborador',
+      'name': 'colaborador',
+      'icon': AppIcones.user_cog_solid,
+      'checked': false,
+    },
+  ];
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){
