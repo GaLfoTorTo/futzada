@@ -38,6 +38,11 @@ class PeladaController extends ChangeNotifier {
   double minJogadores = 8;
   double maxJogadores = 11;
   int divisions = 3;
+  //CONTROLADOR DE PESQUISA DE ENDEREÇOS
+  RxBool isSearching = false.obs;
+  RxString enderecoMessage = ''.obs;
+  //LISTA DE ENDEREÇOS
+  final RxList<dynamic> enderecos = [].obs;
   // CONFIGURAÇÕES DE CONVITE
   final RxList<Map<String, dynamic>> convite = <Map<String, dynamic>>[
     {

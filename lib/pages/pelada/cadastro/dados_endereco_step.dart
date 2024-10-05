@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
@@ -29,13 +30,6 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
   final controller = PeladaController.instace;
-  // Lista de endereços fictícios para demonstração
-  final List<Map<String, String>> enderecos = [
-    {"logradouro":"1234 Market St, San Francisco, CA","complemento":"endereco 1 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"5678 Mission St, San Francisco, CA","complemento":"endereco 2 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"9101 Union St, San Francisco, CA","complemento":"endereco 3 St, San Francisco, CA Complemento de endereço"},
-    {"logradouro":"1123 Castro St, San Francisco, CA","complemento":"endereco 4 St, San Francisco, CA Complemento de endereço"},
-  ];
   //DATA FIXA
   bool dataFixa = false;
   //LISTA DE DIAS DA SEMANA
@@ -50,11 +44,66 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   ];
   //CATEGORIA
   String? categoria;
+  //TIMER DE CONSULTA ENDEREÇO
+  Timer? debounce;
 
   @override
   void initState() {
     super.initState();
     categoria = controller.categoriaController.text;
+  }
+
+  //FUNÇÃO PARA BUSCAR ENDEREÇO (VIA CEP)
+  void searchAddress(value) {
+    //ATUALIZAR ISSEARCHING
+    controller.isSearching.value = true;
+    controller.isSearching.refresh();
+    //CANCELAR O TIMER ATUAL SE EXISTIR
+    if (debounce?.isActive ?? false) {
+      debounce!.cancel();
+    }
+    //VERIFICAR SE VALOR RECEBIDO NÃO ESTA VAZIO
+    if (value.isNotEmpty) {
+      //CRIAR UM NOVO TIMER DE 2 SEGUNDOS
+      debounce = Timer(const Duration(seconds: 2), () async {
+        //BUSCAR ENDEREÇO VIA CEP
+        var endereco = await AppHelper.getAddress(value);
+        //VERIFICAR SE FOI ENCONTRADO APENAS UM ENDEREÇO
+        if(endereco is Map){
+          //VERIFICAR SE OCORREU UM ERRO
+          if(endereco.containsKey('error')){
+            //ATUALIZAR MENSAGEM DE ERRO
+            controller.enderecoMessage.value = endereco['error'];
+            controller.enderecoMessage.refresh();
+            //ATUALIZAR ISSEARCHING
+            controller.enderecos.value = [];
+            controller.enderecos.refresh();
+          }else{
+            //ATUALIZAR ENDEREÇOS
+            controller.enderecos.value = [endereco as Map<String, dynamic> ];
+            controller.enderecos.refresh();
+          }
+        }
+        //VERIFICAR SE FOI ENCONTRADO MAIS DE UM ENDEREÇO
+        if(endereco is List){
+          //CONVERTER DADOS RECEBIDOS PARA O TIPO CORRETO (List<Map<String, dynamic>>)
+          List<Map<String, dynamic>> listEnderecos = List<Map<String, dynamic>>.from(endereco.cast<Map<String, dynamic>>());
+          //ATUALIZAR ENDEREÇOS
+          controller.enderecos.value = listEnderecos;
+          controller.enderecos.refresh();
+        }
+        //ATUALIZAR ISSEARCHING
+        controller.isSearching.value = false;
+        controller.isSearching.refresh();
+      });
+    }else{
+      //ATUALIZAR ISSEARCHING
+      controller.enderecos.value = [];
+      controller.enderecos.refresh(); 
+      //ATUALIZAR ISSEARCHING
+      controller.isSearching.value = false;
+      controller.isSearching.refresh();
+    }
   }
 
   //FUNÇÃO PARA ABRIR BOTTOMSHEET
@@ -83,51 +132,97 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
             ),
             InputTextWidget(
               name: 'search',
-              hint: 'Ex: Rua 5 lote 91...',
+              hint: 'Ex: Campo de Futebol Divinéia - Núcleo Bandeirante, Brasília - DF',
               textController: controller.enderecoController,
               prefixIcon: AppIcones.marker_solid,
               controller: controller,
+              onChanged: searchAddress,
               onSaved: controller.onSaved,
               type: TextInputType.text,
               showModal: openAdressSearch,
             ),
             const Divider(),
-            Expanded(
-              child: ListView(
-                children: enderecos.asMap().entries.map((entry) {
-                  //RESGATAR ENDEREÇO
-                  Map<String, String> item = entry.value;
-                  return ListTile(
-                    leading: const Icon(AppIcones.marker_solid, color: AppColors.dark_300),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item["logradouro"]!,
-                          style: Theme.of(Get.context!).textTheme.titleSmall,
+            Obx(() {
+              return Expanded(
+                child: controller.enderecos.isEmpty 
+                ? Center(
+                    child: controller.isSearching.value
+                      ? const CircularProgressIndicator(
+                          color: AppColors.green_300,
+                        )
+                      : Column(
+                          children: [
+                            Text(
+                              controller.enderecoMessage.value,
+                              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                                color: AppColors.gray_500,
+                              )
+                            ),
+                            Text(
+                              'Ex: Quadra Poliesportiva - Brasília - DF',
+                              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                                color: AppColors.gray_500,
+                              ),
+                              textAlign: TextAlign.center
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                'Você também pode buscar o endereço pelo CEP',
+                                style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                                  color: AppColors.gray_500,
+                                ),
+                                textAlign: TextAlign.center
+                              ),
+                            ),
+                            Text(
+                              'Caso o endereço estja correto mas não foi encontrado, prossiga com o cadastro normalmente',
+                              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                                color: AppColors.gray_500,
+                              ),
+                              textAlign: TextAlign.center
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: Text(
-                            item["complemento"]!,
-                            style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
-                              color: AppColors.gray_500,
-                              overflow: TextOverflow.ellipsis
+                  )
+                : ListView(
+                  children: controller.enderecos.asMap().entries.map((entry) {
+                    //RESGATAR ENDEREÇO
+                    Map<dynamic, dynamic> item = entry.value;
+                    return ListTile(
+                      leading: const Icon(AppIcones.marker_solid, color: AppColors.dark_300),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${item["logradouro"]}, ${item['bairro']} - ${item['localidade']} - ${item['uf']}",
+                            style: Theme.of(Get.context!).textTheme.titleSmall!.copyWith(
+                                overflow: TextOverflow.ellipsis
+                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              item["complemento"]!,
+                              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                                color: AppColors.gray_500,
+                                overflow: TextOverflow.ellipsis
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      //SELECIONAR TEXTO
-                      controller.enderecoController.text = item['logradouro']!;
-                      //FECHAR BOTTOMSHEET
-                      Get.back();
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
+                        ],
+                      ),
+                      onTap: () {
+                        //SELECIONAR TEXTO
+                        controller.enderecoController.text = "${item["logradouro"]}, ${item['bairro']} - ${item['localidade']} - ${item['uf']}";
+                        //FECHAR BOTTOMSHEET
+                        Get.back();
+                      },
+                    );
+                  }).toList(),
+                ),
+              );
+            }),
           ],
         ),
       ),
@@ -525,6 +620,8 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
 
   @override
   void dispose() {
+    //CANCELAR O TIMER
+    debounce?.cancel(); 
     super.dispose();
   }
 }

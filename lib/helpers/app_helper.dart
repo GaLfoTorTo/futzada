@@ -269,4 +269,66 @@ class AppHelper {
     String year = date.year.toString();
     return "$day/$month/$year";
   }
+
+  //FUNÇÃO PARA VERIFICAR SE VALOR É UM CEP VALIDO
+  static bool isCep(String cep) {
+    // REGEX PARA VALIDAR CEP: XXXXX-XXX ou XXXXXXXX
+    final cepRegExp = RegExp(r'^\d{5}-?\d{3}$');
+    return cepRegExp.hasMatch(cep);
+  }
+
+  //FUNÇÃO PARA BUSCAR ENDEREÇO NO VIA CEP
+  static dynamic getAddress(String address) async {
+    //DEFINIR URL DE BUSCA
+    String url = '';
+    //VERIFICAR SE VALOR RECEBIDO É CEP
+    if(isCep(address)){
+      //REMOVER HIFÉN DO CEP SE HOUVER
+      String cep = address.replaceAll('-','');
+      //DEFINIR URL DE BUSCA PARA ENDEREÇO
+      url = 'https://viacep.com.br/ws/${cep}/json/';
+    }else{
+      //SEPARAR ENDEREÇO RECEBIDO POR ESPAÇOS
+      List<String> addressSplited = address.split(' - ');
+      //VERIFICAR SE O ENDEREÇO FOI INFORMADO COMPLETAMENTE (LOGRADOURO, CIDADE E UF)
+      if(addressSplited.length < 3){
+        return {'error': 'Informe um endereço no formato compativel!'};
+      }
+      //VERIFICAR SE LOGRADOURO E CIDADE TEM NO MINIMO 3 CARACTERES
+      if(addressSplited[0].length < 2 && addressSplited[1].length < 2){
+        return {'error': 'Logradouro e Cidades devem conter no minimo 3 caracteres!'};
+      }
+      //RESGATAR PARAMETROS DE ENDEREÇO
+      String logradouro = addressSplited[0];
+      String cidade = addressSplited[1];
+      String uf = addressSplited[2].trim();
+      //DEFINIR URL DE BUSCA PARA ENDEREÇO
+      url = 'https://viacep.com.br/ws/${uf.toUpperCase()}/${Uri.encodeComponent(cidade)}/${Uri.encodeComponent(logradouro)}/json/';
+    }
+    //VERIFICAR SE URL NÃO ESTA VAZIA
+    if(url.isNotEmpty){
+      try {
+        //FAZER REQUISIÇÃO AO VIA CEP
+        var resp = await Dio().get(url);
+        //VERIFICAR SE A RESPOSTA E VALIDA
+        if (resp.statusCode == 200) {
+          //VERIFICAR SE ENDEREÇO FOI ENCONTRADO
+          if(resp.data.length == 0){
+            //RETORNAR ERRO
+            return {"error": "Nenhum endereço encontrado!"};  
+          }
+          //RETORNAR ENDEREÇOS
+          return resp.data;
+        } else {
+          //RETORNAR ERRO
+          return {"error": "Nenhum endereço encontrado!"};
+        }
+      } catch (e) {
+        print(e);
+        //RETORNAR ERRO DE REQUISIÇÃO
+        return {"error": 'Não foi possível buscar um endereço'};
+      }
+    }
+    return {};
+  }
 }

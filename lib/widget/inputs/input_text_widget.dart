@@ -8,6 +8,7 @@ class InputTextWidget extends StatefulWidget {
   final IconData? sufixIcon;
   final IconData? prefixIcon;
   final String? placeholder;
+  final Function? onChanged;
   final Function? onSaved;
   final TextInputType? type;
   final int? maxLength;
@@ -24,6 +25,7 @@ class InputTextWidget extends StatefulWidget {
     this.sufixIcon,
     this.prefixIcon,
     this.placeholder,
+    this.onChanged,
     this.onSaved,
     this.type,
     this.maxLength,
@@ -93,6 +95,11 @@ class _InputTextWidgetState extends State<InputTextWidget> {
             )
             : null
         ),
+        onChanged: (value){
+          if(widget.onChanged != null){
+            widget.onChanged!(value);
+          }
+        },
         onSaved: (value){
           if(widget.onSaved != null){
             widget.onSaved!({widget.name:  value});
