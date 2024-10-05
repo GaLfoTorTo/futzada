@@ -38,13 +38,13 @@ class PeladaController extends ChangeNotifier {
   double minJogadores = 8;
   double maxJogadores = 11;
   int divisions = 3;
-  //CONFIGURAÇÕES DE CONVITE
-  final List<Map<String, dynamic>> convite = [
+  // CONFIGURAÇÕES DE CONVITE
+  final RxList<Map<String, dynamic>> convite = <Map<String, dynamic>>[
     {
       'label': 'Participar como Jogador',
       'name': 'jogador',
       'icon': AppIcones.foot_field_solid,
-      'checked': false,
+      'checked': true,
     },
     {
       'label': 'Participar como Técnico',
@@ -64,7 +64,20 @@ class PeladaController extends ChangeNotifier {
       'icon': AppIcones.user_cog_solid,
       'checked': false,
     },
-  ];
+  ].obs;
+  
+  //LISTA DE AMIGOS
+  final RxList<Map<String, dynamic>> amigos = [
+    for(var i = 0; i <= 15; i++)
+      {
+        'id': i,
+        'nome': 'Jeferson Vasconcelos',
+        'userName': 'jeff_vasc',
+        'posicao': null,
+        'foto': null,
+        'checked': false,
+      },
+  ].obs;
 
   String? validateEmpty(String? value, String label) {
     if(value?.isEmpty ?? true){

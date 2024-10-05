@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -24,24 +26,6 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
   final controller = PeladaController.instace;
-  //LISTA DE AMIGOS
-  final List<Map<String, dynamic>> amigos = [
-    for(var i = 0; i <= 15; i++)
-      {
-        'id': i,
-        'nome': 'Jeferson Vasconcelos',
-        'userName': 'jeff_vasc',
-        'posicao': null,
-        'foto': null,
-        'checked': false,
-        'convite' : {
-          'jogador': false,
-          'tecnico': false,
-          'arbitro': false,
-          'colaborador' : false
-        }
-      },
-  ];
 
   @override
   void initState() {
@@ -51,7 +35,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
 
   void initPositions() async{
     //LOOP NOS AMIGOS
-    for(var item in amigos){
+    for(var item in controller.amigos){
       //RESGATAR POSIÇÃO PRINCIPAL DO AMIGO
       item['posicao'] = await AppHelper.mainPosition(AppIcones.posicao["mei"]);
       setState(() {});
@@ -62,24 +46,18 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
     print(value);
   }
 
-  void selectPreferencia(label){
-    setState(() {
-      //ENCONTRAR O DIA ESPECIFICO NO ARRAY
-      final item = controller.convite.firstWhere((item) => item['label'] == label);
-      //ATUALIZAR O VALOR DE CHECKED
-      item['checked'] = !(item['checked'] as bool);
-      //ADICIONAR A MODEL DE PELADA
-      //controller.onSaved({"diasSemana": jsonEncode(controller.diasSemana)});
-    });
-  }
-  void selectPreferenciaJogador(label, convite){
-    setState(() {
-      convite[label] = !convite[label];
-    });
+  //FUNÇÃO DE DEFINIÇÃO DE PREFERENCIAS DE CONVITE
+  void selectPreferencia(String name) {
+    //BUSCAR ITEMS DO ARRAY DE CONVITE
+    final item = controller.convite.firstWhere((item) => item['name'] == name);
+    //ALTERAR VALOR
+    item['checked'] = !(item['checked'] as bool);
+    //NOTIFICAR MUDANÇA AO CONTROLLER
+    controller.convite.refresh();
   }
 
   //FUNÇÃO DE RETORNO PARA HOME
-  void openPreferencia(Map<String, bool>? convite) {
+  void openPreferencia(convites, flag) {
     Get.dialog(
       Dialog(
         backgroundColor: AppColors.white,
@@ -96,7 +74,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   'Convite',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Get.textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -104,54 +82,50 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   'Determine o formato de ingresso dos participantes a pelada, as pré-definições aplicadas poderão ser alteradas posteriormente.',
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.gray_500),
+                  style: Get.textTheme.bodySmall!.copyWith(color: AppColors.gray_500),
                   textAlign: TextAlign.center,
                 ),
               ),
-              //for(var item in controller.convite)
-              Column(
-                children: controller.convite.asMap().entries.map((entry) {
-                  //RESGATAR ITEM
-                  Map<String, dynamic> item = entry.value;
-                  //RESGATAR VALUE
-                  bool value = convite != null ? convite[item['name']] : item['checked'];
-                  return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: SwitchListTile(
-                    value: value,
-                    onChanged: (value) {
-                      if(convite != null){
-                        selectPreferenciaJogador(item['name'], convite);
-                      }else{
-                        selectPreferencia(item['label']);
-                      }
-                    }, 
-                    activeColor: AppColors.green_300,
-                    inactiveTrackColor: AppColors.gray_300,
-                    inactiveThumbColor: AppColors.gray_500,
-                    title: Text(
-                      item['label'],
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: value ? AppColors.green_300 : AppColors.gray_500),
-                    ),
-                    secondary: item['icon'] == AppIcones.foot_field_solid
-                      ? Transform.rotate(
-                        angle: - 45 * 3.14159 / 200,
-                        child: Icon(
-                          item['icon'],
-                          color: value ? AppColors.green_300 : AppColors.gray_500,
-                          size: 18,
+              Obx(() {
+                return Column(
+                  children: controller.convite.map((entry) {
+                    //RESGATAR ITENS 
+                    Map<String, dynamic> item = entry;
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: SwitchListTile(
+                        value: item['checked'],
+                        onChanged: (newValue) {
+                          selectPreferencia(item['name']);
+                        },
+                        activeColor: AppColors.green_300,
+                        inactiveTrackColor: AppColors.gray_300,
+                        inactiveThumbColor: AppColors.gray_500,
+                        title: Text(
+                          item['label'],
+                          style: Get.textTheme.bodyMedium!.copyWith(
+                            color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
+                          ),
                         ),
-                      )
-                    :
-                      Icon(
-                        item['icon'],
-                        color: value ? AppColors.green_300 : AppColors.gray_500,
-                        size: 25,
+                        secondary: item['icon'] == AppIcones.foot_field_solid
+                            ? Transform.rotate(
+                                angle: -45 * 3.14159 / 200,
+                                child: Icon(
+                                  item['icon'],
+                                  color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
+                                  size: 18,
+                                ),
+                              )
+                            : Icon(
+                                item['icon'],
+                                color: item['checked'] ? AppColors.green_300 : AppColors.gray_500,
+                                size: 25,
+                              ),
                       ),
-                    ),
-                  );
-                }).toList()
-              ),
+                    );
+                  }).toList(),
+                );
+              }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -270,12 +244,12 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                           iconAfter: true,
                           textColor: AppColors.green_300,
                           backgroundColor: Colors.transparent,
-                          action: () => openPreferencia(null),
+                          action: () => openPreferencia(controller.convite, 'geral'),
                         ),
                       ],
                     ),
                   ),
-                  for(var item in amigos)
+                  for(var item in controller.amigos)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
                       child: TextButton(
@@ -284,7 +258,6 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                             item['checked'] = !item['checked'];
                           });
                         },
-                        onLongPress: () => openPreferencia(item['convite']),
                         style: const ButtonStyle(
                           backgroundColor: WidgetStatePropertyAll(AppColors.white),
                           padding: WidgetStatePropertyAll(EdgeInsets.all(15))
