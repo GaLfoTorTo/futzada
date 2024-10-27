@@ -6,13 +6,13 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/api/api.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/models/pelada_model.dart';
+import 'package:futzada/models/registro_pelada_model.dart';
 
 class PeladaController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETX
   static PeladaController get instace => Get.find();
   //INSTANCIA DE PELADA MODEL
-  PeladaModel model = PeladaModel();
+  RegistroPeladaModel model = RegistroPeladaModel();
   // CONTROLLERS DE CADA CAMPO
   late final TextEditingController nomeController = TextEditingController();
   late final TextEditingController bioController = TextEditingController();
@@ -24,13 +24,20 @@ class PeladaController extends ChangeNotifier {
   late final TextEditingController dataController = MaskedTextController(mask: "00/00/0000");
   late final TextEditingController horaInicioController = MaskedTextController(mask: "00:00");
   late final TextEditingController horaFimController = MaskedTextController(mask: "00:00");
-  late final bool colaboradoresController;
+  late final TextEditingController colaboradoresController = TextEditingController();
   late final TextEditingController permissoesController = TextEditingController();
-  late final double qtdJogadoresController;
-  //CONTROLLER DE POSIÇÕES
-  final List<dynamic> diasSemana = [];
+  late final TextEditingController qtdJogadoresController = TextEditingController();
+  late final TextEditingController conviteController = TextEditingController();
+  late final TextEditingController participantesController = TextEditingController();
+  //CONTROLLER DE DIAS DA SEMANA
+  final RxList<dynamic> diasSemana = [].obs;
   //CONTROLLER DE PERMISSÕES
-  final List<dynamic> permissoes = [];
+  //LISTA DE INPUTS CHECKBOX
+  final RxMap<String, dynamic> permissoes = <String, dynamic>{
+    'Adicionar': false,
+    'Editar': false,
+    'Remover': false,
+  }.obs;
   //CONTROLLER DE COLABORADORES
   bool activeColaboradores = false;
   //CONTROLLER DE SLIDER
@@ -71,6 +78,8 @@ class PeladaController extends ChangeNotifier {
     },
   ].obs;
   
+  //LISTA DE PARTICIPANTES CONVIDADOS
+  final RxList<dynamic> participantes = [].obs;
   //LISTA DE AMIGOS
   final RxList<Map<String, dynamic>> amigos = [
     for(var i = 0; i <= 15; i++)
@@ -93,7 +102,6 @@ class PeladaController extends ChangeNotifier {
 
   void onSaved(Map<String, dynamic> updates) {
     model = model.copyWithMap(updates: updates);
-    notifyListeners();
   }
 
   Future<Map<String, dynamic>> sendForm() async {

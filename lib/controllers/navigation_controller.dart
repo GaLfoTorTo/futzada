@@ -124,7 +124,7 @@ class NavigationController extends GetxController {
       buttonIcone: AppIcones.compass_solid,
       buttonTitulo: 'Ver no Mapa',
       viewTitulo: 'Pesquisar manualmente',
-      buttonAction: () => print('navegar para Explore no mapa'),
+      buttonAction: () => Get.toNamed('/explore/mapa'),
       outlineAction: () => print('navegar para Pesquisa manual'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO

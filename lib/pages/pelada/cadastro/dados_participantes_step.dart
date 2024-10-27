@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_animations.dart';
 import 'package:get/get.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/controllers/pelada_controller.dart';
+import 'package:futzada/controllers/registro_pelada_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -13,6 +14,7 @@ import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
+import 'package:lottie/lottie.dart';
 
 class DadosParticipantesStep extends StatefulWidget {
   const DadosParticipantesStep({super.key});
@@ -26,6 +28,10 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
   final controller = PeladaController.instace;
+  //TITULO DA PÁGINA
+  String titulo = 'Cadastro Pelada';
+  //MENSAGEM DE ERRO
+  String? errorMessage;
 
   @override
   void initState() {
@@ -54,6 +60,74 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
     item['checked'] = !(item['checked'] as bool);
     //NOTIFICAR MUDANÇA AO CONTROLLER
     controller.convite.refresh();
+  }
+
+  void selectParticipante(id){
+    setState(() {
+      //RESGATAR QUANTIDADE DE PARTICIPANTES SELECIONADOS
+      int count = 0;
+      //LOOP NOS PARTICIPANTES
+      controller.amigos.asMap().forEach((key, item){
+        //VERIFICAR SE ITEM RECEBIDO É IGUAL A
+        if(item['id'] == id){
+          //SELECIONAR PARTICIPANTE
+          item['checked'] = !item['checked'];
+          //VERIFICAR SE PARTICIPANTE JA FOI CONVIDADO 
+          if(item['checked']){
+            //ADICIONAR PARTICIPANTE AO ARRAY DE CONVIDADOS
+            controller.participantes.add({'id':item['id']});
+          }else{
+            //ADICIONAR PARTICIPANTE AO ARRAY DE CONVIDADOS
+            controller.participantes.removeWhere((participante) => participante['id'] == item['id']);
+          }
+        }
+        //VERIFICAR SE PARTICIPANTE FOI SELECIONADO E INCREMENTAR CONTADOR
+        if(item['checked'] == true){
+          //INCREMENTAR CONTADOR
+          count ++;
+        }
+      });
+      //VERIFICAR QUANTIDADE DE PARTICIPANTES SELECIONADOS
+      if(count > 0){
+        //ALTERAR TITULO DA PAGINA
+        titulo = "$count selecionados";
+      }else{
+        //ALTERAR TITULO DA PAGINA
+        titulo = "Cadastro Pelada";
+      }
+      //NOTIFICAR MUDANÇA AO CONTROLLER
+      controller.amigos.refresh();
+      //ADICIONAR A MODEL DE PELADA
+      controller.participantesController.text = jsonEncode(controller.participantes);
+      controller.onSaved({"participantes": jsonEncode(controller.participantes)});
+    });
+  }
+
+  //VALIDAÇÃO DA ETAPA
+  void submitForm(){
+    //RESGATAR O FORMULÁRIO
+    var formData = formKey.currentState;
+    //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
+    if (formData?.validate() ?? false) {
+      formData?.save();
+      //REGISTRAR PELADA
+      registerPelada();
+    }
+  }
+
+  //FUNÇÃO DE CALLBACK DE RETORNO DO SERVIDOR
+  void onCompleteAnimation(statusRequest) async {
+    //ESPERAR 5 SEGUNDOS
+    await Future.delayed(Duration(seconds: 5));
+    //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
+    if(statusRequest == true){
+      //NAVEGAR PARA HOME
+      Get.toNamed('/home');
+    }else{
+      Get.back();
+      //EXIBIR MENSAGEM DE ERRO
+      AppHelper.erroMessage(context, errorMessage);
+    }
   }
 
   //FUNÇÃO DE RETORNO PARA HOME
@@ -154,16 +228,107 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
     );
   }
 
-  //VALIDAÇÃO DA ETAPA
-  void submitForm(){
-    //RESGATAR O FORMULÁRIO
-    var formData = formKey.currentState;
-    //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (formData?.validate() ?? false) {
-      formData?.save();
-      //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/pelada/cadastro/dados_participantes');
-    }
+  //FUNÇÃO DE ENVIO DE DADOS PARA BACKEND
+  void registerPelada() async{
+    var response = controller.sendForm();
+    //MODAL DE STATUS DE REGISTRO DO USUARIO
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 1,
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: response,
+            builder: (context, snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting) {
+                return Container(
+                  width: 300,
+                  height: 300,
+                  child: Center(
+                    child: Lottie.asset(
+                      AppAnimations.loading,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                );
+              }else if(snapshot.hasError) {
+                //ADICIONAR MENSAGEM DE ERRO
+                errorMessage = 'Erro desconhecido';
+                if (snapshot.error is Map<String, dynamic>) {
+                  errorMessage = (snapshot.error as Map<String, dynamic>)['message'] ?? 'Erro desconhecido';
+                }
+                return Container(
+                  width: 300,
+                  height: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Lottie.asset(
+                        AppAnimations.checkError,
+                        fit: BoxFit.contain,
+                        onLoaded: (composition) {
+                          //REMOVER MODAL
+                          onCompleteAnimation(false);
+                        },
+                      ),
+                    ],
+                  )
+                );
+              }else if(snapshot.hasData) {
+                //RESGATAR MENSAGEM
+                var data = snapshot.data!;
+                //VERIFICAR SE OPERAÇÃO FOI BEM SUCEDIDA
+                if (data['status'] == 200) {
+                  return Container(
+                    width: 300,
+                    height: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Lottie.asset(
+                          AppAnimations.checkSuccess,
+                          fit: BoxFit.contain,
+                          onLoaded: (composition) {
+                            //REMOVER MODAL
+                            onCompleteAnimation(true);
+                          },
+                        ),
+                      ],
+                    )
+                  );
+                }else{
+                  //ADICIONAR MENSAGEM DE ERRO
+                  errorMessage = data['message'];
+                  return Container(
+                    width: 300,
+                    height: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Lottie.asset(
+                          AppAnimations.checkError,
+                          fit: BoxFit.contain,
+                          onLoaded: (composition) {
+                            //REMOVER MODAL
+                            onCompleteAnimation(false);
+                          },
+                        ),
+                      ],
+                    )
+                  );
+                }
+              }
+              return Container(
+                width: 300,
+                height: 300,
+              );
+            }
+          )
+        );
+      },
+    );
   }
 
   @override
@@ -176,7 +341,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
-        title: "Cadastro Pelada", 
+        title: titulo, 
         leftAction: () => Get.back(),
         rightAction: () => navigationController.backHome(context),
       ),
@@ -301,11 +466,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                                 scale: 2,
                                 child: Checkbox(
                                   value: item['checked'],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      item['checked'] = !item['checked'];
-                                    });
-                                  },
+                                  onChanged: (value) => selectParticipante(item['id']),
                                   activeColor: AppColors.green_300,
                                   side: const BorderSide(color: AppColors.gray_500, width: 1),
                                 ),

@@ -13,7 +13,7 @@ import 'package:futzada/widget/inputs/input_textarea_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/controllers/pelada_controller.dart';
+import 'package:futzada/controllers/registro_pelada_controller.dart';
 
 class DadosPeladaStep extends StatefulWidget {  
   const DadosPeladaStep({super.key});
@@ -31,28 +31,10 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
   final ImagePicker imagePicker = ImagePicker();
-  //LISTA DE INPUTS CHECKBOX
-  final List<Map<String, dynamic>> permissoes = [
-    {
-      'name': 'Adicionar',
-      'value': false,
-    },
-    {
-      'name': 'Editar',
-      'value': false,
-    },
-    {
-      'name': 'Remover',
-      'value': false,
-    },
-  ];
-  //DEFINIR VARIAVEL DE CONTROLE DE COLABORADORES
-  late bool activeColaboradores = false;
 
   @override
   void initState() {
     super.initState();
-    activeColaboradores = controller.activeColaboradores;
   }
 
   //FUNÇÃO PARA BUSCAR IMAGEM
@@ -123,37 +105,40 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
     });
   }
   //ATIVAR COLABORADORES
-  void selectColaboradores(){
+  void selectColaboradores(value){
     setState(() {
-      activeColaboradores = !activeColaboradores;
-      controller.activeColaboradores = !activeColaboradores;
+      controller.colaboradoresController.text = jsonEncode(value);
+      controller.activeColaboradores = value;
+      controller.onSaved({'colaboradores': jsonEncode(value)});
     });
   }
 
   //SELECIONAR A VISIBILIDADE
-  void selectedPermissao(name){
+  void selectedPermissao(String name){
     setState(() {
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
-      final permissao = permissoes.firstWhere((item) => item['name'] == name);
-      //ATUALIZAR O VALOR DE CHECKED
-      permissao['value'] = !(permissao['value'] as bool);
+      controller.permissoes.update(
+        name,
+        (value) => !value
+      );
+      //NOTIFICAR MUDANÇA AO CONTROLLER
+      controller.permissoes.refresh();
       //ADICIONAR A MODEL DE PELADA
+      controller.permissoesController.text = jsonEncode(controller.permissoes);
       controller.onSaved({"permissoes": jsonEncode(controller.permissoes)});
     });
   }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
-    Get.toNamed('/pelada/cadastro/dados_endereco');
-
-    /* //RESGATAR O FORMULÁRIO
+    //RESGATAR O FORMULÁRIO
     var formData = formKey.currentState;
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
       Get.toNamed('/pelada/cadastro/dados_endereco');
-    } */
+    }
   }
 
   @override
@@ -308,8 +293,8 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: SwitchListTile(
-                      value: activeColaboradores,
-                      onChanged: (value) => selectColaboradores(),
+                      value: controller.activeColaboradores,
+                      onChanged: (value) => selectColaboradores(value),
                       activeColor: AppColors.green_300,
                       inactiveTrackColor: AppColors.gray_300,
                       inactiveThumbColor: AppColors.gray_500,
@@ -323,7 +308,7 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                       ),
                     ),
                   ),
-                  if(activeColaboradores)
+                  if(controller.activeColaboradores)
                     Column(
                       children: [
                         Padding(
@@ -352,10 +337,10 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for(var permissao in permissoes)
+                              for(var permissao in controller.permissoes.entries)
                                 InputCheckBoxWidget(
-                                  name: permissao['name'],
-                                  value: permissao['value'],
+                                  name: permissao.key,
+                                  value: permissao.value,
                                   onChanged: selectedPermissao,
                                 ),
                             ]

@@ -10,7 +10,7 @@ import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/controllers/pelada_controller.dart';
+import 'package:futzada/controllers/registro_pelada_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
@@ -231,11 +231,11 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   }
 
   //SELECIONAR O MELHOR PÉ
-  void selectTipoCampo(String value){
+  void selectCategoria(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
       controller.categoriaController.text = value;
-      controller.onSaved({"tipoCampo": value});
+      controller.onSaved({"categoria": value});
       categoria = value;
       //SELECIONAR TIPO DE CAMPO
       if(value == 'Campo'){
@@ -267,12 +267,13 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
         controller.diasSemana.remove(value);
       }else{
         controller.diasSemana.add(value);
-      }
+      } 
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
       final day = diasSemana.firstWhere((item) => item['dia'] == value);
       //ATUALIZAR O VALOR DE CHECKED
       day['checked'] = !(day['checked'] as bool);
       //ADICIONAR A MODEL DE PELADA
+      controller.diasSemanaController.text = jsonEncode(controller.diasSemana);
       controller.onSaved({"diasSemana": jsonEncode(controller.diasSemana)});
     });
   }
@@ -300,7 +301,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   }
 
   //FUNÇÃO PARA PICKER DE HORAS
-  Future<void> selectTime(BuildContext context, controller) async {
+  Future<void> selectTime(BuildContext context, name) async {
     final TimeOfDay? timeSelected = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -314,8 +315,14 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       },
     );
     if (timeSelected != null) {
-      //ATUALIZAR VALOR DO CONTROLER
-      controller.text = timeSelected.toString();
+      //VERIFICAR HORARAIO
+      if(name == 'horaInicio'){
+        //ATUALIZAR VALOR DO CONTROLER
+        controller.horaInicioController.text =  timeSelected.toString();
+      }else{
+        //ATUALIZAR VALOR DO CONTROLER
+        controller.horaFimController.text = timeSelected.toString();
+      }
     }
   }
 
@@ -323,6 +330,8 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   void selectQtdJogadores(value){
     setState(() {
       controller.qtdJogadores = value;
+      controller.qtdJogadoresController.text = value.toInt().toString();
+      controller.onSaved({"qtdJogadores": value.toInt().toString()});
     });
   }
 
@@ -478,23 +487,23 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                         Container(
                           width: dimensions.width / 2 - 20,
                           child: InputDateWidget(
-                            name: 'hora_inicio',
+                            name: 'horaInicio',
                             label: 'Hora de Início',
                             textController: controller.horaInicioController,
                             controller: controller,
                             onSaved: controller.onSaved,
-                            showModal: () => selectTime(context, controller.horaInicioController),
+                            showModal: () => selectTime(context, 'horaInicio'),
                           ),
                         ),
                         Container(
                           width: dimensions.width / 2 - 20,
                           child: InputDateWidget(
-                            name: 'hora_fim',
+                            name: 'horaFim',
                             label: 'Hora de Fim',
                             textController: controller.horaFimController,
                             controller: controller,
                             onSaved: controller.onSaved,
-                            showModal: () => selectTime(context, controller.horaFimController),
+                            showModal: () => selectTime(context, 'horaFim'),
                           ),
                         ),
                       ],
@@ -521,7 +530,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                             iconSize: 40,
                             checked: item['checked'],
                             controller: controller,
-                            onChanged: selectTipoCampo,
+                            onChanged: selectCategoria,
                           )
                       ],
                     ),

@@ -1,7 +1,7 @@
-import 'package:futzada/pages/cadastro/conclusao_step.dart';
+import 'package:get/get.dart';
+import 'package:futzada/pages/pelada/cadastro/dados_pelada_step.dart';
 import 'package:futzada/pages/pelada/cadastro/dados_endereco_step.dart';
 import 'package:futzada/pages/pelada/cadastro/dados_participantes_step.dart';
-import 'package:get/get.dart';
 import 'package:futzada/pages/app_base.dart';
 import 'package:futzada/pages/splash_page.dart';
 import 'package:futzada/pages/auth/login_page.dart';
@@ -11,7 +11,8 @@ import 'package:futzada/pages/cadastro/dados_basicos_step.dart';
 import 'package:futzada/pages/cadastro/modalidades_step.dart';
 import 'package:futzada/pages/cadastro/modalidade_jogador_step.dart';
 import 'package:futzada/pages/cadastro/modalidade_tecnico_step.dart';
-import 'package:futzada/pages/pelada/cadastro/dados_pelada_step.dart';
+import 'package:futzada/pages/cadastro/conclusao_step.dart';
+import 'package:futzada/pages/mapa/map_widget.dart';
 
 class AppRoutes {
   static final routes = [
@@ -33,5 +34,7 @@ class AppRoutes {
       GetPage(name: "/pelada/cadastro/dados_pelada", page: () => const DadosPeladaStep(), transition: Transition.rightToLeft),
       GetPage(name: "/pelada/cadastro/dados_endereco", page: () => const DadosEnderecoStep(), transition: Transition.rightToLeft),
       GetPage(name: "/pelada/cadastro/dados_participantes", page: () => const DadosParticipantesStep(), transition: Transition.rightToLeft),
+      //EXPLORE MAPA
+      GetPage(name: "/explore/mapa", page: () => const MapaPage(), transition: Transition.rightToLeft),
   ];
 }
