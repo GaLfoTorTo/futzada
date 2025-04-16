@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/models/usuario_model.dart';
+import 'package:futzada/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -14,9 +14,9 @@ class AuthController extends getx.GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static AuthController get instance => getx.Get.find();
   //INSTANCIA DE MODEL DE USUARIO
-  final _usuario = getx.Rxn<UsuarioModel>();
+  final _user = getx.Rxn<UserModel>();
   //GETTER DE MODEL DE USUARIO
-  UsuarioModel? get usuario => _usuario.value;
+  UserModel? get usuario => _user.value;
   //INSTANCIAR STORAGE
   final storage = GetStorage();
   //ON READY
@@ -31,10 +31,10 @@ class AuthController extends getx.GetxController{
   }
 
   //FUNÇÃO DE CONFIGURAÇÕES DE USUÁRIO LOCALMENTE
-  void setUsuario(UsuarioModel? usuario) {
+  void setUsuario(UserModel? usuario) {
     //VERIFICAR SE USUÁRIO RECEBIDO NÃO ESTA VAZIO
     if(usuario != null){
-      _usuario.value = usuario;
+      _user.value = usuario;
       //SALVAR LOCALMENTE
       saveUsuario(usuario);
       //VERIFICAR SE É O PRIMEIRO LOGIN
@@ -54,7 +54,7 @@ class AuthController extends getx.GetxController{
   }
 
   //FUNÇÃO DE SALVAMENTO DE DADOS DO USUÁRIO LOCALMENTE
-  Future<void> saveUsuario(UsuarioModel usuario) async{
+  Future<void> saveUsuario(UserModel usuario) async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
     //SALVAR USUARIO LOCALMENTE
@@ -83,7 +83,7 @@ class AuthController extends getx.GetxController{
       //RESGATAR DADOS SALVOS DO USUARIO
       final usuarioData = storage.get('usuario') as String;
       //DEFINIR USUARIO
-      setUsuario(UsuarioModel.fromJson(usuarioData));
+      setUsuario(UserModel.fromJson(usuarioData));
     }else{
       //RETORNAR STATUS
       setUsuario(null);
@@ -91,7 +91,7 @@ class AuthController extends getx.GetxController{
   }
   
   //FUNÇÃO PARA VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-  Future<UsuarioModel?> getUsuario() async{
+  Future<UserModel?> getUsuario() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
     await Future.delayed(Duration(seconds: 2));
@@ -100,7 +100,7 @@ class AuthController extends getx.GetxController{
       //RESGATAR DADOS SALVOS DO USUARIO
       final usuarioData = storage.get('usuario') as String;
       //RETORNAR USUARIO EM FORMATO DE JSON
-      return UsuarioModel.fromJson(usuarioData);
+      return UserModel.fromJson(usuarioData);
     }
     return null;
   }
@@ -114,14 +114,14 @@ class AuthController extends getx.GetxController{
       //ENVIAR SOLICITAÇÃO AO GOOGLE
       final resp = await googleSignIn.signIn();
       //RESGATAR DADOS DO USUÁRIO FORNECIDOS PELO GOOGLE
-      String? nome = resp?.displayName?.split(' ')[0] ?? 'Usuario';
-      String? sobrenome = resp?.displayName?.split(' ').skip(1).join(' ') ?? 'Anônimo';
+      String? firstName = resp?.displayName?.split(' ')[0] ?? 'Usuario';
+      String? lastName = resp?.displayName?.split(' ').skip(1).join(' ') ?? 'Anônimo';
       //CRIAR NOVA INSTANCIA DE USUARIO COM DADOS DO GOOGLE
-      final usuario = UsuarioModel(
-        nome: nome,
-        sobrenome: sobrenome,
+      final usuario = UserModel(
+        firstName: firstName,
+        lastName: lastName,
         email: resp?.email,
-        foto: resp?.photoUrl,
+        photo: resp?.photoUrl,
       );
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
       setUsuario(usuario);
@@ -160,9 +160,9 @@ class AuthController extends getx.GetxController{
       //VERIFICAR RESPOSTA DO SERVIDOR
       if(response.statusCode == 200) {
         //RESGATAR OS DADOS DE USUARIO
-        UsuarioModel usuario = UsuarioModel.fromMap(response.data['usuario']);
+        UserModel user = UserModel.fromMap(response.data['user']);
         //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
-        setUsuario(usuario);
+        setUsuario(user);
         //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
         return {'status': 200};
       } else {

@@ -18,27 +18,27 @@ import 'package:futzada/widget/pickers/picker_uniforme_widget.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class ModalidadeTecnicoStep extends StatefulWidget {  
-  const ModalidadeTecnicoStep({super.key});
+class ModoTecnicoStep extends StatefulWidget {  
+  const ModoTecnicoStep({super.key});
 
   @override
-  State<ModalidadeTecnicoStep> createState() => ModalidadeTecnicoStepStateState();
+  State<ModoTecnicoStep> createState() => ModoTecnicoStepStateState();
 }
 
-class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
+class ModoTecnicoStepStateState extends State<ModoTecnicoStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
   final CadastroController controller = Get.put(CadastroController());
   //CONTROLADORES DE PICKER DE COR
-  late Color primaria;
-  late Color secundaria;
-  bool selectedPrimaria = false;
-  bool selectedSecundaria = false;
-  String currentColor = "Primaria";
+  late Color primary;
+  late Color secondary;
+  bool selectedPrimary = false;
+  bool selectedSecoundary = false;
+  String currentColor = "Primary";
   String selectedColor = "";
   //CONTROLLADOR DO EMBLEMA
-  late Map<String, Map<String, dynamic>> confEmblema = {};
+  late Map<String, Map<String, dynamic>> confEmblem = {};
   //VARIVAEL PARA ARMAZENAR EMBLEMAS EM FORMATO DE STRING
   Map<String, String> emblemas = {};
   //CONTROLLADOR DO CARROUSEL DE EMBELMAS
@@ -54,31 +54,31 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
   void initState() {
     super.initState();
     //INICIALIZAR CORES
-    primaria = controller.model.primaria != null 
-              ? AppColors.colors[controller.model.primaria]! 
+    primary = controller.model.manager?.primary != null 
+              ? AppColors.colors[controller.model.manager!.primary]! 
               : AppColors.green_300;
-    secundaria = controller.model.secundaria != null 
-              ? AppColors.colors[controller.model.secundaria]! 
+    secondary = controller.model.manager?.secondary != null 
+              ? AppColors.colors[controller.model.manager?.secondary]! 
               : AppColors.blue_500;
     //INICIALIZAR PERSONALIZAÇÃO DOS EMBLEMAS
-    if(controller.model.emblema != null){
+    if(controller.model.manager?.emblem != null){
       //RESGATAR CONFIGURAÇÕES DE EMBLEMA SALVAS
-      transformeMap(controller.model.emblema!, confEmblema);
+      transformeMap(controller.model.manager?.emblem, confEmblem);
       //RESGATAR CORES DAS ESTAMPAS APARTIR DAS CHAVES SALVAS
-      getColorKey(confEmblema, 'inicializar');
+      getColorKey(confEmblem, 'inicializar');
       //RESGATAR INDEX DO EMBLEMA SELECIONADO PELO USUARIO
-      var emblemaSelected = confEmblema['emblema']!['item'];
+      var emblemaSelected = confEmblem['emblem']!['item'];
       emblemaSelected = emblemaSelected.split('_');
       indexEmblema = int.parse(emblemaSelected[1]) - 1;
     }else{
       //DEFINIR CONFIGURAÇÃO INICIAL DE EMBLEMA
-      confEmblema = {
-        'emblema' : {
+      confEmblem = {
+        'emblem' : {
           'item': 'emblema_1'
         },
         'bg': {
           'checked': true,
-          'color': primaria,
+          'color': primary,
         },
         'mt': {
           'checked': false,
@@ -109,9 +109,9 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
       indexEmblema = 0;
     }
     //INICIALIZAR UNIFOME
-    if(controller.model.uniforme != null){
+    if(controller.model.manager?.uniform != null){
       //RESGATAR CONFIGURAÇÕES DE EMBLEMA SALVAS
-      transformeMap(controller.model.uniforme!, confUniforme);
+      transformeMap(controller.model.manager?.uniform!, confUniforme);
       //RESGATAR CORES DAS ESTAMPAS APARTIR DAS CHAVES SALVAS
       getColorKey(confUniforme, 'inicializar');
     }else{
@@ -119,7 +119,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
       confUniforme = {
         'bg': {
           'checked': true,
-          'color': primaria,
+          'color': primary,
         },
         'mt': {
           'checked': false,
@@ -200,13 +200,13 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
   Future<void> _initializeSvg() async {
     //TRANSFORMAR EMBLEMAS EM STRINGS
     emblemas = await mapSvgToString(AppIcones.emblemas);
-    confEmblema.forEach((key, value) {
+    confEmblem.forEach((key, value) {
       //VERIFICAR SE CHAVE NÃO É O TIPO DE EMBLEMA
-      if(key != 'emblema'){
+      if(key != 'emblem'){
         //ADICIONAR NULL NAS CORES DE ESTAMPAS NÃO HABILITADAS
-        if(confEmblema[key]!['checked'] == true){
+        if(confEmblem[key]!['checked'] == true){
           //APLICAR COR NA ESTAMPA
-          selectEstampaColor(key, confEmblema[key]!['color'], 'Emblema');
+          selectEstampaColor(key, confEmblem[key]!['color'], 'Emblema');
         }
       }
     });
@@ -227,7 +227,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
       //ADICIONAR NULL NAS CORES PARA ESTAMPAS NÃO ATIVAS DO EMBLEMA
       config.forEach((key, value) {
         //VERIFICAR SE CHAVE NÃO E DO TIPO DE EMBLEMA
-        if(key != 'emblema'){
+        if(key != 'emblem'){
           //ADICIONAR NULL NAS CORES DE ESTAMPAS NÃO HABILITADAS
           if(config[key]!['checked'] == true){
             //RESGATAR CHAVE DA COR DA ESTAMAPA
@@ -238,11 +238,11 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
               config[key]!['color'] = AppColors.colors[colorKey];
             }else{
               //RESGATAR COR DEFINIDA COMO PRIMÁRIA CASO NÃO ENCONTRE CHAVE
-              config[key]!['color'] = primaria;
+              config[key]!['color'] = primary;
             }
           }else{
             //RESGATAR COR DEFINIDA COMO SECUNDÁRIA CASO NÃO ENCONTRE CHAVE
-            config[key]!['color'] = secundaria;
+            config[key]!['color'] = secondary;
           }
         }
       });
@@ -250,7 +250,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
       //ADICIONAR NULL NAS CORES PARA ESTAMPAS NÃO ATIVAS DO EMBLEMA
       config.forEach((key, value) {
         //VERIFICAR SE CHAVE NÃO É O TIPO DE EMBLEMA
-        if(key != 'emblema'){
+        if(key != 'emblem'){
           //ADICIONAR NULL NAS CORES DE ESTAMPAS NÃO HABILITADAS
           if(config[key]!['checked'] == false){
             //DEFINIR COR COMO NULL
@@ -266,26 +266,26 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
     }
   }
 
-  //FUNÇÃO PARA ALTERNAR ENTRE CORES (PRIMARIA OU SECUNDARIA)
+  //FUNÇÃO PARA ALTERNAR ENTRE CORES (PRIMARy OU SECUNDARIA)
   void selectColor(String label, Color color, String? item){
     setState(() {
       //ALTERNAR ENTRE PICKERS
       if(label == 'Primária'){
         currentColor = "Primária";
-        selectedPrimaria = true;
-        selectedSecundaria = false;
+        selectedPrimary = true;
+        selectedSecoundary = false;
       }else if(label == 'Secundária'){
         currentColor = "Secundária";
-        selectedPrimaria = false;
-        selectedSecundaria = true;
+        selectedPrimary = false;
+        selectedSecoundary = true;
       }
       //ALTERAR CORES DO PICKER ATUAL
       if(currentColor == 'Primária'){
-        primaria = color;
-        controller.primariaController.text = label;
+        primary = color;
+        controller.primaryController.text = label;
       }else{
-        secundaria = color;
-        controller.secundariaController.text = label;
+        secondary = color;
+        controller.secondaryController.text = label;
       }
       //ALTERAR COR SELECIONADA
       selectedColor = label;
@@ -297,11 +297,11 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
     setState(() {
       if(item == 'Emblema'){
         //ALTERAR ESTADO DA ESTAMPA
-        confEmblema[estampa]!['color'] = color;
+        confEmblem[estampa]!['color'] = color;
         //LOOP NOS KITS
         for (final item in emblemas.entries) {
           //ALTERAR COR DOS KITS
-          String newKit = AppHelper.alterSvgColor(item.value, estampa, confEmblema[estampa]!['checked'], color);
+          String newKit = AppHelper.alterSvgColor(item.value, estampa, confEmblem[estampa]!['checked'], color);
           //REATRIBUIR KIT
           emblemas[item.key] = newKit;
         }
@@ -310,7 +310,6 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
         confUniforme[estampa]!['color'] = color;
         //ALTERAR COR DA ESTAMPA SELECIONADA NO EMBLEMA
         uniforme = AppHelper.alterSvgColor(uniforme, estampa, confUniforme[estampa]!['checked'], color);
-
       }
     });
   }
@@ -321,9 +320,9 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
     setState(() {
       if(item == 'Emblema'){
         //ALTERAR CHECKED DA ESTAMPA
-        confEmblema[estampa]!['checked'] = !(confEmblema[estampa]!['checked'] as bool);
+        confEmblem[estampa]!['checked'] = !(confEmblem[estampa]!['checked'] as bool);
         //ALTERAR COR DA ESTAMPA
-        confEmblema[estampa]!['color'] = confEmblema[estampa]!['checked'] ? color : null;
+        confEmblem[estampa]!['color'] = confEmblem[estampa]!['checked'] ? color : null;
         //ALTERAR COR DA ESTAMPA SELECIONADA NO EMBLEMA
         selectEstampaColor(estampa, color, item);
       }else{
@@ -338,16 +337,16 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
   }
 
   //FUNÇÃO PARA SELECIONAR O KIT
-  void selectEmblema(emblema){
+  void selectEmblema(emblem){
     //RESAGATAR EMBLEMA SELECIONADO
-    controller.uniformeController.text = emblema;
-    confEmblema['emblema']!['item'] = emblema;
+    controller.uniformController.text = emblem;
+    confEmblem['emblem']!['item'] = emblem;
   }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
     //AJUSTAR CORES SELECIONADAS PARA ESTAMPAS DE EMBLEMA E UNIFORMES
-    getColorKey(confEmblema, 'salvar');
+    getColorKey(confEmblem, 'salvar');
     getColorKey(confUniforme, 'salvar');
     //RESGATAR O FORMULÁRIO
     var formData = formKey.currentState;
@@ -355,17 +354,17 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
     if (formData?.validate() ?? false) {
       //SALVAR CORES E UNIFORME
       controller.onSaved({
-        "primaria": AppColors.colors.entries.firstWhere((entry) => entry.value == primaria, orElse: () => const MapEntry('green_300', AppColors.green_300)).key,
-        "secundaria": AppColors.colors.entries.firstWhere((entry) => entry.value == secundaria, orElse: () => const MapEntry('blue_500', AppColors.blue_500)).key,
-        "emblema": jsonEncode(confEmblema),
-        "uniforme": jsonEncode(confUniforme),
+        "manager.primary": AppColors.colors.entries.firstWhere((entry) => entry.value == primary, orElse: () => const MapEntry('green_300', AppColors.green_300)).key,
+        "manager.secondary": AppColors.colors.entries.firstWhere((entry) => entry.value == secondary, orElse: () => const MapEntry('blue_500', AppColors.blue_500)).key,
+        "manager.emblem": jsonEncode(confEmblem),
+        "manager.uniform": jsonEncode(confUniforme),
       });
       formData?.save();
       //AJUSTAR CORES PARA ESTAMPAS DE EMBLEMA E UNIFORMES
-      getColorKey(confEmblema, 'inicializar');
+      getColorKey(confEmblem, 'inicializar');
       getColorKey(confUniforme, 'inicializar');
-      //NAVEGAR PARA ROTA DE MODALIDADES
-      Get.toNamed('/cadastro/modalidades');
+      //RETORNAR PARA APRESENTAÇÃO DOS MODOS
+      Get.until((route) => route.settings.name == '/cadastro/modos');
     }
   }
   
@@ -374,15 +373,15 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
     //LISTA DE CAMPOS
     final List<Map<String, dynamic>> inputs = [
       {
-        'name':'equipe',
+        'name':'manager.team',
         'label': 'Equipe',
-        'controller': controller.equipeController,
+        'controller': controller.teamController,
         'type': TextInputType.text
       },
       {
-        'name': 'sigla',
+        'name': 'manager.alias',
         'label': 'Sigla',
-        'controller': controller.siglaController,
+        'controller': controller.aliasController,
         'type': TextInputType.text,
         'maxLength' : 3,
       },
@@ -451,7 +450,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  for(var input in inputs)
+                  for(var input in inputs)...[
                     InputTextWidget(
                       name: input['name'],
                       label: input['label'],
@@ -461,6 +460,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                       type: input['type'],
                       maxLength: input['maxLength']
                     ),
+                  ],
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Column(
@@ -478,18 +478,18 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               PickerColorWidget(
-                                color: primaria,
+                                color: primary,
                                 id: "Primária",
                                 label: "Primária",
-                                checked: selectedPrimaria,
+                                checked: selectedPrimary,
                                 selectColor: selectColor,
                                 tipo: 'Color',
                               ),
                               PickerColorWidget(
-                                color: secundaria,
+                                color: secondary,
                                 id: "Secundária",
                                 label: "Secundária",
-                                checked: selectedSecundaria,
+                                checked: selectedSecoundary,
                                 selectColor: selectColor,
                                 tipo: 'Color',
                               )
@@ -579,9 +579,9 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                                   PickerEmblemaWidget(
                                     selectEstampa: selectEstampa,
                                     selectColor: selectEstampaColor,
-                                    primariaColor: primaria,
-                                    secundariaColor: secundaria,
-                                    confEstampa: confEmblema,
+                                    primaryColor: primary,
+                                    secondaryColor: secondary,
+                                    confEstampa: confEmblem,
                                   ),
                                 ],
                               );
@@ -651,8 +651,8 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                                     PickerUniformeWidget(
                                       selectEstampa: selectEstampa,
                                       selectColor: selectEstampaColor,
-                                      primariaColor: primaria,
-                                      secundariaColor: secundaria,
+                                      primaryColor: primary,
+                                      secondaryColor: secondary,
                                       confEstampa: confUniforme,
                                     ),
                                   ]
@@ -671,7 +671,7 @@ class ModalidadeTecnicoStepStateState extends State<ModalidadeTecnicoStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back()
+                        action: () => Get.toNamed('/cadastro/modos')
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

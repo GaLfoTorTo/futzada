@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/models/usuario_model.dart';
+import 'package:futzada/models/user_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -11,7 +11,7 @@ class HomeController extends GetxController{
   //CONTROLLER DE BARRA NAVEGAÇÃO
   final authController = AuthController.instance;
   //GETTER DE USUARIO SALVO LOCALMENTE
-  UsuarioModel? get usuario => AuthController.instance.usuario;
+  UserModel? get usuario => AuthController.instance.usuario;
   
   //LISTA DE OPTIONS PARA O CARD PERTO DE VOCE
   List<Map<String, dynamic>> peladas = [];
@@ -43,7 +43,7 @@ class HomeController extends GetxController{
       partidas
     ];
   }
-  Future<UsuarioModel> fetchUsuario() async{
+  Future<UserModel> fetchUsuario() async{
     //DELAY DE 2 SEGUNDOS
     await Future.delayed(Duration(seconds: 2));
     return usuario!;

@@ -63,7 +63,7 @@ class _ConclusaoStepStateState extends State<ConclusaoStep>  with SingleTickerPr
 
   //FUNÇÃO DE ENVIO DE DADOS PARA BACKEND
   void registerUser() async{
-    var response = controller.sendForm();
+    var response = controller.registerUser();
     //MODAL DE STATUS DE REGISTRO DO USUARIO
     showDialog(
       context: context,

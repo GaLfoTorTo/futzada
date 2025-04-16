@@ -27,6 +27,7 @@ class AppWidget extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       initialRoute: initialRoute,
       smartManagement: SmartManagement.keepFactory,
+      debugShowCheckedModeBanner: false,
       getPages: AppRoutes.routes,
       routingCallback: (routing) {
         if (routing != null) {

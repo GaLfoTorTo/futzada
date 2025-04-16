@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/models/usuario_model.dart';
+import 'package:futzada/models/user_model.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
@@ -21,7 +21,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   //INSTANCIAR CONTROLLER DE AUTENTICAÇÃO
   final controller = Get.find<AuthController>();
   //DADOS DO USUÁRIO
-  late UsuarioModel? usuario;
+  late UserModel? usuario;
   //VARIAVEL DE MENSAGEM DE ERRO
   String? errorMessage;
 
@@ -150,7 +150,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       ImgCircularWidget(
                         width: 80, 
                         height: 80, 
-                        image: usuario!.foto
+                        image: usuario!.photo
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
@@ -159,7 +159,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${usuario!.nome} ${usuario!.sobrenome}',
+                              '${usuario!.firstName} ${usuario!.lastName}',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: AppColors.blue_500,

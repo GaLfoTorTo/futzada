@@ -75,26 +75,46 @@ class AppHelper {
   static String alterSvgColor(String svg, String estampa, bool checked, Color color) {
     //FORMATAR COR PARA HEX
     String colorSelected = convertColor(color);
+    //FORMATAR OLD COR PARA HEX
+    String oldColorSelected = getFillColor(svg, estampa);
+    //VERIFICAR SE SVG CONTEM A COR ANTIGA
+    bool existColor = svg.contains('id="$estampa" fill="#$oldColorSelected"');
+    bool existNone = svg.contains('id="$estampa" fill="none"');
     //VERIFICAR SE ESTAMAPA ESTÁ SELECIONADA
-    if (checked == true) {
-      //BUSCAR ESTAMAPA NO SVG E ALTERAR A COR
-      svg = svg.replaceAll(
-        'id="$estampa"',
-        'id="$estampa" fill="#$colorSelected"',
-      );
-    } else {
-      //VERIFICAR SE ESTAMPA RECEBIDA NÃO E O BG
-      if (estampa != 'bg') {
-        //BUSCAR ESTAMPA NO SVG E REMOVER COR
+    if(checked){
+      //VERIFICAR SE ESTAMPA ESTAVA COLORIDA
+      if(existColor){
+        //BUSCAR ESTAMAPA NO SVG E ALTERAR A COR
         svg = svg.replaceAll(
-          'id="$estampa"',
-          'id="$estampa" fill="none"',
+          'id="$estampa" fill="#$oldColorSelected"',
+          'id="$estampa" fill="#$colorSelected"',
         );
       }
+      //VERIFICAR SE ESTAMPA NÃO ESTAVA COLORIDA
+      if(existNone){
+        //BUSCAR ESTAMAPA NO SVG E ALTERAR A COR
+        svg = svg.replaceAll(
+          'id="$estampa" fill="none"',
+          'id="$estampa" fill="#$colorSelected"',
+        );
+      }
+    } else {
+      //BUSCAR ESTAMPA NO SVG E REMOVER COR
+      svg = svg.replaceAll(
+        'id="$estampa" fill="#$oldColorSelected"',
+        'id="$estampa" fill="none"',
+      );
     }
     //RETORNAR SVG RECOLORIDO
     return svg;
   }
+
+  static String getFillColor(String svg, String estampa) {
+    return svg.contains('id="$estampa" fill="#') 
+      ? svg.split('id="$estampa" fill="#')[1].split('"')[0] 
+      : '#04D361';
+  }
+
 
   //FUNÇÃO PARA DEFINIR POSIÇÃO PRINCIPAL DO USUARIO
   static String setMainPosition(String svg){

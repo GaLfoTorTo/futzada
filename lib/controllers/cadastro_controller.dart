@@ -1,38 +1,35 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart'as Dio;
+import 'package:futzada/models/user_model.dart';
+import 'package:futzada/services/form_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/models/casdastro_model.dart';
 
 class CadastroController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
   static CadastroController get instace => Get.find();
-  //INSTANCIA DE CADASTRO MODEL
-  CadastroModel model = CadastroModel();
+  //INSTANCIAR MODEL DE USUARIO
+  UserModel model = UserModel();
   // CONTROLLERS DE DADOS BASICOS
-  final TextEditingController nomeController = TextEditingController();
-  final TextEditingController sobreNomeController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
   final MaskedTextController userNameController = MaskedTextController(mask: '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', translator: {"@": RegExp(r'[@\w]')});
   final TextEditingController emailController = TextEditingController();
-  final MaskedTextController telefoneController = MaskedTextController(mask: "(00) 00000-0000");
-  final MaskedTextController dataNascimentoController = MaskedTextController(mask: "00/00/0000");
-  final TextEditingController visibilidadeController = TextEditingController();
-  final TextEditingController fotoController = TextEditingController();
+  final MaskedTextController phoneController = MaskedTextController(mask: "(00) 00000-0000");
+  final MaskedTextController bornDateController = MaskedTextController(mask: "00/00/0000");
+  final TextEditingController visibilityController = TextEditingController();
+  final TextEditingController photoController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmacaoController = TextEditingController();
   // CONTROLLERS DE JOGADOR
-  final TextEditingController melhorPeController = TextEditingController();
-  final TextEditingController arquetipoController = TextEditingController();
+  final TextEditingController bestSideController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
   // CONTROLLERS DE TÉNICO
-  final TextEditingController equipeController = TextEditingController();
-  final TextEditingController siglaController = TextEditingController();
-  final TextEditingController primariaController = TextEditingController();
-  final TextEditingController secundariaController = TextEditingController();
-  final TextEditingController emblemaController = TextEditingController();
-  final TextEditingController uniformeController = TextEditingController();
+  final TextEditingController teamController = TextEditingController();
+  final TextEditingController aliasController = TextEditingController();
+  final TextEditingController primaryController = TextEditingController();
+  final TextEditingController secondaryController = TextEditingController();
+  final TextEditingController emblemController = TextEditingController();
+  final TextEditingController uniformController = TextEditingController();
 
   //VALIDAÇÃO DE CAMPOS
   String? validateEmpty(String? value, String label) {
@@ -42,69 +39,15 @@ class CadastroController extends GetxController {
     return null;
   }
 
-  //VALIADÇÃO DE CONFIRMAÇÃO DE SENHA
-  String? validateConfirm(){
-    //VERIFICAR SE NÃO ESTÁ VAZIO
-    if(confirmacaoController.text.isEmpty){
-      return "Confirmação de Senha deve ser preenchido(a)!";
-    }
-    //VERIFICAR SE SENHAS COMBINAM
-    if(passwordController.text != confirmacaoController.text){
-      return "Senha e Confirmação de senha devem ser iguais!";
-    }
-    return null;
-  }
-
   void onSaved(Map<String, dynamic> updates) {
     model = model.copyWithMap(updates: updates);
   }
 
-  Future<Map<String, dynamic>> sendForm() async {
+  Future<Map<String, dynamic>> registerUser() async {
     //BUSCAR URL BASICA
     var url = AppApi.url+AppApi.createUser;
-    //TENTAR SALVAR USUÁRIO
-    try {
-      //INSTANCIAR DIO
-      var dio = Dio.Dio();
-      //RESGATAR DADOS DE USUARIO NO FORMATO DE MAP
-      var formDataMap = model.toMap();
-      //CRIAR OBJETO FORMDATA
-      var formData = Dio.FormData.fromMap(formDataMap);
-      //VERIFICAR SE EXISTE FOTO NA REQUISIÇÃO
-      if (model.foto != null) {
-        //ADICIONAR IMAGEM NO FORMDATA
-        formData.files.add(MapEntry(
-          'foto',
-          await Dio.MultipartFile.fromFile(
-            model.foto!, 
-            filename: model.foto!.split('/').last,
-          ),
-        ));
-      }
-      //INICIALIZAR REQUISIÇÃO
-      var response = await dio.post(
-        url, 
-        options: Dio.Options(headers: {'Content-Type': 'multipart/form-data'}),
-        data: formData,
-      );
-      //VERIFICAR RESPOSTA DO SERVIDOR
-      if(response.statusCode == 200) {
-        //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
-        return {
-          'status': 200,
-        };
-      } else {
-        //RESGATAR MENSAGEM DE ERRO
-        var errorMessage = jsonDecode(response.data);
-        //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
-        return {
-          'status': 400,
-          'message': errorMessage['message'],
-        };
-      }
-    } on Dio.DioException catch (e) {
-      //TRATAR ERROS
-      return AppHelper.tratamentoErros(e);
-    }
+    //ENVIAR FORMULÁRIO
+    var response = await FormService.sendForm(model, url);
+    return response;
   }
 }

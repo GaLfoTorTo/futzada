@@ -8,9 +8,9 @@ import 'package:futzada/pages/auth/login_page.dart';
 import 'package:futzada/pages/apresentacao/apresentacao_page.dart';
 import 'package:futzada/pages/cadastro/apresentacao_step.dart';
 import 'package:futzada/pages/cadastro/dados_basicos_step.dart';
-import 'package:futzada/pages/cadastro/modalidades_step.dart';
-import 'package:futzada/pages/cadastro/modalidade_jogador_step.dart';
-import 'package:futzada/pages/cadastro/modalidade_tecnico_step.dart';
+import 'package:futzada/pages/cadastro/modos_step.dart';
+import 'package:futzada/pages/cadastro/modo_jogador_step.dart';
+import 'package:futzada/pages/cadastro/modo_tecnico_step.dart';
 import 'package:futzada/pages/cadastro/conclusao_step.dart';
 import 'package:futzada/pages/mapa/map_widget.dart';
 
@@ -22,9 +22,9 @@ class AppRoutes {
       //CADASTRO
       GetPage(name: "/cadastro/apresentacao", page: () =>  const ApresentacaoStep(), transition: Transition.rightToLeft),
       GetPage(name: "/cadastro/dados_basicos", page: () =>  const DadosBasicosStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/cadastro/modalidades", page: () =>  const ModalidadesStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/cadastro/jogador", page: () =>  const ModalidadeJogadorStep(), transition: Transition.leftToRight),
-      GetPage(name: "/cadastro/tecnico", page: () =>  const ModalidadeTecnicoStep(), transition: Transition.leftToRight),
+      GetPage(name: "/cadastro/modos", page: () =>  const ModosStep(), transition: Transition.rightToLeft),
+      GetPage(name: "/cadastro/jogador", page: () =>  const ModoJogadorStep(), transition: Transition.leftToRight),
+      GetPage(name: "/cadastro/tecnico", page: () =>  const ModoTecnicoStep(), transition: Transition.leftToRight),
       GetPage(name: "/cadastro/conclusao", page: () =>  const ConclusaoStep(), transition: Transition.leftToRight),
       //HOME
       GetPage(name: "/home", page: () => const AppBase()),

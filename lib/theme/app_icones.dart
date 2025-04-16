@@ -44,6 +44,7 @@ class AppIcones {
     "cap": "assets/icones/posicoes/posicao_cap.svg",
   };
   //REDES SOCIAIS
+  static const String facebook = "assets/icones/facebook.svg";
   static const String google = "assets/icones/google.svg";
   //LINHAS CAMPO
   static const String linhasCampo = "assets/icones/linhas_campo.svg";

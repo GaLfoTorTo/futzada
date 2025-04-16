@@ -1,0 +1,1 @@
+enum VisibilityPerfil { Publico, Privado }

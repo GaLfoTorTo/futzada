@@ -9,8 +9,8 @@ import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:get/get.dart';
 
-class ModalidadesStep extends StatelessWidget {
-  const ModalidadesStep({super.key});
+class ModosStep extends StatelessWidget {
+  const ModosStep({super.key});
   
   @override
   Widget build(BuildContext context) {
@@ -19,21 +19,21 @@ class ModalidadesStep extends StatelessWidget {
     //RESGATAR DIMENSOES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //LISTA DE INPUTS RADIO
-    final List<Map<String, dynamic>> modalidade = [
+    final List<Map<String, dynamic>> modos = [
       {
-        'modalidade': 'Jogador',
+        'modos': 'Jogador',
         'icone': AppIcones.foot_field_solid,
         'iconSize': 40.0,
-        'descricao' : 'Esta modalidade e voltada aos usuários que atuaram em campo ou quadras nas partidas.',
-        'checked' : controller.model.posicoes != null ? true : false,
+        'descricao' : 'Este modo e voltado aos usuários que atuaram em campo ou quadras nas partidas.',
+        'checked' : controller.model.player?.positions != null ? true : false,
         'route' : '/cadastro/jogador',
       },
       {
-        'modalidade': 'Técnico',
+        'modos': 'Técnico',
         'icone': AppIcones.clipboard_solid,
         'iconSize': 70.0,
-        'descricao' : 'Esta modalidade e voltada aos usuários que atuaram escalando seu times nas peladas.',
-        'checked' : controller.model.equipe != null ? true : false,
+        'descricao' : 'Este modo e voltado aos usuários que atuaram escalando seu times nas peladas.',
+        'checked' : controller.model.manager?.team != null ? true : false,
         'route' : '/cadastro/tecnico',
       },
     ];
@@ -62,7 +62,7 @@ class ModalidadesStep extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    "Modalidades",
+                    "Modos",
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
@@ -70,7 +70,7 @@ class ModalidadesStep extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    "Agora defina suas preferências para cada modalidade disponível. Escolha que tipo de atuação você terá dentro do app. Você também pode optar ambas.",
+                    "Agora escolha o tipo de atuação você deseja ter no app. Defina suas preferências para cada modo de jogo disponível podendo optar por ambas as opções.",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                   ),
@@ -80,11 +80,11 @@ class ModalidadesStep extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      for(var item in modalidade)
+                      for(var item in modos)
                         Column(
                           children: [
                             Text(
-                              item['modalidade'],
+                              item['modos'],
                               style: Theme.of(context).textTheme.headlineSmall,
                               textAlign: TextAlign.center,
                             ),
@@ -116,7 +116,7 @@ class ModalidadesStep extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Text(
-                    "A definição das modalidades podem ser feitas posteriores ao cadastro pórem suas ações no app serão limitadas até a conclusão.",
+                    "A definição dos modos de jogo podem ser feitas posteriores ao cadastro, pórem suas ações no app serão limitadas até lá.",
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                     textAlign: TextAlign.center,
                   ),

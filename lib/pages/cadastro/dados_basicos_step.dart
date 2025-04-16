@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/enum/enums.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
@@ -35,9 +36,9 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
   void initState() {
     super.initState();
     //VERIFICAR ALGUMA IMAGEM FOI SALVA PELO USUARIO
-    if (controller.model.foto != null) {
+    if (controller.model.photo != null) {
       //CRIAR UM OBJETO FILE APARTIR DO CAMINHO SALVO
-      imageFile = File(controller.model.foto!); 
+      imageFile = File(controller.model.photo!); 
     }
   }
   
@@ -48,7 +49,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     if (image != null) {
       setState(() {
         imageFile = File(image.path);
-        controller.onSaved({'foto': image.path});
+        controller.onSaved({'photo': image.path});
       });
     }
   }
@@ -56,10 +57,12 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
   //SELECIONAR A VISIBILIDADE DO PERFIL
   void selectedVisibility(value){
     setState(() {
-      controller.visibilidadeController.text = value;
-      controller.onSaved({'visibilidade': value});
+      var visibility = VisibilityPerfil.values.firstWhere((e) => e.name == value);
+      controller.visibilityController.text = value;
+      controller.onSaved({'visibility': visibility});
     });
   }
+
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
@@ -69,7 +72,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA PROXIMA ETAPA
-      Get.toNamed('/cadastro/modalidades');
+      Get.toNamed('/cadastro/modos');
     }
   }
 
@@ -78,17 +81,17 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     //LISTA DE CAMPOS
     final List<Map<String, dynamic>> inputs = [
       {
-        'name':'nome',
+        'name':'firstName',
         'label': 'Nome',
         'prefixIcon' : AppIcones.user_outline,
-        'controller': controller.nomeController,
+        'controller': controller.firstNameController,
         'type': TextInputType.text
       },
       {
-        'name': 'sobrenome',
+        'name': 'lastName',
         'label': 'Sobrenome',
         'prefixIcon' : AppIcones.user_outline,
-        'controller': controller.sobreNomeController,
+        'controller': controller.lastNameController,
         'type': TextInputType.text
       },
       {
@@ -106,17 +109,17 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
         'type': TextInputType.emailAddress,
       },
       {
-        'name': 'telefone',
+        'name': 'phone',
         'label': 'Telefone',
         'prefixIcon' : LineAwesomeIcons.phone_alt_solid,
-        'controller': controller.telefoneController,
+        'controller': controller.phoneController,
         'type': TextInputType.phone,
       },
       {
-        'name': 'dataNascimento',
+        'name': 'bornDate',
         'label': 'Data de Nascimento',
         'prefixIcon' : AppIcones.calendar_outline,
-        'controller': controller.dataNascimentoController,
+        'controller': controller.bornDateController,
         'type': TextInputType.datetime,
       },
       {
@@ -127,31 +130,22 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
         'controller': controller.passwordController,
         'type': TextInputType.visiblePassword,
       },
-      {
-        'name': 'confirmacao',
-        'label': 'Confirmação de Senha',
-        'prefixIcon' : AppIcones.lock_outline,
-        'sufixIcon' : Icons.visibility_off,
-        'controller': controller.confirmacaoController,
-        'type': TextInputType.visiblePassword,
-        'validator' : controller.validateConfirm,
-      },
     ];
     //LISTA DE INPUTS RADIO
     final List<Map<String, dynamic>> radios = [
       {
-        'name': 'visibilidade',
+        'name': 'visibility',
         'placeholder' : 'Qualquer usuário pode visualizar suas informações.',
         'value': 'Publico',
         'icon' : AppIcones.door_open_solid,
-        'controller': controller.visibilidadeController,
+        'controller': controller.visibilityController,
       },
       {
-        'name': 'visibilidade',
+        'name': 'visibility',
         'placeholder' : 'Apenas você e seus amigos podem visualizar suas informações..',
         'value': 'Privado',
         'icon' : AppIcones.door_close_solid,
-        'controller': controller.visibilidadeController,
+        'controller': controller.visibilityController,
       },
     ];
 

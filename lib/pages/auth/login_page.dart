@@ -298,14 +298,14 @@ class _LoginPageState extends State<LoginPage> {
                                 controller.googleLogin(context);
                               }
                             ),
-                            /* ButtonIconWidget(
-                              icon: AppIcones.facebook["fas"],
-                              iconColor: AppColors.blue_300,
-                              dimensions: 60,
+                            ButtonIconWidget(
+                              icon: AppIcones.facebook,
+                              width: 60,
+                              height: 60,
                               action: (){
-                                print('Login facebook');
+                                //controller.googleLogin(context);
                               }
-                            ) */
+                            ),
                           ],
                         ),
                       )

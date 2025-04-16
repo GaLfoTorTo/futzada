@@ -10,7 +10,7 @@ class ApresentacaoStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //FUNÇÃO DE MAVEGAÇÃO
+    //FUNÇÃO DE NAVEGAÇÃO
     void proximo(){
       Get.toNamed('/cadastro/dados_basicos');
     }

@@ -55,7 +55,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     //INICIALIZR VISIBILIDADE DE SENHA CASO EXISTA
     obscure = widget.type != null && widget.type == TextInputType.visiblePassword;
     visible = widget.type != null && widget.type == TextInputType.visiblePassword;
-    //INICIALIZAR SUFIXICON
+    //INICIALIZAR ICONS
     sufixIcon = widget.sufixIcon != null
       ? Icon(widget.sufixIcon) 
       : null;

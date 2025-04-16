@@ -15,28 +15,28 @@ import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/select_widget.dart';
 import 'package:get/get.dart';
 
-class ModalidadeJogadorStep extends StatefulWidget {
-  const ModalidadeJogadorStep({super.key});
+class ModoJogadorStep extends StatefulWidget {
+  const ModoJogadorStep({super.key});
 
   @override
-  State<ModalidadeJogadorStep> createState() => ModalidadeJogadorStepState();
+  State<ModoJogadorStep> createState() => ModoJogadorStepState();
 }
 
-class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
+class ModoJogadorStepState extends State<ModoJogadorStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
   final CadastroController controller = Get.put(CadastroController());
   //CONTROLLER DE POSIÇÕES
-  late List<dynamic> posicoes;
+  late List<dynamic> positions;
   //CONTROLLERS DE POSIÇÕES
   late bool isCheckedGol;
   late bool isCheckedZag;
   late bool isCheckedMei;
   late bool isCheckedAta;
   //CONTROLLADOR DE MELHOR PÉ
-  late bool isCheckedEsquerdo;
-  late bool isCheckedDireito;
+  late bool isCheckedLeft;
+  late bool isCheckedRight;
   //CONTROLLADOR DE ARQUETIPO
   late String selectedArquetipo;
   //VALIDADORES
@@ -47,17 +47,17 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE POSIÇÃO E CONVERTER STRING PARA MAP
-    posicoes = controller.model.posicoes != null ? jsonDecode(controller.model.posicoes!) : [];
+    positions = controller.model.player?.positions != null ? jsonDecode(controller.model.player!.positions!) : [];
     //INICIALIZAÇÃO DE CONTROLLERS DE POSIÇÕES
-    isCheckedAta = posicoes.contains('ATA') ? true : false;
-    isCheckedMei = posicoes.contains('MEI') ? true : false;
-    isCheckedZag = posicoes.contains('ZAG') ? true : false;
-    isCheckedGol = posicoes.contains('GOL') ? true : false;
+    isCheckedAta = positions.contains('ATA') ? true : false;
+    isCheckedMei = positions.contains('MEI') ? true : false;
+    isCheckedZag = positions.contains('ZAG') ? true : false;
+    isCheckedGol = positions.contains('GOL') ? true : false;
     //INICIALIZAÇÃO DE CONTROLLERS DE MELHOR PÉ
-    isCheckedDireito = controller.model.melhorPe != null && controller.model.melhorPe == 'Direito' ? true : false;
-    isCheckedEsquerdo =  controller.model.melhorPe != null && controller.model.melhorPe == 'Esquerdo' ? true : false;
+    isCheckedRight = controller.model.player?.bestSide != null && controller.model.player!.bestSide == 'Right' ? true : false;
+    isCheckedLeft =  controller.model.player?.bestSide != null && controller.model.player!.bestSide == 'Left' ? true : false;
     //INICIALIZAR ARQUETIPO
-    selectedArquetipo = controller.model.arquetipo != null ? controller.model.arquetipo! : "Item";
+    selectedArquetipo = controller.model.player?.type != null ? controller.model.player!.type! : "Item";
     //INICIALIZAR VALIDADOR DE POSICOES
     validatePositions = true;
     validateFoot = true;
@@ -83,8 +83,8 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
         default:
       }
       //ADICIONAR OU REMOVER POSIÇÃO DO ARRAY DE POSIÇÕES
-      checked == true ? posicoes.add(position) : posicoes.remove(position);
-      controller.onSaved({"posicoes": jsonEncode(posicoes)});
+      checked == true ? positions.add(position) : positions.remove(position);
+      controller.onSaved({"player.positions": jsonEncode(positions)});
     });
   }
 
@@ -92,11 +92,11 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
   void selectMelhorPe(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      controller.melhorPeController.text = value;
-      controller.onSaved({"melhorPe": value});
+      controller.bestSideController.text = value;
+      controller.onSaved({"player.bestSide": value});
       //VERIFICAR E ALTERAR PÉ SELECIONADO
-      isCheckedEsquerdo = value == 'Esquerdo' ?  true : false;
-      isCheckedDireito = value == 'Direito' ? true : false;
+      isCheckedLeft = value == 'Left' ?  true : false;
+      isCheckedRight = value == 'Right' ? true : false;
     });
   }
 
@@ -104,8 +104,8 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
   void selectArquetipo(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      controller.arquetipoController.text = value;
-      controller.onSaved({"arquetipo": value});
+      controller.typeController.text = value;
+      controller.onSaved({"player.type": value});
     });
   }
 
@@ -116,31 +116,32 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
     //ATUALIZAR STATUS
     setState(() {
       //VERIFICAR SE AO MENOS 1 POSIÇÃO FOI SELECIONADA
-      validatePositions = posicoes.length > 0 ? true : false;
+      validatePositions = positions.length > 0 ? true : false;
       //VERIFICAR SE AO MENOS 1 PÉ FOI SELECIONADO
-      validateFoot = controller.melhorPeController.text.isNotEmpty ? true : false;
+      validateFoot = controller.bestSideController.text.isNotEmpty ? true : false;
     });
     //VALIDAR FORMULÁRIO
     if(validatePositions && validateFoot){
       //SALVAR DADOS CRUCIAIS DO FORMULÁRIO
       formData?.save();
-      Get.back();
+      //RETORNAR PARA APRESENTAÇÃO DOS MODOS
+      Get.until((route) => route.settings.name == '/cadastro/modos');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     //LISTA DE OPTIONS PARA AS POSIÇÕES
-    final List<Map<String, dynamic>> posicoes = [
+    final List<Map<String, dynamic>> positions = [
       {'posicao': 'Atacante', 'sigla': 'ATA', 'icon': AppIcones.posicao["ata"],'icon_posicao': AppIcones.silhueta["ata"], 'checked': isCheckedAta},
       {'posicao': 'Meio-Campo', 'sigla': 'MEI', 'icon': AppIcones.posicao["mei"],'icon_posicao': AppIcones.silhueta["mei"], 'checked': isCheckedMei},
       {'posicao': 'Zagueiro', 'sigla': 'ZAG', 'icon': AppIcones.posicao["zag"],'icon_posicao': AppIcones.silhueta["zag"], 'checked': isCheckedZag},
       {'posicao': 'Goleiro', 'sigla': 'GOL', 'icon': AppIcones.posicao["gol"],'icon_posicao': AppIcones.silhueta["gol"], 'checked': isCheckedGol},
     ];
     //LISTA DE OPTIONS PARA O MELHOR PÉ
-    final List<Map<String, dynamic>> melhorPe = [
-      {'value': 'Esquerdo', 'icon': AppIcones.foot_left_solid, 'checked': isCheckedEsquerdo},
-      {'value': 'Direito', 'icon': AppIcones.foot_right_solid, 'checked': isCheckedDireito},
+    final List<Map<String, dynamic>> bestSide = [
+      {'value': 'Left', 'icon': AppIcones.foot_left_solid, 'checked': isCheckedLeft},
+      {'value': 'Right', 'icon': AppIcones.foot_right_solid, 'checked': isCheckedRight},
     ];
     //LISTA DE OPTIONS PARA O ARQUETIPO
     final List<String> arquetipos = [
@@ -237,7 +238,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                                 enlargeFactor: 0.2,
                                 scrollDirection: Axis.horizontal,
                               ),
-                              items: posicoes.map((item) {
+                              items: positions.map((item) {
                                 return Builder(
                                   builder: (BuildContext context) {
                                     return Container(
@@ -298,7 +299,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            for(var item in melhorPe)
+                            for(var item in bestSide)
                               SelectRoundedWidget(
                                 value: item['value'],
                                 icon: item['icon'],
@@ -335,7 +336,7 @@ class ModalidadeJogadorStepState extends State<ModalidadeJogadorStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back()
+                        action: () => Get.until((route) => route.settings.name == '/cadastro/modos')
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

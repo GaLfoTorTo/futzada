@@ -4,7 +4,7 @@ import '/theme/app_colors.dart';
 import '/theme/app_icones.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/controllers/home_controller.dart';
-import 'package:futzada/models/usuario_model.dart';
+import 'package:futzada/models/user_model.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/pages/home/secao/secao_home_widget.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   //CONTROLLER DE BARRA NAVEGAÇÃO
   final navigationController = NavigationController.instace;
   final controller = HomeController.instance;
-  late UsuarioModel? usuario;
+  late UserModel? usuario;
   @override
   void initState() {
     super.initState();
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 ImgCircularWidget(
                                   width: 80, 
                                   height: 80, 
-                                  image: usuario!.foto
+                                  image: usuario!.photo
                                 ),
                                 Positioned(
                                   top: 60,
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     ),
                                   ),
                                   Text(
-                                    '${usuario!.nome} ${usuario!.sobrenome}',
+                                    '${usuario!.firstName} ${usuario!.lastName}',
                                     style: const TextStyle(
                                       color: AppColors.blue_500,
                                       fontSize: 15,

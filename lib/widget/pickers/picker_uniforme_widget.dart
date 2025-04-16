@@ -7,8 +7,8 @@ import 'dart:math';
 class PickerUniformeWidget extends StatelessWidget {
   final Function selectEstampa;
   final Function selectColor;
-  final Color primariaColor;
-  final Color secundariaColor;
+  final Color primaryColor;
+  final Color secondaryColor;
   //CONTROLLADORES DE CORES DAS ESTAMPAS
   final Map<String, dynamic> confEstampa;
   
@@ -16,8 +16,8 @@ class PickerUniformeWidget extends StatelessWidget {
     super.key, 
     required this.selectEstampa,
     required this.selectColor,
-    required this.primariaColor,
-    required this.secundariaColor,
+    required this.primaryColor,
+    required this.secondaryColor,
     required this.confEstampa,
   });
 
@@ -37,18 +37,18 @@ class PickerUniformeWidget extends StatelessWidget {
     Map<String, dynamic> mmConfig = confEstampa['mm'];
     Map<String, dynamic> mxlConfig = confEstampa['mxl'];
     //CONFIGURAR COR INICIAL 
-    bgConfig['color'] = bgConfig['color'] ?? secundariaColor;
-    mtConfig['color'] = mtConfig['color'] ?? secundariaColor;
-    mbConfig['color'] = mbConfig['color'] ?? secundariaColor;
-    mlConfig['color'] = mlConfig['color'] ?? secundariaColor;
-    mrConfig['color'] = mrConfig['color'] ?? secundariaColor;
-    lvcConfig['color'] = lvcConfig['color'] ?? secundariaColor;
-    lvlConfig['color'] = lvlConfig['color'] ?? secundariaColor;
-    lhcConfig['color'] = lhcConfig['color'] ?? secundariaColor;
-    lhlConfig['color'] = lhlConfig['color'] ?? secundariaColor;
-    mcConfig['color'] = mcConfig['color'] ?? secundariaColor;
-    mmConfig['color'] = mmConfig['color'] ?? secundariaColor;
-    mxlConfig['color'] = mxlConfig['color'] ?? secundariaColor;
+    bgConfig['color'] = bgConfig['color'] ?? secondaryColor;
+    mtConfig['color'] = mtConfig['color'] ?? secondaryColor;
+    mbConfig['color'] = mbConfig['color'] ?? secondaryColor;
+    mlConfig['color'] = mlConfig['color'] ?? secondaryColor;
+    mrConfig['color'] = mrConfig['color'] ?? secondaryColor;
+    lvcConfig['color'] = lvcConfig['color'] ?? secondaryColor;
+    lvlConfig['color'] = lvlConfig['color'] ?? secondaryColor;
+    lhcConfig['color'] = lhcConfig['color'] ?? secondaryColor;
+    lhlConfig['color'] = lhlConfig['color'] ?? secondaryColor;
+    mcConfig['color'] = mcConfig['color'] ?? secondaryColor;
+    mmConfig['color'] = mmConfig['color'] ?? secondaryColor;
+    mxlConfig['color'] = mxlConfig['color'] ?? secondaryColor;
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> estampas = [
       {
@@ -134,7 +134,7 @@ class PickerUniformeWidget extends StatelessWidget {
                       child: PickerColorWidget(
                         color: mtConfig['color'],
                         id: "mt",
-                        label: "Suoerior",
+                        label: "Superior",
                         checked: mtConfig['checked'],
                         selectColor: selectColor,
                         tipo: "Uniforme",
