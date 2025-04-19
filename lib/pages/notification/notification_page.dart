@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 
-class NotificacaoPageState extends StatefulWidget {
+class NotificationPageState extends StatefulWidget {
   final VoidCallback actionButton;
   
-  const NotificacaoPageState({
+  const NotificationPageState({
     super.key,
     required this.actionButton,
   });
 
   @override
-  State<NotificacaoPageState> createState() => NotificacaoPageStateState();
+  State<NotificationPageState> createState() => NotificationPageStateState();
 }
 
-class NotificacaoPageStateState extends State<NotificacaoPageState> {
-  //CONTROLADOR DE PAGINAS
+class NotificationPageStateState extends State<NotificationPageState> {
+  /* //CONTROLADOR DE PAGINAS
   final PageController _pageController = PageController(initialPage: 0);
   //TITULO
   String title = "";
@@ -34,7 +33,7 @@ class NotificacaoPageStateState extends State<NotificacaoPageState> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
-  }
+  } */
   
   @override
   Widget build(BuildContext context) {

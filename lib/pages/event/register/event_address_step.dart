@@ -10,7 +10,7 @@ import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/controllers/registro_pelada_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
@@ -18,22 +18,22 @@ import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class DadosEnderecoStep extends StatefulWidget {  
-  const DadosEnderecoStep({super.key});
+class EventAddressStep extends StatefulWidget {  
+  const EventAddressStep({super.key});
 
   @override
-  State<DadosEnderecoStep> createState() => DadosEnderecoStepState();
+  State<EventAddressStep> createState() => EventAddressStepState();
 }
 
-class DadosEnderecoStepState extends State<DadosEnderecoStep> {
+class EventAddressStepState extends State<EventAddressStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = PeladaController.instace;
+  final controller = EventController.instace;
   //DATA FIXA
   bool dataFixa = false;
   //LISTA DE DIAS DA SEMANA
-  final List<Map<String, dynamic>> diasSemana = [
+  final List<Map<String, dynamic>> daysOfWeek = [
     {'dia':'Dom', 'checked':false},
     {'dia':'Seg', 'checked':false},
     {'dia':'Ter', 'checked':false},
@@ -50,7 +50,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   @override
   void initState() {
     super.initState();
-    categoria = controller.categoriaController.text;
+    categoria = controller.categoryController.text;
   }
 
   //FUNÇÃO PARA BUSCAR ENDEREÇO (VIA CEP)
@@ -133,7 +133,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
             InputTextWidget(
               name: 'search',
               hint: 'Ex: Campo de Futebol Divinéia - Núcleo Bandeirante, Brasília - DF',
-              textController: controller.enderecoController,
+              textController: controller.addressController,
               prefixIcon: AppIcones.marker_solid,
               controller: controller,
               onChanged: searchAddress,
@@ -214,7 +214,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                       ),
                       onTap: () {
                         //SELECIONAR TEXTO
-                        controller.enderecoController.text = "${item["logradouro"]}, ${item['bairro']} - ${item['localidade']} - ${item['uf']}";
+                        controller.addressController.text = "${item["logradouro"]}, ${item['bairro']} - ${item['localidade']} - ${item['uf']}";
                         //FECHAR BOTTOMSHEET
                         Get.back();
                       },
@@ -234,27 +234,27 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   void selectCategoria(String value){
     setState(() {
       //ATUALIZAR VALOR DO CONTROLER
-      controller.categoriaController.text = value;
+      controller.categoryController.text = value;
       controller.onSaved({"categoria": value});
       categoria = value;
       //SELECIONAR TIPO DE CAMPO
       if(value == 'Campo'){
         //DEFINIR VALOR PARA SLIDER
-        controller.qtdJogadores = 11;
-        controller.minJogadores =  9;
-        controller.maxJogadores = 11;
+        controller.qtdPlayers = 11;
+        controller.minPlayers =  9;
+        controller.maxPlayers = 11;
         controller.divisions = 2;
       }else if(value == 'Society'){
         //DEFINIR VALOR PARA SLIDER
-        controller.qtdJogadores = 6;
-        controller.minJogadores = 4;
-        controller.maxJogadores = 8;
+        controller.qtdPlayers = 6;
+        controller.minPlayers = 4;
+        controller.maxPlayers = 8;
         controller.divisions = 4;
       }else if(value == 'Quadra'){
         //DEFINIR VALOR PARA SLIDER
-        controller.qtdJogadores = 5;
-        controller.minJogadores = 4;
-        controller.maxJogadores = 6;
+        controller.qtdPlayers = 5;
+        controller.minPlayers = 4;
+        controller.maxPlayers = 6;
         controller.divisions = 2;
       }
     });
@@ -263,18 +263,18 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
   //FUNÇÃO SELECIONAR DIA DA SEMANA
   void selectDaysWeek(String value){
     setState(() {
-      if(controller.diasSemana.contains(value)){
-        controller.diasSemana.remove(value);
+      if(controller.daysOfWeek.contains(value)){
+        controller.daysOfWeek.remove(value);
       }else{
-        controller.diasSemana.add(value);
+        controller.daysOfWeek.add(value);
       } 
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
-      final day = diasSemana.firstWhere((item) => item['dia'] == value);
+      final day = daysOfWeek.firstWhere((item) => item['dia'] == value);
       //ATUALIZAR O VALOR DE CHECKED
       day['checked'] = !(day['checked'] as bool);
       //ADICIONAR A MODEL DE PELADA
-      controller.diasSemanaController.text = jsonEncode(controller.diasSemana);
-      controller.onSaved({"diasSemana": jsonEncode(controller.diasSemana)});
+      controller.daysWeekController.text = jsonEncode(controller.daysOfWeek);
+      controller.onSaved({"daysOfWeek": jsonEncode(controller.daysOfWeek)});
     });
   }
 
@@ -296,7 +296,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     );
     if (dateSelected != null) {
       //ATUALIZAR VALOR DO CONTROLER
-      controller.dataController.text = AppHelper.formatDate(dateSelected);
+      controller.dateController.text = AppHelper.formatDate(dateSelected);
     }
   }
 
@@ -318,20 +318,20 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       //VERIFICAR HORARAIO
       if(name == 'horaInicio'){
         //ATUALIZAR VALOR DO CONTROLER
-        controller.horaInicioController.text =  timeSelected.toString();
+        controller.startTimeController.text =  timeSelected.toString();
       }else{
         //ATUALIZAR VALOR DO CONTROLER
-        controller.horaFimController.text = timeSelected.toString();
+        controller.endTimeController.text = timeSelected.toString();
       }
     }
   }
 
   //FUNÇÃO PARA SELEICONAR QUANTIDADE DE JOGADORES
-  void selectQtdJogadores(value){
+  void selectqtdPlayers(value){
     setState(() {
-      controller.qtdJogadores = value;
-      controller.qtdJogadoresController.text = value.toInt().toString();
-      controller.onSaved({"qtdJogadores": value.toInt().toString()});
+      controller.qtdPlayers = value;
+      controller.qtdPlayersController.text = value.toInt().toString();
+      controller.onSaved({"qtdPlayers": value.toInt().toString()});
     });
   }
 
@@ -343,7 +343,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/pelada/cadastro/dados_participantes');
+      Get.toNamed('/event/register/event_participants');
     }
   }
 
@@ -358,19 +358,19 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
       {
         'value': 'Campo',
         'icon': AppIcones.foot_field_solid,
-        'checked': controller.categoriaController.text == 'Campo' ? true : false,
+        'checked': controller.categoryController.text == 'Campo' ? true : false,
         'quantidade' : 11
       },
       {
         'value': 'Society',
         'icon': AppIcones.foot_society_solid,
-        'checked': controller.categoriaController.text == 'Society' ? true : false,
+        'checked': controller.categoryController.text == 'Society' ? true : false,
         'quantidade' : 8
       },
       {
         'value': 'Quadra',
         'icon': AppIcones.foot_futsal_solid,
-        'checked': controller.categoriaController.text == 'Quadra' ? true : false,
+        'checked': controller.categoryController.text == 'Quadra' ? true : false,
         'quantidade' : 5
       },
     ];
@@ -421,7 +421,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                   InputTextWidget(
                     name: 'endereco',
                     label: 'Endereço',
-                    textController: controller.enderecoController,
+                    textController: controller.addressController,
                     controller: controller,
                     onSaved: controller.onSaved,
                     type: TextInputType.streetAddress,
@@ -443,7 +443,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: diasSemana.map<Widget>((item) {
+                            children: daysOfWeek.map<Widget>((item) {
                               return SelectDaysWeekWidget(
                                 value: item['dia'],
                                 checked: item['checked'],
@@ -458,7 +458,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                     InputDateWidget(
                       name: 'data',
                       label: 'Data',
-                      textController: controller.dataController,
+                      textController: controller.dateController,
                       controller: controller,
                       onSaved: controller.onSaved,
                       showModal: () => selectDate(context),
@@ -489,7 +489,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                           child: InputDateWidget(
                             name: 'horaInicio',
                             label: 'Hora de Início',
-                            textController: controller.horaInicioController,
+                            textController: controller.startTimeController,
                             controller: controller,
                             onSaved: controller.onSaved,
                             showModal: () => selectTime(context, 'horaInicio'),
@@ -500,7 +500,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                           child: InputDateWidget(
                             name: 'horaFim',
                             label: 'Hora de Fim',
-                            textController: controller.horaFimController,
+                            textController: controller.endTimeController,
                             controller: controller,
                             onSaved: controller.onSaved,
                             showModal: () => selectTime(context, 'horaFim'),
@@ -554,14 +554,14 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                           ),
                         ),
                         Slider(
-                          value: controller.qtdJogadores,
-                          min: controller.minJogadores,
-                          max: controller.maxJogadores,
+                          value: controller.qtdPlayers,
+                          min: controller.minPlayers,
+                          max: controller.maxPlayers,
                           divisions: controller.divisions,
-                          label: controller.qtdJogadores.toInt().toString(),
+                          label: controller.qtdPlayers.toInt().toString(),
                           activeColor: AppColors.green_300,
                           inactiveColor: AppColors.white,
-                          onChanged: (double newValue) => selectQtdJogadores(newValue),
+                          onChanged: (double newValue) => selectqtdPlayers(newValue),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -576,7 +576,7 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                                   borderRadius: BorderRadius.circular(50),
                                 ),
                                 child: Text(
-                                  controller.qtdJogadores.toInt().toString(),
+                                  controller.qtdPlayers.toInt().toString(),
                                   style: Theme.of(context).textTheme.titleLarge!.copyWith(color: AppColors.white),
                                   textAlign: TextAlign.center,
                                 ),
@@ -594,8 +594,8 @@ class DadosEnderecoStepState extends State<DadosEnderecoStep> {
                           ),
                         ),
                         CampoWidget(
-                          categoria: controller.categoriaController.text,
-                          qtd: controller.qtdJogadores,
+                          categoria: controller.categoryController.text,
+                          qtd: controller.qtdPlayers,
                         ),
                       ],
                     ),

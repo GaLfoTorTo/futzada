@@ -3,7 +3,6 @@ import 'package:futzada/theme/app_animations.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';

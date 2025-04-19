@@ -6,9 +6,9 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:lottie/lottie.dart';
 
-class BoasVindasViewPage extends StatelessWidget {
+class WelcomePage extends StatelessWidget {
   final VoidCallback action;
-  const BoasVindasViewPage({
+  const WelcomePage({
     super.key,
     required this.action
   });

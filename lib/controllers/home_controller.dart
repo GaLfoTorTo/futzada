@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/models/user_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -10,9 +9,6 @@ class HomeController extends GetxController{
   static HomeController get instance => Get.find();
   //CONTROLLER DE BARRA NAVEGAÇÃO
   final authController = AuthController.instance;
-  //GETTER DE USUARIO SALVO LOCALMENTE
-  UserModel? get usuario => AuthController.instance.usuario;
-  
   //LISTA DE OPTIONS PARA O CARD PERTO DE VOCE
   List<Map<String, dynamic>> peladas = [];
   //LISTA DE OPTIONS PARA O CARD TOP RANKING
@@ -29,11 +25,10 @@ class HomeController extends GetxController{
   Future<dynamic>fetchHome() async{
     //EXECUTAR BUSCA DE DADOS PARA HOME PAGE
     await Future.wait([
-      fetchUsuario(),
-      /* fetchPertoVoce(),
-      fecthTopRanking(),
-      fecthPopular(),
-      fecthUltimosJogos() */
+      //fetchPertoVoce(),
+      //fecthTopRanking(),
+      //fecthPopular(),
+      //fecthUltimosJogos()
     ]);
     //RETORNAR DADOS BUSCADOS
     return [
@@ -42,11 +37,6 @@ class HomeController extends GetxController{
       popular,
       partidas
     ];
-  }
-  Future<UserModel> fetchUsuario() async{
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
-    return usuario!;
   }
   //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
   Future<void> fetchPertoVoce() async {

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/pages/apresentacao_page.dart';
+import 'package:futzada/pages/presentation_page.dart';
 import 'package:futzada/pages/home/home_page.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
@@ -12,7 +12,13 @@ class NavigationController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
   static NavigationController get instace => Get.find();
   //SCAFFOLD KEY
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  void onInit() {
+    super.onInit();
+    //ADICIONAR KEY DO SCAFFOLD GLOBALMENT AO GET
+    Get.put(scaffoldKey, tag: 'appBaseScaffold', permanent: true);
+  }
   //CONTROLADOR DE INDEX NAVIGATION BAR
   final Rx<int> index = 0.obs; 
   //FUNÇÃO DE ATUALIZAÇÃO DE INDEX
@@ -92,7 +98,7 @@ class NavigationController extends GetxController {
     //HOME PAGE
     const HomePage(),
     //APRENSENTAÇÃO PAGE ESCALAÇÕES
-    ApresentacaoPageWiget(
+    PresentationPageWidget(
       image: AppImages.capaEscalacao,
       route: 'Escalação',
       titulo: 'Monte o seu time ideal da pelada',
@@ -104,19 +110,19 @@ class NavigationController extends GetxController {
       outlineAction: () => print('navegar para Minhas escalações'),
     ),
     //APRENSENTAÇÃO PAGE PELADAS
-    ApresentacaoPageWiget(
-      image: AppImages.capaPelada,
+    PresentationPageWidget(
+      image: AppImages.capaEvent,
       route: 'Peladas',
       titulo: 'Nunca foi tão facil organizar suas peladas',
       subTitulo: 'Sua pelada agora está na palma da suas mãos! Organize e gerencie suas peladas entre os amigos de forma simples e colaborativa.',
       buttonTitulo: 'Criar nova pelada',
       buttonIcone: LineAwesomeIcons.plus_circle_solid,
       viewTitulo: 'Ver minhas peladas',
-      buttonAction: () => Get.toNamed('/pelada/cadastro/dados_pelada'),
+      buttonAction: () => Get.toNamed('/event/register/event_basic'),
       outlineAction: () => print('navegar para Minhas peladas'),
     ),
     //APRENSENTAÇÃO PAGE EXPLORE
-    ApresentacaoPageWiget(
+    PresentationPageWidget(
       image: AppImages.capaExplore,
       route: 'Explore',
       titulo: 'Encontre o Fut certo para você',
@@ -128,7 +134,7 @@ class NavigationController extends GetxController {
       outlineAction: () => print('navegar para Pesquisa manual'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO
-    ApresentacaoPageWiget(
+    PresentationPageWidget(
       image: AppImages.capaEscalacao,
       route: 'Notificações',
       titulo: 'Monte o seu time ideal da pelada',

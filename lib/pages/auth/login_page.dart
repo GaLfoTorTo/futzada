@@ -277,7 +277,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               onPressed: (){
-                                Get.toNamed('/cadastro/apresentacao');
+                                Get.toNamed('/register/apresentacao');
                               },
                             ),
                           ],

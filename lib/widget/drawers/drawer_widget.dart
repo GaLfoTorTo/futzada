@@ -21,14 +21,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   //INSTANCIAR CONTROLLER DE AUTENTICAÇÃO
   final controller = Get.find<AuthController>();
   //DADOS DO USUÁRIO
-  late UserModel? usuario;
+  late UserModel? user;
   //VARIAVEL DE MENSAGEM DE ERRO
   String? errorMessage;
 
   @override
   void initState() {
     super.initState();
-    usuario = controller.usuario;
+    user = Get.find<UserModel>(tag: 'user');
   }
 
   void completeLogout(statusLogout) async {
@@ -150,7 +150,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       ImgCircularWidget(
                         width: 80, 
                         height: 80, 
-                        image: usuario!.photo
+                        image: user!.photo
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
@@ -159,7 +159,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${usuario!.firstName} ${usuario!.lastName}',
+                              '${user!.firstName} ${user!.lastName}',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: AppColors.blue_500,
@@ -167,9 +167,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if(usuario!.userName != null)
+                            if(user!.userName != null)
                               Text(
-                                '@${usuario!.userName}',
+                                '@${user!.userName}',
                                 style: const TextStyle(
                                   color: AppColors.blue_500,
                                   fontSize: 12,

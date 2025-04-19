@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
@@ -18,18 +18,18 @@ import 'package:futzada/widget/pickers/picker_uniforme_widget.dart';
 import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class ModoTecnicoStep extends StatefulWidget {  
-  const ModoTecnicoStep({super.key});
+class ManagerModeStep extends StatefulWidget {  
+  const ManagerModeStep({super.key});
 
   @override
-  State<ModoTecnicoStep> createState() => ModoTecnicoStepStateState();
+  State<ManagerModeStep> createState() => ManagerModeStepStateState();
 }
 
-class ModoTecnicoStepStateState extends State<ModoTecnicoStep> {
+class ManagerModeStepStateState extends State<ManagerModeStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
-  final CadastroController controller = Get.put(CadastroController());
+  final RegisterController controller = Get.put(RegisterController());
   //CONTROLADORES DE PICKER DE COR
   late Color primary;
   late Color secondary;
@@ -364,7 +364,7 @@ class ModoTecnicoStepStateState extends State<ModoTecnicoStep> {
       getColorKey(confEmblem, 'inicializar');
       getColorKey(confUniforme, 'inicializar');
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      Get.until((route) => route.settings.name == '/cadastro/modos');
+      Get.until((route) => route.settings.name == '/register/modos');
     }
   }
   
@@ -671,7 +671,7 @@ class ModoTecnicoStepStateState extends State<ModoTecnicoStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.toNamed('/cadastro/modos')
+                        action: () => Get.toNamed('/register/modos')
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

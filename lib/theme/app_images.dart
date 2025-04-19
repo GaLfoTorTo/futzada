@@ -7,7 +7,7 @@ class AppImages {
   static const linhas = "assets/images/linhas.png";
   static const capaCadastroPelada = "assets/images/capa_cadastro_pelada.png";
   //CAPAS DE APRESENTAÇÃO DE PÁGINAS
-  static const capaPelada = "assets/images/capa_pelada.png";
+  static const capaEvent = "assets/images/capa_pelada.png";
   static const capaExplore = "assets/images/capa_explore.png";
   static const capaEscalacao = "assets/images/capa_escalacao.png";
 }

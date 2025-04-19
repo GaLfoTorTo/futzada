@@ -4,8 +4,8 @@ import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/helpers/app_helper.dart';
 
 class FormService {
-  //FUNÇÃO DE ENVIO DE FORMULÁRIO PARA API
-  static Future<Map<String, dynamic>> sendForm(model, url) async {
+
+  static Future<Map<String, dynamic>> sendForm(model, options, url) async {
     //TENTAR SALVAR USUÁRIO
     try {
       //INSTANCIAR DIO
@@ -28,7 +28,7 @@ class FormService {
       //INICIALIZAR REQUISIÇÃO
       var response = await dio.post(
         url, 
-        options: Dio.Options(headers: {'Content-Type': 'multipart/form-data'}),
+        options: Dio.Options(headers: options),
         data: formData,
       );
       //VERIFICAR RESPOSTA DO SERVIDOR
@@ -49,6 +49,50 @@ class FormService {
     } on Dio.DioException catch (e) {
       //TRATAR ERROS
       return AppHelper.tratamentoErros(e);
+    }
+  }
+
+  //FUNÇÃO DE ENVIO DE FORMULÁRIO PARA API
+  static Future<Map<String, dynamic>> sendData(data, options, url) async {
+    //TENTAR SALVAR USUÁRIO
+    try {
+      //INSTANCIAR DIO
+      var dio = Dio.Dio();
+      //INICIALIZAR REQUISIÇÃO
+      var response = await dio.post(
+        url, 
+        options: Dio.Options(headers: options),
+        data: data,
+      );
+      //VERIFICAR RESPOSTA DO SERVIDOR
+      if(response.statusCode == 200) {
+        //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
+        return {
+          'status': 200,
+          'data': response.data,
+        };
+      } else {
+        //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
+        return {
+          'status': 400,
+          'message': response.data
+        };
+      }
+    } on Dio.DioException catch (e) {
+      //TRATAR ERROS
+      return AppHelper.tratamentoErros(e);
+    }
+  }
+
+  static Future<Map<String, dynamic>>setOption(user) async {
+    //VERIFICAR SE USARIO ESTA LOGADO
+    if(user != null){
+      return {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ${user.token}'
+            };
+    }else{
+      return {'Content-Type': 'application/json'};
     }
   }
 }

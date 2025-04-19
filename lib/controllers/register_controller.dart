@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
-class CadastroController extends GetxController {
+class RegisterController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
-  static CadastroController get instace => Get.find();
+  static RegisterController get instace => Get.find();
   //INSTANCIAR MODEL DE USUARIO
   UserModel model = UserModel();
   // CONTROLLERS DE DADOS BASICOS
@@ -46,8 +46,10 @@ class CadastroController extends GetxController {
   Future<Map<String, dynamic>> registerUser() async {
     //BUSCAR URL BASICA
     var url = AppApi.url+AppApi.createUser;
+    //RESGATAR OPTIONS
+    var options = await FormService.setOption(null);
     //ENVIAR FORMULÁRIO
-    var response = await FormService.sendForm(model, url);
+    var response = await FormService.sendForm(model, options, url);
     return response;
   }
 }

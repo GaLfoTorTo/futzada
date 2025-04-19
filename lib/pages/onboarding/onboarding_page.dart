@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/pages/apresentacao/boas_vindas_view_page.dart';
-import 'package:futzada/pages/apresentacao/introducao_page.dart';
+import 'package:futzada/pages/onboarding/welcome_page.dart';
+import 'package:futzada/pages/onboarding/introduction_page.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
@@ -8,14 +8,14 @@ import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class ApresentacaoPage extends StatefulWidget {
-  const ApresentacaoPage({super.key});
+class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
 
   @override
-  State<ApresentacaoPage> createState() => ApresentacaoPageStateState();
+  State<OnboardingPage> createState() => OnboardingPageState();
 }
 
-class ApresentacaoPageStateState extends State<ApresentacaoPage> {
+class OnboardingPageState extends State<OnboardingPage> {
   //CONTROLADOR DE PAGINAS
   final PageController pageController = PageController(initialPage: 0);
   //INDEX DE PAGINA
@@ -81,11 +81,11 @@ class ApresentacaoPageStateState extends State<ApresentacaoPage> {
             });
           },
           children: [
-            BoasVindasViewPage(
+            WelcomePage(
               action: () => alterPage(context, "Proximo")
             ),
             for(var i = 0; i < pages.length; i++)
-              IntroducaoPage(
+              IntroductionPage(
                 descricao: pages[i]['descricao'],
                 animation: pages[i]['animation'],
                 pageController: pageController,

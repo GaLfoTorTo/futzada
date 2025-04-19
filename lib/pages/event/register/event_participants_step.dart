@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/controllers/registro_pelada_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -16,18 +16,18 @@ import 'package:futzada/widget/images/ImgCircularWidget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:lottie/lottie.dart';
 
-class DadosParticipantesStep extends StatefulWidget {
-  const DadosParticipantesStep({super.key});
+class EventParticipantsStep extends StatefulWidget {
+  const EventParticipantsStep({super.key});
 
   @override
-  State<DadosParticipantesStep> createState() => _DadosParticipantesStepState();
+  State<EventParticipantsStep> createState() => _EventParticipantsStepState();
 }
 
-class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
+class _EventParticipantsStepState extends State<EventParticipantsStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = PeladaController.instace;
+  final controller = EventController.instace;
   //TITULO DA PÁGINA
   String titulo = 'Cadastro Pelada';
   //MENSAGEM DE ERRO
@@ -52,14 +52,14 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
     print(value);
   }
 
-  //FUNÇÃO DE DEFINIÇÃO DE PREFERENCIAS DE CONVITE
+  //FUNÇÃO DE DEFINIÇÃO DE PREFERENCIAS DE invite
   void selectPreferencia(String name) {
-    //BUSCAR ITEMS DO ARRAY DE CONVITE
-    final item = controller.convite.firstWhere((item) => item['name'] == name);
+    //BUSCAR ITEMS DO ARRAY DE invite
+    final item = controller.invite.firstWhere((item) => item['name'] == name);
     //ALTERAR VALOR
     item['checked'] = !(item['checked'] as bool);
     //NOTIFICAR MUDANÇA AO CONTROLLER
-    controller.convite.refresh();
+    controller.invite.refresh();
   }
 
   void selectParticipante(id){
@@ -98,7 +98,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
       //NOTIFICAR MUDANÇA AO CONTROLLER
       controller.amigos.refresh();
       //ADICIONAR A MODEL DE PELADA
-      controller.participantesController.text = jsonEncode(controller.participantes);
+      controller.participantsController.text = jsonEncode(controller.participantes);
       controller.onSaved({"participantes": jsonEncode(controller.participantes)});
     });
   }
@@ -131,7 +131,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
   }
 
   //FUNÇÃO DE RETORNO PARA HOME
-  void openPreferencia(convites, flag) {
+  void openPreferencia(invites, flag) {
     Get.dialog(
       Dialog(
         backgroundColor: AppColors.white,
@@ -147,7 +147,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  'Convite',
+                  'invite',
                   style: Get.textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -162,7 +162,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
               ),
               Obx(() {
                 return Column(
-                  children: controller.convite.map((entry) {
+                  children: controller.invite.map((entry) {
                     //RESGATAR ITENS 
                     Map<String, dynamic> item = entry;
                     return Padding(
@@ -230,7 +230,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
 
   //FUNÇÃO DE ENVIO DE DADOS PARA BACKEND
   void registerPelada() async{
-    var response = controller.sendForm();
+    var response = controller.registerEvent();
     //MODAL DE STATUS DE REGISTRO DO USUARIO
     showDialog(
       context: context,
@@ -409,7 +409,7 @@ class _DadosParticipantesStepState extends State<DadosParticipantesStep> {
                           iconAfter: true,
                           textColor: AppColors.green_300,
                           backgroundColor: Colors.transparent,
-                          action: () => openPreferencia(controller.convite, 'geral'),
+                          action: () => openPreferencia(controller.invite, 'geral'),
                         ),
                       ],
                     ),

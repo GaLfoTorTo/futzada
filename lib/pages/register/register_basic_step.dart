@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
@@ -14,19 +14,19 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-class DadosBasicosStep extends StatefulWidget {
+class RegisterBasicStep extends StatefulWidget {
   
-  const DadosBasicosStep({super.key});
+  const RegisterBasicStep({super.key});
 
   @override
-  State<DadosBasicosStep> createState() => _DadosBasicosStepState();
+  State<RegisterBasicStep> createState() => _RegisterBasicStepState();
 }
 
-class _DadosBasicosStepState extends State<DadosBasicosStep> {
+class _RegisterBasicStepState extends State<RegisterBasicStep> {
   //FORMKEY PARA FORMULARIO DE CADASTRO
   final formKey = GlobalKey<FormState>();
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
-  final CadastroController controller = Get.put(CadastroController());
+  final RegisterController controller = Get.put(RegisterController());
   //INICIALIZAR IMAGE PICKER
   final ImagePicker imagePicker = ImagePicker();
   //VARIAVEL DE CONTROLE DE IMAGEM DO USUARIO
@@ -72,7 +72,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA PROXIMA ETAPA
-      Get.toNamed('/cadastro/modos');
+      Get.toNamed('/register/modos');
     }
   }
 
@@ -155,7 +155,7 @@ class _DadosBasicosStepState extends State<DadosBasicosStep> {
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
-        leftAction: () => Get.toNamed('/cadastro/apresentacao')
+        leftAction: () => Get.toNamed('/register/apresentacao')
       ),
       body: SafeArea(
         child: SingleChildScrollView(

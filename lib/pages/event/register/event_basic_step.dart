@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:futzada/enum/enums.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,20 +14,20 @@ import 'package:futzada/widget/inputs/input_textarea_widget.dart';
 import 'package:futzada/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/controllers/registro_pelada_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
 
-class DadosPeladaStep extends StatefulWidget {  
-  const DadosPeladaStep({super.key});
+class EventBasicStep extends StatefulWidget {  
+  const EventBasicStep({super.key});
 
   @override
-  State<DadosPeladaStep> createState() => DadosPeladaStepState();
+  State<EventBasicStep> createState() => EventBasicStepState();
 }
 
-class DadosPeladaStepState extends State<DadosPeladaStep> {
+class EventBasicStepState extends State<EventBasicStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = Get.put(PeladaController());
+  final controller = Get.put(EventController());
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
@@ -44,7 +45,7 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
     if (image != null) {
       setState(() {
         imageFile = File(image.path);
-        controller.onSaved({'foto': image.path});
+        controller.onSaved({'photo': image.path});
       });
     }
   }
@@ -97,35 +98,36 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
     }
   }
 
-  //SELECIONAR A VISIBILIDADE
+  //SELECIONAR A VISIBILIDADE DO PERFIL
   void selectedVisibility(value){
     setState(() {
-      controller.visibilidadeController.text = value;
-      controller.onSaved({'visibilidade': value});
+      var visibility = VisibilityPerfil.values.firstWhere((e) => e.name == value);
+      controller.visibilityController.text = value;
+      controller.onSaved({'visibility': visibility});
     });
   }
   //ATIVAR COLABORADORES
-  void selectColaboradores(value){
+  void selectColaboradors(value){
     setState(() {
-      controller.colaboradoresController.text = jsonEncode(value);
-      controller.activeColaboradores = value;
-      controller.onSaved({'colaboradores': jsonEncode(value)});
+      controller.allowCollaboratorsController.text = jsonEncode(value);
+      controller.activeColaboradors = value;
+      controller.onSaved({'allowCollaborators': jsonEncode(value)});
     });
   }
 
   //SELECIONAR A VISIBILIDADE
-  void selectedPermissao(String name){
+  void selectedPermissions(String name){
     setState(() {
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
-      controller.permissoes.update(
+      controller.permissions.update(
         name,
         (value) => !value
       );
       //NOTIFICAR MUDANÇA AO CONTROLLER
-      controller.permissoes.refresh();
+      controller.permissions.refresh();
       //ADICIONAR A MODEL DE PELADA
-      controller.permissoesController.text = jsonEncode(controller.permissoes);
-      controller.onSaved({"permissoes": jsonEncode(controller.permissoes)});
+      controller.permissionsController.text = jsonEncode(controller.permissions);
+      controller.onSaved({"permissions": jsonEncode(controller.permissions)});
     });
   }
 
@@ -137,7 +139,7 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/pelada/cadastro/dados_endereco');
+      Get.toNamed('/event/register/event_address');
     }
   }
 
@@ -146,18 +148,18 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
     //LISTA DE INPUTS RADIO
     final List<Map<String, dynamic>> radios = [
       {
-        'name': 'visibilidade',
+        'name': 'visibility',
         'placeholder' : 'Qualquer usuário pode visualizar as informações.',
         'value': 'Publico',
         'icon' : AppIcones.door_open_solid,
-        'controller': controller.visibilidadeController,
+        'controller': controller.visibilityController,
       },
       {
-        'name': 'visibilidade',
+        'name': 'visibility',
         'placeholder' : 'Apenas os participantes podem visualizar as informações.',
         'value': 'Privado',
         'icon' : AppIcones.door_close_solid,
-        'controller': controller.visibilidadeController,
+        'controller': controller.visibilityController,
       },
     ];
 
@@ -228,9 +230,9 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                       ],
                     ),
                   InputTextWidget(
-                    name: 'nome',
-                    label: 'Nome',
-                    textController: controller.nomeController,
+                    name: 'title',
+                    label: 'Titulo',
+                    textController: controller.titleController,
                     controller: controller,
                     onSaved: controller.onSaved,
                     type: TextInputType.text,
@@ -293,8 +295,8 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: SwitchListTile(
-                      value: controller.activeColaboradores,
-                      onChanged: (value) => selectColaboradores(value),
+                      value: controller.activeColaboradors,
+                      onChanged: (value) => selectColaboradors(value),
                       activeColor: AppColors.green_300,
                       inactiveTrackColor: AppColors.gray_300,
                       inactiveThumbColor: AppColors.gray_500,
@@ -308,7 +310,7 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                       ),
                     ),
                   ),
-                  if(controller.activeColaboradores)
+                  if(controller.activeColaboradors)
                     Column(
                       children: [
                         Padding(
@@ -337,11 +339,11 @@ class DadosPeladaStepState extends State<DadosPeladaStep> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for(var permissao in controller.permissoes.entries)
+                              for(var permissao in controller.permissions.entries)
                                 InputCheckBoxWidget(
                                   name: permissao.key,
                                   value: permissao.value,
-                                  onChanged: selectedPermissao,
+                                  onChanged: selectedPermissions,
                                 ),
                             ]
                           ),

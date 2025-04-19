@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -14,18 +14,18 @@ import 'package:futzada/widget/termos_politicas/termos.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
-class ConclusaoStep extends StatefulWidget {
-  const ConclusaoStep({super.key});
+class ConclusionStep extends StatefulWidget {
+  const ConclusionStep({super.key});
 
   @override
-  State<ConclusaoStep> createState() => _ConclusaoStepStateState();
+  State<ConclusionStep> createState() => _ConclusionStepStateState();
 }
 
-class _ConclusaoStepStateState extends State<ConclusaoStep>  with SingleTickerProviderStateMixin {
+class _ConclusionStepStateState extends State<ConclusionStep>  with SingleTickerProviderStateMixin {
   //CONTROLLER DE ABAS
   late final TabController _termosController;
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
-  final CadastroController controller = Get.put(CadastroController());
+  final RegisterController controller = Get.put(RegisterController());
   //CONTROLLADORES DE CHECKBOX
   late bool termosUsoChecked;
   late bool politicasChecked;

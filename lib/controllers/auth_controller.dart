@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:futzada/services/form_service.dart';
 import 'package:get/get.dart' as getx;
 import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -16,7 +17,7 @@ class AuthController extends getx.GetxController{
   //INSTANCIA DE MODEL DE USUARIO
   final _user = getx.Rxn<UserModel>();
   //GETTER DE MODEL DE USUARIO
-  UserModel? get usuario => _user.value;
+  UserModel? get user => _user.value;
   //INSTANCIAR STORAGE
   final storage = GetStorage();
   //ON READY
@@ -27,16 +28,19 @@ class AuthController extends getx.GetxController{
     //FLAG DE PRIMEIRO LOGIN DO USUARIO NO APP
     storage.writeIfNull('firstLogin', true);
     //VERIFICAR SE USUÁRIO JA ESTÁ LOGADO
-    hasUsuario();
+    hasUser();
   }
 
   //FUNÇÃO DE CONFIGURAÇÕES DE USUÁRIO LOCALMENTE
-  void setUsuario(UserModel? usuario) {
+  void setUser(UserModel? user) async {
     //VERIFICAR SE USUÁRIO RECEBIDO NÃO ESTA VAZIO
-    if(usuario != null){
-      _user.value = usuario;
-      //SALVAR LOCALMENTE
-      saveUsuario(usuario);
+    if(user != null){
+      //ATUALIZAR VALOR DE USUARIO NO CONTROLLER
+      _user.value = user;
+      //SALVAR USUARIO LOCAL
+      await saveUser(user);
+      //ADICIONAR USUARIO AO GLOBALMENT AO GET
+      getx.Get.put(user, tag: 'user', permanent: true);
       //VERIFICAR SE É O PRIMEIRO LOGIN
       if(storage.read('firstLogin') == true){
         //NAVEGAR PARA APRESENTAÇÃO PAGE
@@ -48,59 +52,63 @@ class AuthController extends getx.GetxController{
         getx.Get.offAllNamed('/home');
       }
     }else{
-      //NAVEGAR PARA LOGIN PAGE
-      getx.Get.offAllNamed('/login');
+      //REMOVER USUARIO LOCAL
+      await removeUser();
+      //VERIFICAR ROTA ATUAL
+      if (getx.Get.currentRoute != '/login') {
+        //NAVEGAR PARA LOGIN PAGE
+        getx.Get.offAllNamed('/login');
+      }
     }
   }
 
-  //FUNÇÃO DE SALVAMENTO DE DADOS DO USUÁRIO LOCALMENTE
-  Future<void> saveUsuario(UserModel usuario) async{
-    //INSTANCIAR STORAGE
-    final storage = await SharedPreferences.getInstance();
-    //SALVAR USUARIO LOCALMENTE
-    await storage.setString('usuario', usuario.toJson());
-  }
-
-  //FUNÇÃO DE REMOVER DE DADOS DO USUÁRIO LOCALMENTE
-  Future<void> removeUsuario() async{
-    //INSTANCIAR STORAGE
-    final storage = await SharedPreferences.getInstance();
-    //VERIFICAR SE EXISTE A CHAVE USUARIO LOCALMENTE
-    if(storage.containsKey("usuario")){
-      //REMOVER USUARIO LOCALMENTE
-      storage.remove("usuario");
-      setUsuario(null);
-    }
-  }
-  
   //FUNÇÃO PARA VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-  Future<void> hasUsuario() async{
+  Future<void> hasUser() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
     await Future.delayed(const Duration(seconds: 2));
     //VERIFICAR SE EXISTE A CHAVE USER LOCALMENTE
-    if(storage.containsKey("usuario")){
+    if(storage.containsKey("user")){
       //RESGATAR DADOS SALVOS DO USUARIO
-      final usuarioData = storage.get('usuario') as String;
+      final userData = storage.get('user') as String;
       //DEFINIR USUARIO
-      setUsuario(UserModel.fromJson(usuarioData));
+      setUser(UserModel.fromJson(userData));
     }else{
       //RETORNAR STATUS
-      setUsuario(null);
+      setUser(null);
+    }
+  }
+
+  //FUNÇÃO DE SALVAMENTO DE DADOS DO USUÁRIO LOCALMENTE
+  Future<void> saveUser(UserModel user) async{
+    //INSTANCIAR STORAGE
+    final storage = await SharedPreferences.getInstance();
+    //SALVAR USUARIO LOCALMENTE
+    await storage.setString('user', user.toJson());
+  }
+
+  //FUNÇÃO DE REMOVER DE DADOS DO USUÁRIO LOCALMENTE
+  Future<void> removeUser() async{
+    //INSTANCIAR STORAGE
+    final storage = await SharedPreferences.getInstance();
+    //VERIFICAR SE EXISTE A CHAVE USUARIO LOCALMENTE
+    if(storage.containsKey("user")){
+      //REMOVER USUARIO LOCALMENTE
+      storage.remove("user");
     }
   }
   
   //FUNÇÃO PARA VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-  Future<UserModel?> getUsuario() async{
+  Future<UserModel?> getUser() async{
     //INSTANCIAR STORAGE
     final storage = await SharedPreferences.getInstance();
     await Future.delayed(Duration(seconds: 2));
     //VERIFICAR SE EXISTE A CHAVE USER LOCALMENTE
-    if(storage.containsKey("usuario")){
+    if(storage.containsKey("user")){
       //RESGATAR DADOS SALVOS DO USUARIO
-      final usuarioData = storage.get('usuario') as String;
+      final userData = storage.get('user') as String;
       //RETORNAR USUARIO EM FORMATO DE JSON
-      return UserModel.fromJson(usuarioData);
+      return UserModel.fromJson(userData);
     }
     return null;
   }
@@ -117,18 +125,18 @@ class AuthController extends getx.GetxController{
       String? firstName = resp?.displayName?.split(' ')[0] ?? 'Usuario';
       String? lastName = resp?.displayName?.split(' ').skip(1).join(' ') ?? 'Anônimo';
       //CRIAR NOVA INSTANCIA DE USUARIO COM DADOS DO GOOGLE
-      final usuario = UserModel(
+      final user = UserModel(
         firstName: firstName,
         lastName: lastName,
         email: resp?.email,
         photo: resp?.photoUrl,
       );
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
-      setUsuario(usuario);
+      setUser(user);
       //RETORNAR SUCESSO
       return{'status' : 200};
     } catch (e) {
-      setUsuario(null);
+      setUser(null);
       //RETORNAR MENSAGEM DE ERRO NO LOGIN DO GOOGLE
       return {
         'status': 401,
@@ -141,42 +149,28 @@ class AuthController extends getx.GetxController{
   Future<Map<String, dynamic>>login(String user, String password) async {
    //BUSCAR URL BASICA
     var url = '${AppApi.url}login';
-    //TENTAR SALVAR USUÁRIO
-    try {
-      //INSTANCIAR DIO
-      var dio = Dio();
-      dio.options.connectTimeout = const Duration(seconds: 30);
-      dio.options.receiveTimeout = const Duration(seconds: 30);
-      // CRIAR OBJETO JSON
-      var data = jsonEncode({'user': user, 'password': password});
-      // INICIALIZAR REQUISIÇÃO
-      var response = await dio.post(
-        url,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-        ),
-        data: data,
-      );
-      //VERIFICAR RESPOSTA DO SERVIDOR
-      if(response.statusCode == 200) {
-        //RESGATAR OS DADOS DE USUARIO
-        UserModel user = UserModel.fromMap(response.data['user']);
-        //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
-        setUsuario(user);
-        //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
-        return {'status': 200};
-      } else {
-        //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
-        setUsuario(null);
-        //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
-        return {
-          'status': 401,
-          'message': response.data['message'],
-        };
-      }
-    } on DioException catch (e) {
-      //TRATAR ERROS
-      return AppHelper.tratamentoErros(e);
+    // CRIAR OBJETO JSON
+    var data = jsonEncode({'user': user, 'password': password});
+    //RESGATAR OPTIONS
+    var options = await FormService.setOption(null);
+    //ENVIAR FORMULÁRIO
+    var response = await FormService.sendData(data, options, url);
+    //VERIFICAR RESPOSTA DO SERVIDOR
+    if(response['status'] == 200) {
+      //RESGATAR OS DADOS DE USUARIO
+      UserModel user = UserModel.fromMap(response['data']['user']);
+      //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
+      setUser(user);
+      //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
+      return {'status': 200};
+    } else {
+      //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
+      setUser(null);
+      //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
+      return {
+        'status': 401,
+        'message': response['message'],
+      };
     }
   }
   
@@ -187,47 +181,42 @@ class AuthController extends getx.GetxController{
     //TENTAR SALVAR USUÁRIO
     try {
       //RESGATAR USUARIO SALVO LOCAMENTE
-      var usuario = await getUsuario();
+      var user = await getUser();
+      //RESGATAR OPTIONS
+      var options = await FormService.setOption(user);
       //VERIFICAR SE EXISTE USUÁRIO SALVO LOCALMENTE
-      if (usuario != null) {
-        //CONFIGURAR DIO
-        var dio = Dio();
-        dio.options.connectTimeout = const Duration(seconds: 5);
-        dio.options.receiveTimeout = const Duration(seconds: 5);
-        //ENVIAR REQUISIÇÃO DE LOGOUT
-        var response = await dio.post(
-          url,
-          options: Options(
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ${usuario.token}'
-            },
-          ),
-          data: FormData.fromMap({'uuid': usuario.uuid}),
-        );
-        //VERIFICAR STATUS DE RESPOSTA
-        if (response.statusCode == 200) {
+      if (user != null) {
+        // CRIAR OBJETO JSON
+        var data = jsonEncode({'uuid': user.uuid});
+        //ENVIAR FORMULÁRIO
+        var response = await FormService.sendData(data, options, url);
+        //VERIFICAR RESPOSTA DO SERVIDOR
+        if(response['status'] == 200) {
           //REMOVER USUÁRIO LOCAL
-          removeUsuario();
-          //RETORNAR STATUS DE SUCCESSO
+          setUser(null);
+          //RETORNAR MENSAGEM DE SUCESSO NO SALVAMENTO
           return {'status': 200};
         } else {
-          //RETORNAR STATUS DE ERRO
+          //REMOVER USUÁRIO LOCAL
+          setUser(null);
+          //RETORNAR MENSAGEM DE ERRO NO SALVAMENTO
           return {
-            'status': 500,
-            'message': response.data['message'],
+            'status': 401,
+            'message': response['message'],
           };
         }
       } else {
         //EFETUAR LOGOUT DO GOOGLE
         GoogleSignIn googleSignIn = GoogleSignIn();
         await googleSignIn.signOut();
+        //REMOVER USUÁRIO LOCAL
+        setUser(null);
         //RETORNAR STATUS DE SUCCESSO
         return {'status': 200};
       }
     } on DioException catch (e) {
       //REMOVER INFORMAÇÕES DO USUÁRIO LOCALMENTE
-      removeUsuario();
+      setUser(null);
       //TRATAR ERROS
       return AppHelper.tratamentoErros(e);
     }

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -15,18 +15,18 @@ import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/select_widget.dart';
 import 'package:get/get.dart';
 
-class ModoJogadorStep extends StatefulWidget {
-  const ModoJogadorStep({super.key});
+class PlayerModeStep extends StatefulWidget {
+  const PlayerModeStep({super.key});
 
   @override
-  State<ModoJogadorStep> createState() => ModoJogadorStepState();
+  State<PlayerModeStep> createState() => PlayerModeStepState();
 }
 
-class ModoJogadorStepState extends State<ModoJogadorStep> {
+class PlayerModeStepState extends State<PlayerModeStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
-  final CadastroController controller = Get.put(CadastroController());
+  final RegisterController controller = Get.put(RegisterController());
   //CONTROLLER DE POSIÇÕES
   late List<dynamic> positions;
   //CONTROLLERS DE POSIÇÕES
@@ -125,7 +125,7 @@ class ModoJogadorStepState extends State<ModoJogadorStep> {
       //SALVAR DADOS CRUCIAIS DO FORMULÁRIO
       formData?.save();
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      Get.until((route) => route.settings.name == '/cadastro/modos');
+      Get.until((route) => route.settings.name == '/register/modos');
     }
   }
 
@@ -336,7 +336,7 @@ class ModoJogadorStepState extends State<ModoJogadorStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.until((route) => route.settings.name == '/cadastro/modos')
+                        action: () => Get.until((route) => route.settings.name == '/register/modos')
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

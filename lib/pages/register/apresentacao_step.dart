@@ -12,7 +12,7 @@ class ApresentacaoStep extends StatelessWidget {
   Widget build(BuildContext context) {
     //FUNÇÃO DE NAVEGAÇÃO
     void proximo(){
-      Get.toNamed('/cadastro/dados_basicos');
+      Get.toNamed('/register/dados_basicos');
     }
 
     return Scaffold(

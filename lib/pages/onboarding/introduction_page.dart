@@ -5,12 +5,12 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:lottie/lottie.dart';
 
-class IntroducaoPage extends StatelessWidget {
+class IntroductionPage extends StatelessWidget {
   final String descricao, animation;
   final PageController pageController;
   final VoidCallback action;
 
-  const IntroducaoPage({
+  const IntroductionPage({
     super.key,
     required this.descricao,
     required this.animation,

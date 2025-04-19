@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/cadastro_controller.dart';
+import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class InputRadioWidget extends StatefulWidget {

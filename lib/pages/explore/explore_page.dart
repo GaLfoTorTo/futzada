@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/pages/apresentacao_page.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class ExplorePageState extends StatefulWidget {
   final VoidCallback actionButton;
@@ -19,7 +15,7 @@ class ExplorePageState extends StatefulWidget {
 }
 
 class ExplorePageStateState extends State<ExplorePageState> {
-  //CONTROLADOR DE PAGINAS
+  /* //CONTROLADOR DE PAGINAS
   final PageController _pageController = PageController(initialPage: 0);
   //TITULO
   String title = "";
@@ -37,7 +33,7 @@ class ExplorePageStateState extends State<ExplorePageState> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.ease,
     );
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {

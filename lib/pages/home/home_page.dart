@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import '/theme/app_colors.dart';
 import '/theme/app_icones.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/controllers/home_controller.dart';
 import 'package:futzada/models/user_model.dart';
-import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/pages/home/secao/secao_home_widget.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/cards/card_para_voce_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 
@@ -24,7 +22,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   //CONTROLLER DE BARRA NAVEGAÇÃO
   final navigationController = NavigationController.instace;
   final controller = HomeController.instance;
-  late UserModel? usuario;
+  late UserModel? user;
   @override
   void initState() {
     super.initState();
@@ -36,7 +34,10 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
-        leftAction: () => navigationController.scaffoldKey.currentState?.openDrawer(),
+        leftAction: () {
+          final scaffoldKey = Get.find<GlobalKey<ScaffoldState>>(tag: 'appBaseScaffold');
+          scaffoldKey.currentState?.openDrawer();
+        },
         leftIcon: AppIcones.bars_solid,
         rightAction: () {},
         rightIcon: AppIcones.paper_plane_solid,
@@ -54,7 +55,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
-                  usuario = controller.usuario;
+                  //RESGATAR USUARIO
+                  user = Get.find<UserModel>(tag: 'user');
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -68,7 +70,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                 ImgCircularWidget(
                                   width: 80, 
                                   height: 80, 
-                                  image: usuario!.photo
+                                  image: user!.photo
                                 ),
                                 Positioned(
                                   top: 60,
@@ -98,7 +100,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     ),
                                   ),
                                   Text(
-                                    '${usuario!.firstName} ${usuario!.lastName}',
+                                    '${user!.firstName} ${user!.lastName}',
                                     style: const TextStyle(
                                       color: AppColors.blue_500,
                                       fontSize: 15,

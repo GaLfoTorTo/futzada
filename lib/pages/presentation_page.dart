@@ -6,7 +6,7 @@ import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:get/get.dart';
 
-class ApresentacaoPageWiget extends StatelessWidget {
+class PresentationPageWidget extends StatelessWidget {
   final String image;
   final String route;
   final String titulo;
@@ -17,7 +17,7 @@ class ApresentacaoPageWiget extends StatelessWidget {
   final VoidCallback buttonAction;
   final VoidCallback outlineAction;
 
-  const ApresentacaoPageWiget({
+  const PresentationPageWidget({
     super.key,
     required this.image,
     required this.route,
