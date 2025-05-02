@@ -101,12 +101,12 @@ class NavigationController extends GetxController {
     PresentationPageWidget(
       image: AppImages.capaEscalacao,
       route: 'Escalação',
-      titulo: 'Monte o seu time ideal da pelada',
+      titulo: 'Monte o sua equipe ideal da pelada',
       subTitulo: 'Escale os melhores jogadores da pelada para sua equipe e fique no topo dos rankings da pelada.',
       buttonTitulo: 'Começar Escalar',
       buttonIcone: AppIcones.clipboard_solid,
       viewTitulo: 'Ver minhas escalações',
-      buttonAction: () => Get.toNamed('/escalacao'),
+      buttonAction: () => Get.toNamed('/escalation'),
       outlineAction: () => print('navegar para Minhas escalações'),
     ),
     //APRENSENTAÇÃO PAGE PELADAS
@@ -119,7 +119,7 @@ class NavigationController extends GetxController {
       buttonIcone: LineAwesomeIcons.plus_circle_solid,
       viewTitulo: 'Ver minhas peladas',
       buttonAction: () => Get.toNamed('/event/register/event_basic'),
-      outlineAction: () => print('navegar para Minhas peladas'),
+      outlineAction: () => Get.toNamed('/event/my_events')
     ),
     //APRENSENTAÇÃO PAGE EXPLORE
     PresentationPageWidget(

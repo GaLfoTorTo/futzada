@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class CardParaVoceWidget extends StatelessWidget {

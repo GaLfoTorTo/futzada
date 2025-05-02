@@ -1,16 +1,51 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:futzada/api/api.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/services/form_service.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:futzada/api/api.dart';
+import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/models/event_model.dart';
 
-class EventController extends ChangeNotifier {
+class EventController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
   static EventController get instace => Get.find();
   //INSTANCIA DE PELADA MODEL
   EventModel model = EventModel();
+  //lIST
+  //*
+  //*
+  //*
+  //LISTA DE EVENTOS
+  final RxList<Map<String, dynamic>> events = [
+    for(var i = 0; i <= 2; i++)
+      {
+        'uuid': i,
+        'title': 'Jeferson Vasconcelos',
+        'date' : 'Seg - Sex',
+        'startTime' : '17:00',
+        'endTime' : '18:30',
+        'location' : 'Brasília/DF',
+        'photo': AppImages.gramado,
+      },
+  ].obs;
+  //LISTA DE EVENTOS SUGERIDOS
+  final RxList<Map<String, dynamic>> sugestions = [
+    for(var i = 0; i <= 1; i++)
+      {
+        'uuid': i,
+        'title': 'Jeferson Vasconcelos',
+        'date' : 'Seg - Sex',
+        'startTime' : '17:00',
+        'endTime' : '18:30',
+        'location' : 'Brasília/DF',
+        'photo': AppImages.userDefault,
+      },
+  ].obs;
+  //REGISTER
+  //*
+  //*
+  //*
   // CONTROLLERS DE CADA CAMPO
   late final TextEditingController titleController = TextEditingController();
   late final TextEditingController bioController = TextEditingController();
@@ -44,10 +79,41 @@ class EventController extends ChangeNotifier {
   //CONTROLLER DE COLABORADORES
   bool activeColaboradors = false;
   //CONTROLLER DE SLIDER
-  double qtdPlayers = 11;
-  double minPlayers = 8;
-  double maxPlayers = 11;
+  int qtdPlayers = 11;
+  int minPlayers = 8;
+  int maxPlayers = 11;
   int divisions = 3;
+  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
+  List<int> setFormation(qtd){
+    switch (qtd) {
+      case 4:
+        //SETORES PARA 4 JOGADORES
+        return [0, 2, 1];
+      case 5:
+        //SETORES PARA 5 JOGADORES
+        return [1, 2, 1];
+      case 6:
+        //SETORES PARA 6 JOGADORES
+        return [1, 2, 2];
+      case 7:
+        //SETORES PARA 7 JOGADORES
+        return [1, 3, 2];
+      case 8:
+        //SETORES PARA 8 JOGADORES
+        return [2, 3, 2];
+      case 9:
+        //SETORES PARA 9 JOGADORES
+        return [2, 3, 3];
+      case 10:
+        //SETORES PARA 10 JOGADORES
+        return [3, 3, 3];
+      case 11:
+        //SETORES PARA 11 JOGADORES
+        return [3, 4, 4];
+      default:
+        return [3, 4, 4];
+    }
+  }
   //CONTROLADOR DE PESQUISA DE ENDEREÇOS
   RxBool isSearching = false.obs;
   RxString enderecoMessage = ''.obs;
@@ -80,7 +146,6 @@ class EventController extends ChangeNotifier {
       'checked': false,
     },
   ].obs;
-  
   //LISTA DE PARTICIPANTES CONVIDADOS
   final RxList<dynamic> participantes = [].obs;
   //LISTA DE AMIGOS

@@ -7,6 +7,7 @@ class InputTextWidget extends StatefulWidget {
   final String? hint;
   final IconData? sufixIcon;
   final IconData? prefixIcon;
+  final Color? bgColor;
   final String? placeholder;
   final Function? onChanged;
   final Function? onSaved;
@@ -24,6 +25,7 @@ class InputTextWidget extends StatefulWidget {
     this.hint,
     this.sufixIcon,
     this.prefixIcon,
+    this.bgColor,
     this.placeholder,
     this.onChanged,
     this.onSaved,
@@ -88,6 +90,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           hintText: widget.hint,
           labelText: widget.label,
           prefixIcon: prefixIcon,
+          fillColor: widget.bgColor ?? widget.bgColor,
           suffixIcon: sufixIcon != null 
             ? IconButton(
               icon: sufixIcon!,

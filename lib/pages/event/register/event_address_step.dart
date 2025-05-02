@@ -554,9 +554,9 @@ class EventAddressStepState extends State<EventAddressStep> {
                           ),
                         ),
                         Slider(
-                          value: controller.qtdPlayers,
-                          min: controller.minPlayers,
-                          max: controller.maxPlayers,
+                          value: controller.qtdPlayers.toDouble(),
+                          min: controller.minPlayers.toDouble(),
+                          max: controller.maxPlayers.toDouble(),
                           divisions: controller.divisions,
                           label: controller.qtdPlayers.toInt().toString(),
                           activeColor: AppColors.green_300,
@@ -593,10 +593,10 @@ class EventAddressStepState extends State<EventAddressStep> {
                             ]
                           ),
                         ),
-                        CampoWidget(
+                        /* CampoWidget(
                           categoria: controller.categoryController.text,
                           qtd: controller.qtdPlayers,
-                        ),
+                        ), */
                       ],
                     ),
                   Padding(

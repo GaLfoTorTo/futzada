@@ -1,38 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/buttons/button_player_widget.dart';
 
 class CampoWidget extends StatelessWidget {
   final String? categoria;
-  final double qtd;
+  final Map<int, dynamic> escalation;
+  final String formation;
+  final double? width;
+  final double? height;
 
   const CampoWidget({
     super.key,
     this.categoria = 'Campo',
-    required this.qtd
+    required this.escalation,
+    this.formation = '4-3-3',
+    this.width = 342,
+    this.height = 518,
   });
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //DEFINIR LINHAS DO CAMPO
-    String linhasCampo = AppIcones.linhasCampo;
-    //DEFINIR LINHAS DO CAMPO
-    if(categoria == 'Campo'){
+    //FUNÇÕES DE ESTAMPA DO CAMPO
+    String fieldType(String? categoria){
+      if(categoria == 'Society'){
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.linhasSociety;
+      }
+      if(categoria == 'Quadra'){
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.linhasQuadra;
+      }
       //DEFINIR LINHAS DE CAMPO
-      linhasCampo = AppIcones.linhasCampo;
-    }else if(categoria == 'Society'){
-      //DEFINIR LINHAS DE CAMPO
-      linhasCampo = AppIcones.linhasSociety;
-    }else if(categoria == 'Quadra'){
-      //DEFINIR LINHAS DE CAMPO
-      linhasCampo = AppIcones.linhasQuadra;
+      return AppIcones.linhasCampo;
     }
     //FUNÇÃO DE AJUSTE DE BORDAS DAS LINHAS DO CAMPO
-    BorderRadius? borderCampo(int i){
+    BorderRadius? borderRadiusField(int i){
       if(i == 0){
         return const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15));
       }else if(i == 5){
@@ -40,205 +45,135 @@ class CampoWidget extends StatelessWidget {
       }
       return null;
     }
-
-    //FUNÇÃO PARA DISTRIBUIR JOGADORES PELO CAMPO APARTIR DE QTD RECEBIDA
-    Map<String, int> calcularSetores() {
-      //SETORES DO CAMPO
-      int ataque, meioCampo, zaga;
-      //VERIFICAR QTD RECEBIDA 
-      switch (qtd.toInt()) {
-        //SETORES PARA 4 JOGADORES
-        case 4:
-          ataque = 0;
-          meioCampo = 2;
-          zaga = 1;
-          break;
-        //SETORES PARA 5 JOGADORES
-        case 5:
-          ataque = 1;
-          meioCampo = 2;
-          zaga = 1;
-          break;
-        //SETORES PARA 6 JOGADORES
-        case 6:
-          ataque = 1;
-          meioCampo = 2;
-          zaga = 2;
-          break;
-        //SETORES PARA 7 JOGADORES
-        case 7:
-          ataque = 1;
-          meioCampo = 3;
-          zaga = 2;
-          break;
-        //SETORES PARA 8 JOGADORES
-        case 8:
-          ataque = 2;
-          meioCampo = 3;
-          zaga = 2;
-          break;
-        //SETORES PARA 9 JOGADORES
-        case 9:
-          ataque = 2;
-          meioCampo = 3;
-          zaga = 3;
-          break;
-        //SETORES PARA 10 JOGADORES
-        case 10:
-          ataque = 3;
-          meioCampo = 3;
-          zaga = 3;
-          break;
-        //SETORES PARA 11 JOGADORES
-        case 11:
-          ataque = 3;
-          meioCampo = 3;
-          zaga = 4;
-          break;
-        default:
-          ataque = 1;
-          meioCampo = 1;
-          zaga = 1;
+    //FUNÇÃO PARA GERAR LINHAS DO GRAMADO
+    Widget grassField(){
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(6, (i){
+          return Container(
+            width: width,
+            height: height! / 11,
+            decoration: BoxDecoration(
+              color: AppColors.green_500.withAlpha(70),
+              borderRadius: borderRadiusField(i),
+            ),
+          );
+        }),
+      );
+    }
+    //FUNÇÃO PARA AJUSTAR A ALINHAÇÃO DAS POSIÇÕES NO CAMPO
+    AlignmentGeometry setAligmentPositions(int index, int qtd){
+      //VERIFICAR QTD DE LINHAS NA FORMAÇÃO
+      if(qtd == 4){
+        //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+        if(index == 0 || index == 3 ){
+          //ALINHAR A BAIXO
+          return Alignment.topCenter;
+        }
+      //VERIFICAR QTD DE LINHAS NA FORMAÇÃO
+      }else if(qtd == 5){
+        //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+        if(index == 0 || index == 4){
+          //ALINHAR A BAIXO
+          return Alignment.topCenter;
+        }
       }
-
-      return {
-        'Ataque': ataque,
-        'Meio-Campo': meioCampo,
-        'Zaga': zaga,
-      };
+      //ALINHAR AO CENTRO
+      return Alignment.center;
     }
-
-    // Função para renderizar setor de ataque
-    Row setorAtaque(int numAtaque) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(numAtaque, (index) {
-          return const ImgCircularWidget(
-            height: 50,
-            width: 50,
-            image: null,
-            borderColor: AppColors.white,
-          );
-        }),
+    //FUNÇÃO PARA RENDERIZAR CAMPO
+    Widget renderField(){
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.green_300,
+          border: Border.all(color: AppColors.white, width: 5),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.dark_300.withAlpha(50),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0,5), 
+            ),
+          ],
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if(categoria == 'Campo')...[
+              grassField(),
+            ],
+            SvgPicture.asset(
+              height: height! - 40,
+              fieldType(categoria),
+            )
+          ]
+        ),
       );
     }
-
-    // Função para renderizar setor de meio-campo
-    Row setorMeioCampo(int numMeioCampo) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(numMeioCampo, (index) {
-          return const ImgCircularWidget(
-            height: 50,
-            width: 50,
-            image: null,
-            borderColor: AppColors.white,
-          );
-        }),
-      );
+    //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO
+    List<int> setPositions(){
+      //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
+      var listFormation = formation.split('-').map((e) => int.parse(e)).toList();
+      //ADICIONAR O GOLEIRO NO INICIO DO ARRAY
+      listFormation.insert(0, 1);
+      //INVERTER ORDEM DO ARRAY DE POSIÇÕES
+      return listFormation.reversed.toList();
     }
-
-    // Função para renderizar setor de zaga
-    Row setorZaga(int numZaga) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(numZaga, (index) {
-          return const ImgCircularWidget(
-            height: 50,
-            width: 50,
-            image: null,
-            borderColor: AppColors.white,
-          );
-        }),
-      );
-    }
-
-    //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
-    var setores = calcularSetores();
-    var numAtaque = setores['Ataque']!;
-    var numMeioCampo = setores['Meio-Campo']!;
-    var numZaga = setores['Zaga']!;
+    //VARAIVEL DE POSIÇÕES DA FORMAÇÃO
+    var positions = setPositions();
     
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Stack(
-        children: [
-          Center(
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001)
-                ..rotateX(-0.5), 
-              child: Container(
-                width: dimensions.width - 90,
-                height: ( dimensions.height / 2 ) + 50,
-                decoration: BoxDecoration(
-                  color: AppColors.green_300,
-                  border: Border.all(color: AppColors.white, width: 5),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.dark_300.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: Offset(0,5),
-                    ),
-                  ],
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Transform(
+          alignment: Alignment.topCenter,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.0008)
+            ..rotateX(-0.7), 
+          child: renderField()
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ...positions.asMap().entries.map((entry){
+              final groupPosition = entry.key;
+              final qtd = entry.value;
+              //INVERTER POSITIONS PARA CALULAR INDEX REAL DO ATLETA
+              final invertedGroupPos = positions.length - 1 - groupPosition;
+              // CALCULAR A POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+              final groupStartIndex = positions
+                  .reversed
+                  .toList()
+                  .sublist(0, invertedGroupPos)
+                  .fold(0, (sum, item) => sum + item);
+              //ATACANTES, MEIAS, ZAGUEIROS E GOLEIRO
+              return SizedBox(
+                height: positions.length == 5 ? 100 : 130,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(qtd, (index) {
+                    // CALCULAR A POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+                    final realPosition = groupStartIndex + index;
+                    //RESGATAR JOGADOR NA ESCALAÇÃO
+                    Map<String, dynamic>? player = escalation[realPosition];
+                    return Container(
+                      alignment: setAligmentPositions(index, qtd),
+                      child: ButtonPlayerWidget(
+                        player: player,
+                        size: 60,
+                        borderColor: AppHelper.setPlayerPosition(player),
+                      )
+                    );
+                  }),
                 ),
-                child: Stack(
-                  children: [
-                    if(categoria == 'Campo')
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: List.generate(6, (i){
-                          return Container(
-                            width: dimensions.width - 90,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: AppColors.green_500.withOpacity(0.3),
-                              borderRadius: borderCampo(i),
-                            ),
-                          );
-                        }),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20.0),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          linhasCampo,
-                        )
-                      ),
-                    ),
-                  ]
-                ),
-              ),
-            ),
-          ),
-          Container(
-            height: ( dimensions.height / 2 ),
-            margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-            padding: const EdgeInsets.only(top: 80),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //ATAQUE
-                setorAtaque(numAtaque),
-                //MEIO-CAMPO
-                setorMeioCampo(numMeioCampo),
-                //ZAGA
-                setorZaga(numZaga),
-                //GOLEIRO
-                const ImgCircularWidget(
-                  height: 50,
-                  width: 50,
-                  image: null,
-                  borderColor: AppColors.white,
-                ),
-              ]
-            ),
-          ),
-        ]
-      ),
+              );
+            }),
+          ]
+        ),
+      ]
     );
   }
 }

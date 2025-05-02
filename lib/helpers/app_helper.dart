@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/alerts/alert_widget.dart';
 
 class AppHelper {
@@ -60,6 +61,83 @@ class AppHelper {
     //RETORNAR SVG EM FORMATO DE STRING
     return svgString;
   }
+  
+  //FUNÇÃO PARA AJUSTAR A COR DA BORDAS DAS POSIÇÕES
+  static Color setPlayerPosition(dynamic player){
+    //VERIFICAR SE PLAYER NÃO ESTA VAZIO
+    if(player != null){
+      //VERIFICAR AREA DO CAMPO
+      switch (player!['position']) {
+        case 'ata':
+          return AppColors.blue_300;
+        case 'mei':
+          return AppColors.green_300;
+        case 'zag':
+          return AppColors.red_300;
+        case 'gol':
+          return AppColors.yellow_300;
+        default:
+          return AppColors.white;
+      }
+    }else{
+      return AppColors.white;
+    }
+  }
+
+  //FUNÇÃO PARA RETORNAR COR DE PONTUAÇÃO
+  static Map<String, dynamic> setColorPontuation(dynamic value) {
+    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
+    if(value > 0 ){
+      return {
+        'color': AppColors.green_300,
+        'icon': Icons.arrow_upward_outlined 
+      };
+    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
+    }else if(value < 0){
+      return {
+        'color': AppColors.red_300, 
+        'icon': Icons.arrow_upward_outlined 
+      };
+    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEUTROS)
+    }else if(value == 0){
+      return {
+        'color': AppColors.gray_300, 
+        'icon': Icons.minimize_rounded 
+      };
+    }else{
+      return {
+        'color': AppColors.gray_300, 
+        'icon': Icons.minimize_rounded 
+      };
+    }
+  }
+
+  //FUNÇÃO PARA DEFINIR ICONE E COR DE STATUS DE JOGADOR
+  static Map<String, dynamic> setStatusPlayer(String status){
+    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
+    if(status == 'Ativo'){
+      return {
+        'color': AppColors.green_300,
+        'icon': AppIcones.check_circle_solid
+      };
+    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
+    }else if(status == 'Inativo'){
+      return {
+        'color': AppColors.red_300, 
+        'icon': AppIcones.times_circle_solid 
+      };
+    }else if(status == 'Duvida'){
+      return {
+        'color': AppColors.yellow_500, 
+        'icon': AppIcones.question_circle_solid 
+      };
+    }else{
+      return {
+        'color': AppColors.gray_300, 
+        'icon': Icons.minimize_rounded 
+      };
+    }
+  }
 
   //FUNÇÃO PARA CONVERTER CORES PARA HEXADECIMAL
   static String convertColor(Color color){
@@ -108,13 +186,13 @@ class AppHelper {
     //RETORNAR SVG RECOLORIDO
     return svg;
   }
-
+  
+  //FUNÇÃO PARA RESGATAR A COR DO SVG
   static String getFillColor(String svg, String estampa) {
     return svg.contains('id="$estampa" fill="#') 
       ? svg.split('id="$estampa" fill="#')[1].split('"')[0] 
       : '#04D361';
   }
-
 
   //FUNÇÃO PARA DEFINIR POSIÇÃO PRINCIPAL DO USUARIO
   static String setMainPosition(String svg){
@@ -128,7 +206,8 @@ class AppHelper {
     //RETORNAR NOVO SVG
     return svg;
   }
-
+  
+  //FUNÇÃO PARA ADICIONAR A COR DO EMBLEMA PRINCIPAL
   static Future<String> mainPosition(posicao) async {
     //CONVERTER SVG TO STRING
     String posicaoString = await AppHelper.svgToString(posicao);
@@ -137,7 +216,8 @@ class AppHelper {
     //RETORNAR POSIÇÃO
     return posicaoString;
   }
-
+  
+  //FUNDAÇÃO DE SAUDAÇÃO DE ACORDO COM O PERÍODO DO DIA
   static String saudacaoPeriodo(){
     //BUSCAR HORA ATUAL
     DateTime now = DateTime.now();
@@ -200,6 +280,7 @@ class AppHelper {
         };
     }
   }
+  
   //FUNÇÃO PARA RESGATAR ALTURA DO DISPOSITIVO
   static Map<String, double> getDimensions(BuildContext context){
     var dimensions = MediaQuery.of(context).size;
@@ -282,6 +363,7 @@ class AppHelper {
   static bool toggleVisibility(bool visible) {
     return visible = !visible;
   }
+  
   //FUNÇÃO PARA FORMATAR DATAS
   static String formatDate(DateTime date) {
     String day = date.day.toString().padLeft(2, '0');

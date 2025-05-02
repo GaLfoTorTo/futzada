@@ -5,6 +5,7 @@ import 'package:futzada/theme/app_colors.dart';
 class ButtonIconWidget extends StatelessWidget {
   final dynamic icon;
   final Color? iconColor;
+  final double? iconSize;
   final Color? color;
   final double? width;
   final double? height;
@@ -15,6 +16,7 @@ class ButtonIconWidget extends StatelessWidget {
     super.key,
     required this.icon,
     this.iconColor, 
+    this.iconSize, 
     this.color = AppColors.white, 
     this.width = 55, 
     this.height = 55, 
@@ -40,8 +42,8 @@ class ButtonIconWidget extends StatelessWidget {
           child: icon is String 
             ? SvgPicture.asset(
               icon!,
-              width: double.infinity,
-              height: double.infinity,
+              width: iconSize ?? double.infinity,
+              height: iconSize ?? double.infinity,
               color: iconColor,
             )
             : Icon(icon!),

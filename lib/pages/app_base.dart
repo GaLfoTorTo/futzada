@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/chat_controller.dart';
 import 'package:get/get.dart';
 import 'package:futzada/controllers/home_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -12,8 +13,10 @@ class AppBase extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE NAVEGAÇÃO
     final controller = NavigationController.instace;
-    //INICIALIZAR CONTROLLER DA HOME PAGE
+    //INICIALIZAR CONTROLLER HOME PAGE
     Get.put(HomeController());
+    //INICIALIZAR CONTROLLER CHAT PAGE
+    Get.put(ChatController());
     
     return Scaffold(
       key: controller.scaffoldKey,

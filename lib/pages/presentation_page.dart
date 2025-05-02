@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -34,6 +36,26 @@ class PresentationPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLERDE NAVEGACAO DE TABS
     final navigationTab = Get.find<NavigationController>();
+    //VERIFICAR ROTA PARA INICIALIZAÇÃO DE CONTROLLER
+    switch (route) {
+      case 'Peladas':
+        //INICIALIZAR CONTROLLER DE EVENTO
+        Get.put(EventController());
+        break;
+      case 'Escalação':
+        //INICIALIZAR CONTROLLER DE ESCALÇAO
+        Get.put(EscalationController());
+        break;
+      case 'Explore':
+        //INICIALIZAR CONTROLLER DE EXPLORER
+        Get.put(EventController());
+        break;
+      case 'Notificações':
+        //INICIALIZAR CONTROLLER DE NOTIFICAÇÕES
+        Get.put(EventController());
+        break;
+      default:
+    }
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
 

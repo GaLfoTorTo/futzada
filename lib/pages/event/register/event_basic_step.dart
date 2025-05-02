@@ -26,8 +26,8 @@ class EventBasicStep extends StatefulWidget {
 class EventBasicStepState extends State<EventBasicStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
-  //CONTROLLER DE REGISTRO DA PELADA
-  final controller = Get.put(EventController());
+  //RESGATAR CONTROLLER DE CHAT
+  var controller = EventController.instace;
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER

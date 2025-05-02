@@ -103,18 +103,6 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
     });
   }
 
-  //VALIDAÇÃO DA ETAPA
-  void submitForm(){
-    //RESGATAR O FORMULÁRIO
-    var formData = formKey.currentState;
-    //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (formData?.validate() ?? false) {
-      formData?.save();
-      //REGISTRAR PELADA
-      registerPelada();
-    }
-  }
-
   //FUNÇÃO DE CALLBACK DE RETORNO DO SERVIDOR
   void onCompleteAnimation(statusRequest) async {
     //ESPERAR 5 SEGUNDOS
@@ -229,7 +217,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
   }
 
   //FUNÇÃO DE ENVIO DE DADOS PARA BACKEND
-  void registerPelada() async{
+  void registerEvent() async{
     var response = controller.registerEvent();
     //MODAL DE STATUS DE REGISTRO DO USUARIO
     showDialog(
@@ -331,6 +319,18 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
     );
   }
 
+  //VALIDAÇÃO DA ETAPA
+  void submitForm(){
+    //RESGATAR O FORMULÁRIO
+    var formData = formKey.currentState;
+    //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
+    if (formData?.validate() ?? false) {
+      formData?.save();
+      //REGISTRAR PELADA
+      registerEvent();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //CONTROLLER DE BARRA NAVEGAÇÃO
@@ -364,14 +364,16 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        "Adicionar Participantes",
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        textAlign: TextAlign.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text(
+                          "Adicionar Participantes",
+                          style: Theme.of(context).textTheme.headlineMedium,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
-                    ),]
+                    ]
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),

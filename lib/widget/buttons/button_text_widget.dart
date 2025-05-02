@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 class ButtonTextWidget extends StatelessWidget {
   final String? text;
   final Color? textColor;
-  final Color? backgroundColor;
+  final double? textSize;
   final dynamic icon;
   final double? iconSize;
   final bool iconAfter;
+  final Color? backgroundColor;
   final double? width;
   final double? height;
   final bool? disabled;
@@ -16,10 +17,11 @@ class ButtonTextWidget extends StatelessWidget {
     super.key,
     this.text,
     this.textColor,
-    this.backgroundColor,
+    this.textSize,
     this.icon,
     this.iconSize,
     this.iconAfter = false,
+    this.backgroundColor,
     this.width = 40,
     this.height = 40,
     this.disabled = false,
@@ -37,32 +39,32 @@ class ButtonTextWidget extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: height,
-        child: text != null
-        //CASO EXISTA TEXTO
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: iconAfter
-              ? [
-                  if (text != null) 
-                    Text(text!),
-                  if (icon != null) 
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Icon(icon!, size: iconSize),
-                    ),
-                ]
-              : [
-                  if (icon != null) 
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: Icon(icon!, size: iconSize),
-                    ),
-                  if (text != null) 
-                    Text(text!),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if(iconAfter)...[
+                if(text != null)...[
+                  Text(text!),
                 ],
-          )
-        //CASO EXISTA APENAS ICONE
-        : Icon(icon!, size: iconSize),
+                if(icon != null)...[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Icon(icon!, size: iconSize),
+                  ),
+                ],
+            ]else...[
+                if(icon != null)...[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Icon(icon!, size: iconSize),
+                  ),
+                ],
+                if(text != null)...[
+                  Text(text!),
+                ],
+            ],
+          ],
+        )
       ),
     );
   }

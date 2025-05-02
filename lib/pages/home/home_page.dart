@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import '/theme/app_colors.dart';
 import '/theme/app_icones.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -39,8 +38,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
           scaffoldKey.currentState?.openDrawer();
         },
         leftIcon: AppIcones.bars_solid,
-        rightAction: () {},
+        rightAction: () => Get.toNamed('/chats'),
         rightIcon: AppIcones.paper_plane_solid,
+        shadow: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
