@@ -85,9 +85,17 @@ class UserModel {
       token: updates?['token'] ?? token,
       // ATUALIZANDO PLAYER
       player: PlayerModel(
+        user: this,
         bestSide: updates?['player.bestSide'] ?? player?.bestSide,
         type: updates?['player.type'] ?? player?.type,
-        positions: updates?['player.positions'] ??player?.positions,
+        positions: updates?['player.positions'] ?? player?.positions,
+        position: updates?['player.position'] ?? player?.position,
+        status: updates?['player.status'] ?? player?.status,
+        lastPontuation: updates?['player.lastPontuation'] ?? player?.lastPontuation,
+        media: updates?['player.media'] ?? player?.media,
+        price: updates?['player.price'] ?? player?.price,
+        valorization: updates?['player.valorization'] ?? player?.valorization,
+        games: updates?['player.games'] ?? player?.games,
       ),
       // ATUALIZANDO MANAGER
       manager: ManagerModel(

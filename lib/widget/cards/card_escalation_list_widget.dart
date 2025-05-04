@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/player_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 
 class CardEscalationListWidget extends StatefulWidget {
-  final Map<String, dynamic>? player;
+  final PlayerModel? player;
+  final String namePosition;
 
   const CardEscalationListWidget({
     super.key,
-    required this.player
+    required this.player,
+    required this.namePosition
   });
 
   @override
@@ -20,43 +23,37 @@ class CardEscalationListWidget extends StatefulWidget {
 
 class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
   //CONTROLADOR DE POSICAO PRINCIPAL
-  String position = 'no progress';
-  bool isLoading = false;
+  String? position;
+  //RESGATAR JOGADOR COMO MAP
+  Map<String, dynamic>? player = {};
 
   @override
   void initState() {
     super.initState();
+    //RESGATAR JOGADOR COMO MAP
+    player = widget.player != null ? widget.player!.toMap() : null;
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
 
   Future<void> loadPosition() async {
+    //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      //VERIFICAR SE PLAYER FOI RECEBIDO
-      var string_position = 'no progress';
-      if(widget.player != null){
-        string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player!['position']]);
-      }
-      //ATUALIZAR ESTADO
-      setState(() {
+      if(player != null){
+        var string_position = await AppHelper.mainPosition(AppIcones.posicao[player!['position']]);
         position = string_position;
-        isLoading = true;
-      });
+      }
     } catch (e) {
-      //ATUALIZAR ESTADO
-      setState(() {
-        position = 'no progress';
-        isLoading = true;
-      });
+      position = null;
     }
+    //ATUALIZAR STATE
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR PLAYER
-    var player = widget.player;
 
     Widget renderCard(){
       //VERIFICAR SE PLAYER EXISTE 
@@ -71,7 +68,7 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                   ImgCircularWidget(
                     height: 80,
                     width: 80,
-                    image: player['photo'],
+                    image: player!['user']['photo'],
                     borderColor: AppColors.gray_300,
                   ),
                   Padding(
@@ -80,11 +77,11 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${player['firstName']} ${player['lastName']}",
+                          "${player!['user']['firstName']} ${player!['user']['lastName']}",
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         Text(
-                          "@${player['userName']}",
+                          "@${player!['user']['userName']}",
                           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
                         ),
                         SizedBox(
@@ -92,9 +89,9 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              if(isLoading)...[
+                              if(position != null)...[
                                 SvgPicture.string(
-                                  position,
+                                  position!,
                                   width: 25,
                                   height: 25,
                                 ),
@@ -118,8 +115,8 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
-                        AppHelper.setStatusPlayer(player['status'])['icon'],
-                        color: AppHelper.setStatusPlayer(player['status'])['color'],
+                        AppHelper.setStatusPlayer(player!['status'])['icon'],
+                        color: AppHelper.setStatusPlayer(player!['status'])['color'],
                         size: 30,
                       ),
                     ),
@@ -134,8 +131,7 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: dimensions.width / 2,
+            SizedBox(
               child: Row(
                 children: [
                   const ImgCircularWidget(
@@ -150,7 +146,7 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Goleiro",
+                          widget.namePosition,
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.gray_500),
                         ),
                       ],
@@ -161,13 +157,14 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
             ),
             const ButtonPlayerWidget(
               player: null,
+              ocupation: 'reserves',
               size: 50,
               borderColor: AppColors.white,
             )
           ],
         );
       }
-  }
+    }
     
     return Container(
       width: dimensions.width,

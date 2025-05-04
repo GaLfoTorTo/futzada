@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
 class CampoWidget extends StatelessWidget {
   final String? categoria;
-  final Map<int, dynamic> escalation;
   final String formation;
   final double? width;
   final double? height;
@@ -15,7 +15,6 @@ class CampoWidget extends StatelessWidget {
   const CampoWidget({
     super.key,
     this.categoria = 'Campo',
-    required this.escalation,
     this.formation = '4-3-3',
     this.width = 342,
     this.height = 518,
@@ -23,6 +22,9 @@ class CampoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR CONTROLLER DE ESCALAÇÃO
+    var controller = EscalationController.instace;
+    
     //FUNÇÕES DE ESTAMPA DO CAMPO
     String fieldType(String? categoria){
       if(categoria == 'Society'){
@@ -122,8 +124,7 @@ class CampoWidget extends StatelessWidget {
       //INVERTER ORDEM DO ARRAY DE POSIÇÕES
       return listFormation.reversed.toList();
     }
-    //VARAIVEL DE POSIÇÕES DA FORMAÇÃO
-    var positions = setPositions();
+
     
     return Stack(
       alignment: Alignment.center,
@@ -135,44 +136,53 @@ class CampoWidget extends StatelessWidget {
             ..rotateX(-0.7), 
           child: renderField()
         ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ...positions.asMap().entries.map((entry){
+        Obx(() {
+          //RESGATAR ESCALAÇÃO DO USUARIO
+          final escalation = controller.escalation['starters'];
+          //RESGATR POSIÇÕES DA ESCALAÇÃO DO USUARIO
+          final positions = setPositions();
+          
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: positions.asMap().entries.map((entry) {
+              //RESGATAR CHAVE DO GRUPO DE POSIÇÕES
               final groupPosition = entry.key;
+              //RESGATAR QTD DE JOGADORES PARA O SETOR
               final qtd = entry.value;
-              //INVERTER POSITIONS PARA CALULAR INDEX REAL DO ATLETA
+              //RESGATR INDEX REAL DO JOGADOR INVERTENDO POSIÇÕES
               final invertedGroupPos = positions.length - 1 - groupPosition;
-              // CALCULAR A POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+              //CALCULAR A INDEX DO JOGADOR NA ESCALAÇÃO
               final groupStartIndex = positions
                   .reversed
                   .toList()
                   .sublist(0, invertedGroupPos)
                   .fold(0, (sum, item) => sum + item);
-              //ATACANTES, MEIAS, ZAGUEIROS E GOLEIRO
+              
               return SizedBox(
                 height: positions.length == 5 ? 100 : 130,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(qtd, (index) {
-                    // CALCULAR A POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+                    //RESGATAR INDEX REAL DO JOGADOR NA ESCALÇAO
                     final realPosition = groupStartIndex + index;
-                    //RESGATAR JOGADOR NA ESCALAÇÃO
-                    Map<String, dynamic>? player = escalation[realPosition];
+                    //RESGATAR JOGADOR NA ESCALÇAO
+                    final player = escalation![realPosition];
+                    
                     return Container(
                       alignment: setAligmentPositions(index, qtd),
                       child: ButtonPlayerWidget(
                         player: player,
+                        index: realPosition,
+                        ocupation: 'starters',
                         size: 60,
-                        borderColor: AppHelper.setPlayerPosition(player),
                       )
                     );
                   }),
                 ),
               );
-            }),
-          ]
-        ),
+            }).toList(),
+          );
+        }),
       ]
     );
   }

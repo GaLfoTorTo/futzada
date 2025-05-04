@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
 
 class ReserveBankWidget extends StatelessWidget {
   final String category;
-  final Map<int, dynamic> escalation;
 
   const ReserveBankWidget({
     super.key,
     required this.category,
-    required this.escalation,
   });
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR CONTROLLER DE ESCALAÇÃO
+    var controller = EscalationController.instace;
+    //RESGATAR ESCALAÇÃO TITULAR
+    var escalation = controller.escalation['reserves']!;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //FUNÇÃO PARA RESGATAR POSIÇÃO NO BANCO DE RESERVAS
@@ -33,6 +36,7 @@ class ReserveBankWidget extends StatelessWidget {
           return 'ATA';
       }
     }
+    
     return Container(
       width: dimensions.width - 20,
       height: 150,
@@ -46,7 +50,7 @@ class ReserveBankWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: List.generate(escalation.length, (index) {
           //RESGATAR JOGADOR NA ESCALAÇÃO
-          Map<String, dynamic>? player = escalation[index];
+          final player = escalation[index];
           //RESGATAR POSIÇÃO
           String position = getReservePosition(index);
           return Column(
@@ -54,6 +58,7 @@ class ReserveBankWidget extends StatelessWidget {
             children: [
               ButtonPlayerWidget(
                 player: player,
+                ocupation: 'reserves',
                 size: 60,
                 borderColor: AppColors.gray_300,
               ),
@@ -62,7 +67,7 @@ class ReserveBankWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 5),
                   child: Text(
                     position,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.gray_300),
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.gray_300),
                   ),
                 )
               ]

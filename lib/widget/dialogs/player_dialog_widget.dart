@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/widget/text/player_indicator_widget.dart';
+import 'package:futzada/models/player_model.dart';
 import 'package:get/get.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -9,7 +10,7 @@ import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 
 class PlayerDialogWidget extends StatefulWidget {
-  final Map<String, dynamic> player;
+  final PlayerModel player;
 
   const PlayerDialogWidget({
     super.key,
@@ -17,45 +18,93 @@ class PlayerDialogWidget extends StatefulWidget {
   });
 
   @override
-  State<PlayerDialogWidget> createState() => _PlayerDialogWidgetState();
+  State<PlayerDialogWidget> createState() => PlayerDialogWidgetState();
 }
 
-class _PlayerDialogWidgetState extends State<PlayerDialogWidget> {
+class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
+  //RESGATAR CONTROLLER DE ESCALAÇÃO
+  var controller = EscalationController.instace;
   //CONTROLADOR DE POSICAO PRINCIPAL
-  String position = 'no progress';
-  bool isLoading = true;
+  String? position;
+  //RESGATAR JOGADOR COMO MAP
+  Map<String, dynamic> player = {};
 
   @override
   void initState() {
     super.initState();
+    //RESGATAR JOGADOR COMO MAP
+    player = widget.player.toMap();
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
 
+  //FUNÇÃO PARA CARREGAR ICONE DE POSIÇÃO DO JOGADOR
   Future<void> loadPosition() async {
+    //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      final string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player['position']]);
-      setState(() {
-        position = string_position;
-        isLoading = false;
-      });
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['position']]);
+      position = string_position;
     } catch (e) {
-      setState(() {
-        position = 'error';
-        isLoading = false;
-      });
+      position = null;
     }
+    //ATUALIZAR STATE
+    setState(() {});
+  }
+
+  //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
+  void setPlayerPosition(uuid){
+    //SELECIONAR JOGADOR
+    controller.setPlayerEscalation(uuid);
+    //FECHAR BOTTOM SHEET
+    Get.back();
   }
   
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR JOGADOR
-    var player = widget.player;
-    print(player);
+    //LISTA DE METRICAS DO CARD
+    List<Map<String, dynamic>> metrics = [
+      {
+        'name':'price',
+        'label':'Valor de Mercado',
+        'icon': AppIcones.money_check_solid,
+        'price':true
+      },
+      {
+        'name':'valorization',
+        'label':'Valorização',
+        'icon': AppIcones.sort_amount_up_solid,
+        'price':false
+      },
+      {
+        'name':'lastPontuation',
+        'label':'Última Pontuação',
+        'icon': AppIcones.calculator_solid,
+        'price':false
+      },
+      {
+        'name':'media',
+        'label':'Média',
+        'icon': AppIcones.chart_line_solid,
+        'price':false
+      },
+      {
+        'name':'games',
+        'label':'Jogos',
+        'icon': AppIcones.clipboard_solid,
+        'price':false
+      },
+      {
+        'name':'status',
+        'label':'Status',
+        'icon': AppIcones.user_checked_solid,
+        'price':false
+      },
+    ];
 
     return  Container(
+      height: ( dimensions.height / 2 ) + 50,
       padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: AppColors.white,
@@ -65,7 +114,7 @@ class _PlayerDialogWidgetState extends State<PlayerDialogWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if(isLoading)...[
+          if(position == null)...[
             const CircularProgressIndicator(
               color: AppColors.green_300,
               strokeWidth: 2,
@@ -77,11 +126,11 @@ class _PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   ImgCircularWidget(
                     height: 100,
                     width: 100,
-                    image: player['photo'],
+                    image: player['user']['photo'],
                     borderColor: player['borderColor'],
                   ),
                   Text(
-                    "${player['firstName']} ${player['lastName']}",
+                    "${player['user']['firstName']} ${player['user']['lastName']}",
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -90,52 +139,62 @@ class _PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    "@${player['userName']}",
+                    "@${player['user']['userName']}",
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.gray_300,
                     ),
                   ),
                   SvgPicture.string(
-                    position,
+                    position!,
                     width: 30,
                     height: 30,
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 150,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,  
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Wrap(
+                spacing: 10,
                 children: [
-                  PlayerIndicatorWidget(
-                    title: "Valor de Mercado",
-                    value: player['price'],
-                    iconLabel: AppIcones.money_check_solid,
-                    price: true,
-                  ),
-                  PlayerIndicatorWidget(
-                    title: "Valorização",
-                    value: player['valorization'],
-                    iconLabel: AppIcones.sort_amount_up_solid,
-                  ),
-                  PlayerIndicatorWidget(
-                    title: "Última Pontuação",
-                    value: player['lastPontuation'],
-                    iconLabel: AppIcones.calculator_solid,
-                  ),
-                  PlayerIndicatorWidget(
-                    title: "Pontuação Média",
-                    value: player['media'],
-                    iconLabel: AppIcones.chart_line_solid,
-                  ),
-                  PlayerIndicatorWidget(
-                    title: "Status",
-                    value: player['status'],
-                    iconLabel: AppIcones.user_checked_solid,
-                  ),
-                ],
+                  ...metrics.asMap().entries.map((entry){
+                    //RESGATAR OBJETO DE METRICA
+                    final item = entry.value;
+                    //RESGATAR CHAVE IDENTIFICADORA DDO ITEM
+                    final name = item['name'];
+                    
+                    return Container(
+                      width: ( dimensions.width / 2 ) - 25,
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.gray_300.withAlpha(40),
+                        borderRadius: const BorderRadius.all(Radius.circular(5))
+                      ),
+                      child: Column(
+                        children: [
+                          if(name == 'status')...[
+                            Icon(
+                              AppHelper.setStatusPlayer(player[name])['icon'],
+                              size: 30,
+                              color: AppHelper.setStatusPlayer(player[name])['color'],
+                            )
+                          ]else...[
+                            Text(
+                              "${player[name]}",
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(player[name])['color']),
+                            ),
+                          ],
+                          Text(
+                            "${item['label']}",
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      )
+                    );
+                  }),
+                ]
               ),
             ),
             Row(
@@ -157,7 +216,7 @@ class _PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
-                  action: () {print('Remover Jogador');},
+                  action: () => setPlayerPosition(player['id']),
                 ),
               ],
             ),

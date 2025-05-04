@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -11,7 +11,6 @@ import 'package:futzada/widget/cards/card_escalation_list_widget.dart';
 import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:futzada/widget/others/reserve_bank_widget.dart';
 import 'package:futzada/widget/text/price_indicator_widget.dart';
-import 'package:get/get.dart';
 
 class EscalationPage extends StatefulWidget {  
   const EscalationPage({
@@ -29,36 +28,83 @@ class EscalationPageState extends State<EscalationPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   var controller = EscalationController.instace;
 
+  //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(newValue){
     setState(() {
       controller.selectedEvent = newValue;
       controller.update();
     });
   }
-
+  //FUNÇÃO PARA SELECIONAR TIPO DE VISUALIZAÇÃO
   void selectView(type){
     setState(() {
       //VERIFICAR O TIPO RECEBIDO
       viewType = type;
     });
   }
-
+  //FUNÇÃO PARA SELECIONAR FORMAÇÃO
   void selectFormation(newValue){
     setState(() {
       controller.selectedFormation = newValue;
       controller.update();
     });
   }
+  //FUNÇÃO DE NOMECLATURA DE POSIÇÕES
+  String setNamePositionFormation(int i, String type){
+    if(type == 'starters'){
+      switch (i) {
+        case 0:
+          return 'Goleiro';
+        case 1:
+        case 2:
+          return 'Zagueiro';
+        case 3:
+        case 4:
+          return 'Lateral';
+        case 5:
+        case 6:
+        case 7:
+          return 'Meio-Campo';
+        case 8:
+        case 9:
+        case 10:
+          return 'Atacante';
+        default:
+          return 'Jogador';
+      }
+    }else{
+      switch (i) {
+        case 0:
+          return 'Goleiro';
+        case 1:
+          return 'Zagueiro';
+        case 2:
+          return 'Lateral';
+        case 3:
+          return 'Meio-Campo';
+        case 4:
+          return 'Atacante';
+        default:
+          return 'Jogador';
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //RESGATAR ESCALAÇÃO TITULAR
+    var escalationStarters = controller.escalation['starters'];
+    //RESGATAR ESCALAÇÃO RESERVAS
+    var escalationReserves = controller.escalation['reserves'];
 
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Escalação',
         leftAction: () => Get.back(),
+        rightAction: () => Get.toNamed('/escalation/market'),
+        rightIcon: Icons.shopping_cart,
         shadow: false,
       ),
       body: SafeArea(
@@ -158,7 +204,6 @@ class EscalationPageState extends State<EscalationPage> {
                   categoria: 'Campo',
                   width: ( dimensions.width ) - 80,
                   height: ( dimensions.height / 2) + 50,
-                  escalation: controller.userEscalation['starters'],
                   formation: controller.selectedFormation,
                 ),
               ]else...[
@@ -169,12 +214,19 @@ class EscalationPageState extends State<EscalationPage> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
-                ...controller.userEscalation['starters'].entries.map((entry) {
+                ...escalationStarters!.entries.map((entry) {
                   //RESGATAR ITENS 
-                  Map<String, dynamic>? item = entry.value;
+                  int key = entry.key;
+                  //RESGATAR O NOME DA POSIÇÃO DE ACORDO COM O INDEX DE RENDERIZAÇÃO
+                  String namePosition = setNamePositionFormation(key, 'starters');
+                  //RESGATAR ITENS 
+                  final item = entry.value;
                   return  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: CardEscalationListWidget(player: item),
+                    child: CardEscalationListWidget(
+                      player: item,
+                      namePosition: namePosition
+                    ),
                   );
                 }).toList(),
               ],
@@ -188,14 +240,20 @@ class EscalationPageState extends State<EscalationPage> {
               //VERIFICAR TIPO DE VISUALIZAÇÃO PARA BANCO DE RESERVAS (ESCALAÇÃO OU LISTA)
               if(viewType == 'escalation')...[
                 ReserveBankWidget(
-                  category: 'Campo',
-                  escalation: controller.userEscalation['reserves'],
+                  category: controller.category,
                 )
               ]else...[
-                ...controller.userEscalation['reserves'].entries.map((entry) {
+                ...escalationReserves!.entries.map((entry) {
                   //RESGATAR ITENS 
-                  Map<String, dynamic>? item = entry.value;
-                  return  CardEscalationListWidget(player: item);
+                  int key = entry.key;
+                  //RESGATAR O NOME DA POSIÇÃO DE ACORDO COM O INDEX DE RENDERIZAÇÃO
+                  String namePosition = setNamePositionFormation(key, 'reserves');
+                  //RESGATAR ITENS 
+                  final item = entry.value;
+                  return  CardEscalationListWidget(
+                    player: item,
+                    namePosition: namePosition,
+                  );
                 }).toList(),
               ]
             ],

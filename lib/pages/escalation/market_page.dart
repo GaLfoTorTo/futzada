@@ -46,26 +46,24 @@ class MarketPageState extends State<MarketPage> {
                     ),
                   ],
                 ),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                   ],
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(10),
-                child: Obx(() {
-                  return Column(
-                    children: controller.playersMarket.map((entry) {
-                      //RESGATAR ITENS 
-                      Map<String, dynamic> item = entry;
-                      return  CardPlayerMarketWidget(
-                        player: item,
-                        escalation: controller.userEscalation['starters']
-                      );
-                    }).toList(),
-                  );
-                }),
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: controller.playersMarket.map((entry) {
+                    //RESGATAR ITENS 
+                    final item = entry;
+                    return  CardPlayerMarketWidget(
+                      player: item,
+                      escalation: controller.escalation['starters']!
+                    );
+                  }).toList(),
+                ),
               )
             ],
           ),

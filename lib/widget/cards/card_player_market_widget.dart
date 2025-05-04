@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/models/player_model.dart';
+import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
-import 'package:futzada/widget/text/player_indicator_widget.dart';
 
 class CardPlayerMarketWidget extends StatefulWidget {
-  final Map<String, dynamic> player;
+  final PlayerModel player;
   final Map<int, dynamic> escalation;
   
   const CardPlayerMarketWidget({
@@ -22,20 +24,27 @@ class CardPlayerMarketWidget extends StatefulWidget {
 }
 
 class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
+  //RESGATAR CONTROLLER DE ESCALAÇÃO
+  var controller = EscalationController.instace;
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
+  //RESGATAR JOGADOR COMO MAP
+  Map<String, dynamic> player = {};
 
   @override
   void initState() {
     super.initState();
+    //RESGATAR JOGADOR COMO MAP
+    player = widget.player.toMap();
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
 
+  //FUNÇÃO PARA CARREGAR ICONE DE POSIÇÃO DO JOGADOR
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player['position']]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['position']]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -44,10 +53,11 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
     setState(() {});
   }
 
-  Map<String, dynamic> setButtonBuy(){
+  //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
+  Map<String, dynamic> setButtonBuy(player){
     /* 
     //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-    if(user[futcoin] < widget.player['price']){
+    if(user[futcoin] < player['price']){
       return{
         'text':'Comprar',
         'color' : AppColors.gray_300,
@@ -55,8 +65,10 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
       };
     }
     */
+    //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
+    final isEscaled = controller.findPlayerEscalation(player['id']);
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
-    if(widget.escalation.containsValue(widget.player['uuid'])){
+    if(isEscaled){
       return{
         'text':'Vender',
         'color' : AppColors.red_300,
@@ -69,11 +81,17 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
       'disabled': true
     };
   }
+
+  //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
+  void setPlayerPosition(uuid){
+    //SELECIONAR JOGADOR
+    controller.setPlayerEscalation(uuid);
+    //NAVEGAR DE VOLTA PARA ESCALAÇÃO
+    Get.offNamed('/escalation');
+  }
   
   @override
   Widget build(BuildContext context) {
-    //RESGATAR PLAYER
-    var player = widget.player;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //LISTA DE METRICAS DO CARD
@@ -119,11 +137,11 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${player['firstName']} ${player['lastName']}",
+                        "${player['user']['firstName']} ${player['user']['lastName']}",
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       Text(
-                        "@${player['userName']}",
+                        "@${player['user']['userName']}",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
                       ),
                       SizedBox(
@@ -230,13 +248,13 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                   action: (){},
                 ),
                 ButtonTextWidget(
-                  text: setButtonBuy()['text'],
+                  text: setButtonBuy(player)['text'],
                   height: 30,
                   width: 100,
                   textColor: AppColors.white,
-                  backgroundColor: setButtonBuy()['color'],
-                  action: (){},
-                  disabled: setButtonBuy()['disabled'],
+                  backgroundColor: setButtonBuy(player)['color'],
+                  disabled: setButtonBuy(player)['disabled'],
+                  action: () => setPlayerPosition(player['id']),
                 )
               ],
             ),

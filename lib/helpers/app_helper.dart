@@ -86,24 +86,32 @@ class AppHelper {
 
   //FUNÇÃO PARA RETORNAR COR DE PONTUAÇÃO
   static Map<String, dynamic> setColorPontuation(dynamic value) {
-    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
-    if(value > 0 ){
-      return {
-        'color': AppColors.green_300,
-        'icon': Icons.arrow_upward_outlined 
-      };
-    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
-    }else if(value < 0){
-      return {
-        'color': AppColors.red_300, 
-        'icon': Icons.arrow_upward_outlined 
-      };
-    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEUTROS)
-    }else if(value == 0){
-      return {
-        'color': AppColors.gray_300, 
-        'icon': Icons.minimize_rounded 
-      };
+    //VERIFICAR SE VALOR RECEBIDO NÃO ESTA NULO
+    if(value != null){
+      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
+      if(value > 0 ){
+        return {
+          'color': AppColors.green_300,
+          'icon': Icons.arrow_upward_outlined 
+        };
+      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
+      }else if(value < 0){
+        return {
+          'color': AppColors.red_300, 
+          'icon': Icons.arrow_downward_outlined 
+        };
+      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEUTROS)
+      }else if(value == 0){
+        return {
+          'color': AppColors.gray_300, 
+          'icon': Icons.minimize_rounded 
+        };
+      }else{
+        return {
+          'color': AppColors.gray_300, 
+          'icon': Icons.minimize_rounded 
+        };
+      }
     }else{
       return {
         'color': AppColors.gray_300, 

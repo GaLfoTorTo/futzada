@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/player_model.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/dialogs/player_dialog_widget.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 import 'package:get/get.dart';
 
 class ButtonPlayerWidget extends StatelessWidget {
-  final Map<String, dynamic>? player;
+  final PlayerModel? player;
+  final String ocupation;
+  final int? index;
   final double? size;
   final Color? borderColor;
   final bool? userDefault;
@@ -17,6 +19,8 @@ class ButtonPlayerWidget extends StatelessWidget {
   const ButtonPlayerWidget({
     super.key,
     this.player,
+    this.index,
+    required this.ocupation,
     this.size = 55,
     this.borderColor = AppColors.white,
     this.userDefault = false
@@ -24,25 +28,32 @@ class ButtonPlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //DEFINIR BORDER COLOR A SER UTILIZADA
+    Color border = borderColor!;
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
-    void showDialogPlayer(Map<String, dynamic>? player) {
+    void showDialogPlayer(PlayerModel? player) {
+      //RESGATAR CONTROLLER DE ESCALAÇÃO
+      var controller = EscalationController.instace;
+      //ATUALIZAR INDEX DE JOGADOR SELECIONADO
+      controller.selectedPlayer.value = index ?? 0;
+      controller.selectedOcupation.value = ocupation;
       //VERIFICAR SE JOGADOR NÃO É NULO
       if(player != null){
-        //ADICIONAR BORDA NOS DADOS DO PLAYER
-        player['borderColor'] = borderColor;
+        border = AppHelper.setPlayerPosition(player.toMap());
         //CHAMAR DIALOG DO JOGADOR
-        Get.bottomSheet(PlayerDialogWidget(player: player));
+        Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true);
       }else{
         //NAVEGAR PARA PAGINA DE MERCADO
         Get.toNamed('/escalation/market');
       }
     }
 
-    List<Widget> setPlayerButton(player){
+    //FUNÇÃO PARA DEFINIR BOTÃO DE JOGADOR
+    List<Widget> setPlayerButton(PlayerModel? player){
       //VERIFICAR SE JOGADOR FOI DEFINIDO
       if(player != null){
         return [
-          if(player != null && player!['pontuation'] != null)...[
+          if(player.lastPontuation != null)...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
@@ -58,20 +69,20 @@ class ButtonPlayerWidget extends StatelessWidget {
                 ],
               ),
               child: Row(
-                crossAxisAlignment: player!['pontuation'] == 0 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                crossAxisAlignment: player.lastPontuation == 0 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${player!['pontuation']}",
+                    "${player.lastPontuation}",
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: AppHelper.setColorPontuation(player!['pontuation'])['color'],
+                      color: AppHelper.setColorPontuation(player.lastPontuation)['color'],
                     ),
                   ),
                   Icon(
-                    AppHelper.setColorPontuation(player!['pontuation'])['icon'],
+                    AppHelper.setColorPontuation(player.lastPontuation)['icon'],
                     size: 10,
-                    color: AppHelper.setColorPontuation(player!['pontuation'])['color'],
+                    color: AppHelper.setColorPontuation(player.lastPontuation)['color'],
                   ),
                 ],
               ),
@@ -82,11 +93,11 @@ class ButtonPlayerWidget extends StatelessWidget {
             child: ImgCircularWidget(
               height: size!,
               width: size!,
-              image: player != null ? player!['photo'] : null,
-              borderColor: borderColor,
+              image: player.user.photo,
+              borderColor: border,
             )
           ),
-          if(player != null && player!['firstName'] != null && player!['lastName'] != null)...[
+          if(player.user.firstName != null && player.user.lastName != null)...[
             Container(
               width: 80,
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
@@ -95,13 +106,12 @@ class ButtonPlayerWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                "${player!['firstName']} ${player!['lastName']}",
-                style: const TextStyle(
+                "${player.user.firstName} ${player.user.lastName}",
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   fontSize: 10,
-                  fontWeight: FontWeight.normal,
-                  color: AppColors.white,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  color: AppColors.white, 
+                  overflow: TextOverflow.ellipsis
+                )
               ),
             ),
           ],
@@ -143,7 +153,7 @@ class ButtonPlayerWidget extends StatelessWidget {
     return Container(
       height: player!= null ? size! + 50 : size,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: setPlayerButton(player)
       ),
     );
