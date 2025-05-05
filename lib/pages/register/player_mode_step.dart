@@ -304,7 +304,6 @@ class PlayerModeStepState extends State<PlayerModeStep> {
                                 value: item['value'],
                                 icon: item['icon'],
                                 checked: item['checked'],
-                                controller: controller,
                                 onChanged: selectMelhorPe,
                               )
                           ],

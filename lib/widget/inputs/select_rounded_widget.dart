@@ -10,7 +10,6 @@ class SelectRoundedWidget extends StatelessWidget {
   final Color? iconColor;
   final double? iconSize;
   final bool checked;
-  final dynamic controller;
   final Function onChanged;
 
   const SelectRoundedWidget({
@@ -22,7 +21,6 @@ class SelectRoundedWidget extends StatelessWidget {
     this.iconColor = AppColors.white,
     this.iconSize = 100,
     required this.checked,
-    required this.controller,
     required this.onChanged
   });
 

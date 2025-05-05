@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/theme/app_size.dart';
+import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_player_market_widget.dart';
+import 'package:futzada/widget/dialogs/market_dialog_widget.dart';
+import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 
@@ -15,6 +21,14 @@ class MarketPage extends StatefulWidget {
 class MarketPageState extends State<MarketPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   var controller = EscalationController.instace;
+
+  //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
+  void selectFilter(name, newValue){
+    setState(() {
+      controller.setFilter(name, newValue);
+      controller.update();
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -33,7 +47,6 @@ class MarketPageState extends State<MarketPage> {
             children: [
               Container(
                 width: dimensions.width,
-                height: 70,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppColors.white,
@@ -46,9 +59,67 @@ class MarketPageState extends State<MarketPage> {
                     ),
                   ],
                 ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
+                    InputTextWidget(
+                      name: 'search',
+                      hint: 'Pesquisa',
+                      bgColor: AppColors.gray_300.withAlpha(50),
+                      prefixIcon: AppIcones.search_solid,
+                      textController: controller.pesquisaController,
+                      controller: controller,
+                      type: TextInputType.text,
+                    ),
+                    Obx(() {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ButtonDropdownWidget(
+                            selectedEvent: controller.filtrosMarket['price'],
+                            itens: controller.filterOptions['price'] as List<dynamic>, 
+                            onChange: (newValue) => selectFilter('price', newValue),
+                            textSize: AppSize.fontSm,
+                            width: ( dimensions.width / 3 ) - 10,
+                            menuWidth: 150
+                          ),
+                          const SizedBox(
+                            height: 50,
+                            width: 1,
+                            child: VerticalDivider(
+                              color: AppColors.gray_300,
+                              thickness: 1,
+                            ),
+                          ),
+                          ButtonDropdownWidget(
+                            selectedEvent: controller.filtrosMarket['status'],
+                            itens: controller.filterOptions['status'] as List<dynamic>, 
+                            onChange: (newValue) => selectFilter('status', newValue),
+                            textSize: AppSize.fontSm,
+                            width: ( dimensions.width / 3 ) - 10,
+                            menuWidth: 150
+                          ),
+                          const SizedBox(
+                            height: 50,
+                            width: 1,
+                            child: VerticalDivider(
+                              color: AppColors.gray_300,
+                              thickness: 1,
+                            ),
+                          ),
+                          ButtonTextWidget(
+                            backgroundColor: AppColors.white,
+                            text: "Filtros",
+                            textSize: AppSize.fontSm,
+                            textColor: AppColors.blue_500,
+                            icon: AppIcones.filter_solid,
+                            iconAfter: true,
+                            width: ( dimensions.width / 3 ) - 50,
+                            action: () => Get.bottomSheet(MarketDialogWidget(), isScrollControlled: true)
+                          ),
+                        ],
+                      );
+                    })
                   ],
                 ),
               ),

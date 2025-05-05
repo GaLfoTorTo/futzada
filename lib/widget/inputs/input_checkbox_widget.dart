@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class InputCheckBoxWidget extends StatelessWidget {
-  final String name;
+  final String? name;
   final bool? value;
   final Function onChanged;
 
   const InputCheckBoxWidget({
     super.key,
-    required this.name, 
+    this.name, 
     this.value = false,
     required this.onChanged 
   });
@@ -24,18 +24,18 @@ class InputCheckBoxWidget extends StatelessWidget {
             scale: 2,
             child: Checkbox(
               value: value,
-              onChanged: (value) {
-                onChanged(name);
-              },
+              onChanged: (value) => onChanged(name),
               activeColor: AppColors.green_300,
               side: const BorderSide(color: AppColors.gray_500, width: 2),
             ),
           ),
-          Text(
-            name,
-            style: Theme.of(context).textTheme.titleSmall,
-            textAlign: TextAlign.center,
-          )
+          if(name != null)...[
+            Text(
+              name!,
+              style: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            )
+          ]
         ],
       ),
     );

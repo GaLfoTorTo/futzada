@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:futzada/services/market_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/services/player_services.dart';
+import 'package:futzada/services/player_service.dart';
 import 'package:futzada/models/player_model.dart';
 
 class EscalationController extends GetxController{
@@ -9,6 +10,11 @@ class EscalationController extends GetxController{
   static EscalationController get instace => Get.find();
   //INSTANCIAR SERVICE DE JOGADORES
   static PlayerService _playerService = PlayerService();
+  //INSTANCIAR SERVICE DE JOGADORES
+  static MarketService _marketService = MarketService();
+
+  //CONTROLADOR DE INPUT DE PESQUISA
+  final TextEditingController pesquisaController = TextEditingController();
   
   //CONTROLADOR DE CATEGORIA DO CAMPO
   final String category = 'Campo';
@@ -18,36 +24,77 @@ class EscalationController extends GetxController{
   
   //CONTROLADOR DE EVENTO SELECIONADO
   int selectedEvent = 0;
-  
+
   //CONTROLADOR DE INDEX PARA JOGADOR ADICIONADO OU REMOVIDO
   RxInt selectedPlayer = 0.obs;
   
   //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
   RxString selectedOcupation = ''.obs;
+
+  //CONTROLADOR DE FILTROS 
+  RxMap<String, dynamic> filtrosMarket = {
+    'status' : 'Ativo',
+    'price' : '',
+    'media' : '',
+    'game' : '',
+    'valorization' : '',
+    'lastPontuation' : '',
+    'nome' : '',
+    'bestSide' : '',
+    'positions' : [],
+  }.obs;
   
+  //LISTA DE FILTROS DO MERCADO
+  Map<String, List<Map<String, dynamic>>> filterOptions = _marketService.filterOptions;
+  
+  //LISTA DE FILTROS DO MERCADO
+  Map<String, List<Map<String, dynamic>>> filterPlayerOptions = _marketService.filterPlayerOptions;
+
   //LISTA DE EVENTOS DO USUARIO
   RxList<Map<String, dynamic>> myEvents = [
     /* for(var i = 0; i <= 2; i++) */
       {
         'id' : 0,
         'title': 'Fut dos Cria',
-        'photo': AppImages.userDefault,
+        'photo': null,
       },
       {
         'id' : 1,
         'title': 'Pelada Divineia',
-        'photo': AppImages.userDefault,
+        'photo': null,
       },
       {
         'id' : 2,
         'title': 'Ginásio',
-        'photo': AppImages.userDefault,
+        'photo': null,
       },
   ].obs;
-  
+
   //JOGADORES DO MERCADO
   RxList<PlayerModel> playersMarket = _playerService.playersMarket;
   
+  //FUNÇÃO DE DEFINIÇÃO DE FILTRO DO MERCADO
+  void setFilter(String name, String newValue){
+    //VERIFICAR SE NAME E VALOR RECEBIDOS NÃO SETA VAZIOS
+    if(name != 'positions'){
+      //ATUALIZAR CHAVE DO FILTRO
+      filtrosMarket[name] = newValue;
+    }else{
+      //RESGATAR POSIÇÕES SALVAS NO FILTRO
+      final positions = filtrosMarket['positions'];
+      //VERIFICAR SE POSIÇÃO RESCEBIDA ESTA NO FILTRO
+      if (positions.contains(newValue)) {
+        //REMOVER POSIÇÃO
+        positions.remove(newValue);
+      } else {
+        //ADICIONAR POSIÇÃO
+        positions.add(newValue);
+      }
+      //REATRIBUIR POSIÇÕES NO FILTRO
+      filtrosMarket['positions'] = positions; 
+    }
+  }
+
   //ESCALAÇÃO DO USUARIO
   final RxMap<String, RxMap<int, PlayerModel?>> escalation = setEscalation();
 

@@ -529,7 +529,6 @@ class EventAddressStepState extends State<EventAddressStep> {
                             size: 120,
                             iconSize: 40,
                             checked: item['checked'],
-                            controller: controller,
                             onChanged: selectCategoria,
                           )
                       ],

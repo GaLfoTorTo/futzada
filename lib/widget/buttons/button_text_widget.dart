@@ -35,6 +35,9 @@ class ButtonTextWidget extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor ?? backgroundColor,
         foregroundColor: textColor ?? textColor,
+        textStyle: TextStyle(
+          fontSize: textSize ?? textSize,
+        ),
       ),
       child: SizedBox(
         width: width,

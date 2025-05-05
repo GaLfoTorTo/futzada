@@ -135,6 +135,7 @@ class EscalationPageState extends State<EscalationPage> {
                         selectedEvent: controller.selectedEvent,
                         itens: controller.myEvents,
                         onChange: selectEvent,
+                        iconAfter: false,
                       ),
                     ),
                     Container(
