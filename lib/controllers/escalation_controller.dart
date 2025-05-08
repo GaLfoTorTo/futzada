@@ -30,6 +30,9 @@ class EscalationController extends GetxController{
   
   //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
   RxString selectedOcupation = ''.obs;
+  
+  //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
+  RxInt playerCapitan = 0.obs;
 
   //CONTROLADOR DE FILTROS 
   RxMap<String, dynamic> filtrosMarket = {
@@ -115,6 +118,29 @@ class EscalationController extends GetxController{
     'starters': starters,
     'reserves': reserves,
   }.obs;
+  }
+
+  //FUNÇÃO PARA DEFINIR JOGADOR COMO CAPITÃO
+  void setPlayerCapitan(dynamic id){
+    try {
+      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
+      bool isEscaled = findPlayerEscalation(id);
+      //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
+      if(isEscaled){
+        //VERIFICAR SE JOGADOR JA ESTA DEFINIDO COMO CAPITÃO
+        if(playerCapitan.value == id){
+          //REMOVER CAPITÃO
+          playerCapitan.value = 0;
+        }else{
+          //ADICIONAR ID DO JOGADOR CAPITÃO
+          playerCapitan.value = id;
+        }
+      }
+    } catch (e) {
+      print(e);
+      //EXIBIR MENSAGEM DE ERRO
+      AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
+    }
   }
 
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO

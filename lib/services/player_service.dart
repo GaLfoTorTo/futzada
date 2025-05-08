@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:futzada/models/player_model.dart';
@@ -20,7 +21,7 @@ class PlayerService {
     //JUNTAR MAPS
     final List<PlayerModel> map = [];
     //LOOP PARA TITULARES
-    for (var i = 0; i < 25; i++) {
+    for (var i = 1; i <= 25; i++) {
       //DADOS DO JOGADOR
       var firstName = faker.person.firstName();
       var lastName = faker.person.lastName();
@@ -32,7 +33,7 @@ class PlayerService {
 
       //DEFINIR PLAYER
       PlayerModel player = PlayerModel.fromMap({
-        'id': i.hashCode,
+        'id': i,
         'user': {
           'firstName': firstName,
           'lastName': lastName,
@@ -40,15 +41,16 @@ class PlayerService {
         },
         'bestSide': bestSide ? 'Right' : 'Left',
         'type': type,
+        'mainPosition': setPosition(num),
         'positions' : positions.toString(),
-        'position': setPosition(num),
-        'status': setStatus(numStatus),
+        'currentPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
         'lastPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
         'media': double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
         'price': double.parse(setValues(0.0, 30.5).toStringAsFixed(2)),
         'valorization': double.parse(setValues(-5.5, 5.5).toStringAsFixed(2)),
         'games': random.nextInt(50),
         'photo': null,
+        'status': setStatus(numStatus),
       });
       //ADICIONAR JOGADOR A LISTA
       map.add(player);

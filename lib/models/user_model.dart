@@ -89,13 +89,14 @@ class UserModel {
         bestSide: updates?['player.bestSide'] ?? player?.bestSide,
         type: updates?['player.type'] ?? player?.type,
         positions: updates?['player.positions'] ?? player?.positions,
-        position: updates?['player.position'] ?? player?.position,
-        status: updates?['player.status'] ?? player?.status,
+        mainPosition: updates?['player.mainPosition'] ?? player?.mainPosition,
+        currentPontuation: updates?['player.currentPontuation'] ?? player?.currentPontuation,
         lastPontuation: updates?['player.lastPontuation'] ?? player?.lastPontuation,
         media: updates?['player.media'] ?? player?.media,
         price: updates?['player.price'] ?? player?.price,
         valorization: updates?['player.valorization'] ?? player?.valorization,
         games: updates?['player.games'] ?? player?.games,
+        status: updates?['player.status'] ?? player?.status,
       ),
       // ATUALIZANDO MANAGER
       manager: ManagerModel(

@@ -7,87 +7,62 @@ class PlayerModel {
   final UserModel user;
   final String bestSide;
   final String? type;
+  final String mainPosition;
   final String positions;
-  final String position;
-  final String status;
+  final double? currentPontuation;
   final double? lastPontuation;
   final double? media;
   final double? price;
   final double? valorization;
   final int? games;
+  final String status;
 
   PlayerModel({
     this.id,
     required this.user,
     required this.bestSide,
     required this.type,
+    required this.mainPosition,
     required this.positions,
-    required this.position,
-    required this.status,
+    required this.currentPontuation,
     required this.lastPontuation,
     required this.media,
     required this.price,
     required this.valorization,
     required this.games,
+    required this.status,
   });
+
 
   PlayerModel copyWith({
     int? id,
     UserModel? user,
     String? bestSide,
     String? type,
+    String? mainPosition,
     String? positions,
-    String? position,
-    String? status,
+    double? currentPontuation,
     double? lastPontuation,
     double? media,
     double? price,
     double? valorization,
     int? games,
+    String? status,
   }) {
     return PlayerModel(
       id: id ?? this.id,
       user: user ?? this.user,
       bestSide: bestSide ?? this.bestSide,
       type: type ?? this.type,
+      mainPosition: mainPosition ?? this.mainPosition,
       positions: positions ?? this.positions,
-      position: position ?? this.position,
-      status: status ?? this.status,
+      currentPontuation: currentPontuation ?? this.currentPontuation,
       lastPontuation: lastPontuation ?? this.lastPontuation,
       media: media ?? this.media,
       price: price ?? this.price,
       valorization: valorization ?? this.valorization,
       games: games ?? this.games,
-    );
-  }
-  
-  PlayerModel copyWithMap({
-    int? id,
-    UserModel? user,
-    String? bestSide,
-    String? type,
-    String? positions,
-    String? position,
-    String? status,
-    double? lastPontuation,
-    double? media,
-    double? price,
-    double? valorization,
-    int? games,
-  }) {
-    return PlayerModel(
-      id: id ?? this.id,
-      user: user ?? this.user,
-      bestSide: bestSide ?? this.bestSide,
-      type: type ?? this.type,
-      positions: positions ?? this.positions,
-      position: position ?? this.position,
       status: status ?? this.status,
-      lastPontuation: lastPontuation ?? this.lastPontuation,
-      media: media ?? this.media,
-      price: price ?? this.price,
-      valorization: valorization ?? this.valorization,
-      games: games ?? this.games,
     );
   }
 
@@ -97,31 +72,33 @@ class PlayerModel {
       'user': user.toMap(),
       'bestSide': bestSide,
       'type': type,
+      'mainPosition': mainPosition,
       'positions': positions,
-      'position': position,
-      'status': status,
+      'currentPontuation': currentPontuation,
       'lastPontuation': lastPontuation,
       'media': media,
       'price': price,
       'valorization': valorization,
       'games': games,
+      'status': status,
     };
   }
 
   factory PlayerModel.fromMap(Map<String, dynamic> map) {
     return PlayerModel(
-      id: map['id'] as int,
+      id: map['id'] != null ? map['id'] as int : null,
       user: UserModel.fromMap(map['user'] as Map<String,dynamic>),
       bestSide: map['bestSide'] as String,
       type: map['type'] != null ? map['type'] as String : null,
+      mainPosition: map['mainPosition'] as String,
       positions: map['positions'] as String,
-      position: map['position'] as String,
-      status: map['status'] as String,
+      currentPontuation: map['currentPontuation'] != null ? map['currentPontuation'] as double : null,
       lastPontuation: map['lastPontuation'] != null ? map['lastPontuation'] as double : null,
       media: map['media'] != null ? map['media'] as double : null,
       price: map['price'] != null ? map['price'] as double : null,
       valorization: map['valorization'] != null ? map['valorization'] as double : null,
       games: map['games'] != null ? map['games'] as int : null,
+      status: map['status'] as String,
     );
   }
 
@@ -131,7 +108,7 @@ class PlayerModel {
 
   @override
   String toString() {
-    return 'PlayerModel(id: $id, user: $user, bestSide: $bestSide, type: $type, positions: $positions, position: $position, status: $status, lastPontuation: $lastPontuation, media: $media, price: $price, valorization: $valorization, games: $games)';
+    return 'PlayerModel(id: $id, user: $user, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, currentPontuation: $currentPontuation, lastPontuation: $lastPontuation, media: $media, price: $price, valorization: $valorization, games: $games, status: $status)';
   }
 
   @override
@@ -143,14 +120,15 @@ class PlayerModel {
       other.user == user &&
       other.bestSide == bestSide &&
       other.type == type &&
+      other.mainPosition == mainPosition &&
       other.positions == positions &&
-      other.position == position &&
-      other.status == status &&
+      other.currentPontuation == currentPontuation &&
       other.lastPontuation == lastPontuation &&
       other.media == media &&
       other.price == price &&
       other.valorization == valorization &&
-      other.games == games;
+      other.games == games &&
+      other.status == status;
   }
 
   @override
@@ -159,13 +137,14 @@ class PlayerModel {
       user.hashCode ^
       bestSide.hashCode ^
       type.hashCode ^
+      mainPosition.hashCode ^
       positions.hashCode ^
-      position.hashCode ^
-      status.hashCode ^
+      currentPontuation.hashCode ^
       lastPontuation.hashCode ^
       media.hashCode ^
       price.hashCode ^
       valorization.hashCode ^
-      games.hashCode;
+      games.hashCode ^
+      status.hashCode;
   }
 }

@@ -58,6 +58,7 @@ class ReserveBankWidget extends StatelessWidget {
             children: [
               ButtonPlayerWidget(
                 player: player,
+                index: index,
                 ocupation: 'reserves',
                 size: 60,
                 borderColor: AppColors.gray_300,

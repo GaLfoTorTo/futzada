@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/widget/lists/escalation_list_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -7,7 +8,6 @@ import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
 import 'package:futzada/widget/buttons/button_formation_widget.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/widget/cards/card_escalation_list_widget.dart';
 import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:futzada/widget/others/reserve_bank_widget.dart';
 import 'package:futzada/widget/text/price_indicator_widget.dart';
@@ -49,55 +49,11 @@ class EscalationPageState extends State<EscalationPage> {
       controller.update();
     });
   }
-  //FUNÇÃO DE NOMECLATURA DE POSIÇÕES
-  String setNamePositionFormation(int i, String type){
-    if(type == 'starters'){
-      switch (i) {
-        case 0:
-          return 'Goleiro';
-        case 1:
-        case 2:
-          return 'Zagueiro';
-        case 3:
-        case 4:
-          return 'Lateral';
-        case 5:
-        case 6:
-        case 7:
-          return 'Meio-Campo';
-        case 8:
-        case 9:
-        case 10:
-          return 'Atacante';
-        default:
-          return 'Jogador';
-      }
-    }else{
-      switch (i) {
-        case 0:
-          return 'Goleiro';
-        case 1:
-          return 'Zagueiro';
-        case 2:
-          return 'Lateral';
-        case 3:
-          return 'Meio-Campo';
-        case 4:
-          return 'Atacante';
-        default:
-          return 'Jogador';
-      }
-    }
-  }
   
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR ESCALAÇÃO TITULAR
-    var escalationStarters = controller.escalation['starters'];
-    //RESGATAR ESCALAÇÃO RESERVAS
-    var escalationReserves = controller.escalation['reserves'];
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -199,64 +155,33 @@ class EscalationPageState extends State<EscalationPage> {
                   ],
                 )
               ),
-              //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
-              if(viewType == 'escalation')...[
-                CampoWidget(
-                  categoria: 'Campo',
-                  width: ( dimensions.width ) - 80,
-                  height: ( dimensions.height / 2) + 50,
-                  formation: controller.selectedFormation,
-                ),
-              ]else...[
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    'Titulares',
-                    style: Theme.of(context).textTheme.headlineSmall,
+                //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
+                if (viewType == 'escalation') ...[
+                  CampoWidget(
+                    categoria: 'Campo',
+                    width: dimensions.width - 80,
+                    height: (dimensions.height / 2) + 50,
+                    formation: controller.selectedFormation,
                   ),
-                ),
-                ...escalationStarters!.entries.map((entry) {
-                  //RESGATAR ITENS 
-                  int key = entry.key;
-                  //RESGATAR O NOME DA POSIÇÃO DE ACORDO COM O INDEX DE RENDERIZAÇÃO
-                  String namePosition = setNamePositionFormation(key, 'starters');
-                  //RESGATAR ITENS 
-                  final item = entry.value;
-                  return  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: CardEscalationListWidget(
-                      player: item,
-                      namePosition: namePosition
-                    ),
-                  );
-                }).toList(),
-              ],
-              Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: Text(
-                  'Banco de Reservas',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              //VERIFICAR TIPO DE VISUALIZAÇÃO PARA BANCO DE RESERVAS (ESCALAÇÃO OU LISTA)
-              if(viewType == 'escalation')...[
-                ReserveBankWidget(
-                  category: controller.category,
-                )
-              ]else...[
-                ...escalationReserves!.entries.map((entry) {
-                  //RESGATAR ITENS 
-                  int key = entry.key;
-                  //RESGATAR O NOME DA POSIÇÃO DE ACORDO COM O INDEX DE RENDERIZAÇÃO
-                  String namePosition = setNamePositionFormation(key, 'reserves');
-                  //RESGATAR ITENS 
-                  final item = entry.value;
-                  return  CardEscalationListWidget(
-                    player: item,
-                    namePosition: namePosition,
-                  );
-                }).toList(),
-              ]
+                  const SizedBox(height: 50),
+                  const Text(
+                    'Reservas',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  ReserveBankWidget(
+                    category: controller.category,
+                  ),
+                ] else ...[
+                  const EscalationListWidget(
+                    title: 'Titulares',
+                    occupationType: 'starters',
+                  ),
+                  const SizedBox(height: 20),
+                  const EscalationListWidget(
+                    title: 'Reservas',
+                    occupationType: 'reserves',
+                  ),
+                ],
             ],
           ),
         ),

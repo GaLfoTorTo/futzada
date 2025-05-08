@@ -44,7 +44,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['position']]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['mainPosition']]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -87,7 +87,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
     //SELECIONAR JOGADOR
     controller.setPlayerEscalation(uuid);
     //NAVEGAR DE VOLTA PARA ESCALAÇÃO
-    Get.offNamed('/escalation');
+    Get.back();
   }
   
   @override

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:get/get.dart';
 
 class CardEventListWidget extends StatelessWidget {
   final double? height;

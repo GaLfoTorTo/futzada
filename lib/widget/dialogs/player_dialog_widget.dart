@@ -26,6 +26,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   var controller = EscalationController.instace;
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
+  bool isCapitan = false;
   //RESGATAR JOGADOR COMO MAP
   Map<String, dynamic> player = {};
 
@@ -34,6 +35,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
     super.initState();
     //RESGATAR JOGADOR COMO MAP
     player = widget.player.toMap();
+    isCapitan = controller.playerCapitan.value == player['id'];
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
@@ -42,7 +44,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['position']]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['mainPosition']]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -52,9 +54,15 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   }
 
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
-  void setPlayerPosition(uuid){
-    //SELECIONAR JOGADOR
-    controller.setPlayerEscalation(uuid);
+  void setPlayerPosition(id, action){
+    //VEERIFICAR TIPO DE AÇÃO
+    if(action == 'setPosition'){
+      //SELECIONAR JOGADOR
+      controller.setPlayerEscalation(id);
+    }else{
+      //ATUALIZAR INDEX DE JOGADOR CAPITÃO
+      controller.setPlayerCapitan(id);
+    }
     //FECHAR BOTTOM SHEET
     Get.back();
   }
@@ -120,38 +128,53 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
               strokeWidth: 2,
             ),
           ]else...[
-            SizedBox(
-              child: Column(
-                children: [
-                  ImgCircularWidget(
-                    height: 100,
-                    width: 100,
-                    image: player['user']['photo'],
-                    borderColor: player['borderColor'],
+            Stack(
+              children:[ 
+                SizedBox(
+                  child: Column(
+                    children: [
+                      ImgCircularWidget(
+                        height: 100,
+                        width: 100,
+                        image: player['user']['photo'],
+                        borderColor: AppHelper.setColorPosition(player['mainPosition']),
+                      ),
+                      Text(
+                        "${player['user']['firstName']} ${player['user']['lastName']}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.dark_500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        "@${player['user']['userName']}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.gray_300,
+                        ),
+                      ),
+                      SvgPicture.string(
+                        position!,
+                        width: 30,
+                        height: 30,
+                      ),
+                    ],
                   ),
-                  Text(
-                    "${player['user']['firstName']} ${player['user']['lastName']}",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.dark_500,
+                ),
+                if(player['id'] == controller.playerCapitan.value)...[
+                  Positioned(
+                    top: 70,
+                    left: 80,
+                    child: SvgPicture.asset(
+                      AppIcones.posicao['cap']!,
+                      width: 25,
+                      height: 25,
                     ),
-                    textAlign: TextAlign.center,
                   ),
-                  Text(
-                    "@${player['user']['userName']}",
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.gray_300,
-                    ),
-                  ),
-                  SvgPicture.string(
-                    position!,
-                    width: 30,
-                    height: 30,
-                  ),
-                ],
-              ),
+                ]
+              ]
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
@@ -201,13 +224,13 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ButtonTextWidget(
-                  text: "Tornar Capitão",
+                  text: !isCapitan ? "Tornar Capitão" : "Remover Capitão",
                   icon: Icons.copyright,
                   width: (dimensions.width / 2) - 40,
                   height: 30,
                   backgroundColor: AppColors.yellow_300,
                   textColor: AppColors.dark_500,
-                  action: () {print('Tornar Capitão');},
+                  action: () => setPlayerPosition(player['id'], 'setCapitan'),
                 ),
                 ButtonTextWidget(
                   text: "Remover",
@@ -216,7 +239,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
-                  action: () => setPlayerPosition(player['id']),
+                  action: () => setPlayerPosition(player['id'], 'setPosition'),
                 ),
               ],
             ),

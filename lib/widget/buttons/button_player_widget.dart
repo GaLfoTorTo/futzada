@@ -11,25 +11,27 @@ import 'package:get/get.dart';
 class ButtonPlayerWidget extends StatelessWidget {
   final PlayerModel? player;
   final String ocupation;
+  final bool? capitan;
   final int? index;
   final double? size;
   final Color? borderColor;
   final bool? userDefault;
+  final bool? showName;
 
   const ButtonPlayerWidget({
     super.key,
     this.player,
-    this.index,
     required this.ocupation,
+    this.capitan = false,
+    this.index,
     this.size = 55,
     this.borderColor = AppColors.white,
-    this.userDefault = false
+    this.userDefault = false,
+    this.showName = false
   });
 
   @override
   Widget build(BuildContext context) {
-    //DEFINIR BORDER COLOR A SER UTILIZADA
-    Color border = borderColor!;
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
     void showDialogPlayer(PlayerModel? player) {
       //RESGATAR CONTROLLER DE ESCALAÇÃO
@@ -39,7 +41,6 @@ class ButtonPlayerWidget extends StatelessWidget {
       controller.selectedOcupation.value = ocupation;
       //VERIFICAR SE JOGADOR NÃO É NULO
       if(player != null){
-        border = AppHelper.setPlayerPosition(player.toMap());
         //CHAMAR DIALOG DO JOGADOR
         Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true);
       }else{
@@ -53,7 +54,7 @@ class ButtonPlayerWidget extends StatelessWidget {
       //VERIFICAR SE JOGADOR FOI DEFINIDO
       if(player != null){
         return [
-          if(player.lastPontuation != null)...[
+          if(player.currentPontuation != null)...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
@@ -69,20 +70,20 @@ class ButtonPlayerWidget extends StatelessWidget {
                 ],
               ),
               child: Row(
-                crossAxisAlignment: player.lastPontuation == 0 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                crossAxisAlignment: player.currentPontuation == 0 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${player.lastPontuation}",
+                    "${player.currentPontuation}",
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
-                      color: AppHelper.setColorPontuation(player.lastPontuation)['color'],
+                      color: AppHelper.setColorPontuation(player.currentPontuation)['color'],
                     ),
                   ),
                   Icon(
-                    AppHelper.setColorPontuation(player.lastPontuation)['icon'],
+                    AppHelper.setColorPontuation(player.currentPontuation)['icon'],
                     size: 10,
-                    color: AppHelper.setColorPontuation(player.lastPontuation)['color'],
+                    color: AppHelper.setColorPontuation(player.currentPontuation)['color'],
                   ),
                 ],
               ),
@@ -90,14 +91,15 @@ class ButtonPlayerWidget extends StatelessWidget {
           ],
           InkWell(
             onTap: () => showDialogPlayer(player),
-            child: ImgCircularWidget(
-              height: size!,
-              width: size!,
-              image: player.user.photo,
-              borderColor: border,
-            )
+            child:
+              ImgCircularWidget(
+                height: size!,
+                width: size!,
+                image: player.user.photo,
+                borderColor: borderColor,
+              ),
           ),
-          if(player.user.firstName != null && player.user.lastName != null)...[
+          if(showName!)...[
             Container(
               width: 80,
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),

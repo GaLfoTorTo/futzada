@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 class CampoWidget extends StatelessWidget {
   final String? categoria;
@@ -38,6 +39,7 @@ class CampoWidget extends StatelessWidget {
       //DEFINIR LINHAS DE CAMPO
       return AppIcones.linhasCampo;
     }
+    
     //FUNÇÃO DE AJUSTE DE BORDAS DAS LINHAS DO CAMPO
     BorderRadius? borderRadiusField(int i){
       if(i == 0){
@@ -47,6 +49,7 @@ class CampoWidget extends StatelessWidget {
       }
       return null;
     }
+    
     //FUNÇÃO PARA GERAR LINHAS DO GRAMADO
     Widget grassField(){
       return Column(
@@ -63,6 +66,7 @@ class CampoWidget extends StatelessWidget {
         }),
       );
     }
+    
     //FUNÇÃO PARA AJUSTAR A ALINHAÇÃO DAS POSIÇÕES NO CAMPO
     AlignmentGeometry setAligmentPositions(int index, int qtd){
       //VERIFICAR QTD DE LINHAS NA FORMAÇÃO
@@ -83,6 +87,55 @@ class CampoWidget extends StatelessWidget {
       //ALINHAR AO CENTRO
       return Alignment.center;
     }
+    
+    //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO
+    List<int> setPositions(){
+      //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
+      var listFormation = formation.split('-').map((e) => int.parse(e)).toList();
+      //ADICIONAR O GOLEIRO NO INICIO DO ARRAY
+      listFormation.insert(0, 1);
+      //INVERTER ORDEM DO ARRAY DE POSIÇÕES
+      return listFormation.reversed.toList();
+    }
+    
+    //FUNÇÃO PARA AJUSTAR A ALINHAÇÃO DAS POSIÇÕES NO CAMPO
+    String setBorderPositions(int index, int linhas){
+      //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+      if(linhas == 4){
+        //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+        switch (index) {
+          case 0:
+            return 'gol';
+          case 1:
+            return 'zag';
+          case 2:
+            return 'mei';
+          case 3:
+            return 'ata';
+          default:
+            return '';
+        }
+      //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+      }else if(linhas == 5){
+        //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+        switch (index) {
+          case 0:
+            return 'gol';
+          case 1:
+            return 'zag';
+          case 2:
+          case 3:
+            return 'mei';
+          case 4:
+            return 'ata';
+          default:
+            return '';
+        }
+      }
+      //ALINHAR AO CENTRO
+      return '';
+    }
+    
     //FUNÇÃO PARA RENDERIZAR CAMPO
     Widget renderField(){
       return Container(
@@ -115,17 +168,7 @@ class CampoWidget extends StatelessWidget {
         ),
       );
     }
-    //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO
-    List<int> setPositions(){
-      //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
-      var listFormation = formation.split('-').map((e) => int.parse(e)).toList();
-      //ADICIONAR O GOLEIRO NO INICIO DO ARRAY
-      listFormation.insert(0, 1);
-      //INVERTER ORDEM DO ARRAY DE POSIÇÕES
-      return listFormation.reversed.toList();
-    }
 
-    
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -137,52 +180,70 @@ class CampoWidget extends StatelessWidget {
           child: renderField()
         ),
         Obx(() {
-          //RESGATAR ESCALAÇÃO DO USUARIO
-          final escalation = controller.escalation['starters'];
-          //RESGATR POSIÇÕES DA ESCALAÇÃO DO USUARIO
+          final escalation = controller.escalation['starters']!;
           final positions = setPositions();
           
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: positions.asMap().entries.map((entry) {
-              //RESGATAR CHAVE DO GRUPO DE POSIÇÕES
+              //RESGATAR SETOR DA FORMAÇÃO
               final groupPosition = entry.key;
-              //RESGATAR QTD DE JOGADORES PARA O SETOR
+              //BUSCAR QUANTIDADE DE JOGADORES NO SETOR
               final qtd = entry.value;
-              //RESGATR INDEX REAL DO JOGADOR INVERTENDO POSIÇÕES
+              //INVERTER SETORES
               final invertedGroupPos = positions.length - 1 - groupPosition;
-              //CALCULAR A INDEX DO JOGADOR NA ESCALAÇÃO
+              //BUSCAR INDEX DA POSIÇÃO NO SETOR
               final groupStartIndex = positions
                   .reversed
                   .toList()
                   .sublist(0, invertedGroupPos)
                   .fold(0, (sum, item) => sum + item);
+              //RESGATAR QUANTIDADE DE LINHAS NA FORMAÇÃO 
+              final linhas = positions.length;
+              //BUSCAR POSIÇÃO NO CAMPO
+              final position = setBorderPositions(invertedGroupPos, linhas);
               
               return SizedBox(
                 height: positions.length == 5 ? 100 : 130,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(qtd, (index) {
-                    //RESGATAR INDEX REAL DO JOGADOR NA ESCALÇAO
+                    //RESGATAR INDEX REAL DO JOGADOR NA FORMAÇÃO
                     final realPosition = groupStartIndex + index;
-                    //RESGATAR JOGADOR NA ESCALÇAO
-                    final player = escalation![realPosition];
-                    
-                    return Container(
-                      alignment: setAligmentPositions(index, qtd),
-                      child: ButtonPlayerWidget(
-                        player: player,
-                        index: realPosition,
-                        ocupation: 'starters',
-                        size: 60,
-                      )
+                    //RESGATAR ITEM NA POSIÇÃO ESPECIFICADA NA FORMAÇÃO
+                    final player = escalation[realPosition];
+
+                    return Stack(
+                      children:[ 
+                        Container(
+                          alignment: setAligmentPositions(index, qtd),
+                          child: ButtonPlayerWidget(
+                            player: player,
+                            index: realPosition,
+                            ocupation: 'starters',
+                            size: 60,
+                            borderColor: AppHelper.setColorPosition(position),
+                          )
+                        ),
+                        if(player != null && player.id == controller.playerCapitan.value)...[
+                          Positioned(
+                            top: 100,
+                            left: 15,
+                            child: SvgPicture.asset(
+                              AppIcones.posicao['cap']!,
+                              width: 20,
+                              height: 20,
+                            ),
+                          ),
+                        ]
+                      ]
                     );
                   }),
                 ),
               );
             }).toList(),
           );
-        }),
+        })
       ]
     );
   }
