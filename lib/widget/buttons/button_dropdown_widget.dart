@@ -4,8 +4,8 @@ import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/widget/images/ImgCircularWidget.dart';
 
 class ButtonDropdownWidget extends StatelessWidget {
-  final dynamic selectedEvent;
-  final List<dynamic> itens;
+  final dynamic selectedItem;
+  final List<dynamic> items;
   final Function onChange;
   final double? width;
   final double? menuWidth;
@@ -20,8 +20,8 @@ class ButtonDropdownWidget extends StatelessWidget {
 
   const ButtonDropdownWidget({
     super.key,
-    required this.selectedEvent,
-    required this.itens,
+    required this.selectedItem,
+    required this.items,
     required this.onChange,
     this.width = 150,
     this.menuWidth = 170,
@@ -48,33 +48,33 @@ class ButtonDropdownWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
       ),
       child: DropdownButton<dynamic>(
-        value: selectedEvent,
+        value: selectedItem,
         onChanged: (dynamic newValue) => onChange(newValue),
         style: TextStyle(
           color: textColor,
           fontSize: textSize
-        ),
-        underline: Container(
-          height: 0,
         ),
         dropdownColor: color,
         icon: icon ? const SizedBox.shrink() : null,
         iconSize: iconSize != null ? iconSize! : 0,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
         alignment: aligment != 'center' ? Alignment.centerLeft : Alignment.center,
+        underline: Container(height: 0),
         menuWidth: menuWidth ?? width,
         hint: Text(
           'Selecione',
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300, fontSize: textSize),
         ),
-        items: itens.map<DropdownMenuItem<dynamic>>((item) {
+        items: items.map<DropdownMenuItem<dynamic>>((item) {
           //RESGATAR O VALUE E O TITULO DEPENDENDO DO TIPO DE DADO NA LISTA
           final optionValue = item is Map<String, dynamic> ? item['id'] : item;
           final optionTitle = item is Map<String, dynamic> ? item['title'] : item;
           return DropdownMenuItem<dynamic>(
             value: optionValue,
             child: Padding(
-              padding: !iconAfter ? const EdgeInsets.only(right: 10) : const EdgeInsets.only(left: 10),
+              padding: !iconAfter 
+                  ? const EdgeInsets.only(right: 10) 
+                  : const EdgeInsets.only(left: 10),
               child: Row(
                 children: [
                   if(item is Map<String, dynamic> && !iconAfter)...[

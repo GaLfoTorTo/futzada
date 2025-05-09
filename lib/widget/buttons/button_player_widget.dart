@@ -44,6 +44,9 @@ class ButtonPlayerWidget extends StatelessWidget {
         //CHAMAR DIALOG DO JOGADOR
         Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true);
       }else{
+        //AJUSTAR FILTRO
+        controller.setFilter('positions', controller.getPositionFromEscalation(index));
+        controller.update();
         //NAVEGAR PARA PAGINA DE MERCADO
         Get.toNamed('/escalation/market');
       }

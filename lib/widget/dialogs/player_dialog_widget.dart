@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:get/get.dart';
@@ -27,15 +29,12 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
   bool isCapitan = false;
-  //RESGATAR JOGADOR COMO MAP
-  Map<String, dynamic> player = {};
 
   @override
   void initState() {
     super.initState();
-    //RESGATAR JOGADOR COMO MAP
-    player = widget.player.toMap();
-    isCapitan = controller.playerCapitan.value == player['id'];
+    //RESGATAR CAPITÃO
+    isCapitan = controller.playerCapitan.value == widget.player.id;
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
@@ -44,7 +43,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['mainPosition']]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player.mainPosition]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -52,7 +51,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
     //ATUALIZAR STATE
     setState(() {});
   }
-
+  
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
   void setPlayerPosition(id, action){
     //VEERIFICAR TIPO DE AÇÃO
@@ -71,6 +70,19 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    
+    //RESGATAR JOGADOR
+    PlayerModel player = widget.player;
+
+    //RESGTAR JOGADOR COMO MAP
+    Map<String, dynamic> playerMap = widget.player.toMap();
+    
+    //RESGATAR POSIÇÕES DO JOGADOR
+    List<dynamic> playerPositions = jsonDecode(player.positions);
+    
+    //REMOVER POSIÇÃO PRINCIPAL DO ARRAY
+    playerPositions.remove(player.mainPosition);
+    
     //LISTA DE METRICAS DO CARD
     List<Map<String, dynamic>> metrics = [
       {
@@ -136,11 +148,11 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                       ImgCircularWidget(
                         height: 100,
                         width: 100,
-                        image: player['user']['photo'],
-                        borderColor: AppHelper.setColorPosition(player['mainPosition']),
+                        image: player.user.photo,
+                        borderColor: AppHelper.setColorPosition(player.mainPosition),
                       ),
                       Text(
-                        "${player['user']['firstName']} ${player['user']['lastName']}",
+                        "${player.user.firstName} ${player.user.lastName}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -149,7 +161,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        "@${player['user']['userName']}",
+                        "@${player.user.userName}",
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.gray_300,
@@ -160,10 +172,29 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                         width: 30,
                         height: 30,
                       ),
+                      Container(
+                        width: 100,
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ...playerPositions.asMap().entries.map((entry){
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 2),
+                                child: SvgPicture.asset(
+                                  AppIcones.posicao[entry.value]!,
+                                  width: 15,
+                                  height: 15,
+                                ),
+                              );
+                            }),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
-                if(player['id'] == controller.playerCapitan.value)...[
+                if(player.id == controller.playerCapitan.value)...[
                   Positioned(
                     top: 70,
                     left: 80,
@@ -199,14 +230,14 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                         children: [
                           if(name == 'status')...[
                             Icon(
-                              AppHelper.setStatusPlayer(player[name])['icon'],
+                              AppHelper.setStatusPlayer(playerMap[name])['icon'],
                               size: 30,
-                              color: AppHelper.setStatusPlayer(player[name])['color'],
+                              color: AppHelper.setStatusPlayer(playerMap[name])['color'],
                             )
                           ]else...[
                             Text(
-                              "${player[name]}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(player[name])['color']),
+                              "${playerMap[name]}",
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[name])['color']),
                             ),
                           ],
                           Text(
@@ -230,7 +261,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.yellow_300,
                   textColor: AppColors.dark_500,
-                  action: () => setPlayerPosition(player['id'], 'setCapitan'),
+                  action: () => setPlayerPosition(player.id, 'setCapitan'),
                 ),
                 ButtonTextWidget(
                   text: "Remover",
@@ -239,7 +270,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
-                  action: () => setPlayerPosition(player['id'], 'setPosition'),
+                  action: () => setPlayerPosition(player.id, 'setPosition'),
                 ),
               ],
             ),

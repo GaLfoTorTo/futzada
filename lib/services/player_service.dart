@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:futzada/models/player_model.dart';
@@ -29,7 +30,6 @@ class PlayerService {
       var numStatus = random.nextInt(3);
       var bestSide = random.nextBool();
       var type = faker.lorem.toString();
-      var positions = ['ata','mei','zag','gol'];
 
       //DEFINIR PLAYER
       PlayerModel player = PlayerModel.fromMap({
@@ -41,8 +41,8 @@ class PlayerService {
         },
         'bestSide': bestSide ? 'Right' : 'Left',
         'type': type,
-        'mainPosition': setPosition(num),
-        'positions' : positions.toString(),
+        'mainPosition': getPositionFromEscalation(num),
+        'positions' : jsonEncode(setPositions()),
         'currentPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
         'lastPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
         'media': double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
@@ -78,9 +78,38 @@ class PlayerService {
         return 'Neutro';
     }
   }
+
+  //FUNÇÃO PARA DEFINIR POSIÇÕES DO JOGADOR (TEMPORARIAMENTE)
+  static List<String> setPositions(){
+    List<String> positions = [];
+    int qtd = random.nextInt(4);
+    for (var i = 0; i < qtd; i++) {
+      var num = random.nextInt(4);
+      positions.add(randomPosition(num)); 
+    } 
+    //REMOVER DUPLICATAS
+    positions = positions.toSet().toList();
+    return positions;
+  }
+
+  //FUNÇÃO DE CLASSIFICAÇÃO DE POSIÇÕES RANDOMICAS (TEMPORARIAMENTE)
+  static String randomPosition(i){
+    switch (i) {
+      case 0:
+        return 'gol';
+      case 1:
+        return 'zag';
+      case 2:
+        return 'mei';
+      case 3:
+        return 'ata';
+      default:
+        return 'ata';
+    }
+  }
   
   //FUNÇÃO PARA DEFINIR POSIÇÃO DINAMICAMENTE (TEMPORARIAMENTE)
-  static String setPosition(i){
+  static String getPositionFromEscalation(i){
     if(i == 0){
       return 'gol';
     }else if(i ==  1 || i ==  2 || i == 3 || i == 4){

@@ -107,12 +107,6 @@ class MarketService {
     ],
     'status': [
       {
-        'id' : '',
-        'title': 'Status',
-        'icon': null,
-        'color': AppColors.gray_300,
-      },
-      {
         'id' : 'Ativo',
         'title': 'Ativo',
         'color': AppColors.green_300,
@@ -125,8 +119,8 @@ class MarketService {
         'color': AppColors.red_300, 
       },
       {
-        'id' : 'Dúvida',
-        'title': 'Dúvida',
+        'id' : 'Duvida',
+        'title': 'Duvida',
         'icon': AppIcones.question_circle_solid ,
         'color': AppColors.yellow_500, 
       },

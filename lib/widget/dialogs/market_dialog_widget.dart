@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:futzada/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:futzada/widget/inputs/input_checkbox_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_size.dart';
@@ -28,7 +29,7 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
   }
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
-  void selectFilter(String name, String newValue){
+  void selectFilter(String name, dynamic newValue){
     setState(() {
       controller.setFilter(name, newValue);
       controller.update();
@@ -45,6 +46,7 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    
     //LISTA DE METRICAS DO CARD
     List<Map<String, dynamic>> metricOptions = [
       {
@@ -88,17 +90,6 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
         'width' : 2
       },
       {
-        'name':'status',
-        'label':'Status',
-        'icon': AppIcones.user_checked_solid,
-        'selectedItem' : controller.filtrosMarket['status'],
-        'itens': controller.filterOptions['status'],
-        'width' : 2
-      },
-    ];
-    //LISTA DE METRICAS DO CARD
-    List<Map<String, dynamic>> jogadorOptions = [
-      {
         'name':'nome',
         'label':'Ordenar',
         'icon': AppIcones.money_check_solid,
@@ -106,13 +97,23 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
         'itens': controller.filterPlayerOptions['nome'],
         'width' : 2
       },
+      {
+        'name':'status',
+        'label':'Status',
+        'icon': AppIcones.check_circle_solid,
+        'selectedItem' : controller.filtrosMarket['status'],
+        'itens': controller.filterOptions['status'],
+        'width' : 2
+      },
     ];
+    
     //LISTA DE MELHOR PÉ
     List<Map<String, dynamic>> bestSideOptions = [
       {'value': 'Esquerda', 'icon': AppIcones.foot_left_solid, 'checked': controller.filtrosMarket['bestSide'] == 'Esquerda' ? true : false},
       {'value': 'Direita', 'icon': AppIcones.foot_right_solid, 'checked': controller.filtrosMarket['bestSide'] == 'Direita' ? true : false},
     ];
-    //LISTA DE POSIÇÕES DISPONIVEIS
+    
+    //LISTA DE STATUS DISPONIVEIS
     List<Map<String, dynamic>> positionsOptions = [
       {'label': 'ATA','value': 'ata', 'icon': AppIcones.posicao['ata'], 'checked': controller.filtrosMarket['positions'].contains('ATA') ? true : false},
       {'label': 'MEI','value': 'mei', 'icon': AppIcones.posicao['mei'], 'checked': controller.filtrosMarket['positions'].contains('MEI') ? true : false},
@@ -166,16 +167,27 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
                                       style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
                                     ),
                                   ),
-                                  ButtonDropdownWidget(
-                                    width: ( dimensions.width / 2 ) - 20,
-                                    menuWidth: ( dimensions.width / 2 ),
-                                    selectedEvent: item['selectedItem'], 
-                                    itens: item['itens'], 
-                                    textSize: AppSize.fontSm,
-                                    borderColor: AppColors.gray_300,
-                                    aligment: item['name'] == 'status' ? 'center' : 'centerLeft',
-                                    onChange: (newValue) => selectFilter(item['name'], newValue),
-                                  ),
+                                  if(item['label'] == 'Status')...[
+                                    ButtonDropdownMultiWidget(
+                                      selectedItems: controller.filtrosMarket['status'] as List<dynamic>,
+                                      items: controller.filterOptions['status'] as List<dynamic>, 
+                                      onChanged: (newValue) => selectFilter('status', newValue),
+                                      textSize: AppSize.fontSm,
+                                      borderColor: AppColors.gray_300,
+                                      width: ( dimensions.width / 2 ) - 20,
+                                    ),
+                                  ]else...[
+                                    ButtonDropdownWidget(
+                                      width: ( dimensions.width / 2 ) - 20,
+                                      menuWidth: ( dimensions.width / 2 ),
+                                      selectedItem: item['selectedItem'], 
+                                      items: item['itens'], 
+                                      textSize: AppSize.fontSm,
+                                      borderColor: AppColors.gray_300,
+                                      aligment: item['name'] == 'status' ? 'center' : 'centerLeft',
+                                      onChange: (newValue) => selectFilter(item['name'], newValue),
+                                    ),
+                                  ]
                                 ],
                               );
                             }),
@@ -187,35 +199,6 @@ class PlayerDialogWidgetState extends State<MarketDialogWidget> {
                             'Jogador',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
-                        ),
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            ...jogadorOptions.asMap().entries.map((entry){
-                              final item = entry.value;
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 5),
-                                      child: Text(
-                                        item['label'],
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    ButtonDropdownWidget(
-                                      width: dimensions.width,
-                                      menuWidth: dimensions.width,
-                                      selectedEvent: item['selectedItem'], 
-                                      itens: item['itens'], 
-                                      textSize: AppSize.fontSm,
-                                      borderColor: AppColors.gray_300,
-                                      onChange: (newValue) => selectFilter(item['name'], newValue),
-                                    ),
-                                ],
-                              );
-                            }),
-                          ],
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),

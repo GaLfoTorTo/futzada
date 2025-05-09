@@ -88,8 +88,8 @@ class EscalationPageState extends State<EscalationPage> {
                     Container(
                       width: (dimensions.width / 3) - 10,
                       child: ButtonDropdownWidget(
-                        selectedEvent: controller.selectedEvent,
-                        itens: controller.myEvents,
+                        selectedItem: controller.selectedEvent,
+                        items: controller.myEvents,
                         onChange: selectEvent,
                         iconAfter: false,
                       ),

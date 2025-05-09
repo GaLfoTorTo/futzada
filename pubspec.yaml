@@ -49,6 +49,7 @@ dependencies:
   flutter_masked_text2: ^0.9.1
   carousel_slider: ^5.0.0
   dropdown_search: ^5.0.6
+  dropdown_button2: ^2.3.9
   http: ^1.2.1
   dio: ^5.5.0+1
   lottie: ^3.1.2

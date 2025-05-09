@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:futzada/services/market_service.dart';
 import 'package:get/get.dart';
@@ -9,13 +11,13 @@ class EscalationController extends GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static EscalationController get instace => Get.find();
   //INSTANCIAR SERVICE DE JOGADORES
-  static PlayerService _playerService = PlayerService();
+  static PlayerService playerService = PlayerService();
   //INSTANCIAR SERVICE DE JOGADORES
   static MarketService _marketService = MarketService();
 
   //CONTROLADOR DE INPUT DE PESQUISA
   final TextEditingController pesquisaController = TextEditingController();
-  
+
   //CONTROLADOR DE CATEGORIA DO CAMPO
   final String category = 'Campo';
   
@@ -36,8 +38,8 @@ class EscalationController extends GetxController{
 
   //CONTROLADOR DE FILTROS 
   RxMap<String, dynamic> filtrosMarket = {
-    'status' : 'Ativo',
-    'price' : '',
+    'status' : ['Ativo','Inativo','Duvida','Neutro'],
+    'price' : 'Maior preço',
     'media' : '',
     'game' : '',
     'valorization' : '',
@@ -74,50 +76,186 @@ class EscalationController extends GetxController{
   ].obs;
 
   //JOGADORES DO MERCADO
-  RxList<PlayerModel> playersMarket = _playerService.playersMarket;
+  late RxList<PlayerModel> playersMarket;
+  //ESCALAÇÃO DO USUARIO
+  late RxMap<String, RxMap<int, PlayerModel?>> escalation;
+
+  @override
+  void onInit() {
+    super.onInit();
+    //DEFINIR JOGADORES DO MERCADO
+    playersMarket = filterMarketPlayers();
+    //DEFINIR ESCALAÇÃO DO USUARIO
+    escalation = setEscalation();
+  }
   
   //FUNÇÃO DE DEFINIÇÃO DE FILTRO DO MERCADO
   void setFilter(String name, String newValue){
     //VERIFICAR SE NAME E VALOR RECEBIDOS NÃO SETA VAZIOS
-    if(name != 'positions'){
+    if(name != 'positions' && name != 'status'){
       //ATUALIZAR CHAVE DO FILTRO
       filtrosMarket[name] = newValue;
-    }else{
+    }
+    //VERIFICAÇÃO PARA POSIÇÕES
+    if(name == 'positions' || name == 'status'){
       //RESGATAR POSIÇÕES SALVAS NO FILTRO
-      final positions = filtrosMarket['positions'];
+      final arr = filtrosMarket[name];
       //VERIFICAR SE POSIÇÃO RESCEBIDA ESTA NO FILTRO
-      if (positions.contains(newValue)) {
+      if (arr.contains(newValue)) {
         //REMOVER POSIÇÃO
-        positions.remove(newValue);
+        arr.remove(newValue);
       } else {
         //ADICIONAR POSIÇÃO
-        positions.add(newValue);
+        arr.insert(0, newValue);
       }
+      print(arr);
       //REATRIBUIR POSIÇÕES NO FILTRO
-      filtrosMarket['positions'] = positions; 
+      filtrosMarket[name] = arr; 
     }
+    //APLICAR FILTRO NOS JOGADORES DO MERCADO
+    playersMarket.value = filterMarketPlayers();
   }
 
-  //ESCALAÇÃO DO USUARIO
-  final RxMap<String, RxMap<int, PlayerModel?>> escalation = setEscalation();
+  //FUNÇÃO DE APLICAÇÃO DE FILTRO
+  RxList<PlayerModel> filterMarketPlayers() {
+    //RESGATAR FILTROS
+    final filters = filtrosMarket;
+    //RESGATAR JOGADORES DO MERCADO
+    final players = playerService.playersMarket;
+    //APLICAR FILTROS NÃO NÚMERICOS
+    List<PlayerModel> filteredPlayers = players.where((player) {
+      //FILTRO NOS STATUS
+      if (filters['status'] != null && filters['status'].isNotEmpty && filters['status'] != 'Todos') {
+        final selectedStatus = List<String>.from(filters['status']);
+        //VERIFICAR STATUS DO JOGADOR
+        final hasStatus = selectedStatus.any((status) => player.status == status );
+        if (!hasStatus) {
+          return false;
+        }
+      }
+
+      //FILTRO DE PESQUISA DE NOME NOMES
+      if(filters['search'] != null && filters['search'] != '') {
+        final nome = filters['search'].toLowerCase();
+        //VERIFICAR NOME DO JOGADOR
+        if (!player.user.userName!.toLowerCase().contains(nome) &&
+            !player.user.firstName!.toLowerCase().contains(nome) &&
+            !player.user.lastName!.toLowerCase().contains(nome)) {
+          return false;
+        }
+      }
+
+      //FILTRO MELHOR PÉ
+      if (filters['bestSide'] != null && 
+          filters['bestSide'] != '' && 
+          player.bestSide != filters['bestSide']) {
+        return false;
+      }
+
+      //FILTRO POR POSIÇÕES
+      if (filters['positions'] != null && filters['positions'].isNotEmpty) {
+        final selectedPositions = List<String>.from(filters['positions']);
+        final playerPositions = jsonDecode(player.positions) as List<dynamic>;
+        
+        final hasPosition = selectedPositions.any((pos) => 
+            player.mainPosition == pos || 
+            playerPositions.contains(pos));
+        
+        if (!hasPosition) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
+
+    //ORDENAÇÃO DE NUMERICOS
+    if (filters['price'] != null && filters['price'] != '') {
+      filteredPlayers.sort((a, b) {
+        if (filters['price'] == 'Maior preço') {
+          //ORDEM POR MAIOR PREÇO
+          return b.price!.compareTo(a.price!); 
+        } else {
+          //ORDEM POR MENO PREÇO
+          return a.price!.compareTo(b.price!);
+        }
+      });
+    }
+    //ORDENAR PO MÉDIA
+    if (filters['media'] != null && filters['media'] != '') {
+      filteredPlayers.sort((a, b) {
+        if (filters['media'] == 'Maior média') {
+          //ORDEM POR MAIOR MÉDIA
+          return b.media!.compareTo(a.media!);
+        } else {
+          //ORDEM POR MENOR MÉDIA
+          return a.media!.compareTo(b.media!);
+        }
+      });
+    }
+    //ORDENAR POR QUANTIDADE DE JOGOS
+    if (filters['game'] != null && filters['game'] != '') {
+      filteredPlayers.sort((a, b) {
+        if (filters['game'] == 'Mais jogos') {
+          //ORDEM POR MAIS JOGOS
+          return b.games!.compareTo(a.games!);
+        } else {
+          //ORDEM POR MENOS JOGOS
+          return a.games!.compareTo(b.games!);
+        }
+      });
+    }
+    //ORNDENAR POR VALORIZAÇÃO
+    if (filters['valorization'] != null && filters['valorization'] != '') {
+      filteredPlayers.sort((a, b) {
+        if (filters['valorization'] == 'Maior valorização') {
+          //ORDEM POR MAIOR VALORIZAÇÃO
+          return b.valorization!.compareTo(a.valorization!);
+        } else {
+          //ORDEM POR MENOR VALORIZAÇÃO
+          return a.valorization!.compareTo(b.valorization!);
+        }
+      });
+    }
+    //ORDENAR POR ULTIMA PONTUAÇÃO
+    if (filters['lastPontuation'] != null && filters['lastPontuation'] != '') {
+      filteredPlayers.sort((a, b) {
+        if (filters['lastPontuation'] == 'Maior pontuação') {
+          //ORDEM POR MAIOR PONTUAÇÃO
+          return b.lastPontuation!.compareTo(a.lastPontuation!);
+        } else {
+          //ORDEM POR MENOR PONTUAÇÃO
+          return a.lastPontuation!.compareTo(b.lastPontuation!);
+        }
+      });
+    }
+    //FILTRO DE ORDENAÇÃO POR NOME
+    if(filters['nome'] != null && filters['nome'] != '') {
+      filteredPlayers.sort((a, b) {
+        return a.user.firstName!.toLowerCase().compareTo(b.user.firstName!.toLowerCase());
+      });
+    }
+  //RETORNAR JOGADORES FILTRADOS E ORDENADOS
+  return filteredPlayers.obs;
+}
 
   //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
   static RxMap<String, RxMap<int, PlayerModel?>> setEscalation() {
-  //CRIAR MAPS DE TITULARES E RESERVAS OBSERVAVEIS
-  final starters = <int, PlayerModel?>{}.obs;
-  final reserves = <int, PlayerModel?>{}.obs;
-  //INICIALIZAR COM VALORES NULOS
-  for (var i = 0; i < 11; i++) {
-    starters[i] = null;
-  }
-  for (var i = 0; i < 5; i++) {
-    reserves[i] = null;
-  }
-  //RETORNAR ESCALAÇÃO
-  return <String, RxMap<int, PlayerModel?>>{
-    'starters': starters,
-    'reserves': reserves,
-  }.obs;
+    //CRIAR MAPS DE TITULARES E RESERVAS OBSERVAVEIS
+    final starters = <int, PlayerModel?>{}.obs;
+    final reserves = <int, PlayerModel?>{}.obs;
+    //INICIALIZAR COM VALORES NULOS
+    for (var i = 0; i < 11; i++) {
+      starters[i] = null;
+    }
+    for (var i = 0; i < 5; i++) {
+      reserves[i] = null;
+    }
+    //RETORNAR ESCALAÇÃO
+    return <String, RxMap<int, PlayerModel?>>{
+      'starters': starters,
+      'reserves': reserves,
+    }.obs;
   }
 
   //FUNÇÃO PARA DEFINIR JOGADOR COMO CAPITÃO
@@ -146,7 +284,7 @@ class EscalationController extends GetxController{
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
   void setPlayerEscalation(dynamic id){
     //RESGATR JOGADOR DO MERCADO
-    final player = _playerService.findPlayer(id);
+    final player = playerService.findPlayer(id);
     //VERIFICAR SE JOGADOR FOI ENCONTRADO
     if (player == null) {
       //EXIBIR MENSAGEM DE ERRO
@@ -167,6 +305,8 @@ class EscalationController extends GetxController{
         //REMOVER JOGADOR DA POSIÇÃO
         escalation[playerOcupation]![playerIndex] = null;
       }
+      //RESETAR JOGADORES NO MERCADO
+      playersMarket.value = playerService.playersMarket;
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
@@ -214,5 +354,18 @@ class EscalationController extends GetxController{
       }
     }
     return false;
+  }
+
+  //FUNÇÃO PARA DEFINIR POSIÇÃO DINAMICAMENTE (TEMPORARIAMENTE)
+  String getPositionFromEscalation(i){
+    if(i == 0){
+      return 'gol';
+    }else if(i ==  1 || i ==  2 || i == 3 || i == 4){
+      return 'zag';
+    }else if(i ==  5 || i == 6 || i == 7){
+      return 'mei';
+    }else{
+      return 'ata';
+    }
   }
 }

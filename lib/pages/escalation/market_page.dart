@@ -3,6 +3,7 @@ import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_size.dart';
+import 'package:futzada/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_player_market_widget.dart';
@@ -23,7 +24,7 @@ class MarketPageState extends State<MarketPage> {
   var controller = EscalationController.instace;
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
-  void selectFilter(name, newValue){
+  void selectFilter(String name, dynamic newValue){
     setState(() {
       controller.setFilter(name, newValue);
       controller.update();
@@ -76,12 +77,11 @@ class MarketPageState extends State<MarketPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ButtonDropdownWidget(
-                            selectedEvent: controller.filtrosMarket['price'],
-                            itens: controller.filterOptions['price'] as List<dynamic>, 
+                            selectedItem: controller.filtrosMarket['price'],
+                            items: controller.filterOptions['price'] as List<dynamic>, 
                             onChange: (newValue) => selectFilter('price', newValue),
                             textSize: AppSize.fontSm,
                             width: ( dimensions.width / 3 ) - 10,
-                            menuWidth: 150
                           ),
                           const SizedBox(
                             height: 50,
@@ -91,13 +91,12 @@ class MarketPageState extends State<MarketPage> {
                               thickness: 1,
                             ),
                           ),
-                          ButtonDropdownWidget(
-                            selectedEvent: controller.filtrosMarket['status'],
-                            itens: controller.filterOptions['status'] as List<dynamic>, 
-                            onChange: (newValue) => selectFilter('status', newValue),
+                          ButtonDropdownMultiWidget(
+                            selectedItems: controller.filtrosMarket['status'] as List<dynamic>,
+                            items: controller.filterOptions['status'] as List<dynamic>, 
+                            onChanged: (newValue) => selectFilter('status', newValue),
                             textSize: AppSize.fontSm,
                             width: ( dimensions.width / 3 ) - 10,
-                            menuWidth: 150
                           ),
                           const SizedBox(
                             height: 50,

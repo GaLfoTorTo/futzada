@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:get/get.dart';
@@ -28,14 +30,10 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   var controller = EscalationController.instace;
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
-  //RESGATAR JOGADOR COMO MAP
-  Map<String, dynamic> player = {};
 
   @override
   void initState() {
     super.initState();
-    //RESGATAR JOGADOR COMO MAP
-    player = widget.player.toMap();
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
@@ -44,7 +42,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[player['mainPosition']]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player.mainPosition]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -57,7 +55,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   Map<String, dynamic> setButtonBuy(player){
     /* 
     //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-    if(user[futcoin] < player['price']){
+    if(user[futcoin] < player.price){
       return{
         'text':'Comprar',
         'color' : AppColors.gray_300,
@@ -66,7 +64,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
     }
     */
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
-    final isEscaled = controller.findPlayerEscalation(player['id']);
+    final isEscaled = controller.findPlayerEscalation(player.id);
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
     if(isEscaled){
       return{
@@ -94,6 +92,19 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    
+    //RESGATAR JOGADOR
+    PlayerModel player = widget.player;
+    
+    //RESGTAR JOGADOR COMO MAP
+    Map<String, dynamic> playerMap = widget.player.toMap();
+    
+    //RESGATAR POSIÇÕES DO JOGADOR
+    List<dynamic> playerPositions = jsonDecode(player.positions);
+    
+    //REMOVER POSIÇÃO PRINCIPAL DO ARRAY
+    playerPositions.remove(player.mainPosition);
+    
     //LISTA DE METRICAS DO CARD
     Map<String, dynamic> metrics = {
       'lastPontuation':'Última pontuação', 
@@ -128,7 +139,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                 ImgCircularWidget(
                   height: 80,
                   width: 80,
-                  image: player['photo'],
+                  image: player.user.photo,
                   borderColor: AppColors.gray_300,
                 ),
                 Padding(
@@ -136,66 +147,94 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "${player['user']['firstName']} ${player['user']['lastName']}",
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      Text(
-                        "@${player['user']['userName']}",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
+                      SizedBox(
+                        width: (dimensions.width / 2) - 50,
+                        child: Text(
+                          "${player.user.firstName} ${player.user.lastName}",
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
+                        ),
                       ),
                       SizedBox(
-                        width: (dimensions.width / 2) - 30,
+                        width: (dimensions.width / 2) - 50,
+                        child: Text(
+                          "@${player.user.userName}",
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
+                        ),
+                      ),
+                      SizedBox(
+                        width: (dimensions.width / 2) - 50,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            if(position != null)...[
-                              SvgPicture.string(
-                                position!,
-                                width: 25,
-                                height: 25,
+                            SizedBox(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  if(position != null)...[
+                                    SvgPicture.string(
+                                      position!,
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ]else...[
+                                    Container(
+                                      width: 35,
+                                      height: 25,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.gray_300,
+                                        borderRadius: BorderRadius.all(Radius.circular(5))
+                                      ),
+                                    )
+                                  ],
+                                  ...playerPositions.asMap().entries.map((entry){
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                                      child: SvgPicture.asset(
+                                        AppIcones.posicao[entry.value]!,
+                                        width: 15,
+                                        height: 15,
+                                      ),
+                                    );
+                                  }),
+                                ],
                               ),
-                            ]else...[
-                              Container(
-                                width: 35,
-                                height: 25,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.gray_300,
-                                  borderRadius: BorderRadius.all(Radius.circular(5))
-                                ),
-                              )
-                            ],
-                            Text(
-                              "Fz\$",
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.gray_300),
                             ),
-                            Text(
-                              "${player['price']}",
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            Text(
-                              "${player['valorization']}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(player['valorization'])['color']),
-                            ),
-                            Icon(
-                              AppHelper.setColorPontuation(player['valorization'])['icon'],
-                              size: 15,
-                              color: AppHelper.setColorPontuation(player['valorization'])['color'],
+                            SizedBox(
+                              child:Icon(
+                                AppHelper.setStatusPlayer(player.status)['icon'],
+                                color: AppHelper.setStatusPlayer(player.status)['color'],
+                                size: 20,
+                              ),
                             )
                           ],
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Icon(
-                      AppHelper.setStatusPlayer(player['status'])['icon'],
-                      color: AppHelper.setStatusPlayer(player['status'])['color'],
-                      size: 30,
-                    ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Fz\$",
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.gray_300),
+                      ),
+                      Text(
+                        "${player.price}",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      Text(
+                        "${player.valorization}",
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppHelper.setColorPontuation(player.valorization)['color'], fontWeight: FontWeight.bold),
+                      ),
+                      Icon(
+                        AppHelper.setColorPontuation(player.valorization)['icon'],
+                        size: 15,
+                        color: AppHelper.setColorPontuation(player.valorization)['color'],
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -220,8 +259,8 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                     child: Column(
                       children: [
                         Text(
-                          "${player[key]}",
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(player[key])['color']),
+                          "${playerMap[key]}",
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[key])['color']),
                         ),
                         Text(
                           "$label",
@@ -254,7 +293,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                   textColor: AppColors.white,
                   backgroundColor: setButtonBuy(player)['color'],
                   disabled: setButtonBuy(player)['disabled'],
-                  action: () => setPlayerPosition(player['id']),
+                  action: () => setPlayerPosition(player.id),
                 )
               ],
             ),
