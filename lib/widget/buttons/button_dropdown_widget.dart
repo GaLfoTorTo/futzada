@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_size.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class ButtonDropdownWidget extends StatelessWidget {
   final dynamic selectedItem;

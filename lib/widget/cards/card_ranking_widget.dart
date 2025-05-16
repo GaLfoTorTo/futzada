@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class CardRankingWidget extends StatefulWidget {
   final double width;

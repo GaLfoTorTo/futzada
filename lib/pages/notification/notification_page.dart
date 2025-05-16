@@ -1,53 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/notification_controller.dart';
+import 'package:futzada/pages/notification/notification_view.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:get/route_manager.dart';
 
-class NotificationPageState extends StatefulWidget {
-  final VoidCallback actionButton;
+class NotificationPage extends StatefulWidget {
   
-  const NotificationPageState({
+  const NotificationPage({
     super.key,
-    required this.actionButton,
   });
 
   @override
-  State<NotificationPageState> createState() => NotificationPageStateState();
+  State<NotificationPage> createState() => NotificationPageState();
 }
 
-class NotificationPageStateState extends State<NotificationPageState> {
-  /* //CONTROLADOR DE PAGINAS
-  final PageController _pageController = PageController(initialPage: 0);
-  //TITULO
-  String title = "";
-  //INDEX DE PAGINA
-  int currentPage = 0;
-  //FUNÇÃO PARA ALTERAÇÃO DE PÁGINAS
-  void _alterPage(context, String action) {
-    setState(() {
-      //ADICIONAR TITULO
-      currentPage = action == "Proximo" ? currentPage + 1 : currentPage - 1;
-    });
-    //ALTERAR PAGINA
-    _pageController.animateToPage(
-      currentPage,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.ease,
-    );
-  } */
+class NotificationPageState extends State<NotificationPage> with SingleTickerProviderStateMixin {
+  var controller = NotificationController.instace;
+  //CONTROLLER DE ABAS
+  late final TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    //INICIALIZAR CONTROLLER DE TAB
+    tabController = TabController(length: 2, vsync: this);
+  }
   
   @override
   Widget build(BuildContext context) {
+    var dimentions = MediaQuery.of(context).size;
+    
     return Scaffold(
-      backgroundColor: AppColors.light,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: HeaderWidget(
-          title: 'Notificações',
-          leftAction: () => widget.actionButton(),
-        )
+      backgroundColor: AppColors.white,
+      appBar: HeaderWidget(
+        title: 'Notificações',
+        leftAction: () => Get.back(),
+        shadow: false,
       ),
       body: SafeArea(
-        child: Container()
+        child: Column(
+          children: [
+            Container(
+              color: AppColors.white,
+              child: TabBar(
+                controller: tabController,
+                indicator: UnderlineTabIndicator(
+                  borderSide: const BorderSide(
+                    width: 5,
+                    color: AppColors.green_300,
+                  ),
+                  insets: EdgeInsets.symmetric(horizontal: dimentions.width / 3.5)
+                ),
+                labelColor: AppColors.green_300,
+                labelStyle: const TextStyle(
+                  color: AppColors.gray_500,
+                  fontWeight: FontWeight.normal,
+                ),
+                unselectedLabelColor: AppColors.gray_500,
+                labelPadding: const EdgeInsets.symmetric(vertical: 5),
+                tabs: const [
+                  Text("Todas"),
+                  Tab(text: 'Para você'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: tabController,
+                children: const [
+                  NotificationView(
+                    type: 'all',
+                  ),
+                  NotificationView(
+                    type: 'forMe',
+                  ),
+                ],
+              ),
+            ), 
+          ],
+        ),
       ), 
     );
   }

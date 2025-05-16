@@ -15,7 +15,7 @@ class CampoWidget extends StatelessWidget {
 
   const CampoWidget({
     super.key,
-    this.categoria = 'Campo',
+    this.categoria = 'Futebol',
     this.formation = '4-3-3',
     this.width = 342,
     this.height = 518,
@@ -27,17 +27,21 @@ class CampoWidget extends StatelessWidget {
     var controller = EscalationController.instace;
     
     //FUNÇÕES DE ESTAMPA DO CAMPO
-    String fieldType(String? categoria){
-      if(categoria == 'Society'){
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.linhasSociety;
+    String fieldType(String? category){
+      switch (category) {
+        case 'Futebol':
+          //DEFINIR LINHAS DE CAMPO
+          return AppIcones.linhasCampo;
+        case 'Fut7':
+          //DEFINIR LINHAS DE CAMPO
+          return AppIcones.linhasSociety;
+        case 'Futsal':
+          //DEFINIR LINHAS DE CAMPO
+          return AppIcones.linhasQuadra;
+        default:
+          //DEFINIR LINHAS DE CAMPO
+          return AppIcones.linhasCampo;
       }
-      if(categoria == 'Quadra'){
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.linhasQuadra;
-      }
-      //DEFINIR LINHAS DE CAMPO
-      return AppIcones.linhasCampo;
     }
     
     //FUNÇÃO DE AJUSTE DE BORDAS DAS LINHAS DO CAMPO
@@ -157,7 +161,7 @@ class CampoWidget extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            if(categoria == 'Campo')...[
+            if(categoria == 'Futebol')...[
               grassField(),
             ],
             SvgPicture.asset(

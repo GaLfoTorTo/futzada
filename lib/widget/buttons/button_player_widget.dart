@@ -5,7 +5,7 @@ import 'package:futzada/models/player_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/dialogs/player_dialog_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:get/get.dart';
 
 class ButtonPlayerWidget extends StatelessWidget {
@@ -44,8 +44,10 @@ class ButtonPlayerWidget extends StatelessWidget {
         //CHAMAR DIALOG DO JOGADOR
         Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true);
       }else{
-        //AJUSTAR FILTRO
-        controller.setFilter('positions', controller.getPositionFromEscalation(index));
+        //RESGATAR POSIÇÃO SELECIONADA
+        var position = controller.getPositionFromEscalation(index);
+        //AJUSTAR FILTRO PARA POSIÇÃO SELECIONADA
+        controller.setFilter('positions', [position]);
         controller.update();
         //NAVEGAR PARA PAGINA DE MERCADO
         Get.toNamed('/escalation/market');

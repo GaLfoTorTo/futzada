@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/alerts/alert_widget.dart';
+import 'package:intl/intl.dart';
 
 class AppHelper {
   //VERIFICAÇÃO DE COMPLEXIDADE DE SENHAS
@@ -225,7 +226,31 @@ class AppHelper {
     //RETORNAR POSIÇÃO
     return posicaoString;
   }
-  
+
+  //FUNÇÃO PARA RESGATAR DATA RELATIVA
+  static String getDateLabel(DateTime date) {
+    //RESGATAR DATA DE HOJE COMPLETA
+    final now = DateTime.now();
+    //RESGATAR DATA DE HOJE (DD/MM/YYYY)
+    final today = DateTime(now.year, now.month, now.day);
+    //DATA ALVO (DD/MM/YYYY)
+    final targetDate = DateTime(date.year, date.month, date.day);
+    //RESGATAR DIFERENÇA ENTRE AS DATA
+    final difference = today.difference(targetDate).inDays;
+    //VERIFICAR DIFERENÇA ENTRE DATA
+    if (difference == 0) {
+      return 'Hoje';
+    } else if (difference == 1) {
+      return 'Ontem';
+    } else if (difference <= 7) {
+      return 'Essa semana';
+    } else if (difference <= 14) {
+      return 'Semana passada';
+    } else {
+      return DateFormat('dd/MM/yyyy').format(date);
+    }
+  }  
+
   //FUNDAÇÃO DE SAUDAÇÃO DE ACORDO COM O PERÍODO DO DIA
   static String saudacaoPeriodo(){
     //BUSCAR HORA ATUAL

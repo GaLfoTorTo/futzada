@@ -61,6 +61,8 @@ dependencies:
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
   geolocator: ^13.0.1
+  intl: ^0.20.2
+  timeago: ^3.7.1
   #remover despois
   faker: ^2.1.0
 
@@ -75,12 +77,13 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
 
-flutter_icons:
-  android: true # can specify file name here e.g. "ic_launcher"
-  ios: true # can specify file name here e.g. "My-Launcher-Icon"
+flutter_launcher_icons:
+  android: false
+  ios: false
   image_path: "assets/images/icon/logo.png"
+  adaptive_icon_foreground: "assets/images/icon/logo_foreground.png"
   adaptive_icon_background: "#04D361"
-  min_sdk_android: 21 # android min sdk min:16, default 21
+  min_sdk_android: 21
   remove_alpha_ios: true
   background_color_ios: "#04D361"
 

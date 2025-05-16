@@ -35,7 +35,7 @@ class MarketPageState extends State<MarketPage> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-
+    
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Mercado',
@@ -125,14 +125,46 @@ class MarketPageState extends State<MarketPage> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
-                  children: controller.playersMarket.map((entry) {
-                    //RESGATAR ITENS 
-                    final item = entry;
-                    return  CardPlayerMarketWidget(
-                      player: item,
-                      escalation: controller.escalation['starters']!
-                    );
-                  }).toList(),
+                  children: [
+                    if(controller.playersMarket.isNotEmpty)...[
+                      ...controller.playersMarket.map((entry) {
+                        //RESGATAR ITENS 
+                        final item = entry;
+                        return  CardPlayerMarketWidget(
+                          player: item,
+                          escalation: controller.escalation['starters']!
+                        );
+                      }).toList(),
+                    ]else...[
+                      Container(
+                        alignment: Alignment.center,
+                        width: dimensions.width,
+                        height: dimensions.height / 2,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Nenhum jogador encontrado', 
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.gray_500, fontWeight: FontWeight.normal),
+                              textAlign: TextAlign.center,
+                            ),
+                            const Icon(
+                              Icons.person_off,
+                              color: AppColors.gray_300,
+                              size: 150,
+                            ),
+                            Text(
+                              'Verifique a aplicação de filtros ou faça uma nova pesquisa.', 
+                              style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.gray_500, fontWeight: FontWeight.normal),
+                              textAlign: TextAlign.center,
+                            ),
+                          ]
+                        )
+                      )
+                    ]
+                  ]
                 ),
               )
             ],

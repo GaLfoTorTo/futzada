@@ -35,6 +35,7 @@ class EscalationPageState extends State<EscalationPage> {
       controller.update();
     });
   }
+  
   //FUNÇÃO PARA SELECIONAR TIPO DE VISUALIZAÇÃO
   void selectView(type){
     setState(() {
@@ -42,6 +43,7 @@ class EscalationPageState extends State<EscalationPage> {
       viewType = type;
     });
   }
+  
   //FUNÇÃO PARA SELECIONAR FORMAÇÃO
   void selectFormation(newValue){
     setState(() {
@@ -50,6 +52,14 @@ class EscalationPageState extends State<EscalationPage> {
     });
   }
   
+  //FUNÇÃO PARA DEFINIR FILTROS QUANDO NEVEGAÇÃO FOR DIRETO PARA MERCADO
+  void goToMarket(){
+    //RESETAR FILTRO
+    controller.resetFilter();
+    controller.update();
+    Get.toNamed('/escalation/market');
+  }
+
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
@@ -59,7 +69,7 @@ class EscalationPageState extends State<EscalationPage> {
       appBar: HeaderWidget(
         title: 'Escalação',
         leftAction: () => Get.back(),
-        rightAction: () => Get.toNamed('/escalation/market'),
+        rightAction: () => goToMarket(),
         rightIcon: Icons.shopping_cart,
         shadow: false,
       ),
@@ -82,34 +92,39 @@ class EscalationPageState extends State<EscalationPage> {
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: (dimensions.width / 3) - 10,
-                      child: ButtonDropdownWidget(
-                        selectedItem: controller.selectedEvent,
-                        items: controller.myEvents,
-                        onChange: selectEvent,
-                        iconAfter: false,
+                child: Obx((){
+                  var userTeamPrice = controller.userTeamPrice.value;
+                  var userPatrimony = controller.userPatrimony.value;
+
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: (dimensions.width / 3) - 10,
+                        child: ButtonDropdownWidget(
+                          selectedItem: controller.selectedEvent,
+                          items: controller.myEvents,
+                          onChange: selectEvent,
+                          iconAfter: false,
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: (dimensions.width / 3) - 10,
-                      child: PriceIndicatorWidget(
-                        title: 'Preço da Equipe',
-                        value: '103.07'
+                      Container(
+                        width: (dimensions.width / 3) - 10,
+                        child: PriceIndicatorWidget(
+                          title: 'Preço da Equipe',
+                          value: '$userTeamPrice'
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: (dimensions.width / 3) - 10,
-                      child: PriceIndicatorWidget(
-                        title: 'FutCoins',
-                        value: '0.25'
+                      Container(
+                        width: (dimensions.width / 3) - 10,
+                        child: PriceIndicatorWidget(
+                          title: 'FutCoins',
+                          value: '$userPatrimony'
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  );
+                })
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -158,7 +173,7 @@ class EscalationPageState extends State<EscalationPage> {
                 //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
                 if (viewType == 'escalation') ...[
                   CampoWidget(
-                    categoria: 'Campo',
+                    categoria: controller.category,
                     width: dimensions.width - 80,
                     height: (dimensions.height / 2) + 50,
                     formation: controller.selectedFormation,

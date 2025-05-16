@@ -1,12 +1,12 @@
-import 'package:futzada/theme/app_animations.dart';
-import 'package:lottie/lottie.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:futzada/app_widget.dart';
+import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 
 void main() async {

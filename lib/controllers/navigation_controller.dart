@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/pages/notification/notification_page.dart';
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
@@ -103,9 +104,9 @@ class NavigationController extends GetxController {
       route: 'Escalação',
       titulo: 'Monte o sua equipe ideal da pelada',
       subTitulo: 'Escale os melhores jogadores da pelada para sua equipe e fique no topo dos rankings da pelada.',
-      buttonTitulo: 'Começar Escalar',
+      buttonTitulo: 'Escalação',
       buttonIcone: AppIcones.clipboard_solid,
-      viewTitulo: 'Ver minhas escalações',
+      viewTitulo: 'Histórico Partidas',
       buttonAction: () => Get.toNamed('/escalation'),
       outlineAction: () => print('navegar para Minhas escalações'),
     ),
@@ -134,16 +135,6 @@ class NavigationController extends GetxController {
       outlineAction: () => print('navegar para Pesquisa manual'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO
-    PresentationPageWidget(
-      image: AppImages.capaEscalacao,
-      route: 'Notificações',
-      titulo: 'Monte o seu time ideal da pelada',
-      subTitulo: 'Escale os melhores jogadores da pelada para sua equipe e fique no topo dos rankings da pelada.',
-      buttonTitulo: 'Começar Escalar',
-      buttonIcone: AppIcones.clipboard_solid,
-      viewTitulo: 'Ver minhas escalações',
-      buttonAction: () => print('navegar para Notificações'),
-      outlineAction: () => print('navegar para Notificações'),
-    ),
+    const NotificationPage()
   ];
 }

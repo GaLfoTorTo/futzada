@@ -31,7 +31,12 @@ class ButtonTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: action,
+      onPressed: () {
+        //VERIFICAR SE BOTÃO FOI DESABILITADO
+        if(disabled == false){
+          action();
+        }
+      },
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor ?? backgroundColor,
         foregroundColor: textColor ?? textColor,
@@ -45,26 +50,20 @@ class ButtonTextWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if(iconAfter)...[
-                if(text != null)...[
-                  Text(text!),
-                ],
-                if(icon != null)...[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
-                ],
-            ]else...[
-                if(icon != null)...[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Icon(icon!, size: iconSize),
-                  ),
-                ],
-                if(text != null)...[
-                  Text(text!),
-                ],
+            if(!iconAfter && icon != null)...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Icon(icon!, size: iconSize),
+                ),
+            ],
+            if(text != null)...[
+              Text(text!),
+            ],
+            if(iconAfter && icon != null)...[
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Icon(icon!, size: iconSize),
+              ),
             ],
           ],
         )

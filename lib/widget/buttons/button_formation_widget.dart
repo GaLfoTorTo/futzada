@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class ButtonFormationWidget extends StatelessWidget {
@@ -13,18 +14,10 @@ class ButtonFormationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> itens = [
-      '4-3-3',
-    	'4-1-2-3',
-    	'4-2-1-3',
-    	'4-2-3-1',
-    	'4-4-2',
-      '3-4-3',
-      '3-2-4-1',
-    	'3-4-2-1',
-      '5-3-2',
-      '5-4-1'
-    ];
+    //RESGATAR CONTROLLER DE ESCALAÇÃO
+    var controller = EscalationController.instace;
+    //RESGATAR FORMAÇÕES
+    final List<String> itens = controller.formations;
     
     return DropdownButton<String>(
       value: selectedFormation,

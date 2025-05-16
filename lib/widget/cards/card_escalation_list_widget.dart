@@ -7,7 +7,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
 import 'package:futzada/widget/dialogs/player_dialog_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:get/get.dart';
 
 class CardEscalationListWidget extends StatefulWidget {

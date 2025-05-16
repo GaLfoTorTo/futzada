@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:convert';
 import 'dart:math';
 import 'package:get/get.dart';
@@ -22,7 +21,7 @@ class PlayerService {
     //JUNTAR MAPS
     final List<PlayerModel> map = [];
     //LOOP PARA TITULARES
-    for (var i = 1; i <= 25; i++) {
+    for (var i = 1; i <= 50; i++) {
       //DADOS DO JOGADOR
       var firstName = faker.person.firstName();
       var lastName = faker.person.lastName();
@@ -43,7 +42,7 @@ class PlayerService {
         'type': type,
         'mainPosition': getPositionFromEscalation(num),
         'positions' : jsonEncode(setPositions()),
-        'currentPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
+        'currentPontuation': 0.0,
         'lastPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
         'media': double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
         'price': double.parse(setValues(0.0, 30.5).toStringAsFixed(2)),

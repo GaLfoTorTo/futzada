@@ -8,7 +8,7 @@ import 'package:futzada/models/user_model.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

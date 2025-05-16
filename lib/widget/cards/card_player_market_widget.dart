@@ -9,7 +9,7 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class CardPlayerMarketWidget extends StatefulWidget {
   final PlayerModel player;
@@ -52,19 +52,17 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   }
 
   //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
-  Map<String, dynamic> setButtonBuy(player){
-    /* 
+  Map<String, dynamic> setButtonBuy(PlayerModel player){
     //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-    if(user[futcoin] < player.price){
+    if(player.price! > controller.userPatrimony.value){
       return{
         'text':'Comprar',
         'color' : AppColors.gray_300,
         'disabled': true
       };
     }
-    */
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
-    final isEscaled = controller.findPlayerEscalation(player.id);
+    final isEscaled = controller.findPlayerEscalation(player.id!);
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
     if(isEscaled){
       return{
@@ -76,7 +74,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
     return{
       'text':'Comprar',
       'color' : AppColors.green_300,
-      'disabled': true
+      'disabled': false
     };
   }
 
@@ -112,6 +110,9 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
       'games':'jogos'
     };
 
+    //DEFINIR CONFIGURAÇÕES DE BOTÃO DE COMPRA E VENDA DE JOGADOR
+    var buttonConfig = setButtonBuy(player);
+
     return Container(
       width: dimensions.width,
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -128,176 +129,188 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
           ),
         ],
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+          SizedBox(
+            width: (dimensions.width * 0.65) - 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ImgCircularWidget(
-                  height: 80,
-                  width: 80,
-                  image: player.user.photo,
-                  borderColor: AppColors.gray_300,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: (dimensions.width / 2) - 50,
-                        child: Text(
-                          "${player.user.firstName} ${player.user.lastName}",
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
-                        ),
-                      ),
-                      SizedBox(
-                        width: (dimensions.width / 2) - 50,
-                        child: Text(
-                          "@${player.user.userName}",
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
-                        ),
-                      ),
-                      SizedBox(
-                        width: (dimensions.width / 2) - 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  if(position != null)...[
-                                    SvgPicture.string(
-                                      position!,
-                                      width: 25,
-                                      height: 25,
-                                    ),
-                                  ]else...[
-                                    Container(
-                                      width: 35,
-                                      height: 25,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.gray_300,
-                                        borderRadius: BorderRadius.all(Radius.circular(5))
-                                      ),
-                                    )
-                                  ],
-                                  ...playerPositions.asMap().entries.map((entry){
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                                      child: SvgPicture.asset(
-                                        AppIcones.posicao[entry.value]!,
-                                        width: 15,
-                                        height: 15,
-                                      ),
-                                    );
-                                  }),
-                                ],
-                              ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ImgCircularWidget(
+                      height: 80,
+                      width: 80,
+                      image: player.user.photo,
+                      borderColor: AppColors.gray_300,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: (dimensions.width / 2) - 50,
+                            height: 25,
+                            child: Text(
+                              "${player.user.firstName} ${player.user.lastName}",
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
                             ),
-                            SizedBox(
-                              child:Icon(
-                                AppHelper.setStatusPlayer(player.status)['icon'],
-                                color: AppHelper.setStatusPlayer(player.status)['color'],
-                                size: 20,
+                          ),
+                          SizedBox(
+                            width: (dimensions.width / 2) - 50,
+                            height: 25,
+                            child: Text(
+                              "@${player.user.userName}",
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
+                            ),
+                          ),
+                          SizedBox(
+                            width: (dimensions.width / 2) - 50,
+                            height: 25,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      if(position != null)...[
+                                        SvgPicture.string(
+                                          position!,
+                                          width: 25,
+                                          height: 25,
+                                        ),
+                                      ]else...[
+                                        Container(
+                                          width: 35,
+                                          height: 25,
+                                          decoration: const BoxDecoration(
+                                            color: AppColors.gray_300,
+                                            borderRadius: BorderRadius.all(Radius.circular(5))
+                                          ),
+                                        )
+                                      ],
+                                      ...playerPositions.asMap().entries.map((entry){
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                                          child: SvgPicture.asset(
+                                            AppIcones.posicao[entry.value]!,
+                                            width: 15,
+                                            height: 15,
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  child:Icon(
+                                    AppHelper.setStatusPlayer(player.status)['icon'],
+                                    color: AppHelper.setStatusPlayer(player.status)['color'],
+                                    size: 20,
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  width: (dimensions.width * 0.65) - 20,
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Wrap(
+                    spacing: 8,
+                    children: [
+                      ...metrics.entries.map((entry){
+                        final key = entry.key;
+                        final label = entry.value;
+                        final itemWidth = key == 'lastPontuation' ? ( dimensions.width * 0.60 ) : ( dimensions.width * 0.3 ) - 5;
+                        return Container(
+                          width: itemWidth,
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                            color: AppColors.gray_300.withAlpha(40),
+                            borderRadius: const BorderRadius.all(Radius.circular(5))
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                "${playerMap[key]}",
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[key])['color']),
                               ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                              Text(
+                                "$label",
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          )
+                        );
+                      }),
+                    ]
                   ),
                 ),
+              ]
+            ),
+          ),
+          SizedBox(
+            width: (dimensions.width * 0.3) - 10,
+            height: 210,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
                 Expanded(
                   child: Column(
                     children: [
                       Text(
                         "Fz\$",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.gray_300),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
                       ),
                       Text(
                         "${player.price}",
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style: Theme.of(context).textTheme.headlineLarge,
                       ),
-                      Text(
-                        "${player.valorization}",
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppHelper.setColorPontuation(player.valorization)['color'], fontWeight: FontWeight.bold),
-                      ),
-                      Icon(
-                        AppHelper.setColorPontuation(player.valorization)['icon'],
-                        size: 15,
-                        color: AppHelper.setColorPontuation(player.valorization)['color'],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              "${player.valorization}",
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppHelper.setColorPontuation(player.valorization)['color'], fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Icon(
+                            AppHelper.setColorPontuation(player.valorization)['icon'],
+                            size: 15,
+                            color: AppHelper.setColorPontuation(player.valorization)['color'],
+                          )
+                        ],
                       )
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ...metrics.entries.map((entry){
-                  final key = entry.key;
-                  final label = entry.value;
-                  final itemWidth = key == 'lastPontuation' ? (dimensions.width / 3) : (dimensions.width / 3) - 30;
-                  return Container(
-                    width: itemWidth,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.gray_300.withAlpha(40),
-                      borderRadius: const BorderRadius.all(Radius.circular(5))
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          "${playerMap[key]}",
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[key])['color']),
-                        ),
-                        Text(
-                          "$label",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    )
-                  );
-                }),
-              ]
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
                 ButtonTextWidget(
-                  text: "Ver Detalhes",
+                  text: buttonConfig['text'],
                   height: 30,
-                  width: 100,
+                  width: (dimensions.width * 0.3) - 10,
                   textColor: AppColors.white,
-                  backgroundColor: AppColors.green_300,
-                  action: (){},
-                ),
-                ButtonTextWidget(
-                  text: setButtonBuy(player)['text'],
-                  height: 30,
-                  width: 100,
-                  textColor: AppColors.white,
-                  backgroundColor: setButtonBuy(player)['color'],
-                  disabled: setButtonBuy(player)['disabled'],
+                  backgroundColor: buttonConfig['color'],
+                  disabled: buttonConfig['disabled'],
                   action: () => setPlayerPosition(player.id),
                 )
               ],
             ),
-          )
+          ),
         ],
       ),
     );

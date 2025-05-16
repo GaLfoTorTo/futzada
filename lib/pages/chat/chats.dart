@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/chat_controller.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -53,7 +52,7 @@ class _ChatsPageState extends State<ChatsPage> {
                   child: InputTextWidget(
                     name: 'search',
                     hint: 'Pesquisa',
-                    bgColor: AppColors.gray_300.withAlpha(100),
+                    bgColor: AppColors.gray_300.withAlpha(50),
                     prefixIcon: AppIcones.search_solid,
                     textController: controller.pesquisaController,
                     controller: controller,

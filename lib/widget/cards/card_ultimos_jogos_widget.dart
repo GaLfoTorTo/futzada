@@ -6,7 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/cards/card_ranking_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/others/user_stack_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 

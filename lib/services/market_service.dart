@@ -3,6 +3,19 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
 class MarketService {  
+  //FILTRO PADRÃO DE MERCADO
+  Map<String, dynamic> filtrosMarket = {
+    'status' : ['Ativo','Inativo','Duvida','Neutro'],
+    'price' : 'Maior preço',
+    'media' : '',
+    'game' : '',
+    'valorization' : '',
+    'lastPontuation' : '',
+    'nome' : '',
+    'bestSide' : '',
+    'positions' : [],
+  };
+
   //LISTA DE FILTROS DO MERCADO
   Map<String, List<Map<String, dynamic>>> filterOptions = {
     'price': [
@@ -132,6 +145,7 @@ class MarketService {
       },
     ],
   };
+
   //LISTA DE FILTROS DO MERCADO
   Map<String, List<Map<String, dynamic>>> filterPlayerOptions = {
     'nome': [

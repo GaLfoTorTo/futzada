@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/market_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -11,6 +12,8 @@ class EscalationController extends GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static EscalationController get instace => Get.find();
   //INSTANCIAR SERVICE DE JOGADORES
+  static EscalationService escalationService = EscalationService();
+  //INSTANCIAR SERVICE DE JOGADORES
   static PlayerService playerService = PlayerService();
   //INSTANCIAR SERVICE DE JOGADORES
   static MarketService _marketService = MarketService();
@@ -19,13 +22,19 @@ class EscalationController extends GetxController{
   final TextEditingController pesquisaController = TextEditingController();
 
   //CONTROLADOR DE CATEGORIA DO CAMPO
-  final String category = 'Campo';
+  final String category = 'Futebol';
   
   //FORMAÇÃO SELECIONADA
   String selectedFormation = '4-3-3';
   
   //CONTROLADOR DE EVENTO SELECIONADO
   int selectedEvent = 0;
+
+  //CONTROLADOR DE PATRIMONIO DO USUARIO
+  RxDouble userPatrimony = 100.0.obs;
+
+  //CONTROLADOR DE PREÇO DA EQUIPE DO USUARIO
+  RxDouble userTeamPrice = 0.0.obs;
 
   //CONTROLADOR DE INDEX PARA JOGADOR ADICIONADO OU REMOVIDO
   RxInt selectedPlayer = 0.obs;
@@ -36,18 +45,11 @@ class EscalationController extends GetxController{
   //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
   RxInt playerCapitan = 0.obs;
 
+  //CONTROLADOR DE FORMAÇÕES 
+  List<String> formations = [];
+
   //CONTROLADOR DE FILTROS 
-  RxMap<String, dynamic> filtrosMarket = {
-    'status' : ['Ativo','Inativo','Duvida','Neutro'],
-    'price' : 'Maior preço',
-    'media' : '',
-    'game' : '',
-    'valorization' : '',
-    'lastPontuation' : '',
-    'nome' : '',
-    'bestSide' : '',
-    'positions' : [],
-  }.obs;
+  RxMap<String, dynamic> filtrosMarket = _marketService.filtrosMarket.obs;
   
   //LISTA DE FILTROS DO MERCADO
   Map<String, List<Map<String, dynamic>>> filterOptions = _marketService.filterOptions;
@@ -77,6 +79,7 @@ class EscalationController extends GetxController{
 
   //JOGADORES DO MERCADO
   late RxList<PlayerModel> playersMarket;
+  
   //ESCALAÇÃO DO USUARIO
   late RxMap<String, RxMap<int, PlayerModel?>> escalation;
 
@@ -86,11 +89,39 @@ class EscalationController extends GetxController{
     //DEFINIR JOGADORES DO MERCADO
     playersMarket = filterMarketPlayers();
     //DEFINIR ESCALAÇÃO DO USUARIO
-    escalation = setEscalation();
+    escalation = escalationService.setEscalation(category);
+    //DEFINIR ARRAY DE FORMAÇÕES APARTIR DE CATEGORIA SELECIONADA
+    formations = escalationService.formationsPerCategory(category);
+    //DEFINIR ESCALAÇÃO PRÉ SELECIONADA
+    selectedFormation = formations[0];
   }
-  
+
+  //FUNÇÃO PARA CONTABILIZAR PREÇO DA EQUIPE E PATRIMONIO DO USUARIO
+  void calcTeamPrice(double playerPrice, String action){
+    //ARREDONDAR VALOR DO JOGADOR RECEBIDO
+    final roundedPrice = double.parse(playerPrice.toStringAsFixed(2));
+    //VERIFICAR FLAG DE AÇÃO
+    if (action == 'add') {
+      //ADICIONAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
+      userTeamPrice.value = double.parse((userTeamPrice.value + roundedPrice).toStringAsFixed(2));
+      //DESCONTAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
+      userPatrimony.value = double.parse((userPatrimony.value - roundedPrice).toStringAsFixed(2));
+    } else {
+      //DESCONTAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
+      userTeamPrice.value = double.parse((userTeamPrice.value - roundedPrice).toStringAsFixed(2));
+      //ADICIONAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
+      userPatrimony.value = double.parse((userPatrimony.value + roundedPrice).toStringAsFixed(2));
+    }
+  }
+
+  //FUNÇÃO PARA RESETAR FILTRO
+  void resetFilter(){
+    //RESETAR FILTRO
+    filtrosMarket.value = _marketService.filtrosMarket;
+  }
+
   //FUNÇÃO DE DEFINIÇÃO DE FILTRO DO MERCADO
-  void setFilter(String name, String newValue){
+  void setFilter(String name, dynamic newValue){
     //VERIFICAR SE NAME E VALOR RECEBIDOS NÃO SETA VAZIOS
     if(name != 'positions' && name != 'status'){
       //ATUALIZAR CHAVE DO FILTRO
@@ -98,19 +129,24 @@ class EscalationController extends GetxController{
     }
     //VERIFICAÇÃO PARA POSIÇÕES
     if(name == 'positions' || name == 'status'){
-      //RESGATAR POSIÇÕES SALVAS NO FILTRO
-      final arr = filtrosMarket[name];
-      //VERIFICAR SE POSIÇÃO RESCEBIDA ESTA NO FILTRO
-      if (arr.contains(newValue)) {
-        //REMOVER POSIÇÃO
-        arr.remove(newValue);
-      } else {
-        //ADICIONAR POSIÇÃO
-        arr.insert(0, newValue);
+      //VERIFICAR SE RECEBIDO FOI POSIÇÃO E SE ESTA NO FORMATO DE ARRAY
+      if(name == 'positions' && newValue is List<String>){
+        //ATUALIZAR CHAVE DO FILTRO
+        filtrosMarket[name] = newValue;
+      }else{
+        //RESGATAR POSIÇÕES SALVAS NO FILTRO
+        final arr = filtrosMarket[name];
+        //VERIFICAR SE POSIÇÃO RESCEBIDA ESTA NO FILTRO
+        if (arr.contains(newValue)) {
+          //REMOVER POSIÇÃO
+          arr.remove(newValue);
+        } else {
+          //ADICIONAR POSIÇÃO
+          arr.insert(0, newValue);
+        }
+        //REATRIBUIR POSIÇÕES NO FILTRO
+        filtrosMarket[name] = arr; 
       }
-      print(arr);
-      //REATRIBUIR POSIÇÕES NO FILTRO
-      filtrosMarket[name] = arr; 
     }
     //APLICAR FILTRO NOS JOGADORES DO MERCADO
     playersMarket.value = filterMarketPlayers();
@@ -156,11 +192,11 @@ class EscalationController extends GetxController{
       if (filters['positions'] != null && filters['positions'].isNotEmpty) {
         final selectedPositions = List<String>.from(filters['positions']);
         final playerPositions = jsonDecode(player.positions) as List<dynamic>;
-        
+        //VERIFICAR SE JOGADOR CONTEM UMA DAS OPÇÕES DEFINIDAS NO FILTRO
         final hasPosition = selectedPositions.any((pos) => 
             player.mainPosition == pos || 
             playerPositions.contains(pos));
-        
+        //VERIFICAR SE JOGADOR NÃO TEM POSIÇÃO DEFINIDA NO FILTRO            
         if (!hasPosition) {
           return false;
         }
@@ -239,48 +275,6 @@ class EscalationController extends GetxController{
   return filteredPlayers.obs;
 }
 
-  //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
-  static RxMap<String, RxMap<int, PlayerModel?>> setEscalation() {
-    //CRIAR MAPS DE TITULARES E RESERVAS OBSERVAVEIS
-    final starters = <int, PlayerModel?>{}.obs;
-    final reserves = <int, PlayerModel?>{}.obs;
-    //INICIALIZAR COM VALORES NULOS
-    for (var i = 0; i < 11; i++) {
-      starters[i] = null;
-    }
-    for (var i = 0; i < 5; i++) {
-      reserves[i] = null;
-    }
-    //RETORNAR ESCALAÇÃO
-    return <String, RxMap<int, PlayerModel?>>{
-      'starters': starters,
-      'reserves': reserves,
-    }.obs;
-  }
-
-  //FUNÇÃO PARA DEFINIR JOGADOR COMO CAPITÃO
-  void setPlayerCapitan(dynamic id){
-    try {
-      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
-      bool isEscaled = findPlayerEscalation(id);
-      //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
-      if(isEscaled){
-        //VERIFICAR SE JOGADOR JA ESTA DEFINIDO COMO CAPITÃO
-        if(playerCapitan.value == id){
-          //REMOVER CAPITÃO
-          playerCapitan.value = 0;
-        }else{
-          //ADICIONAR ID DO JOGADOR CAPITÃO
-          playerCapitan.value = id;
-        }
-      }
-    } catch (e) {
-      print(e);
-      //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
-    }
-  }
-
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
   void setPlayerEscalation(dynamic id){
     //RESGATR JOGADOR DO MERCADO
@@ -301,12 +295,14 @@ class EscalationController extends GetxController{
       if(!isEscaled){
         //ADICIONAR JOGADOR NA POSIÇÃO
         escalation[playerOcupation]![playerIndex] = player;
+        //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
+        calcTeamPrice(player.price!, 'add');
       }else{
         //REMOVER JOGADOR DA POSIÇÃO
         escalation[playerOcupation]![playerIndex] = null;
+        //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
+        calcTeamPrice(player.price!, 'remove');
       }
-      //RESETAR JOGADORES NO MERCADO
-      playersMarket.value = playerService.playersMarket;
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
@@ -366,6 +362,29 @@ class EscalationController extends GetxController{
       return 'mei';
     }else{
       return 'ata';
+    }
+  }
+
+  //FUNÇÃO PARA DEFINIR JOGADOR COMO CAPITÃO
+  void setPlayerCapitan(dynamic id){
+    try {
+      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
+      bool isEscaled = findPlayerEscalation(id);
+      //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
+      if(isEscaled){
+        //VERIFICAR SE JOGADOR JA ESTA DEFINIDO COMO CAPITÃO
+        if(playerCapitan.value == id){
+          //REMOVER CAPITÃO
+          playerCapitan.value = 0;
+        }else{
+          //ADICIONAR ID DO JOGADOR CAPITÃO
+          playerCapitan.value = id;
+        }
+      }
+    } catch (e) {
+      print(e);
+      //EXIBIR MENSAGEM DE ERRO
+      AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
     }
   }
 }

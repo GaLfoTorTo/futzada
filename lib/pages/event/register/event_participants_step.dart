@@ -12,7 +12,7 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:lottie/lottie.dart';
 

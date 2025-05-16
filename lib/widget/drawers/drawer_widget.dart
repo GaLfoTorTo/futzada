@@ -6,7 +6,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/theme/app_size.dart';
-import 'package:futzada/widget/images/ImgCircularWidget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 

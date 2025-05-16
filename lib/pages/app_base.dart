@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/chat_controller.dart';
+import 'package:futzada/controllers/notification_controller.dart';
 import 'package:get/get.dart';
 import 'package:futzada/controllers/home_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -17,6 +18,8 @@ class AppBase extends StatelessWidget {
     Get.put(HomeController());
     //INICIALIZAR CONTROLLER CHAT PAGE
     Get.put(ChatController());
+    //INICIALIZAR CONTROLLER DE NOTIFICAÇÕES
+    Get.put(NotificationController());
     
     return Scaffold(
       key: controller.scaffoldKey,
