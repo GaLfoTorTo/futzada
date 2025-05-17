@@ -5,6 +5,7 @@ class ButtonOutlineWidget extends StatelessWidget {
   final Color? textColor;
   final Color? backgroundColor;
   final dynamic icon;
+  final double? iconSize;
   final bool iconAfter;
   final double? width;
   final double? height;
@@ -17,6 +18,7 @@ class ButtonOutlineWidget extends StatelessWidget {
     this.textColor,
     this.backgroundColor,
     this.icon,
+    this.iconSize,
     this.iconAfter = false,
     this.width = 40,
     this.height = 40,
@@ -37,16 +39,24 @@ class ButtonOutlineWidget extends StatelessWidget {
         height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: iconAfter
-            ? [
-                if (text != null) Text(text!),
-                if (icon != null) Icon(icon!),
-              ]
-            : [
-                if (icon != null) Icon(icon!),
-                if (text != null) Text(text!),
-              ],
-        ),
+          children: [
+            if(!iconAfter && icon != null)...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Icon(icon!, size: iconSize),
+                ),
+            ],
+            if(text != null)...[
+              Text(text!),
+            ],
+            if(iconAfter && icon != null)...[
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Icon(icon!, size: iconSize),
+              ),
+            ],
+          ],
+        )
       ),
     );
   }

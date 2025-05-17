@@ -6,9 +6,9 @@ class AppAnimations {
   //ANIMAÇÕES DE LOADING
   static const loading = 'assets/animations/loading.json';
   //ANIMAÇÕES DE APRESENTAÇÃO (ON BOARDING)
-  static const introducaoFlag = 'assets/animations/introducaoFlag.json';
-  static const introducaoCelular = 'assets/animations/introducaoCelular.json';
-  static const introducaoEstadio = 'assets/animations/introducaoEstadio.json';
-  static const introducaoTecnico = 'assets/animations/introducaoTecnico.json';
-  static const introducaoJogador = 'assets/animations/introducaoJogador.json';
+  static const introductionFlag = 'assets/animations/introducaoFlag.json';
+  static const introductionPhone = 'assets/animations/introducaoCelular.json';
+  static const introductionEscalation = 'assets/animations/introducaoEstadio.json';
+  static const introductionManager = 'assets/animations/introducaoTecnico.json';
+  static const introductionPlayer = 'assets/animations/introducaoJogador.json';
 }

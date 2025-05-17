@@ -81,7 +81,7 @@ class WelcomePage extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     onTap: action, 
                     child: Lottie.asset(
-                      AppAnimations.introducaoFlag,
+                      AppAnimations.introductionFlag,
                       fit: BoxFit.contain,
                       height: 100
                     ), 

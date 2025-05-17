@@ -76,6 +76,26 @@ class EscalationController extends GetxController{
         'photo': null,
       },
   ].obs;
+  
+  //LISTA DE ESCALASÕES DO USUARIO
+  RxList<Map<String, dynamic>> myEscalations = [
+    /* for(var i = 0; i <= 2; i++) */
+      {
+        'id' : 0,
+        'title': 'Fut dos Cria',
+        'photo': null,
+      },
+      {
+        'id' : 1,
+        'title': 'Pelada Divineia',
+        'photo': null,
+      },
+      {
+        'id' : 2,
+        'title': 'Ginásio',
+        'photo': null,
+      },
+  ].obs;
 
   //JOGADORES DO MERCADO
   late RxList<PlayerModel> playersMarket;

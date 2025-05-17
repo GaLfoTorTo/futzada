@@ -32,7 +32,7 @@ class OnboardingPageState extends State<OnboardingPage> {
   //FUNÇÃO PARA ALTERAÇÃO DE PÁGINAS
   void alterPage(context, String action) {
     setState(() {
-      if(currentPage == 3){
+      if(currentPage == 4){
         //NAVEGAR PARA HOME PAGE
         Navigator.pushReplacementNamed(context, "/home");
       }else{
@@ -53,22 +53,75 @@ class OnboardingPageState extends State<OnboardingPage> {
     //LISTA DE OPTIONS PARA O CARD PERTO DE VOCE
     List<Map<String, dynamic>> pages = [
       {
-        'descricao':"Gerenciar suas peladas nunca foi tão fácil! Com uma gama de funcionalidades e uma interface amigável e intuitiva, suas peladas nunca mais serão as mesmas.",
-        'animation':AppAnimations.introducaoCelular
+        'title':"Gerenciar suas peladas nunca foi tão fácil!",
+        'descricao':"Com uma gama de funcionalidades e uma interface amigável e intuitiva, suas peladas nunca mais serão as mesmas.",
+        'animation':AppAnimations.introductionPhone
       },
       {
-        'descricao':"Ta afim de um Fut ? Encontre peladas rolando na sua redondeza em tempo real ou marcadas para acontecer em alguma data ou local especifico.",
-        'animation':AppAnimations.introducaoEstadio
+        'title':"Ta afim de um Fut ?",
+        'descricao':"Encontre peladas rolando na sua redondeza em tempo real ou marcadas para acontecer em alguma data ou local especifico.",
+        'animation':AppAnimations.introductionEscalation
       },
       {
-        'descricao':"No Futzada, você pode mostrar que não é o craque apenas em campo mas também com a prancheta. Monte o time ideal da pelada com os melhores na sua escalação.",
-        'animation':AppAnimations.introducaoTecnico
+        'title':"Quem manda é o professor!",
+        'descricao':"No Futzada, você pode mostrar que é o craque também com a prancheta. Monte o time ideal da pelada com os melhores na sua escalação.",
+        'animation':AppAnimations.introductionManager
       },
       {
-        'descricao':"Você por acaso é o craque da pelada ? Prove que é o melhor com a bola no pé demonstrando toda sua habilidade pontuando com suas ações em campo.",
-        'animation':AppAnimations.introducaoJogador
+        'title': "Você é o craque da pelada ?",
+        'descricao':"Prove que é o melhor com a bola no pé demonstrando toda sua habilidade pontuando com suas ações em campo.",
+        'animation':AppAnimations.introductionPlayer
       }
     ];
+
+    Widget? buildIndicator() {
+      if(currentPage > 0){
+        //VERIFICAR PAGINA ATUAL
+        return Container(
+          padding: const EdgeInsets.all(15),
+          color: AppColors.green_300,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ButtonOutlineWidget(
+                text: "Pular",
+                width: 100,
+                action: () => Get.toNamed('/home'),
+              ),
+              SmoothPageIndicator(
+                controller: pageController,
+                count: 5,
+                effect: const ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: AppColors.blue_500,
+                  dotColor: AppColors.white,
+                  expansionFactor: 2,
+                ),
+              ),
+              ButtonTextWidget(
+                text: currentPage == 4 ? "Começar" : null,
+                textColor: AppColors.white,
+                icon: currentPage != 4 ? Icons.chevron_right : null,
+                iconSize: 30,
+                iconAfter: true,
+                backgroundColor: AppColors.blue_500,
+                width: currentPage == 4 ? 100 : null,
+                action: () {
+                  if(currentPage != 4){
+                    alterPage(context, "Proximo");
+                  }else{
+                    Get.toNamed('/home');
+                  }
+                }
+              ),
+            ],
+          ),
+        ); 
+      }
+      return null;
+    }
 
     return Scaffold(
       backgroundColor: AppColors.green_300,
@@ -84,60 +137,19 @@ class OnboardingPageState extends State<OnboardingPage> {
             WelcomePage(
               action: () => alterPage(context, "Proximo")
             ),
-            for(var i = 0; i < pages.length; i++)
-              IntroductionPage(
-                descricao: pages[i]['descricao'],
-                animation: pages[i]['animation'],
-                pageController: pageController,
-                action: () => alterPage(context, "Proximo")
-              ),
+            ...pages.map((item){
+              return
+                IntroductionPage(
+                  item: item,
+                  pageController: pageController,
+                  pageIndex: currentPage,
+                  action: () => alterPage(context, "Proximo")
+                );
+            }).toList()
           ],
         ),
       ),
-      bottomSheet: currentPage > 0 
-        ? Container(
-            padding: const EdgeInsets.all(15),
-            color: AppColors.green_300,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ButtonOutlineWidget(
-                  text: "Pular",
-                  width: 100,
-                  action: () => Get.toNamed('/home'),
-                ),
-                SmoothPageIndicator(
-                  controller: pageController,
-                  count: 5,
-                  effect: const ExpandingDotsEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    activeDotColor: AppColors.blue_500,
-                    dotColor: AppColors.white,
-                    expansionFactor: 2,
-                  ),
-                ),
-                ButtonTextWidget(
-                  text: currentPage == 4 ? "Começar" : null,
-                  textColor: AppColors.white,
-                  icon: currentPage != 4 ? Icons.chevron_right : null,
-                  iconSize: 30,
-                  iconAfter: true,
-                  backgroundColor: AppColors.blue_500,
-                  width: currentPage == 4 ? 100 : null,
-                  action: () {
-                    if(currentPage != 4){
-                      alterPage(context, "Proximo");
-                    }else{
-                      Get.toNamed('/home');
-                    }
-                  }
-                ),
-              ],
-            ),
-          )
-        : null
+      bottomSheet: buildIndicator()
     );
   }
 }

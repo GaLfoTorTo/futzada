@@ -104,11 +104,12 @@ class NavigationController extends GetxController {
       route: 'Escalação',
       titulo: 'Monte o sua equipe ideal da pelada',
       subTitulo: 'Escale os melhores jogadores da pelada para sua equipe e fique no topo dos rankings da pelada.',
-      buttonTitulo: 'Escalação',
-      buttonIcone: AppIcones.clipboard_solid,
-      viewTitulo: 'Histórico Partidas',
-      buttonAction: () => Get.toNamed('/escalation'),
-      outlineAction: () => print('navegar para Minhas escalações'),
+      buttonFirstText: 'Escalação',
+      buttonFirstIcon: AppIcones.clipboard_solid,
+      buttonSecoundText: 'Partida',
+      buttonSecoundIcon: AppIcones.escalacao_outline,
+      buttonFirstAction: () => Get.toNamed('/escalation'),
+      buttonSecoundAction: () => Get.toNamed('/game'),
     ),
     //APRENSENTAÇÃO PAGE PELADAS
     PresentationPageWidget(
@@ -116,11 +117,12 @@ class NavigationController extends GetxController {
       route: 'Peladas',
       titulo: 'Nunca foi tão facil organizar suas peladas',
       subTitulo: 'Sua pelada agora está na palma da suas mãos! Organize e gerencie suas peladas entre os amigos de forma simples e colaborativa.',
-      buttonTitulo: 'Criar nova pelada',
-      buttonIcone: LineAwesomeIcons.plus_circle_solid,
-      viewTitulo: 'Ver minhas peladas',
-      buttonAction: () => Get.toNamed('/event/register/event_basic'),
-      outlineAction: () => Get.toNamed('/event/my_events')
+      buttonFirstText: 'Criar nova pelada',
+      buttonFirstIcon: LineAwesomeIcons.plus_circle_solid,
+      buttonSecoundText: 'Ver minhas peladas',
+      buttonSecoundIcon: null,
+      buttonFirstAction: () => Get.toNamed('/event/register/event_basic'),
+      buttonSecoundAction: () => Get.toNamed('/event/my_events')
     ),
     //APRENSENTAÇÃO PAGE EXPLORE
     PresentationPageWidget(
@@ -128,11 +130,12 @@ class NavigationController extends GetxController {
       route: 'Explore',
       titulo: 'Encontre o Fut certo para você',
       subTitulo: 'Buscando por um futebol ? Encontrar jogos que estão rolando em tempo real ou que acontecem regularmente no local indicado.',
-      buttonIcone: AppIcones.compass_solid,
-      buttonTitulo: 'Ver no Mapa',
-      viewTitulo: 'Pesquisar manualmente',
-      buttonAction: () => Get.toNamed('/explore/mapa'),
-      outlineAction: () => print('navegar para Pesquisa manual'),
+      buttonFirstIcon: AppIcones.compass_solid,
+      buttonFirstText: 'Ver no Mapa',
+      buttonSecoundText: 'Pesquisar manualmente',
+      buttonSecoundIcon: null,
+      buttonFirstAction: () => Get.toNamed('/explore/mapa'),
+      buttonSecoundAction: () => print('navegar para Pesquisa manual'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO
     const NotificationPage()

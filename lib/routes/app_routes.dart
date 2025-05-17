@@ -1,4 +1,5 @@
 import 'package:futzada/pages/escalation/escalation_page.dart';
+import 'package:futzada/pages/escalation/historic_page.dart';
 import 'package:futzada/pages/escalation/market_page.dart';
 import 'package:futzada/pages/event/list/event_list.dart';
 import 'package:get/get.dart';
@@ -11,13 +12,13 @@ import 'package:futzada/pages/chat/private_chat.dart';
 import 'package:futzada/pages/event/register/event_basic_step.dart';
 import 'package:futzada/pages/event/register/event_address_step.dart';
 import 'package:futzada/pages/event/register/event_participants_step.dart';
-import 'package:futzada/pages/register/apresentacao_step.dart';
-import 'package:futzada/pages/register/register_basic_step.dart';
-import 'package:futzada/pages/register/modes_step.dart';
-import 'package:futzada/pages/register/player_mode_step.dart';
-import 'package:futzada/pages/register/manager_mode_step.dart';
-import 'package:futzada/pages/register/conclusion_step.dart';
-import 'package:futzada/pages/map/map_widget.dart';
+import 'package:futzada/pages/auth/register/apresentacao_step.dart';
+import 'package:futzada/pages/auth/register/register_basic_step.dart';
+import 'package:futzada/pages/auth/register/modes_step.dart';
+import 'package:futzada/pages/auth/register/player_mode_step.dart';
+import 'package:futzada/pages/auth/register/manager_mode_step.dart';
+import 'package:futzada/pages/auth/register/conclusion_step.dart';
+import 'package:futzada/pages/explore/map/map_widget.dart';
 
 class AppRoutes {
   static final routes = [
@@ -39,6 +40,7 @@ class AppRoutes {
       //ESCALAÇÃO
       GetPage(name: "/escalation", page: () => const EscalationPage()),
       GetPage(name: "/escalation/market", page: () => const MarketPage()),
+      GetPage(name: "/escalation/historic", page: () => const HistoricPage()),
       //EVENTS - CADASTRO 
       GetPage(name: "/event/register/event_basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),

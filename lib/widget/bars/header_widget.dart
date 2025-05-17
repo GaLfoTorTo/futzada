@@ -7,6 +7,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final IconData? leftIcon;
   final VoidCallback? rightAction;
   final IconData? rightIcon;
+  final VoidCallback? extraAction;
+  final IconData? extraIcon;
   final bool shadow;
 
   const HeaderWidget({
@@ -16,6 +18,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
     this.leftIcon = Icons.arrow_back, 
     this.rightAction, 
     this.rightIcon = Icons.close,
+    this.extraAction, 
+    this.extraIcon = Icons.history,
     this.shadow = true,
   });
 
@@ -37,14 +41,20 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
         icon: Icon(leftIcon),
         onPressed: leftAction
       ),
-      actions: rightAction != null
-        ? [
+      actions: [
+          if(extraAction != null)...[
+            IconButton(
+              icon: Icon(extraIcon),
+              onPressed: extraAction!,
+            )
+          ],
+          if(rightAction != null)...[
             IconButton(
               icon: Icon(rightIcon),
               onPressed: rightAction!,
             )
           ]
-        : [], 
+        ], 
       elevation: 8,
       shadowColor: shadow 
         ? AppColors.dark_500.withAlpha(100) 

@@ -14,11 +14,12 @@ class PresentationPageWidget extends StatelessWidget {
   final String route;
   final String titulo;
   final String subTitulo;
-  final String buttonTitulo;
-  final IconData buttonIcone;
-  final String viewTitulo;
-  final VoidCallback buttonAction;
-  final VoidCallback outlineAction;
+  final String buttonFirstText;
+  final IconData? buttonFirstIcon;
+  final String buttonSecoundText;
+  final IconData? buttonSecoundIcon;
+  final VoidCallback buttonFirstAction;
+  final VoidCallback buttonSecoundAction;
 
   const PresentationPageWidget({
     super.key,
@@ -26,11 +27,12 @@ class PresentationPageWidget extends StatelessWidget {
     required this.route,
     required this.titulo,
     required this.subTitulo,
-    required this.buttonTitulo,
-    required this.buttonIcone,
-    required this.viewTitulo, 
-    required this.buttonAction, 
-    required this.outlineAction, 
+    required this.buttonFirstText,
+    this.buttonFirstIcon,
+    required this.buttonSecoundText, 
+    this.buttonSecoundIcon, 
+    required this.buttonFirstAction, 
+    required this.buttonSecoundAction, 
   });
 
   @override
@@ -125,16 +127,17 @@ class PresentationPageWidget extends StatelessWidget {
                       Column(
                         children: [
                           ButtonTextWidget(
-                            text: buttonTitulo,
+                            text: buttonFirstText,
                             width: dimensions.width,
-                            icon: buttonIcone,
-                            action: buttonAction,
+                            icon: buttonFirstIcon,
+                            action: buttonFirstAction,
                           ),
                           const Padding(padding: EdgeInsets.all(10)),
                           ButtonOutlineWidget(
-                            text: viewTitulo,
+                            text: buttonSecoundText,
                             width: dimensions.width,
-                            action: outlineAction,
+                            icon: buttonSecoundIcon,
+                            action: buttonSecoundAction,
                           )
                         ],
                       )

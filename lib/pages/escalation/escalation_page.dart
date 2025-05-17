@@ -71,6 +71,8 @@ class EscalationPageState extends State<EscalationPage> {
         leftAction: () => Get.back(),
         rightAction: () => goToMarket(),
         rightIcon: Icons.shopping_cart,
+        extraAction: () => Get.toNamed('/escalation/historic'),
+        extraIcon: Icons.history,
         shadow: false,
       ),
       body: SafeArea(
