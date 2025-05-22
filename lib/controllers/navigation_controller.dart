@@ -106,10 +106,10 @@ class NavigationController extends GetxController {
       subTitulo: 'Escale os melhores jogadores da pelada para sua equipe e fique no topo dos rankings da pelada.',
       buttonFirstText: 'Escalação',
       buttonFirstIcon: AppIcones.clipboard_solid,
-      buttonSecoundText: 'Partida',
+      buttonSecoundText: 'Partidas',
       buttonSecoundIcon: AppIcones.escalacao_outline,
       buttonFirstAction: () => Get.toNamed('/escalation'),
-      buttonSecoundAction: () => Get.toNamed('/game'),
+      buttonSecoundAction: () => Get.toNamed('/games/list'),
     ),
     //APRENSENTAÇÃO PAGE PELADAS
     PresentationPageWidget(
@@ -122,7 +122,7 @@ class NavigationController extends GetxController {
       buttonSecoundText: 'Ver minhas peladas',
       buttonSecoundIcon: null,
       buttonFirstAction: () => Get.toNamed('/event/register/event_basic'),
-      buttonSecoundAction: () => Get.toNamed('/event/my_events')
+      buttonSecoundAction: () => Get.toNamed('/event/list')
     ),
     //APRENSENTAÇÃO PAGE EXPLORE
     PresentationPageWidget(

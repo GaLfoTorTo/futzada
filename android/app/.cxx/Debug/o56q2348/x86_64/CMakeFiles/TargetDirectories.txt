@@ -1,0 +1,2 @@
+C:/Users/galfo/Documents/Projetos/futzada/android/app/.cxx/Debug/o56q2348/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/galfo/Documents/Projetos/futzada/android/app/.cxx/Debug/o56q2348/x86_64/CMakeFiles/rebuild_cache.dir

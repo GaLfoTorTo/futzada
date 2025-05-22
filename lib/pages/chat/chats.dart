@@ -18,7 +18,7 @@ class ChatsPage extends StatefulWidget {
 
 class _ChatsPageState extends State<ChatsPage> {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  final controller = Get.find<ChatController>();
+  final controller = ChatController.instace;
 
   @override
   void initState() {
@@ -30,7 +30,42 @@ class _ChatsPageState extends State<ChatsPage> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR USUARIO LOGADO
-    UserModel user = Get.find<UserModel>(tag: 'user');
+    UserModel user = controller.user;
+
+    //FUNÇÃO PARA DEFINIR PREVIEW DE MENSAGENS NO CHAT
+    Widget previewMessages(List<dynamic> messages){
+      //RESGATAR ULTIMA MENSAGEM DO USUARIO  DO CHAT
+      var lastMessage = messages.last;
+      //VERIFICAR SE ULTIMA MENSAGEM FOI LIDA OU E DO USUARIO LOGADO
+      if(lastMessage['autor'] || lastMessage['readed']){
+        return Text(
+          lastMessage['text'],
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: AppColors.gray_300,
+            overflow: TextOverflow.ellipsis
+          ),
+        );
+      }else{
+        // CONTADOR DE MENSAGENS NÃO LIDAS
+        int countMessages = 1;
+        //LOOP NAS MENSAGENS
+        for (var entry in messages) {
+          //VERIFICAR SE MENSAGEM NÃO É DO USUARIO LOGADO E NÃO FOI LIDA
+          if (!entry['autor'] && !entry['readed']) {
+            countMessages++;
+          }else{
+            break;
+          }
+        }
+
+        return Text(
+          "$countMessages mensagens",
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            fontWeight: FontWeight.bold
+          ),
+        );
+      }
+    }
     
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -82,26 +117,40 @@ class _ChatsPageState extends State<ChatsPage> {
                     ],
                   ),
                 ),
-                for(var item in controller.friends)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5.0),
-                    child: TextButton(
-                      onPressed: () {},
-                      style: const ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(AppColors.white),
-                        padding: WidgetStatePropertyAll(EdgeInsets.all(15))
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
+                Obx(() {
+                  //RESGTATAR CHATS
+                  var chats = controller.chats;
+                  //VERIFICAR SE CHATS NÃO ESTÃO VAZIOS
+                  if (chats.isEmpty) {
+                    return const Center(
+                      child: Text("Nenhuma conversa iniciada."),
+                    );
+                  }
+
+                  return Column(
+                    children: chats.map((chat) {
+                      // RESGATAR USUARIO DO CHAT
+                      UserModel userChat = chat['user'];
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: TextButton(
+                          onPressed: () => Get.toNamed(
+                            "/chat_private",
+                            arguments: userChat,
+                          ),
+                          style: const ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(AppColors.white),
+                            padding: WidgetStatePropertyAll(EdgeInsets.all(15)),
+                          ),
+                          child: Row(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(right: 10.0),
                                 child: ImgCircularWidget(
                                   height: 60,
                                   width: 60,
-                                  image: item['foto'],
+                                  image: userChat.photo,
                                 ),
                               ),
                               Column(
@@ -109,21 +158,24 @@ class _ChatsPageState extends State<ChatsPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    item['nome'],
+                                    "${userChat.firstName} ${userChat.lastName}",
                                     style: Theme.of(context).textTheme.titleSmall,
                                   ),
-                                  Text(
-                                    "4 mensagens",
-                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
-                                  ),
+                                  if(chat['messages'].length > 0)...[
+                                    Container(
+                                      width: dimensions.width - 150,
+                                      child: previewMessages(chat['messages'])
+                                    ),
+                                  ]
                                 ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
+                      );
+                    }).toList(),
+                  );
+                })
               ]
             ),
           ),

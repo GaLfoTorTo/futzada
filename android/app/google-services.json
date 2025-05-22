@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "974765527307",
     "project_id": "futzada-fc3bf",
-    "storage_bucket": "futzada-fc3bf.appspot.com"
+    "storage_bucket": "futzada-fc3bf.firebasestorage.app"
   },
   "client": [
     {
@@ -14,16 +14,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "974765527307-kkdmste80t4bd8fcmub78k6ia9t5lgap.apps.googleusercontent.com",
+          "client_id": "974765527307-g7bo2vrgq5f7doo3s0uns3sbsg7ba08e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.futzada",
-            "certificate_hash": "fdfc4f58c3044c52dac7232e1f4eb8ad6e7c7ae1"
+            "certificate_hash": "fd49d467c38d7297b6c4fcf2ef70b68eee8e28fd"
           }
-        },
-        {
-          "client_id": "974765527307-avcsm1kimbf69hmqn4ib84qap3jn9dl8.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -33,12 +29,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "974765527307-avcsm1kimbf69hmqn4ib84qap3jn9dl8.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

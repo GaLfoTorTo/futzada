@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
 
 class InputTextWidget extends StatefulWidget {
-  final String name;
+  final String? name;
   final String? label;
   final String? hint;
   final IconData? sufixIcon;
@@ -20,7 +20,7 @@ class InputTextWidget extends StatefulWidget {
 
   const InputTextWidget({
     super.key,
-    required this.name, 
+    this.name, 
     this.label,
     this.hint,
     this.sufixIcon,
@@ -34,7 +34,7 @@ class InputTextWidget extends StatefulWidget {
     this.validator,
     this.showModal,
     required this.textController, 
-    required this.controller, 
+    this.controller, 
   });
 
   @override

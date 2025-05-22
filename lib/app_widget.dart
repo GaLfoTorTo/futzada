@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/routes/app_routes.dart';
 import 'package:futzada/theme/app_themes.dart';
@@ -10,6 +11,8 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //INICIALIZAR CONTROLLER DE AUTENTICAÇÃO
+    Get.put(AuthController());
     //INICIALIZAR CONTROLLER DE NAVEGAÇÃO
     Get.put(NavigationController(), permanent: true);
     //INSTANCIAR O GETSTORAGE

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/explorer_controller.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -48,6 +49,8 @@ class PresentationPageWidget extends StatelessWidget {
       case 'Escalação':
         //INICIALIZAR CONTROLLER DE ESCALÇAO
         Get.put(EscalationController());
+        //INICIALIZAR CONTROLLER DE GAME
+        Get.put(GameController());
         break;
       case 'Explore':
         //INICIALIZAR CONTROLLER DE EXPLORER

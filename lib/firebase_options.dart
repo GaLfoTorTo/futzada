@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '974765527307',
     projectId: 'futzada-fc3bf',
     authDomain: 'futzada-fc3bf.firebaseapp.com',
-    storageBucket: 'futzada-fc3bf.appspot.com',
+    storageBucket: 'futzada-fc3bf.firebasestorage.app',
     measurementId: 'G-GXZKSHKZMQ',
   );
 
@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
     appId: '1:974765527307:android:30eff61f9a0dd65ca3d20e',
     messagingSenderId: '974765527307',
     projectId: 'futzada-fc3bf',
-    storageBucket: 'futzada-fc3bf.appspot.com',
+    storageBucket: 'futzada-fc3bf.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -63,9 +63,8 @@ class DefaultFirebaseOptions {
     appId: '1:974765527307:ios:c257b57c73ad6116a3d20e',
     messagingSenderId: '974765527307',
     projectId: 'futzada-fc3bf',
-    storageBucket: 'futzada-fc3bf.appspot.com',
-    androidClientId: '974765527307-kkdmste80t4bd8fcmub78k6ia9t5lgap.apps.googleusercontent.com',
-    iosClientId: '974765527307-m0bsqal4dgdef22lrhtafeoomhpigh6d.apps.googleusercontent.com',
+    storageBucket: 'futzada-fc3bf.firebasestorage.app',
+    androidClientId: '974765527307-g7bo2vrgq5f7doo3s0uns3sbsg7ba08e.apps.googleusercontent.com',
     iosBundleId: 'com.example.futzada',
   );
 
@@ -74,9 +73,8 @@ class DefaultFirebaseOptions {
     appId: '1:974765527307:ios:c257b57c73ad6116a3d20e',
     messagingSenderId: '974765527307',
     projectId: 'futzada-fc3bf',
-    storageBucket: 'futzada-fc3bf.appspot.com',
-    androidClientId: '974765527307-kkdmste80t4bd8fcmub78k6ia9t5lgap.apps.googleusercontent.com',
-    iosClientId: '974765527307-m0bsqal4dgdef22lrhtafeoomhpigh6d.apps.googleusercontent.com',
+    storageBucket: 'futzada-fc3bf.firebasestorage.app',
+    androidClientId: '974765527307-g7bo2vrgq5f7doo3s0uns3sbsg7ba08e.apps.googleusercontent.com',
     iosBundleId: 'com.example.futzada',
   );
 
@@ -86,7 +84,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '974765527307',
     projectId: 'futzada-fc3bf',
     authDomain: 'futzada-fc3bf.firebaseapp.com',
-    storageBucket: 'futzada-fc3bf.appspot.com',
+    storageBucket: 'futzada-fc3bf.firebasestorage.app',
     measurementId: 'G-C4DP23ZFP0',
   );
+
 }

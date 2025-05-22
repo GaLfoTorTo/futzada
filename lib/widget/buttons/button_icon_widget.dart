@@ -26,6 +26,24 @@ class ButtonIconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //FUNÇÃO PARA RETORNAR ICONE 
+    Widget iconBuilder(){
+      if(icon is String){
+        return SvgPicture.asset(
+          icon!,
+          width: iconSize ?? double.infinity,
+          height: iconSize ?? double.infinity,
+          color: iconColor,
+        );
+      }else{
+        return Icon(
+          icon!,
+          size: iconSize,
+          color: iconColor,
+        );
+      }
+    }
+
     return InkWell(
       onTap: disabled! ? null : action,
       splashColor: Colors.transparent,
@@ -39,14 +57,7 @@ class ButtonIconWidget extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: icon is String 
-            ? SvgPicture.asset(
-              icon!,
-              width: iconSize ?? double.infinity,
-              height: iconSize ?? double.infinity,
-              color: iconColor,
-            )
-            : Icon(icon!),
+          child: iconBuilder()
         ),
       ),
     );

@@ -2,13 +2,15 @@ import 'package:futzada/pages/escalation/escalation_page.dart';
 import 'package:futzada/pages/escalation/historic_page.dart';
 import 'package:futzada/pages/escalation/market_page.dart';
 import 'package:futzada/pages/event/list/event_list.dart';
+import 'package:futzada/pages/games/game_detail_page.dart';
+import 'package:futzada/pages/games/games_list_page%20.dart';
 import 'package:get/get.dart';
 import 'package:futzada/pages/splash_page.dart';
 import 'package:futzada/pages/auth/login_page.dart';
 import 'package:futzada/pages/onboarding/onboarding_page.dart';
 import 'package:futzada/pages/app_base.dart';
 import 'package:futzada/pages/chat/chats.dart';
-import 'package:futzada/pages/chat/private_chat.dart';
+import 'package:futzada/pages/chat/chat_private.dart';
 import 'package:futzada/pages/event/register/event_basic_step.dart';
 import 'package:futzada/pages/event/register/event_address_step.dart';
 import 'package:futzada/pages/event/register/event_participants_step.dart';
@@ -36,17 +38,20 @@ class AppRoutes {
       GetPage(name: "/home", page: () => const AppBase()),
       //CHAT
       GetPage(name: "/chats", page: () => const ChatsPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/private_chat", page: () => const PrivateChatPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/chat_private", page: () => const ChatPrivatePage(), transition: Transition.rightToLeft),
       //ESCALAÇÃO
       GetPage(name: "/escalation", page: () => const EscalationPage()),
       GetPage(name: "/escalation/market", page: () => const MarketPage()),
       GetPage(name: "/escalation/historic", page: () => const HistoricPage()),
+      //PARTIDAS
+      GetPage(name: "/games/list", page: () => const GamesListPage()),
+      GetPage(name: "/games/game_detail", page: () => const GameDetailPage()),
       //EVENTS - CADASTRO 
       GetPage(name: "/event/register/event_basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_participants", page: () => const EventParticipantsStep(), transition: Transition.rightToLeft),
       //EVENTS - LISTA
-      GetPage(name: "/event/my_events", page: () => const EventListPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
       //EXPLORE MAPA
       GetPage(name: "/explore/mapa", page: () => const MapaPage(), transition: Transition.rightToLeft),
   ];

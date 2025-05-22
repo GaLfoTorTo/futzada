@@ -31,7 +31,7 @@ class _HistoricPageState extends State<HistoricPage> {
             child: Column(
               children: [
                 Obx(() {
-                  var 
+                  
                   return Column(
                     children: controller.myEscalations.map((entry) {
                       //RESGATAR ITENS 
