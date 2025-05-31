@@ -40,7 +40,7 @@ class RegisterController extends GetxController {
   }
 
   void onSaved(Map<String, dynamic> updates) {
-    model = model.copyWithMap(updates: updates);
+    //model = model.copyWithMap(updates: updates);
   }
 
   Future<Map<String, dynamic>> registerUser() async {

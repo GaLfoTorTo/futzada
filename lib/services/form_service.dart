@@ -4,9 +4,9 @@ import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/helpers/app_helper.dart';
 
 class FormService {
-
+  //FUNÇÃO DE ENVIO DE FORMULÁRIO (COM IMAGENS NA REQUISIÇÃO)
   static Future<Map<String, dynamic>> sendForm(model, options, url) async {
-    //TENTAR SALVAR USUÁRIO
+    //TENTAR ENVIAR DADOS
     try {
       //INSTANCIAR DIO
       var dio = Dio.Dio();
@@ -52,9 +52,9 @@ class FormService {
     }
   }
 
-  //FUNÇÃO DE ENVIO DE FORMULÁRIO PARA API
+  //FUNÇÃO DE ENVIO DE FORMULÁRIO
   static Future<Map<String, dynamic>> sendData(data, options, url) async {
-    //TENTAR SALVAR USUÁRIO
+    //TENTAR ENVIAR DADOS
     try {
       //INSTANCIAR DIO
       var dio = Dio.Dio();
@@ -84,6 +84,7 @@ class FormService {
     }
   }
 
+  //FUNÇÃO DE CONFIGURAÇÕES DE HEADERS 
   static Future<Map<String, dynamic>>setOption(user) async {
     //VERIFICAR SE USARIO ESTA LOGADO
     if(user != null){

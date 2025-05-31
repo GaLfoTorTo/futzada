@@ -6,19 +6,19 @@ import 'package:futzada/models/player_model.dart';
 import 'package:futzada/enum/enums.dart';
 
 class UserModel {
-  final int? id;
-  final String? uuid;
-  final String? firstName;
-  final String? lastName;
-  final String? userName;
-  final String? email;
-  final String? bornDate;
-  final String? phone;
-  final VisibilityPerfil? visibility;
-  final String? photo;
-  final String? token;
-  final PlayerModel? player;
-  final ManagerModel? manager;
+  int? id;
+  String? uuid;
+  String? firstName;
+  String? lastName;
+  String? userName;
+  String? email;
+  String? bornDate;
+  String? phone;
+  VisibilityPerfil? visibility;
+  String? photo;
+  String? token;
+  PlayerModel? player;
+  ManagerModel? manager;
 
   UserModel({
     this.id,
@@ -68,48 +68,6 @@ class UserModel {
     );
   }
 
-  UserModel copyWithMap({
-    Map<String, dynamic>? updates,
-  }) {
-    return UserModel(
-      id: updates?['id'] ?? id,
-      uuid: updates?['uuid'] ?? uuid,
-      firstName: updates?['firstName'] ?? firstName,
-      lastName: updates?['lastName'] ?? lastName,
-      userName: updates?['userName'] ?? userName,
-      email: updates?['email'] ?? email,
-      bornDate: updates?['bornDate'] ?? bornDate,
-      phone: updates?['phone'] ?? phone,
-      visibility: updates?['visibility'] ?? visibility,
-      photo: updates?['photo'] ?? photo,
-      token: updates?['token'] ?? token,
-      // ATUALIZANDO PLAYER
-      player: PlayerModel(
-        user: this,
-        bestSide: updates?['player.bestSide'] ?? player?.bestSide,
-        type: updates?['player.type'] ?? player?.type,
-        positions: updates?['player.positions'] ?? player?.positions,
-        mainPosition: updates?['player.mainPosition'] ?? player?.mainPosition,
-        currentPontuation: updates?['player.currentPontuation'] ?? player?.currentPontuation,
-        lastPontuation: updates?['player.lastPontuation'] ?? player?.lastPontuation,
-        media: updates?['player.media'] ?? player?.media,
-        price: updates?['player.price'] ?? player?.price,
-        valorization: updates?['player.valorization'] ?? player?.valorization,
-        games: updates?['player.games'] ?? player?.games,
-        status: updates?['player.status'] ?? player?.status,
-      ),
-      // ATUALIZANDO MANAGER
-      manager: ManagerModel(
-        team: updates?['manager.team'] ?? manager?.team,
-        alias: updates?['manager.alias'] ?? manager?.alias,
-        primary: updates?['manager.primary'] ?? manager?.primary,
-        secondary: updates?['manager.secondary'] ?? manager?.secondary,
-        emblem: updates?['manager.emblem'] ?? manager?.emblem,
-        uniform: updates?['manager.uniform'] ?? manager?.uniform,
-      ),
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -143,8 +101,12 @@ class UserModel {
         : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       token: map['token'] != null ? map['token'] as String : null,
-      player: map['player'] != null ? PlayerModel.fromMap(map['player'] as Map<String,dynamic>) : null,
-      manager: map['manager'] != null ? ManagerModel.fromMap(map['manager'] as Map<String,dynamic>) : null,
+      player: map['player'] != null 
+        ? PlayerModel.fromMap(map['player'] as Map<String, dynamic>) 
+        : null,
+      manager: map['manager'] != null 
+        ? ManagerModel.fromMap(map['manager'] as Map<String, dynamic>) 
+        : null,
     );
   }
 

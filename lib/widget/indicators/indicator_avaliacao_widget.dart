@@ -3,45 +3,62 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
 class IndicatorAvaliacaoWidget extends StatelessWidget {
-  final double estrelas;
+  final double avaliation;
+  final double? width;
+  final double? starSize;
+
   const IndicatorAvaliacaoWidget({
     super.key,
-    required this.estrelas
+    required this.avaliation,
+     this.width = 100,
+     this.starSize = 20
   });
 
   @override
   Widget build(BuildContext context) {
-    //DEFINIR COR DA ESTRELA
-    Color numEstrelas(int i){
-      if(estrelas >= i){
-        return AppColors.yellow_500;
+    //DEFINIR ICON DE ESTRELA APARTIR DA NOTA DE AVALIAÇÃO
+    IconData getIconStar(int index) {
+      if (avaliation >= index) {
+        return AppIcones.star_solid;
+      } else if (avaliation >= index - 0.5) {
+        return AppIcones.star_half_solid;
+      } else {
+        return AppIcones.star_solid;
       }
-      return AppColors.gray_300;
     }
 
     return SizedBox(
-      width: 100,
+      width: width,
       child: Row(
         children: [
-          for(var i = 1; i <= 5; i ++)
+          for(var i = 1; i <= 5; i ++)...[
             Stack(
+              alignment: Alignment.centerLeft,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(2),
                   child: Icon(
                     AppIcones.star_solid,
-                    size: 20,
-                    color: numEstrelas(i),
+                    size: starSize,
+                    color: AppColors.gray_300,
                   ),
                 ),
-                if(estrelas + 1 > i && estrelas.toInt() != 0)
-                  const Icon(
-                    AppIcones.star_half_solid,
-                    size: 20,
-                    color: AppColors.yellow_500,
+                if (avaliation >= i || (avaliation >= i - 0.5 && avaliation < i))...[
+                  Positioned(
+                    right: getIconStar(i) == AppIcones.star_half_solid ? 4 : 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Icon(
+                        getIconStar(i),
+                        size: starSize,
+                        color: AppColors.yellow_500,
+                      ),
+                    ),
                   ),
+                ]
               ]
             ),
+          ]
         ],
       ),
     );

@@ -11,15 +11,15 @@ import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
-class MarketDialogWidget extends StatefulWidget {
+class MarketDialog extends StatefulWidget {
 
-  const MarketDialogWidget({super.key});
+  const MarketDialog({super.key});
 
   @override
-  State<MarketDialogWidget> createState() => PlayerDialogWidgetState();
+  State<MarketDialog> createState() => MarketDialogState();
 }
 
-class PlayerDialogWidgetState extends State<MarketDialogWidget> {
+class MarketDialogState extends State<MarketDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   var controller = EscalationController.instace;
 

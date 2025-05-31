@@ -37,6 +37,7 @@ class ButtonDropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       width: width,
       alignment: aligment == 'center' ? Alignment.center : null,
@@ -50,10 +51,11 @@ class ButtonDropdownWidget extends StatelessWidget {
       child: DropdownButton<dynamic>(
         value: selectedItem,
         onChanged: (dynamic newValue) => onChange(newValue),
-        style: TextStyle(
+        style: Theme.of(context).textTheme.displayMedium!.copyWith(
           color: textColor,
-          fontSize: textSize
+          fontSize: textSize,
         ),
+        isExpanded: true,
         dropdownColor: color,
         icon: icon ? const SizedBox.shrink() : null,
         iconSize: iconSize != null ? iconSize! : 0,
@@ -80,8 +82,8 @@ class ButtonDropdownWidget extends StatelessWidget {
                   if(item is Map<String, dynamic> && !iconAfter)...[
                     if(item.containsKey('photo'))...[
                       ImgCircularWidget(
-                        width: 20, 
-                        height: 20,
+                        width: 30, 
+                        height: 30,
                         image: item['photo'],
                       ),
                     ]else...[
@@ -91,12 +93,16 @@ class ButtonDropdownWidget extends StatelessWidget {
                       )
                     ]
                   ],
-                  Padding(
-                    padding: iconAfter ? const EdgeInsets.only(right: 5) : const EdgeInsets.only(left: 5),
-                    child: Text(
-                      optionTitle,
-                      style: const TextStyle(
-                        overflow: TextOverflow.ellipsis
+                  Expanded(
+                    child: Padding(
+                      padding: iconAfter
+                          ? const EdgeInsets.only(right: 5)
+                          : const EdgeInsets.only(left: 5),
+                      child: Text(
+                        optionTitle,
+                        style: Theme.of(context).textTheme.displayMedium,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,12 +13,12 @@ import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class CardPlayerMarketWidget extends StatefulWidget {
-  final PlayerModel player;
+  final ParticipantModel participant;
   final Map<int, dynamic> escalation;
   
   const CardPlayerMarketWidget({
     super.key,
-    required this.player,
+    required this.participant,
     required this.escalation,
   });
 
@@ -42,7 +43,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player.mainPosition]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.participant.user.player!.mainPosition]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -54,7 +55,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
   Map<String, dynamic> setButtonBuy(PlayerModel player){
     //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-    if(player.price! > controller.userPatrimony.value){
+    if(player.rating!.price! > controller.managerPatrimony.value){
       return{
         'text':'Comprar',
         'color' : AppColors.gray_300,
@@ -62,7 +63,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
       };
     }
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
-    final isEscaled = controller.findPlayerEscalation(player.id!);
+    final isEscaled = controller.findPlayerEscalation(player.id!, );
     //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
     if(isEscaled){
       return{
@@ -91,22 +92,23 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     
+    //RESGATAR PARTICIPANT
+    ParticipantModel participant = widget.participant;
     //RESGATAR JOGADOR
-    PlayerModel player = widget.player;
-    
+    PlayerModel player = participant.user.player!;
     //RESGTAR JOGADOR COMO MAP
-    Map<String, dynamic> playerMap = widget.player.toMap();
+    Map<String, dynamic> playerMap = player.toMap();
     
     //RESGATAR POSIÇÕES DO JOGADOR
     List<dynamic> playerPositions = jsonDecode(player.positions);
     
     //REMOVER POSIÇÃO PRINCIPAL DO ARRAY
     playerPositions.remove(player.mainPosition);
-    
+    //MAP DE STATUS
     //LISTA DE METRICAS DO CARD
     Map<String, dynamic> metrics = {
-      'lastPontuation':'Última pontuação', 
-      'media': 'Media',
+      'points':'Última pontuação', 
+      'avarage': 'Media',
       'games':'jogos'
     };
 
@@ -143,7 +145,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                     ImgCircularWidget(
                       height: 80,
                       width: 80,
-                      image: player.user.photo,
+                      image: participant.user.photo,
                       borderColor: AppColors.gray_300,
                     ),
                     Padding(
@@ -156,7 +158,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                             width: (dimensions.width / 2) - 50,
                             height: 25,
                             child: Text(
-                              "${player.user.firstName} ${player.user.lastName}",
+                              "${participant.user.firstName} ${participant.user.lastName}",
                               style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
                             ),
                           ),
@@ -164,7 +166,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                             width: (dimensions.width / 2) - 50,
                             height: 25,
                             child: Text(
-                              "@${player.user.userName}",
+                              "@${participant.user.userName}",
                               style: Theme.of(context).textTheme.bodySmall!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
                             ),
                           ),
@@ -211,8 +213,8 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                                 ),
                                 SizedBox(
                                   child:Icon(
-                                    AppHelper.setStatusPlayer(player.status)['icon'],
-                                    color: AppHelper.setStatusPlayer(player.status)['color'],
+                                    AppHelper.setStatusPlayer(participant.status)['icon'],
+                                    color: AppHelper.setStatusPlayer(participant.status)['color'],
                                     size: 20,
                                   ),
                                 )
@@ -231,9 +233,12 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                     spacing: 8,
                     children: [
                       ...metrics.entries.map((entry){
+                        //RESGATAR PARAMETRO DE RATING
                         final key = entry.key;
+                        //RESGATAR LABEL DE RATING
                         final label = entry.value;
-                        final itemWidth = key == 'lastPontuation' ? ( dimensions.width * 0.60 ) : ( dimensions.width * 0.3 ) - 5;
+                        final itemWidth = key == 'points' ? ( dimensions.width * 0.60 ) : ( dimensions.width * 0.3 ) - 5;
+
                         return Container(
                           width: itemWidth,
                           padding: const EdgeInsets.all(10),
@@ -245,8 +250,8 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                           child: Column(
                             children: [
                               Text(
-                                "${playerMap[key]}",
-                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[key])['color']),
+                                "${playerMap['rating'][key] != null ? playerMap['rating'][key] : 0.0}",
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap['rating'][key])['color']),
                               ),
                               Text(
                                 "$label",
@@ -276,7 +281,7 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
                       ),
                       Text(
-                        "${player.price}",
+                        "${player.rating!.price}",
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       Row(
@@ -285,14 +290,14 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: Text(
-                              "${player.valorization}",
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppHelper.setColorPontuation(player.valorization)['color'], fontWeight: FontWeight.bold),
+                              "${player.rating!.valuation}",
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppHelper.setColorPontuation(player.rating!.valuation)['color'], fontWeight: FontWeight.bold),
                             ),
                           ),
                           Icon(
-                            AppHelper.setColorPontuation(player.valorization)['icon'],
+                            AppHelper.setColorPontuation(player.rating!.valuation)['icon'],
                             size: 15,
-                            color: AppHelper.setColorPontuation(player.valorization)['color'],
+                            color: AppHelper.setColorPontuation(player.rating!.valuation)['color'],
                           )
                         ],
                       )

@@ -134,7 +134,7 @@ class NavigationController extends GetxController {
       buttonFirstText: 'Ver no Mapa',
       buttonSecoundText: 'Pesquisar manualmente',
       buttonSecoundIcon: null,
-      buttonFirstAction: () => Get.toNamed('/explore/mapa'),
+      buttonFirstAction: () => Get.toNamed('/explore/map'),
       buttonSecoundAction: () => print('navegar para Pesquisa manual'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO

@@ -2,6 +2,7 @@ import 'package:futzada/pages/escalation/escalation_page.dart';
 import 'package:futzada/pages/escalation/historic_page.dart';
 import 'package:futzada/pages/escalation/market_page.dart';
 import 'package:futzada/pages/event/list/event_list.dart';
+import 'package:futzada/pages/event/view/event_page.dart';
 import 'package:futzada/pages/games/game_detail_page.dart';
 import 'package:futzada/pages/games/games_list_page%20.dart';
 import 'package:get/get.dart';
@@ -50,9 +51,11 @@ class AppRoutes {
       GetPage(name: "/event/register/event_basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_participants", page: () => const EventParticipantsStep(), transition: Transition.rightToLeft),
+      //EVENTS - VIEW GERAL
+      GetPage(name: "/event/geral", page: () => const EventPage(), transition: Transition.rightToLeft),
       //EVENTS - LISTA
       GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
       //EXPLORE MAPA
-      GetPage(name: "/explore/mapa", page: () => const MapaPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/explore/map", page: () => const MapaPage(), transition: Transition.rightToLeft),
   ];
 }

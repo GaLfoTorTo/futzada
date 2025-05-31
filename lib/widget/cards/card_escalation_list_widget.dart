@@ -1,24 +1,24 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/models/player_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
-import 'package:futzada/widget/dialogs/player_dialog_widget.dart';
+import 'package:futzada/widget/dialogs/player_dialog.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:get/get.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 
 class CardEscalationListWidget extends StatefulWidget {
-  final PlayerModel? player;
+  final ParticipantModel? participant;
   final int index;
   final String namePosition;
   final String ocupation;
 
   const CardEscalationListWidget({
     super.key,
-    required this.player,
+    required this.participant,
     required this.index,
     required this.namePosition,
     required this.ocupation
@@ -41,9 +41,9 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      if(widget.player != null){
+      if(widget.participant != null){
         //RESGATAR STRING DE SVG DA POSIÇÃO DO USUARIO
-        var stringPosition = await AppHelper.mainPosition(AppIcones.posicao[widget.player!.mainPosition]);
+        var stringPosition = await AppHelper.mainPosition(AppIcones.posicao[widget.participant!.user.player!.mainPosition]);
         position = stringPosition;
         //RESGATAR SIGLA DE POSIÇÃO DO USUARIO
         positionAlias = widget.namePosition.characters.getRange(0,3).toLowerCase().toString();
@@ -69,7 +69,9 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
       //RESGATAR CONTROLLER
       final controller = EscalationController.instace;
       //RESGATAR JOGADOR NA ESCALAÇÃO
-      PlayerModel? player = controller.escalation[widget.ocupation]![widget.index];
+      ParticipantModel? participant = widget.ocupation == "starters" 
+          ? controller.starters[widget.index]
+          : controller.reserves[widget.index];
       
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -89,16 +91,16 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
         ),
         child: Column(
           children: [
-            if(player != null)...[
+            if(participant != null)...[
               InkWell(
-                onTap: () => Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true),
+                onTap: () => Get.bottomSheet(PlayerDialog(participant: participant), isScrollControlled: true),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ImgCircularWidget(
                       height: 80,
                       width: 80,
-                      image: player.user.photo,
+                      image: participant.user.photo,
                       borderColor: AppHelper.setColorPosition(positionAlias),
                     ),
                     Padding(
@@ -107,11 +109,11 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${player.user.firstName} ${player.user.lastName}",
+                            "${participant.user.firstName} ${participant.user.lastName}",
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           Text(
-                            "@${player.user.userName}",
+                            "@${participant.user.userName}",
                             style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
                           ),
                           SizedBox(
@@ -145,8 +147,8 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                       child: Padding(
                         padding: const EdgeInsets.all(10),
                         child: Icon(
-                          AppHelper.setStatusPlayer(player.status)['icon'],
-                          color: AppHelper.setStatusPlayer(player.status)['color'],
+                          AppHelper.setStatusPlayer(participant.status)['icon'],
+                          color: AppHelper.setStatusPlayer(participant.status)['color'],
                           size: 30,
                         ),
                       ),
@@ -184,7 +186,7 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
                     ),
                   ),
                   ButtonPlayerWidget(
-                    player: null,
+                    participant: null,
                     index: widget.index,
                     ocupation: widget.ocupation,
                     size: 50,

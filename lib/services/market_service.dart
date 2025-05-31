@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/enum/enums.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
 class MarketService {  
-  //FILTRO PADRÃO DE MERCADO
+  //ESTADO DE FILTRO PADRÃO DE MERCADO
   Map<String, dynamic> filtrosMarket = {
-    'status' : ['Ativo','Inativo','Duvida','Neutro'],
+    'status' : [PlayerStatus.Avaliable.name, PlayerStatus.Out.name, PlayerStatus.Doubt.name, PlayerStatus.None.name],
     'price' : 'Maior preço',
     'media' : '',
     'game' : '',
@@ -16,7 +17,7 @@ class MarketService {
     'positions' : [],
   };
 
-  //LISTA DE FILTROS DO MERCADO
+  //LISTA DE FILTROS DE METRICA DO MERCADO
   Map<String, List<Map<String, dynamic>>> filterOptions = {
     'price': [
       {
@@ -120,25 +121,25 @@ class MarketService {
     ],
     'status': [
       {
-        'id' : 'Ativo',
+        'id' : PlayerStatus.Avaliable.name,
         'title': 'Ativo',
         'color': AppColors.green_300,
         'icon': AppIcones.check_circle_solid
       },
       {
-        'id' : 'Inativo',
+        'id' : PlayerStatus.Out.name,
         'title': 'Inativo',
         'icon': AppIcones.times_circle_solid ,
         'color': AppColors.red_300, 
       },
       {
-        'id' : 'Duvida',
+        'id' : PlayerStatus.Doubt.name,
         'title': 'Duvida',
         'icon': AppIcones.question_circle_solid ,
         'color': AppColors.yellow_500, 
       },
       {
-        'id' : 'Neutro',
+        'id' : PlayerStatus.Doubt.name,
         'title': 'Neutro',
         'icon': Icons.minimize_rounded,
         'color': AppColors.gray_500, 
@@ -146,7 +147,7 @@ class MarketService {
     ],
   };
 
-  //LISTA DE FILTROS DO MERCADO
+  //LISTA DE FILTROS DE USUARIO DO MERCADO
   Map<String, List<Map<String, dynamic>>> filterPlayerOptions = {
     'nome': [
       {

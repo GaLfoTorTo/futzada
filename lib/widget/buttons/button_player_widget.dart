@@ -1,15 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/player_model.dart';
+import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/widget/dialogs/player_dialog_widget.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
+import 'package:futzada/widget/dialogs/player_dialog.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:get/get.dart';
 
 class ButtonPlayerWidget extends StatelessWidget {
-  final PlayerModel? player;
+  final ParticipantModel? participant;
   final String ocupation;
   final bool? capitan;
   final int? index;
@@ -20,7 +22,7 @@ class ButtonPlayerWidget extends StatelessWidget {
 
   const ButtonPlayerWidget({
     super.key,
-    this.player,
+    this.participant,
     required this.ocupation,
     this.capitan = false,
     this.index,
@@ -33,16 +35,16 @@ class ButtonPlayerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
-    void showDialogPlayer(PlayerModel? player) {
+    void showDialogPlayer(ParticipantModel? participant) {
       //RESGATAR CONTROLLER DE ESCALAÇÃO
       var controller = EscalationController.instace;
       //ATUALIZAR INDEX DE JOGADOR SELECIONADO
       controller.selectedPlayer.value = index ?? 0;
       controller.selectedOcupation.value = ocupation;
       //VERIFICAR SE JOGADOR NÃO É NULO
-      if(player != null){
+      if(participant != null){
         //CHAMAR DIALOG DO JOGADOR
-        Get.bottomSheet(PlayerDialogWidget(player: player), isScrollControlled: true);
+        Get.bottomSheet(PlayerDialog(participant: participant), isScrollControlled: true);
       }else{
         //RESGATAR POSIÇÃO SELECIONADA
         var position = controller.getPositionFromEscalation(index);
@@ -55,11 +57,14 @@ class ButtonPlayerWidget extends StatelessWidget {
     }
 
     //FUNÇÃO PARA DEFINIR BOTÃO DE JOGADOR
-    List<Widget> setPlayerButton(PlayerModel? player){
+    List<Widget> setPlayerButton(ParticipantModel? participant){
       //VERIFICAR SE JOGADOR FOI DEFINIDO
-      if(player != null){
+      if(participant != null){
+        //RESGATAR JOGADOR
+        PlayerModel player = participant.user.player!;
+
         return [
-          if(player.currentPontuation != null)...[
+          if(player.rating!.points != null)...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
@@ -74,33 +79,18 @@ class ButtonPlayerWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Row(
-                crossAxisAlignment: player.currentPontuation == 0 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "${player.currentPontuation}",
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: AppHelper.setColorPontuation(player.currentPontuation)['color'],
-                    ),
-                  ),
-                  Icon(
-                    AppHelper.setColorPontuation(player.currentPontuation)['icon'],
-                    size: 10,
-                    color: AppHelper.setColorPontuation(player.currentPontuation)['color'],
-                  ),
-                ],
-              ),
+              child: IndicatorValuationWidget(
+                points: player.rating!.points
+              )
             ),
           ],
           InkWell(
-            onTap: () => showDialogPlayer(player),
+            onTap: () => showDialogPlayer(participant),
             child:
               ImgCircularWidget(
                 height: size!,
                 width: size!,
-                image: player.user.photo,
+                image: participant.user.photo,
                 borderColor: borderColor,
               ),
           ),
@@ -113,7 +103,7 @@ class ButtonPlayerWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                "${player.user.firstName} ${player.user.lastName}",
+                "${participant.user.firstName} ${participant.user.lastName}",
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   fontSize: 10,
                   color: AppColors.white, 
@@ -126,7 +116,7 @@ class ButtonPlayerWidget extends StatelessWidget {
       }else{
         return [
           InkWell(
-            onTap: () => showDialogPlayer(player),
+            onTap: () => showDialogPlayer(participant),
             child: 
             Container(
               width: size,
@@ -158,10 +148,10 @@ class ButtonPlayerWidget extends StatelessWidget {
     }
 
     return Container(
-      height: player!= null ? size! + 50 : size,
+      height: participant!= null ? size! + 50 : size,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: setPlayerButton(player)
+        children: setPlayerButton(participant)
       ),
     );
   }

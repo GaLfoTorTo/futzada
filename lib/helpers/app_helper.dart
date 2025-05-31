@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:futzada/enum/enums.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/alerts/alert_widget.dart';
 import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 class AppHelper {
   //VERIFICAÇÃO DE COMPLEXIDADE DE SENHAS
@@ -63,6 +65,63 @@ class AppHelper {
     return svgString;
   }
   
+  //FUNÇÃO PARA RESGATAR COR PREDOMINANTE DA IMAGEM
+  static Future<Color> getDominantColor(String imageUrl) async {
+    try {
+      //RESGATAR IMAGEM 
+      final imageProvider = NetworkImage(imageUrl);
+      //GERAR PALETA DE CORES APARTIR DA IMAGEM
+      final paletteGenerator = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        size: const Size(200, 200), //TAMANHO DA IMAGEM PARA ANALISE
+        maximumColorCount: 10, //NUMERO MAXIMO DE CORES A SEREM COLETADAS
+      );
+      //VERIFICAR SE FOI POSSIVEL GERAR A PALETA DE CORES
+      if (paletteGenerator.colors.isNotEmpty) {
+        //RESGATAR A PRIMERA COR DA PALETA DE CORES
+        return paletteGenerator.colors.first;
+      } else {
+        //COR PADÃO CASO NENHUMA COR TENHA SIDO SELECIONADA
+        return AppColors.dark_500;
+      }
+    } catch (e) {
+      //COR PADÃO CASO DE ERRO
+      return AppColors.dark_500;
+    }
+  }
+  
+  //ESCOLHER TOM MAIS CLARO DA COR
+  static Color brightnessColor(color){
+    var newKey; 
+    //LOOP NAS CORES
+    AppColors.colors.forEach((key, value){
+      //FILTRAR CORES DO TIPO 100
+      if(value == color){
+        newKey = key.split('_');
+      }
+    });
+    return AppColors.colors['${newKey[0]}']!;
+  }
+
+  //ESCOLHER A COR DO CARD ALEATORIAMENTE
+  static Color randomColor(){
+    //DEFINIR ARRAY DE ITEMS
+    List items = [];
+    //LOOP NAS CORES
+    AppColors.colors.forEach((key, value){
+      //FILTRAR CORES DO TIPO 100
+      if(key.contains('100')){
+        items.add(value);
+      }
+    });
+    //INSTANCIAR RANDOM
+    Random random = Random();
+    //SELECIONAR ITEM ALEATORIAMENTE
+    int i = random.nextInt(items.length);
+    //RETORNAR COR ALEATORIA
+    return items[i];
+  }
+  
   //FUNÇÃO PARA AJUSTAR A COR DA BORDAS DAS POSIÇÕES
   static Color setColorPosition(dynamic position){
     //VERIFICAR SE PLAYER NÃO ESTA VAZIO
@@ -84,6 +143,15 @@ class AppHelper {
     }else{
       return AppColors.white;
     }
+  }
+
+  //VERIFICAR SE EVENTO ESTA ACONTECENDO NO MOMENTO
+  static bool verifyInLive(event){
+    //CONVERTER DATA E HORARIO DO EVENTO
+    DateTime eventDateTimeStart = DateFormat("dd/MM/yyyy HH:mm").parse("${event.date} ${event.startTime}");
+    DateTime eventDateTimeEnd = DateFormat("dd/MM/yyyy HH:mm").parse("${event.date} ${event.endTime}");
+    //COMPARAR DATAS PARA VERIFICAÇÃO DE AO VIVO
+    return DateTime.now().isAfter(eventDateTimeStart) && DateTime.now().isBefore(eventDateTimeEnd);
   }
 
   //FUNÇÃO PARA RETORNAR COR DE PONTUAÇÃO
@@ -123,29 +191,29 @@ class AppHelper {
   }
 
   //FUNÇÃO PARA DEFINIR ICONE E COR DE STATUS DE JOGADOR
-  static Map<String, dynamic> setStatusPlayer(String status){
+  static Map<String, dynamic> setStatusPlayer(PlayerStatus status){
     //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
-    if(status == 'Ativo'){
-      return {
-        'color': AppColors.green_300,
-        'icon': AppIcones.check_circle_solid
-      };
-    //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
-    }else if(status == 'Inativo'){
-      return {
-        'color': AppColors.red_300, 
-        'icon': AppIcones.times_circle_solid 
-      };
-    }else if(status == 'Duvida'){
-      return {
-        'color': AppColors.yellow_500, 
-        'icon': AppIcones.question_circle_solid 
-      };
-    }else{
-      return {
-        'color': AppColors.gray_300, 
-        'icon': Icons.minimize_rounded 
-      };
+    switch (status) {
+      case PlayerStatus.Avaliable:
+        return {
+          'color': AppColors.green_300,
+          'icon': AppIcones.check_circle_solid
+        };
+      case PlayerStatus.Out:
+        return {
+          'color': AppColors.red_300, 
+          'icon': AppIcones.times_circle_solid 
+        };
+      case PlayerStatus.Doubt:
+        return {
+          'color': AppColors.yellow_500, 
+          'icon': AppIcones.question_circle_solid 
+        };
+      case PlayerStatus.None:
+        return {
+          'color': AppColors.gray_300, 
+          'icon': Icons.minimize_rounded 
+        };
     }
   }
 
@@ -323,38 +391,6 @@ class AppHelper {
       'height': dimensions.height,
     };
   }
-
-  //ESCOLHER TOM MAIS CLARO DA COR
-  static Color brightnessColor(color){
-    var newKey; 
-    //LOOP NAS CORES
-    AppColors.colors.forEach((key, value){
-      //FILTRAR CORES DO TIPO 100
-      if(value == color){
-        newKey = key.split('_');
-      }
-    });
-    return AppColors.colors['${newKey[0]}']!;
-  }
-
-  //ESCOLHER A COR DO CARD ALEATORIAMENTE
-   static Color randomColor(){
-      //DEFINIR ARRAY DE ITEMS
-      List items = [];
-      //LOOP NAS CORES
-      AppColors.colors.forEach((key, value){
-        //FILTRAR CORES DO TIPO 100
-        if(key.contains('100')){
-          items.add(value);
-        }
-      });
-      //INSTANCIAR RANDOM
-      Random random = Random();
-      //SELECIONAR ITEM ALEATORIAMENTE
-      int i = random.nextInt(items.length);
-      //RETORNAR COR ALEATORIA
-      return items[i];
-    }
 
   //FUNÇÃO PARA RESGATAR A ALTURA DA TELA
   static double screenHeight(BuildContext context){

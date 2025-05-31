@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/explorer_controller.dart';
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/dialogs/erro_escalation_dialog.dart';
 import 'package:get/get.dart';
 
 class PresentationPageWidget extends StatelessWidget {
@@ -40,6 +40,13 @@ class PresentationPageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLERDE NAVEGACAO DE TABS
     final navigationTab = Get.find<NavigationController>();
+    //DEFINIR VARAIVEL DE VERIFICAÇÃO DE USUARIO
+    bool canManager = false;
+    //FUNÇÃO DE MENSAGEM DE ERRO CASO O USUARIO NÃO POSSA ACESSAR 
+    void buttonErroAction(){
+      //EXIBIR DIALOG DE ERRO
+      Get.dialog(const ErroEscalationDialog());
+    }
     //VERIFICAR ROTA PARA INICIALIZAÇÃO DE CONTROLLER
     switch (route) {
       case 'Peladas':
@@ -48,9 +55,8 @@ class PresentationPageWidget extends StatelessWidget {
         break;
       case 'Escalação':
         //INICIALIZAR CONTROLLER DE ESCALÇAO
-        Get.put(EscalationController());
-        //INICIALIZAR CONTROLLER DE GAME
-        Get.put(GameController());
+        var controller = Get.put(EscalationController());
+        canManager = controller.canManager;
         break;
       case 'Explore':
         //INICIALIZAR CONTROLLER DE EXPLORER
@@ -133,7 +139,7 @@ class PresentationPageWidget extends StatelessWidget {
                             text: buttonFirstText,
                             width: dimensions.width,
                             icon: buttonFirstIcon,
-                            action: buttonFirstAction,
+                            action: canManager ? buttonFirstAction : buttonErroAction,
                           ),
                           const Padding(padding: EdgeInsets.all(10)),
                           ButtonOutlineWidget(

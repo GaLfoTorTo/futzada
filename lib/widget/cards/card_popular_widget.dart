@@ -65,7 +65,7 @@ class CardPopularWidget extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        IndicatorAvaliacaoWidget(estrelas: item['avaliacao'])
+                        IndicatorAvaliacaoWidget(avaliation: item['avaliacao'])
                       ],
                     ),
                   ),

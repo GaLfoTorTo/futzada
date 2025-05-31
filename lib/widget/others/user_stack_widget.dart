@@ -27,11 +27,12 @@ class UserStackWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: side == 'right' ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if(usuarios!.isNotEmpty && side == 'left' && icone != null)
+          if(usuarios!.isNotEmpty && side == 'left' && icone != null)...[
             Icon(
               icone!,
               color: AppColors.white,
             ),
+          ],
           Padding(
             padding: const EdgeInsets.all(5),
             child: Container(

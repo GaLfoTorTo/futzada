@@ -1,81 +1,47 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:get/get.dart';
-import 'package:futzada/models/player_model.dart';
 import 'package:faker/faker.dart';
+import 'package:futzada/enum/enums.dart';
+import 'package:futzada/services/rating_service.dart';
+import 'package:futzada/models/player_model.dart';
 
 class PlayerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
   static var faker = Faker();
   static var random = Random();
-  
-  //JOGADORES NO MERCADO
-  final RxList<PlayerModel> playersMarket = setPlayers();
-  
-  PlayerModel? findPlayer(dynamic id) {
-    return playersMarket.firstWhereOrNull((player) => player.id == id);
+
+  //INTANCIAR SERVICO DE RATING (PONTUAÇÃO)
+  RatingService ratingService = RatingService();
+
+  //FUNÇÃO DE GERAÇÃO DE JOGADOR
+  PlayerModel generatePlayer(i){
+    //DADOS DO JOGADOR
+    var num = random.nextInt(11);
+
+    //DEFINIR PLAYER
+    return PlayerModel.fromMap({
+      'id': i,
+      'bestSide': random.nextBool() ? 'Right' : 'Left',
+      'type': faker.lorem.sentence().toString(),
+      'mainPosition': getPositionFromEscalation(num),
+      'positions' : jsonEncode(setPositions()),
+      "rating" : ratingService.generateRating(Roles.Player).toMap(),
+    });
   }
 
   //FUNÇÃO PARA GERAR JOGADORES PARA MERCADO (TEMPORARIAMENTE)
-  static RxList<PlayerModel> setPlayers() {
+  RxList<PlayerModel> getPlayers() {
     //JUNTAR MAPS
-    final List<PlayerModel> map = [];
-    //LOOP PARA TITULARES
-    for (var i = 1; i <= 50; i++) {
-      //DADOS DO JOGADOR
-      var firstName = faker.person.firstName();
-      var lastName = faker.person.lastName();
-      var num = random.nextInt(11);
-      var numStatus = random.nextInt(3);
-      var bestSide = random.nextBool();
-      var type = faker.lorem.toString();
-
-      //DEFINIR PLAYER
-      PlayerModel player = PlayerModel.fromMap({
-        'id': i,
-        'user': {
-          'firstName': firstName,
-          'lastName': lastName,
-          'userName': "${firstName}_${lastName}",
-        },
-        'bestSide': bestSide ? 'Right' : 'Left',
-        'type': type,
-        'mainPosition': getPositionFromEscalation(num),
-        'positions' : jsonEncode(setPositions()),
-        'currentPontuation': 0.0,
-        'lastPontuation': double.parse(setValues(5.5, 30.5).toStringAsFixed(2)),
-        'media': double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
-        'price': double.parse(setValues(0.0, 30.5).toStringAsFixed(2)),
-        'valorization': double.parse(setValues(-5.5, 5.5).toStringAsFixed(2)),
-        'games': random.nextInt(50),
-        'photo': null,
-        'status': setStatus(numStatus),
-      });
+    final List<PlayerModel> arr = [];
+    //GERAR LISTA DE JOGADORES
+    List.generate(random.nextInt(100), (i){
       //ADICIONAR JOGADOR A LISTA
-      map.add(player);
-    }
-    return map.obs;
-  }
-
-  //FUNÇÃO PARA GERAÇÃO DE VALORES (TEMPORARIAMENTE)
-  static double setValues(double min, double max){
-    return min + random.nextDouble() * (max - min);
-  }
-
-  //FUNÇÃO PARA GERAR STATUS DINAMICAMENTE (TEMPORARIAMENTE)
-  static String setStatus(i){
-    switch (i) {
-      case 0:
-        return 'Inativo';
-      case 1:
-        return 'Ativo';
-      case 2:
-        return 'Duvida';
-      case 3:
-        return 'Neutro';
-      default:
-        return 'Neutro';
-    }
+      arr.add(
+        generatePlayer(i)
+      );
+    });
+    return arr.obs;
   }
 
   //FUNÇÃO PARA DEFINIR POSIÇÕES DO JOGADOR (TEMPORARIAMENTE)

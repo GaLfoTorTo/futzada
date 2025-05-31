@@ -1,9 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/models/avaliation_model.dart';
+import 'package:futzada/models/participant_model.dart';
 
 class EventModel {
-  final String? id;
+  final int? id;
   final String? uuid;
   final String? title;
   final String? bio;
@@ -19,12 +22,16 @@ class EventModel {
   final String? startTime;
   final String? endTime;
   final String? category;
-  final String? qtdPlayers;
+  final int? qtdPlayers;
   final VisibilityPerfil? visibility;
-  final String? allowCollaborators;
+  final bool? allowCollaborators;
   final String? permissions;
   final String? photo;
-  final String? participants;
+  final List<ParticipantModel>? participants;
+  final List<AvaliationModel>? avaliations;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? deletedAt;
   
   EventModel({
     this.id,
@@ -48,12 +55,15 @@ class EventModel {
     this.allowCollaborators,
     this.permissions,
     this.photo,
+    this.avaliations,
     this.participants,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
   });
 
-
   EventModel copyWith({
-    String? id,
+    int? id,
     String? uuid,
     String? title,
     String? bio,
@@ -69,16 +79,20 @@ class EventModel {
     String? startTime,
     String? endTime,
     String? category,
-    String? qtdPlayers,
+    int? qtdPlayers,
     VisibilityPerfil? visibility,
-    String? allowCollaborators,
+    bool? allowCollaborators,
     String? permissions,
     String? photo,
-    String? participants,
+    List<AvaliationModel>? avaliations,
+    List<ParticipantModel>? participants,
+    String? createdAt,
+    String? updatedAt,
+    String? deletedAt,
   }) {
     return EventModel(
-      id: id ?? this.id,
-      uuid: uuid ?? this.uuid,
+      id: this.id,
+      uuid: this.uuid,
       title: title ?? this.title,
       bio: bio ?? this.bio,
       address: address ?? this.address,
@@ -98,36 +112,11 @@ class EventModel {
       allowCollaborators: allowCollaborators ?? this.allowCollaborators,
       permissions: permissions ?? this.permissions,
       photo: photo ?? this.photo,
+      avaliations: avaliations ?? this.avaliations,
       participants: participants ?? this.participants,
-    );
-  }
-
-  EventModel copyWithMap({
-    Map<String, dynamic>? updates,
-  }) {
-    return EventModel(
-      id: updates?['id'] ?? id,
-      uuid: updates?['uuid'] ?? uuid,
-      title: updates?['title'] ?? title,
-      bio: updates?['bio'] ?? bio,
-      address: updates?['address'] ?? address,
-      number: updates?['number'] ?? number,
-      city: updates?['city'] ?? city,
-      state: updates?['state'] ?? state,
-      complement: updates?['complement'] ?? complement,
-      country: updates?['country'] ?? country,
-      zipCode: updates?['zipCode'] ?? zipCode,
-      daysWeek: updates?['daysWeek'] ?? daysWeek,
-      date: updates?['date'] ?? date,
-      startTime: updates?['startTime'] ?? startTime,
-      endTime: updates?['endTime'] ?? endTime,
-      category: updates?['category'] ?? category,
-      qtdPlayers: updates?['qtdPlayers'] ?? qtdPlayers,
-      visibility: updates?['visibility'] ?? visibility,
-      allowCollaborators: updates?['allowCollaborators'] ?? allowCollaborators,
-      permissions: updates?['permissions'] ?? permissions,
-      photo: updates?['photo'] ?? photo,
-      participants: updates?['participants'] ?? participants,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -154,13 +143,17 @@ class EventModel {
       'allowCollaborators': allowCollaborators,
       'permissions': permissions,
       'photo': photo,
-      'participants': participants,
+      'avaliations': avaliations,
+      'participants': participants!.map((x) => x.toMap()).toList(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'deletedAt': deletedAt,
     };
   }
 
   factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      id: map['id'] != null ? map['id'] as String : null,
+      id: map['id'] != null ? map['id'] as int : null,
       uuid: map['uuid'] != null ? map['uuid'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,
       bio: map['bio'] != null ? map['bio'] as String : null,
@@ -176,14 +169,22 @@ class EventModel {
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,
       category: map['category'] != null ? map['category'] as String : null,
-      qtdPlayers: map['qtdPlayers'] != null ? map['qtdPlayers'] as String : null,
+      qtdPlayers: map['qtdPlayers'] != null ? map['qtdPlayers'] as int : null,
       visibility: map['visibility'] != null
         ? VisibilityPerfil.values.firstWhere((e) => e.name == map['visibility'])
         : null,
-      allowCollaborators: map['allowCollaborators'] != null ? map['allowCollaborators'] as String : null,
+      allowCollaborators: map['allowCollaborators'] != null ? map['allowCollaborators'] as bool : null,
       permissions: map['permissions'] != null ? map['permissions'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
-      participants: map['participants'] != null ? map['participants'] as String : null,
+      participants: map['participants'] != null 
+        ? List<ParticipantModel>.from((map['participants'] as List<Map<String, dynamic>>).map<ParticipantModel?>((x) => ParticipantModel.fromMap(x),),) 
+        : null,
+      avaliations: map['avaliations'] != null 
+        ? List<AvaliationModel>.from((map['avaliations'] as List<Map<String, dynamic>>).map<AvaliationModel?>((x) => AvaliationModel.fromMap(x),),) 
+        : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
+      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as String : null,
     );
   }
 
@@ -193,7 +194,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, address: $address, number: $number, city: $city, state: $state, complement: $complement, country: $country, zipCode: $zipCode, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, category: $category, qtdPlayers: $qtdPlayers, visibility: $visibility, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, participants: $participants)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, address: $address, number: $number, city: $city, state: $state, complement: $complement, country: $country, zipCode: $zipCode, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, category: $category, qtdPlayers: $qtdPlayers, visibility: $visibility, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, avaliations: $avaliations, participants: $participants, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -222,7 +223,11 @@ class EventModel {
       other.allowCollaborators == allowCollaborators &&
       other.permissions == permissions &&
       other.photo == photo &&
-      other.participants == participants;
+      other.avaliations == avaliations &&
+      listEquals(other.participants, participants) &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -248,6 +253,10 @@ class EventModel {
       allowCollaborators.hashCode ^
       permissions.hashCode ^
       photo.hashCode ^
-      participants.hashCode;
+      avaliations.hashCode ^
+      participants.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

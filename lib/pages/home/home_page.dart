@@ -25,6 +25,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+    //RESGATAR USUARIO
+    user = Get.find<UserModel>(tag: 'user');
   }
 
   @override
@@ -53,10 +55,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   //EXIBIÇÃO DE CARREGAMENTO DE HOME PAGE
                   return const SkeletonHomeWidget();
                 } else if (snapshot.hasError) {
+                  //EXIBIR TELA DE ERRO
                   return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
-                  //RESGATAR USUARIO
-                  user = Get.find<UserModel>(tag: 'user');
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,

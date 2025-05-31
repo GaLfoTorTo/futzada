@@ -1,47 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/models/avaliation_model.dart';
+import 'package:futzada/services/event_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/services/form_service.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/models/event_model.dart';
 
 class EventController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
   static EventController get instace => Get.find();
-  //INSTANCIA DE PELADA MODEL
-  EventModel model = EventModel();
+  //INSTANCIAR MODEL DE ENVETOS
+  EventModel? model;
+  //INSTANCIAR SERVICE DE EVENTOS
+  EventService eventService = EventService();
   //lIST
   //*
   //*
   //*
   //LISTA DE EVENTOS
-  final RxList<Map<String, dynamic>> events = [
-    for(var i = 0; i <= 2; i++)
-      {
-        'uuid': i,
-        'title': 'Jeferson Vasconcelos',
-        'date' : 'Seg - Sex',
-        'startTime' : '17:00',
-        'endTime' : '18:30',
-        'location' : 'Brasília/DF',
-        'photo': AppImages.gramado,
-      },
-  ].obs;
+  List<EventModel> events = [];
   //LISTA DE EVENTOS SUGERIDOS
-  final RxList<Map<String, dynamic>> sugestions = [
-    for(var i = 0; i <= 1; i++)
-      {
-        'uuid': i,
-        'title': 'Jeferson Vasconcelos',
-        'date' : 'Seg - Sex',
-        'startTime' : '17:00',
-        'endTime' : '18:30',
-        'location' : 'Brasília/DF',
-        'photo': AppImages.userDefault,
-      },
-  ].obs;
+  List<EventModel> sugestions = [];
+  //EVENT
+  //*
+  //*
+  //*
+  //LISTA DE EVENTOS
+  List<Map<String, dynamic>> highlights = [];
+
+  @override
+  void onInit() {
+    super.onInit();
+    //INICIALIZAR CONTROLLER DE GAME
+    Get.put(GameController());
+    //RESGATAR PELADAS DO USUARIO
+    events = eventService.getEvents();
+    //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
+    sugestions = eventService.getEvents();
+    //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
+    highlights = eventService.getHighlightsEvent();
+  }
+
+  double getAvaliations(List<AvaliationModel>? avaliations){
+    //DEFINIR VALOR INICIAL DE AVALIAÇÕES
+    double avaliation = 0.0;
+    //VERIFICAR SE EXISTEM AVALIAÇÕES DO EVENTO
+    if(avaliations != null){
+      //CALCULAR MEDIA TOTAL DE AVALIAÇÃO DO EVENTOS
+      avaliations.map((item){
+        avaliation = avaliation + item.avaliation!;
+      });
+      //CALCULAR MEDIA DE AVALIAÇÃO
+      return avaliation / avaliations.length;
+    }
+    return avaliation;
+  }
   //REGISTER
   //*
   //*
@@ -169,8 +185,7 @@ class EventController extends GetxController {
   }
 
   void onSaved(Map<String, dynamic> updates) {
-    model = model.copyWithMap(updates: updates);
-    print(model);
+    //model = model!.copyWith(updates);
   }
 
   Future<Map<String, dynamic>> registerEvent() async {

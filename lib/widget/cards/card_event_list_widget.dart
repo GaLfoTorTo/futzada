@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/widget/indicators/indicator_live_widget.dart';
+import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:futzada/models/event_model.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_images.dart';
+import 'package:intl/intl.dart';
 
 class CardEventListWidget extends StatelessWidget {
   final double? height;
-  final dynamic event;
+  final EventModel event;
 
   const CardEventListWidget({
     super.key,
@@ -15,11 +22,15 @@ class CardEventListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //VERIFICAR SE O EVENTO ESTA ACONTECENDO AGORA
+    bool isLive = AppHelper.verifyInLive(event);
 
     return InkWell(
       onTap: () => {
-        print(("/event/geral/${event['uuid']}"))
-        //Get.toNamed("/event/geral/${event['uuid']}")
+        Get.toNamed(
+          "/event/geral",
+          arguments: event
+        )
       },
       child: Container(
         width: dimensions.width,
@@ -46,22 +57,10 @@ class CardEventListWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                 image: DecorationImage(
-                  /* image: item['photo'] != null 
-                    ? CachedNetworkImageProvider(item['photo']) 
-                    : AssetImage(item['photo']) as ImageProvider, */
-                    image: AssetImage(event['photo']) as ImageProvider,
+                  image: event.photo != null 
+                    ? CachedNetworkImageProvider(event.photo!) 
+                    : const AssetImage(AppImages.gramado) as ImageProvider,
                   fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              child: Text(
-                event['title'],
-                style: const TextStyle(
-                  color: AppColors.dark_500,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
@@ -71,14 +70,36 @@ class CardEventListWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Data: ${event['date']}",
+                    event.title!,
+                    style: const TextStyle(
+                      color: AppColors.dark_500,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if(isLive)...[
+                    const IndicatorLiveWidget(
+                      size: 15,
+                      color: AppColors.red_300,
+                    ),
+                  ]
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Data: ${event.date}",
                     style: const TextStyle(
                       color: AppColors.dark_500,
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                    event['location'],
+                    "${event.city}/${event.state}",
                     style: const TextStyle(
                       color: AppColors.dark_500,
                       fontSize: 12,
@@ -90,7 +111,7 @@ class CardEventListWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
               child: Text(
-                "Horário: ${event['startTime']} - ${event['endTime']}",
+                "Horário: ${event.startTime} - ${event.endTime}",
                 style: const TextStyle(
                   color: AppColors.dark_500,
                   fontSize: 12,

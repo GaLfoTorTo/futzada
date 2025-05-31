@@ -18,7 +18,7 @@ class NotificationView extends StatelessWidget {
     //RESGATAR CONTROLER DE NOTIFICAÇÕES
     var controller =  NotificationController.instace;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimentions = MediaQuery.of(context).size;
+    var dimensions = MediaQuery.of(context).size;
     //RESGATAR NOTIFICAÇÕES
     List<Map<String, dynamic>> notifications = controller.getNotifications(type);
     //ARRAY DE NOTIFICAÇÕES
@@ -48,12 +48,14 @@ class NotificationView extends StatelessWidget {
           )
         );
       }
+      //RESGATAR LISTA DE IMAGENS PARA NOTIFICAÇÃO
+      List<dynamic> imgNotification = [notification['image'][0], notification['image'][1]];
 
       //GERAR CARD DE NOTIFICAÇÃO
       notificationList.add(
         InkWell(
           child: Container(
-            width: dimentions.width,
+            width: dimensions.width,
             padding: const EdgeInsets.all(10),
             color: AppColors.white,
             child: Row(
@@ -63,7 +65,7 @@ class NotificationView extends StatelessWidget {
                   ImgGroupCircularWidget(
                     width: 70,
                     height: 70,
-                    images: notification['image'],
+                    images: imgNotification,
                   ),
                 ] else ...[
                   ImgCircularWidget(
@@ -72,29 +74,32 @@ class NotificationView extends StatelessWidget {
                     image: notification['image'],
                   ),
                 ],
-                Container(
-                  width: dimentions.width - 120,
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Text(
-                          notification['title'],
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: AppColors.blue_500,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Text(
+                            notification['title'],
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                              color: AppColors.blue_500,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        notification['description'],
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: AppColors.gray_500,
+                        Text(
+                          notification['description'],
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: AppColors.gray_500,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

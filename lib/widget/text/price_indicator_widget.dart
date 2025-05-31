@@ -41,7 +41,7 @@ class PriceIndicatorWidget extends StatelessWidget {
               ),
             ]
           )
-        )
+        ),
       ],
     );
   }

@@ -1,29 +1,29 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:get/get.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 
-class PlayerDialogWidget extends StatefulWidget {
-  final PlayerModel player;
+class PlayerDialog extends StatefulWidget {
+  final ParticipantModel participant;
 
-  const PlayerDialogWidget({
+  const PlayerDialog({
     super.key,
-    required this.player,
+    required this.participant,
   });
 
   @override
-  State<PlayerDialogWidget> createState() => PlayerDialogWidgetState();
+  State<PlayerDialog> createState() => PlayerDialogState();
 }
 
-class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
+class PlayerDialogState extends State<PlayerDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   var controller = EscalationController.instace;
   //CONTROLADOR DE POSICAO PRINCIPAL
@@ -34,7 +34,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   void initState() {
     super.initState();
     //RESGATAR CAPITÃO
-    isCapitan = controller.playerCapitan.value == widget.player.id;
+    isCapitan = controller.selectedPlayerCapitan.value == widget.participant.id;
     //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
     loadPosition();
   }
@@ -43,7 +43,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
   Future<void> loadPosition() async {
     //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
     try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.player.mainPosition]);
+      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.participant.user.player!.mainPosition]);
       position = string_position;
     } catch (e) {
       position = null;
@@ -71,11 +71,14 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     
-    //RESGATAR JOGADOR
-    PlayerModel player = widget.player;
+    //RESGATAR PARTICIPANTE
+    ParticipantModel participant = widget.participant;
+    
+    //RESGATAR DADOS DE JOGADOR DO PARTICIPANTE
+    PlayerModel player = participant.user.player!;
 
     //RESGTAR JOGADOR COMO MAP
-    Map<String, dynamic> playerMap = widget.player.toMap();
+    Map<String, dynamic> playerMap = player.toMap();
     
     //RESGATAR POSIÇÕES DO JOGADOR
     List<dynamic> playerPositions = jsonDecode(player.positions);
@@ -104,7 +107,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
         'price':false
       },
       {
-        'name':'media',
+        'name':'avarage',
         'label':'Média',
         'icon': AppIcones.chart_line_solid,
         'price':false
@@ -148,11 +151,11 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                       ImgCircularWidget(
                         height: 100,
                         width: 100,
-                        image: player.user.photo,
+                        image: participant.user.photo,
                         borderColor: AppHelper.setColorPosition(player.mainPosition),
                       ),
                       Text(
-                        "${player.user.firstName} ${player.user.lastName}",
+                        "${participant.user.firstName} ${participant.user.lastName}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -161,7 +164,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        "@${player.user.userName}",
+                        "@${participant.user.userName}",
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.gray_300,
@@ -194,7 +197,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                     ],
                   ),
                 ),
-                if(player.id == controller.playerCapitan.value)...[
+                if(participant.id == controller.selectedPlayerCapitan.value)...[
                   Positioned(
                     top: 70,
                     left: 80,
@@ -261,7 +264,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.yellow_300,
                   textColor: AppColors.dark_500,
-                  action: () => setPlayerPosition(player.id, 'setCapitan'),
+                  action: () => setPlayerPosition(participant.id, 'setCapitan'),
                 ),
                 ButtonTextWidget(
                   text: "Remover",
@@ -270,7 +273,7 @@ class PlayerDialogWidgetState extends State<PlayerDialogWidget> {
                   height: 30,
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
-                  action: () => setPlayerPosition(player.id, 'setPosition'),
+                  action: () => setPlayerPosition(participant.id, 'setPosition'),
                 ),
               ],
             ),

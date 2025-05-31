@@ -1,27 +1,25 @@
 import 'dart:math';
-import 'package:faker/faker.dart';
-import 'package:futzada/models/user_model.dart';
 import 'package:intl/intl.dart';
+import 'package:faker/faker.dart';
+import 'package:futzada/repository/user_repository.dart';
 
 class ChatService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
   static var faker = Faker();
   static var random = Random();
+
+  //INSTANCIAR SERVIÇO DE EVENTOS
+  UserRepository userRepository = UserRepository();
   
   //GENERATE CHATS
   List<Map<String, dynamic>> generateChats(){
-    List<Map<String, dynamic>> map = [];
+    //DEFINIR LISTA DE CHATS
+    List<Map<String, dynamic>> arr = [];
     //LOOP PARA TITULARES
-    for (var i = 1; i <= 50; i++) {
-      //ADICIONAR JOGADOR A LISTA
-      map.add({
-        'user': UserModel.fromMap({
-          'uuid' : "$i",
-          'firstName': faker.person.firstName(),
-          'lastName': faker.person.lastName(),
-          'userName': "${faker.person.firstName()}_${faker.person.lastName()}",
-          'photo': faker.image.loremPicsum()
-        }),
+    List.generate(50, (i){
+      //ADICIONAR CHAT A LISTA
+      arr.add({
+        'user': userRepository.generateUser(i, false).toMap(),
         'messages': List.generate(random.nextInt(20), (index) => {
           'text': faker.lorem.sentence().toString(),
           'autor': random.nextBool(),
@@ -30,8 +28,8 @@ class ChatService {
         }),
         'date': DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       });
-    }
+    });
     //RETORNAR LISTA DE NOTIFICAÇÕES
-    return map;
+    return arr;
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
 import 'package:futzada/widget/lists/escalation_list_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
@@ -31,7 +33,9 @@ class EscalationPageState extends State<EscalationPage> {
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(newValue){
     setState(() {
-      controller.selectedEvent = newValue;
+      //SELECIONAR EVENTO
+      controller.setEvent(newValue);
+      //ATUALIZAR CONTROLLER
       controller.update();
     });
   }
@@ -64,6 +68,10 @@ class EscalationPageState extends State<EscalationPage> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //RESGATAR EVENTOS DO USUARIO COMO MAP
+    List<Map<String, dynamic>> userEvents = controller.myEvents.map((event){
+      return {'id': event.id, 'title' : event.title, 'photo': event.photo};
+    }).toList();
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -90,38 +98,53 @@ class EscalationPageState extends State<EscalationPage> {
                       color: AppColors.dark_500.withAlpha(30),
                       spreadRadius: 0.5,
                       blurRadius: 7,
-                      offset: Offset(2, 5),
+                      offset: const Offset(2, 5),
                     ),
                   ],
                 ),
                 child: Obx((){
-                  var userTeamPrice = controller.userTeamPrice.value;
-                  var userPatrimony = controller.userPatrimony.value;
+                  //RESGATAR VALOR DE PATRIMONIO DO TECNICO
+                  var managerPatrimony = controller.managerPatrimony.value;
+                  //RESGATAR PREÇO DA EQUIPE DO TECNICO
+                  var managerTeamPrice = controller.managerTeamPrice.value;
+                  //RESGATAR VALORIZAÇÃO DO PATRIMONIO DO TECNICO
+                  var managerValuation = controller.managerValuation;
 
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        width: (dimensions.width / 3) - 10,
+                      SizedBox(
+                        width: dimensions.width * 0.25,
                         child: ButtonDropdownWidget(
-                          selectedItem: controller.selectedEvent,
-                          items: controller.myEvents,
+                          selectedItem: controller.selectedEvent!.id,
+                          items: userEvents,
                           onChange: selectEvent,
                           iconAfter: false,
                         ),
                       ),
-                      Container(
-                        width: (dimensions.width / 3) - 10,
+                      SizedBox(
+                        width: dimensions.width * 0.22,
                         child: PriceIndicatorWidget(
                           title: 'Preço da Equipe',
-                          value: '$userTeamPrice'
+                          value: '$managerTeamPrice'
                         ),
                       ),
-                      Container(
-                        width: (dimensions.width / 3) - 10,
-                        child: PriceIndicatorWidget(
-                          title: 'FutCoins',
-                          value: '$userPatrimony'
+                      SizedBox(
+                        width: dimensions.width * 0.22,
+                        child: Row(
+                          children: [
+                            PriceIndicatorWidget(
+                              value: '$managerPatrimony',
+                              title: 'FutCoins',
+                            ),
+                            if(managerValuation != 0.0)...[
+                              Icon(
+                                AppHelper.setColorPontuation(managerValuation)['icon'],
+                                size: 20,
+                                color: AppHelper.setColorPontuation(managerValuation)['color'],
+                              ),
+                            ]
+                          ],
                         ),
                       ),
                     ],
@@ -132,14 +155,14 @@ class EscalationPageState extends State<EscalationPage> {
                 padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: ( dimensions.width / 2 ) -10,
                       child: ButtonFormationWidget(
                         selectedFormation: controller.selectedFormation, 
                         onChange: selectFormation
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: ( dimensions.width / 2 ) -10 ,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -148,7 +171,7 @@ class EscalationPageState extends State<EscalationPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
                               icon: AppIcones.escalacao_outline, 
-                              iconColor: viewType == 'escalation' ? AppColors.white : AppColors.gray_500,
+                              iconColor: viewType == 'escalation' ? AppColors.blue_500 : AppColors.gray_500,
                               color: viewType == 'escalation' ? AppColors.green_300 : AppColors.white,
                               width: 60,
                               height: 60,
@@ -159,7 +182,7 @@ class EscalationPageState extends State<EscalationPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
                               icon: AppIcones.clipboard_outline, 
-                              iconColor: viewType == 'list' ? AppColors.white : AppColors.gray_500,
+                              iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.gray_500,
                               color: viewType == 'list' ? AppColors.green_300 : AppColors.white,
                               width: 60,
                               height: 60,
@@ -172,33 +195,31 @@ class EscalationPageState extends State<EscalationPage> {
                   ],
                 )
               ),
-                //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
-                if (viewType == 'escalation') ...[
-                  CampoWidget(
-                    categoria: controller.category,
-                    width: dimensions.width - 80,
-                    height: (dimensions.height / 2) + 50,
-                    formation: controller.selectedFormation,
-                  ),
-                  const SizedBox(height: 50),
-                  const Text(
-                    'Reservas',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  ReserveBankWidget(
-                    category: controller.category,
-                  ),
-                ] else ...[
-                  const EscalationListWidget(
-                    title: 'Titulares',
-                    occupationType: 'starters',
-                  ),
-                  const SizedBox(height: 20),
-                  const EscalationListWidget(
-                    title: 'Reservas',
-                    occupationType: 'reserves',
-                  ),
-                ],
+              //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
+              if (viewType == 'escalation') ...[
+                CampoWidget(
+                  width: dimensions.width - 80,
+                  height: (dimensions.height / 2) + 50,
+                ),
+                const SizedBox(height: 50),
+                const Text(
+                  'Reservas',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                ReserveBankWidget(
+                  category: controller.selectedCategory,
+                ),
+              ] else ...[
+                const EscalationListWidget(
+                  title: 'Titulares',
+                  occupation: 'starters',
+                ),
+                const SizedBox(height: 20),
+                const EscalationListWidget(
+                  title: 'Reservas',
+                  occupation: 'reserves',
+                ),
+              ],
             ],
           ),
         ),

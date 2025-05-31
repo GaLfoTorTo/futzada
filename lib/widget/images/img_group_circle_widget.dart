@@ -19,18 +19,17 @@ class ImgGroupCircularWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR IMAGENS 
-    var imgs = images ?? [AppImages.userDefault];
-    var countImg = imgs.length > 2 ? 2 : imgs.length;
-
-    return Container(
-      width: width + 30,
-      height: height + 30,
+    //VERIFICAR SE FORAM RECEBIDAS IMAGENS
+    final imgs = images ?? const [AppImages.userDefault, AppImages.userDefault];
+    
+    return SizedBox(
+      width: width + (imgs.length * 10) * 2,
+      height: height,
       child: Stack(
         alignment: Alignment.center,
-        children: List.generate(countImg, (i) {
+        children: List.generate(imgs.length, (i) {
           //RESGATAR IMAGEM
-          var image = images![i];
+          var image = imgs[i];
           return Positioned(
             left: i * 25.0,
             child: Container(

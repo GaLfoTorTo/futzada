@@ -16,6 +16,7 @@ class NotificationPage extends StatefulWidget {
 }
 
 class NotificationPageState extends State<NotificationPage> with SingleTickerProviderStateMixin {
+  //CONTROLLER DE NOTIFICAÇÕES
   var controller = NotificationController.instace;
   //CONTROLLER DE ABAS
   late final TabController tabController;
@@ -29,7 +30,7 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
   
   @override
   Widget build(BuildContext context) {
-    var dimentions = MediaQuery.of(context).size;
+    var dimensions = MediaQuery.of(context).size;
     
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -50,7 +51,7 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
                     width: 5,
                     color: AppColors.green_300,
                   ),
-                  insets: EdgeInsets.symmetric(horizontal: dimentions.width / 3.5)
+                  insets: EdgeInsets.symmetric(horizontal: dimensions.width / 3.5)
                 ),
                 labelColor: AppColors.green_300,
                 labelStyle: const TextStyle(

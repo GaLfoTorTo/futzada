@@ -52,7 +52,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
   @override
   Widget build(BuildContext context) {
     //RESGATAR PRIMEIRO OPÇÃO SELECIONADA
-    var hint = widget.selectedItems.isNotEmpty ? widget.items.firstWhere((item) => item['title'] == widget.selectedItems[0]) : null;
+    var hint = widget.selectedItems.isNotEmpty ? widget.items.firstWhere((item) => item['id'] == widget.selectedItems[0]) : null;
 
     //FUNÇÃO PARA SELECIONAR ITEMS
     void setItems(String value){
@@ -78,7 +78,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              widget.selectedItems.isNotEmpty ? widget.selectedItems[0]! : 'Status',
+              hint != null? hint['title']! : 'Status',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: widget.textSize),
             ),
             if (hint != null)

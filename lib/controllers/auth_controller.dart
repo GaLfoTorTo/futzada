@@ -39,7 +39,7 @@ class AuthController extends getx.GetxController{
       _user.value = user;
       //SALVAR USUARIO LOCAL
       await saveUser(user);
-      //ADICIONAR USUARIO AO GLOBALMENT AO GET
+      //ADICIONAR AO GLOBALMENT AO GET USUARIO
       getx.Get.put(user, tag: 'user', permanent: true);
       //VERIFICAR SE É O PRIMEIRO LOGIN
       if(storage.read('firstLogin') == true){

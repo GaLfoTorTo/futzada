@@ -1,143 +1,129 @@
 import 'dart:convert';
-
+import 'package:futzada/models/escalation_model.dart';
+import 'package:futzada/models/user_model.dart';
+import 'package:futzada/services/manager_service.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/models/player_model.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/market_service.dart';
-import 'package:get/get.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/services/player_service.dart';
-import 'package:futzada/models/player_model.dart';
+import 'package:futzada/services/participant_service.dart';
 
 class EscalationController extends GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static EscalationController get instace => Get.find();
-  //INSTANCIAR SERVICE DE JOGADORES
+  //INSTANCIAR SERVIÇO DE ESCALAÇÃO
   static EscalationService escalationService = EscalationService();
-  //INSTANCIAR SERVICE DE JOGADORES
-  static PlayerService playerService = PlayerService();
-  //INSTANCIAR SERVICE DE JOGADORES
-  static MarketService _marketService = MarketService();
+  //INSTANCIAR SERVIÇO DE PARTICIPANTES
+  static ParticipantService participantService = ParticipantService();
+  //INSTANCIAR SERVIÇO DE MERCADO
+  static MarketService marketService = MarketService();
+  //INSTANCIAR SERVIÇO DE TECNICO
+  static ManagerService managerService = ManagerService();
 
   //CONTROLADOR DE INPUT DE PESQUISA
   final TextEditingController pesquisaController = TextEditingController();
 
-  //CONTROLADOR DE CATEGORIA DO CAMPO
-  final String category = 'Futebol';
-  
-  //FORMAÇÃO SELECIONADA
-  String selectedFormation = '4-3-3';
-  
-  //CONTROLADOR DE EVENTO SELECIONADO
-  int selectedEvent = 0;
-
-  //CONTROLADOR DE PATRIMONIO DO USUARIO
-  RxDouble userPatrimony = 100.0.obs;
-
-  //CONTROLADOR DE PREÇO DA EQUIPE DO USUARIO
-  RxDouble userTeamPrice = 0.0.obs;
-
-  //CONTROLADOR DE INDEX PARA JOGADOR ADICIONADO OU REMOVIDO
+  //RESGATAR USUARIO LOGADO
+  UserModel user = Get.find(tag: 'user');
+  //LISTA DE EVENTOS DO USUARIO
+  List<EventModel> myEvents = Get.find(tag: 'events');
+  //ESTADO CONTROLADOR DE VERIFICAÇÃO SE USUÁRIO ESTA PARTICIPANDO DE UM EVENTO COMO TECNICO
+  bool canManager = false;
+  //ESTADO CONTROLADOR DE CATEGORIA DO EVENTO
+  String selectedCategory = '';
+  //ESTADO CONTROLLADOR DE FORMAÇÃO SELECIONADA
+  String selectedFormation = '';
+  //ESTADO CONTROLADOR DE INDEX DO JOGADOR NA ESCALAÇÃO
   RxInt selectedPlayer = 0.obs;
-  
-  //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
+  //ESTADO CONTROLADOR DE SIGLA DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
   RxString selectedOcupation = ''.obs;
-  
-  //CONTROLADOR DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
-  RxInt playerCapitan = 0.obs;
-
-  //CONTROLADOR DE FORMAÇÕES 
+  //ESTADO CONTROLADOR DE ID DE CAPITÃO NA ESCALAÇÃO
+  RxInt selectedPlayerCapitan = 0.obs;
+  //ESTADO CONTROLADOR DE PATRIMONIO DO USUARIO
+  RxDouble managerPatrimony = 100.0.obs;
+  //ESTADO CONTROLADOR DE PREÇO DA EQUIPE DO USUARIO
+  RxDouble managerTeamPrice = 0.0.obs;
+  //ESTADO CONTROLADOR DE VALORIZAÇÃO DE PATRIMONIO DO USUARIO
+  double managerValuation = 0.0;
+  //ESTADO CONTROLADOR DE FORMAÇÕES DISPONIVIES POR CATEGORIA
   List<String> formations = [];
 
-  //CONTROLADOR DE FILTROS 
-  RxMap<String, dynamic> filtrosMarket = _marketService.filtrosMarket.obs;
-  
-  //LISTA DE FILTROS DO MERCADO
-  Map<String, List<Map<String, dynamic>>> filterOptions = _marketService.filterOptions;
-  
-  //LISTA DE FILTROS DO MERCADO
-  Map<String, List<Map<String, dynamic>>> filterPlayerOptions = _marketService.filterPlayerOptions;
+  //ESTADO DE FILTROS DO MERCADO
+  RxMap<String, dynamic> filtrosMarket = marketService.filtrosMarket.obs;
+  //LISTA DE OPÇÕES DE FILTROS DE METRICA
+  Map<String, List<Map<String, dynamic>>> filterOptions = marketService.filterOptions;
+  //LISTA DE OPÇÕES DE FILTROS DE USUARIO
+  Map<String, List<Map<String, dynamic>>> filterPlayerOptions = marketService.filterPlayerOptions;
 
-  //LISTA DE EVENTOS DO USUARIO
-  RxList<Map<String, dynamic>> myEvents = [
-    /* for(var i = 0; i <= 2; i++) */
-      {
-        'id' : 0,
-        'title': 'Fut dos Cria',
-        'photo': null,
-      },
-      {
-        'id' : 1,
-        'title': 'Pelada Divineia',
-        'photo': null,
-      },
-      {
-        'id' : 2,
-        'title': 'Ginásio',
-        'photo': null,
-      },
-  ].obs;
-  
-  //LISTA DE ESCALASÕES DO USUARIO
-  RxList<Map<String, dynamic>> myEscalations = [
-    /* for(var i = 0; i <= 2; i++) */
-      {
-        'id' : 0,
-        'title': 'Fut dos Cria',
-        'photo': null,
-      },
-      {
-        'id' : 1,
-        'title': 'Pelada Divineia',
-        'photo': null,
-      },
-      {
-        'id' : 2,
-        'title': 'Ginásio',
-        'photo': null,
-      },
-  ].obs;
-
-  //JOGADORES DO MERCADO
-  late RxList<PlayerModel> playersMarket;
-  
-  //ESCALAÇÃO DO USUARIO
-  late RxMap<String, RxMap<int, PlayerModel?>> escalation;
+  //ESTADO CONTROLADOR DE ID DO EVENTO SELECIONADO
+  late EventModel? selectedEvent;
+  //LISTA DE ESCALAÇÕES DO USUARIO
+  late RxList<Map<String, dynamic>> myEscalations;
+  //LISTA DE JOGADORES DO MERCADO
+  late RxList<ParticipantModel> playersMarket;
+  //ESTADO DE ESCALAÇÃO DO USUARIO
+  late RxMap<String, RxMap<int, ParticipantModel?>> escalation;
+  //ESTADO DE ESCALAÇÃO DE TITULARES DO USUARIO
+  RxMap<int, ParticipantModel?> starters = <int, ParticipantModel?>{}.obs;
+  //ESTADO DE ESCALAÇÃO DE RESERVAS DO USUARIO
+  RxMap<int, ParticipantModel?> reserves = <int, ParticipantModel?>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
-    //DEFINIR JOGADORES DO MERCADO
-    playersMarket = filterMarketPlayers();
-    //DEFINIR ESCALAÇÃO DO USUARIO
-    escalation = escalationService.setEscalation(category);
-    //DEFINIR ARRAY DE FORMAÇÕES APARTIR DE CATEGORIA SELECIONADA
-    formations = escalationService.formationsPerCategory(category);
-    //DEFINIR ESCALAÇÃO PRÉ SELECIONADA
-    selectedFormation = formations[0];
+    //VERIFICAR SE USUARIO ESTA PARTICIPANDO DE ALGUM EVENTO
+    if(myEvents.isNotEmpty){
+      //VERIFICAR SE USUARIO ESTA HABILITADO COMO TECNICO NO EVENTO 
+      if(user.manager != null){
+        //PERMITIR GERENCIAR ESCALAÇÃO
+        canManager = true;
+        //DEFINIR DADOS DO EVENTO
+        setEvent(myEvents.first.id);
+      }
+    }
   }
 
-  //FUNÇÃO PARA CONTABILIZAR PREÇO DA EQUIPE E PATRIMONIO DO USUARIO
-  void calcTeamPrice(double playerPrice, String action){
-    //ARREDONDAR VALOR DO JOGADOR RECEBIDO
-    final roundedPrice = double.parse(playerPrice.toStringAsFixed(2));
-    //VERIFICAR FLAG DE AÇÃO
-    if (action == 'add') {
-      //ADICIONAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
-      userTeamPrice.value = double.parse((userTeamPrice.value + roundedPrice).toStringAsFixed(2));
-      //DESCONTAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
-      userPatrimony.value = double.parse((userPatrimony.value - roundedPrice).toStringAsFixed(2));
-    } else {
-      //DESCONTAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
-      userTeamPrice.value = double.parse((userTeamPrice.value - roundedPrice).toStringAsFixed(2));
-      //ADICIONAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
-      userPatrimony.value = double.parse((userPatrimony.value + roundedPrice).toStringAsFixed(2));
-    }
+  //FUNÇÃO PARA SELECIONAR EVENTO E ATUALIZAR DADOS REFERNTES AO EVENTO
+  void setEvent(id){
+    //ATUALIZAR EVENTO SELECIONADO
+    selectedEvent = myEvents.firstWhere((event) => event.id == id);
+    //ATUALIZAR CATEGORIA DO EVENTO SELECIONADOS
+    selectedCategory =  myEvents.firstWhere((event) => event.id == selectedEvent!.id).category!;
+    //ADICIONAR DADOS DE TECNICO CASO EXISTAM
+    user.manager = managerService.generateManager(1);
+    //DEFINIR JOGADORES DO MERCADO DO EVENTO SELECIONADO
+    playersMarket = filterMarketPlayers();
+    //DEFINIR FORMAÇÕES APARTIR DE CATEGORIA SELECIONADA
+    formations = escalationService.getFormations(selectedCategory);
+    //DEFINIR INFORMAÇÕES REFERENTES AO USUARIO NO EVENTO SELECIONADO
+    setUserInfo();
+  }
+
+  //FUNÇÃO QUE RESGATAR DADOS DE ESCALAÇÃO DO USUARIO NO EVENTO SELECIONADO
+  void setUserInfo(){
+    //RESGATAR ESCALAÇÃO DO USUARIO PARA EVENTO SELECIONADO
+    EscalationModel userEscalation = escalationService.generateEscalation(selectedCategory, selectedEvent!.participants!);
+    //RESGATAR FORMAÇÃO DA ESCALAÇAÕ DO USUARIO NO EVENTO SELECIONADO
+    selectedFormation = userEscalation.formation!;
+    //RESGATAR ESCALAÇÃO DE TITULARES E RESERVAS DO USUARIO NO EVENTO SELECIONADO
+    starters.value = userEscalation.starters ?? <int, ParticipantModel?>{}.obs;
+    reserves.value = userEscalation.reserves ?? <int, ParticipantModel?>{}.obs;
+    //DEFINIR VALOR DE PATRIMÔNIO DO USUARIO NO EVENTO SELECIONADO
+    managerPatrimony.value = user.manager!.economy!.patrimony!;
+    //DEFINIR VALOR DA EQUIPE DO USUARIO NO EVENTO SELECIONADO
+    managerTeamPrice.value = user.manager!.economy!.price!;
+    //DEFINIR VALOR DA EQUIPE DO USUARIO NO EVENTO SELECIONADO
+    managerValuation = user.manager!.economy!.valuation!;
   }
 
   //FUNÇÃO PARA RESETAR FILTRO
   void resetFilter(){
     //RESETAR FILTRO
-    filtrosMarket.value = _marketService.filtrosMarket;
+    filtrosMarket.value = marketService.filtrosMarket;
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE FILTRO DO MERCADO
@@ -172,133 +158,164 @@ class EscalationController extends GetxController{
     playersMarket.value = filterMarketPlayers();
   }
 
-  //FUNÇÃO DE APLICAÇÃO DE FILTRO
-  RxList<PlayerModel> filterMarketPlayers() {
+  //FUNÇÃO DE APLICAÇÃO DE FILTROS
+  RxList<ParticipantModel> filterMarketPlayers() {
     //RESGATAR FILTROS
     final filters = filtrosMarket;
     //RESGATAR JOGADORES DO MERCADO
-    final players = playerService.playersMarket;
+    final participants = participantService.getParticipants();
+    //VERIFICAR SE EVENTO TEM PARTICIPANTES VALIDOS
+    if (participants.isEmpty) {
+      //RETORNAR PARTICIPANTES VAZIOS
+      return <ParticipantModel>[].obs;
+    }
     //APLICAR FILTROS NÃO NÚMERICOS
-    List<PlayerModel> filteredPlayers = players.where((player) {
-      //FILTRO NOS STATUS
-      if (filters['status'] != null && filters['status'].isNotEmpty && filters['status'] != 'Todos') {
-        final selectedStatus = List<String>.from(filters['status']);
-        //VERIFICAR STATUS DO JOGADOR
-        final hasStatus = selectedStatus.any((status) => player.status == status );
-        if (!hasStatus) {
+    List<ParticipantModel> filteredPlayers = participants.where((participant) {
+      //VERIFICAR SE PARTICIPANT É UM JOGADOR
+      if(participant.user.player != null){
+        //RESGATAR JOGADOR
+        PlayerModel player = participant.user.player!;
+        //FILTRO NOS STATUS
+        if (filters['status'] != null && filters['status'] != 'Todos') {
+          //SELECIONAR STATUS DO JOGADOR
+          final selectedStatus = List<String>.from(filters['status']);
+          //VERIFICAR STATUS DO JOGADOR
+          final hasStatus = selectedStatus.any((status) => participant.status.name == status );
+          if (!hasStatus) {
+            return false;
+          }
+        }
+
+        //FILTRO DE PESQUISA DE NOME NOMES
+        if(filters['search'] != null && filters['search'] != '') {
+          //RESGATAR NOME DO PARTICIPANTE
+          final nome = filters['search'].toLowerCase();
+          //VERIFICAR NOME DO JOGADOR
+          if (!participant.user.userName!.toLowerCase().contains(nome) &&
+              !participant.user.firstName!.toLowerCase().contains(nome) &&
+              !participant.user.lastName!.toLowerCase().contains(nome)) {
+            return false;
+          }
+        }
+
+        //FILTRO MELHOR PÉ
+        if (filters['bestSide'] != null && 
+            filters['bestSide'] != '' && 
+            player.bestSide != filters['bestSide']) {
           return false;
         }
-      }
 
-      //FILTRO DE PESQUISA DE NOME NOMES
-      if(filters['search'] != null && filters['search'] != '') {
-        final nome = filters['search'].toLowerCase();
-        //VERIFICAR NOME DO JOGADOR
-        if (!player.user.userName!.toLowerCase().contains(nome) &&
-            !player.user.firstName!.toLowerCase().contains(nome) &&
-            !player.user.lastName!.toLowerCase().contains(nome)) {
-          return false;
+        //FILTRO POR POSIÇÕES
+        if (filters['positions'] != null && filters['positions'].isNotEmpty) {
+          //SELECIONAR POSIÇÕES DO FILTRO
+          final selectedPositions = List<String>.from(filters['positions']);
+          //SELECIONAR POSIÇÕES DO JOGADOR
+          final playerPositions = jsonDecode(player.positions) as List<dynamic>;
+          //VERIFICAR SE JOGADOR CONTEM UMA DAS OPÇÕES DEFINIDAS NO FILTRO
+          final hasPosition = selectedPositions.any((pos) => 
+              player.mainPosition == pos || 
+              playerPositions.contains(pos));
+          //VERIFICAR SE JOGADOR NÃO TEM POSIÇÃO DEFINIDA NO FILTRO            
+          if (!hasPosition) {
+            return false;
+          }
         }
+        return true;
       }
-
-      //FILTRO MELHOR PÉ
-      if (filters['bestSide'] != null && 
-          filters['bestSide'] != '' && 
-          player.bestSide != filters['bestSide']) {
-        return false;
-      }
-
-      //FILTRO POR POSIÇÕES
-      if (filters['positions'] != null && filters['positions'].isNotEmpty) {
-        final selectedPositions = List<String>.from(filters['positions']);
-        final playerPositions = jsonDecode(player.positions) as List<dynamic>;
-        //VERIFICAR SE JOGADOR CONTEM UMA DAS OPÇÕES DEFINIDAS NO FILTRO
-        final hasPosition = selectedPositions.any((pos) => 
-            player.mainPosition == pos || 
-            playerPositions.contains(pos));
-        //VERIFICAR SE JOGADOR NÃO TEM POSIÇÃO DEFINIDA NO FILTRO            
-        if (!hasPosition) {
-          return false;
-        }
-      }
-
-      return true;
+      //RETORNAR FALSO SE PARTICIPANTE NÃO FOR UM JOGADOR
+      return false;
     }).toList();
-
-    //ORDENAÇÃO DE NUMERICOS
-    if (filters['price'] != null && filters['price'] != '') {
-      filteredPlayers.sort((a, b) {
-        if (filters['price'] == 'Maior preço') {
-          //ORDEM POR MAIOR PREÇO
-          return b.price!.compareTo(a.price!); 
-        } else {
-          //ORDEM POR MENO PREÇO
-          return a.price!.compareTo(b.price!);
-        }
-      });
-    }
-    //ORDENAR PO MÉDIA
-    if (filters['media'] != null && filters['media'] != '') {
-      filteredPlayers.sort((a, b) {
-        if (filters['media'] == 'Maior média') {
-          //ORDEM POR MAIOR MÉDIA
-          return b.media!.compareTo(a.media!);
-        } else {
-          //ORDEM POR MENOR MÉDIA
-          return a.media!.compareTo(b.media!);
-        }
-      });
-    }
-    //ORDENAR POR QUANTIDADE DE JOGOS
-    if (filters['game'] != null && filters['game'] != '') {
-      filteredPlayers.sort((a, b) {
-        if (filters['game'] == 'Mais jogos') {
-          //ORDEM POR MAIS JOGOS
-          return b.games!.compareTo(a.games!);
-        } else {
-          //ORDEM POR MENOS JOGOS
-          return a.games!.compareTo(b.games!);
-        }
-      });
-    }
-    //ORNDENAR POR VALORIZAÇÃO
-    if (filters['valorization'] != null && filters['valorization'] != '') {
-      filteredPlayers.sort((a, b) {
-        if (filters['valorization'] == 'Maior valorização') {
-          //ORDEM POR MAIOR VALORIZAÇÃO
-          return b.valorization!.compareTo(a.valorization!);
-        } else {
-          //ORDEM POR MENOR VALORIZAÇÃO
-          return a.valorization!.compareTo(b.valorization!);
-        }
-      });
-    }
-    //ORDENAR POR ULTIMA PONTUAÇÃO
-    if (filters['lastPontuation'] != null && filters['lastPontuation'] != '') {
-      filteredPlayers.sort((a, b) {
-        if (filters['lastPontuation'] == 'Maior pontuação') {
-          //ORDEM POR MAIOR PONTUAÇÃO
-          return b.lastPontuation!.compareTo(a.lastPontuation!);
-        } else {
-          //ORDEM POR MENOR PONTUAÇÃO
-          return a.lastPontuation!.compareTo(b.lastPontuation!);
-        }
-      });
-    }
     //FILTRO DE ORDENAÇÃO POR NOME
     if(filters['nome'] != null && filters['nome'] != '') {
       filteredPlayers.sort((a, b) {
         return a.user.firstName!.toLowerCase().compareTo(b.user.firstName!.toLowerCase());
       });
     }
-  //RETORNAR JOGADORES FILTRADOS E ORDENADOS
-  return filteredPlayers.obs;
-}
+    //FILTRAR POR METRICAS 
+    filteredPlayers = filterMetricsPlayer(filteredPlayers);
+    //RETORNAR JOGADORES FILTRADOS E ORDENADOS
+    return filteredPlayers.obs;
+  }
 
-  //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
+  //FUNÇÃO DE APLICAÇÃO DE FILTROS POR MÉTRICAS
+  List<ParticipantModel> filterMetricsPlayer(List<ParticipantModel> participants) {
+    //RESGATAR FILTROS DO MERCADO
+    final filters = filtrosMarket;
+
+    //ORDENAR POR PREÇO
+    if (filters['price'] != null && filters['price'] != '') {
+      participants.sort((a, b) {
+        final aPrice = a.user.player?.rating?.price ?? 0;
+        final bPrice = b.user.player?.rating?.price ?? 0;
+        return filters['price'] == 'Maior preço'
+            ? bPrice.compareTo(aPrice)
+            : aPrice.compareTo(bPrice);
+      });
+    }
+
+    //ORDENAR POR MÉDIA (average)
+    if (filters['media'] != null && filters['media'] != '') {
+      participants.sort((a, b) {
+        final aAvg = a.user.player?.rating?.avarage ?? 0;
+        final bAvg = b.user.player?.rating?.avarage ?? 0;
+        return filters['media'] == 'Maior média'
+            ? bAvg.compareTo(aAvg)
+            : aAvg.compareTo(bAvg);
+      });
+    }
+
+    //ORDENAR POR QUANTIDADE DE JOGOS
+    if (filters['game'] != null && filters['game'] != '') {
+      participants.sort((a, b) {
+        final aGames = a.user.player?.rating?.games ?? 0;
+        final bGames = b.user.player?.rating?.games ?? 0;
+        return filters['game'] == 'Mais jogos'
+            ? bGames.compareTo(aGames)
+            : aGames.compareTo(bGames);
+      });
+    }
+
+    //ORDENAR POR VALORIZAÇÃO
+    if (filters['valorization'] != null && filters['valorization'] != '') {
+      participants.sort((a, b) {
+        final aVal = a.user.player?.rating?.valuation ?? 0;
+        final bVal = b.user.player?.rating?.valuation ?? 0;
+        return filters['valorization'] == 'Maior valorização'
+            ? bVal.compareTo(aVal)
+            : aVal.compareTo(bVal);
+      });
+    }
+
+    //ORDENAR POR ÚLTIMA PONTUAÇÃO (usando points)
+    if (filters['lastPontuation'] != null && filters['lastPontuation'] != '') {
+      participants.sort((a, b) {
+        final aPoints = a.user.player?.rating?.points ?? 0;
+        final bPoints = b.user.player?.rating?.points ?? 0;
+        return filters['lastPontuation'] == 'Maior pontuação'
+            ? bPoints.compareTo(aPoints)
+            : aPoints.compareTo(bPoints);
+      });
+    }
+    //RETORNAR PARTICIPANTS
+    return participants;
+  }
+
+  //FUNÇÃO PARA ALTERAR JOGADOR NA ESCALAÇÃO (TITULARES)
+  void setStarter(int index, ParticipantModel? player) {
+    starters[index] = player;
+    starters.refresh();
+  }
+
+  //FUNÇÃO PARA ALTER JOGADOR NA ESCALAÇÃO (RESERVAS)
+  void setReserve(int index, ParticipantModel? player) {
+    reserves[index] = player;
+    reserves.refresh();
+  }
+
+  //FUNÇÃO DE ALTERAÇÃO JOGADOR NA ESCALAÇÃO
   void setPlayerEscalation(dynamic id){
     //RESGATR JOGADOR DO MERCADO
-    final player = playerService.findPlayer(id);
+    final player = participantService.findPlayer(playersMarket, id);
     //VERIFICAR SE JOGADOR FOI ENCONTRADO
     if (player == null) {
       //EXIBIR MENSAGEM DE ERRO
@@ -306,22 +323,31 @@ class EscalationController extends GetxController{
       return;
     }
     try {
-      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
-      bool isEscaled = verifyPlayerEscalation(player);
-      //RESGATAR CONTROLADORES DE OCUPACAO E INDEX DO JOGADOR
-      int playerIndex = selectedPlayer.value;
-      String playerOcupation = selectedOcupation.value;
+      //VERIFICAR SE JOGADOR ESTA ESCALADO
+      bool isEscaled = findPlayerEscalation(id);
       //VERIFICAR SE JOGADOR JÁ ESTA ESCALADO
       if(!isEscaled){
-        //ADICIONAR JOGADOR NA POSIÇÃO
-        escalation[playerOcupation]![playerIndex] = player;
+        //VERIFICAR OCUPAÇÃO NA ESCALAÇÃO
+        if (selectedOcupation.value == 'starters') {
+          //ADICIONAR JOGADOR A POSIÇÃO
+          setStarter(selectedPlayer.value, player);
+        } else if (selectedOcupation.value == 'reserves') {
+          //ADICIONAR JOGADOR A POSIÇÃO
+          setReserve(selectedPlayer.value, player);
+        }
         //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
-        calcTeamPrice(player.price!, 'add');
+        calcTeamPrice(player.user.player!.rating!.price!, 'add');
       }else{
-        //REMOVER JOGADOR DA POSIÇÃO
-        escalation[playerOcupation]![playerIndex] = null;
+        //VERIFICAR OCUPAÇÃO NA ESCALAÇÃO
+        if (selectedOcupation.value == 'starters') {
+          //REMOVER JOGADOR DA POSIÇÃO
+          setStarter(selectedPlayer.value, player);
+        } else if (selectedOcupation.value == 'reserves') {
+          //REMOVER JOGADOR DA POSIÇÃO
+          setReserve(selectedPlayer.value, player);
+        }
         //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
-        calcTeamPrice(player.price!, 'remove');
+        calcTeamPrice(player.user.player!.rating!.price!, 'remove');
       }
     } catch (e) {
       print(e);
@@ -333,43 +359,34 @@ class EscalationController extends GetxController{
     selectedOcupation.value = '';
   }
   
-  //FUNÇÃO PARA VERIFICAR SE JOGADOR JA FOI ESCALADO
-  bool verifyPlayerEscalation(PlayerModel player){
-    //PERCORRER ESCALAÇÕES DO USUARIO (STARTERS E RESERVES)
-    for (var arr in escalation.entries){
-      //RESGATAR CHAVE
-      var chave = arr.key;
-      //RESGATAR LISTA POR CHAVE
-      var map = arr.value;
-      //LOOP NA LISTA
-      for (int i = 0; i < map.length; i++) {
-        //VERIFICAR SE JOGADOR FOI ESCALADO COMO TITULAR OU RESERVA
-        if (map[i] == player) {
-          //ATUALIZAR INDEX E OCUPAÇÃOS
-          selectedPlayer.value = i;
-          selectedOcupation.value = chave;
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
   //FUNÇÃO DE BUSCA DE JOGADOR NA ESCALAÇÃO
   bool findPlayerEscalation(int id) {
-    //PERCORRER ESCALAÇÕES DO USUARIO (STARTERS E RESERVES)
-    for (var arr in escalation.entries){
-      //RESGATAR LISTA POR CHAVE
-      var map = arr.value;
-      //LOOP NA LISTA
-      for (int i = 0; i < map.length; i++) {
-        //VERIFICAR SE JOGADOR FOI ESCALADO COMO TITULAR OU RESERVA
-        if (map[i] != null && map[i]!.id == id) {
-          return true;
-        }
+    //DEFINIR VALOR PADRÃO
+    bool player = false;
+    //PERCORRER MAPA DE TITULARES
+    starters.forEach((i, participant) {
+      //VERIFICAR SE JOGADOR FOI ESCALADO
+      if (participant != null && participant.id == id) {
+        //ATUALIZAR INDEX E OCUPAÇÃOS DO JOGADOR QUE ESTA SENDO BUSCADO
+        selectedPlayer.value = i;
+        selectedOcupation.value = 'starters';
+        //ATUALIZAR RETORNO DA FUNÇÃO
+        player = true;
       }
-    }
-    return false;
+    });
+    //PERCORRER MAPA DE RESERVAS
+    reserves.forEach((i, participant) {
+      //VERIFICAR SE JOGADOR FOI ESCALADO
+      if (participant != null && participant.id == id) {
+        //ATUALIZAR INDEX E OCUPAÇÃOS DO JOGADOR QUE ESTA SENDO BUSCADO
+        selectedPlayer.value = i;
+        selectedOcupation.value = 'reserves';
+        //ATUALIZAR RETORNO DA FUNÇÃO
+        player = true;
+      }
+    });
+    //RETORNAR SE JOGADOR FOI ENCONTRADO NA ESCALAÇÃO
+    return player;
   }
 
   //FUNÇÃO PARA DEFINIR POSIÇÃO DINAMICAMENTE (TEMPORARIAMENTE)
@@ -385,7 +402,7 @@ class EscalationController extends GetxController{
     }
   }
 
-  //FUNÇÃO PARA DEFINIR JOGADOR COMO CAPITÃO
+  //FUNÇÃO DE DEFINIÇÃO JOGADOR COMO CAPITÃO
   void setPlayerCapitan(dynamic id){
     try {
       //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
@@ -393,18 +410,36 @@ class EscalationController extends GetxController{
       //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
       if(isEscaled){
         //VERIFICAR SE JOGADOR JA ESTA DEFINIDO COMO CAPITÃO
-        if(playerCapitan.value == id){
+        if(selectedPlayerCapitan.value == id){
           //REMOVER CAPITÃO
-          playerCapitan.value = 0;
+          selectedPlayerCapitan.value = 0;
         }else{
           //ADICIONAR ID DO JOGADOR CAPITÃO
-          playerCapitan.value = id;
+          selectedPlayerCapitan.value = id;
         }
       }
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
       AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
+    }
+  }
+
+  //FUNÇÃO PARA CONTABILIZAÇÃO DE PREÇO DA EQUIPE E PATRIMONIO
+  void calcTeamPrice(double playerPrice, String action){
+    //ARREDONDAR VALOR DO JOGADOR RECEBIDO
+    final roundedPrice = double.parse(playerPrice.toStringAsFixed(2));
+    //VERIFICAR FLAG DE AÇÃO
+    if (action == 'add') {
+      //ADICIONAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
+      managerTeamPrice.value = double.parse((managerTeamPrice.value + roundedPrice).toStringAsFixed(2));
+      //DESCONTAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
+      managerPatrimony.value = double.parse((managerPatrimony.value - roundedPrice).toStringAsFixed(2));
+    } else {
+      //DESCONTAR PREÇO DO JOGADOR AO PREÇO DA EQUIPE
+      managerTeamPrice.value = double.parse((managerTeamPrice.value - roundedPrice).toStringAsFixed(2));
+      //ADICIONAR PREÇO DO JOGADOR DO PATRIMONIO DO USUARIO
+      managerPatrimony.value = double.parse((managerPatrimony.value + roundedPrice).toStringAsFixed(2));
     }
   }
 }

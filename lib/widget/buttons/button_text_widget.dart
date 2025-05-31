@@ -30,6 +30,8 @@ class ButtonTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //DEFINIR PADDING APARTIR DE TAMANHO DO BOTÃO
+    var padding = width! * 0.03;
     return TextButton(
       onPressed: () {
         //VERIFICAR SE BOTÃO FOI DESABILITADO
@@ -51,17 +53,17 @@ class ButtonTextWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if(!iconAfter && icon != null)...[
-                Padding(
-                  padding: const EdgeInsets.only(right: 10.0),
-                  child: Icon(icon!, size: iconSize),
-                ),
+              Padding(
+                padding: EdgeInsets.only(right: padding),
+                child: Icon(icon!, size: iconSize),
+              ),
             ],
             if(text != null)...[
               Text(text!),
             ],
             if(iconAfter && icon != null)...[
               Padding(
-                padding: const EdgeInsets.only(left: 10.0),
+                padding: EdgeInsets.only(left: padding),
                 child: Icon(icon!, size: iconSize),
               ),
             ],

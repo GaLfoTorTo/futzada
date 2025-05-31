@@ -1,5 +1,4 @@
 import 'package:faker/faker.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class NotificationService {
@@ -8,11 +7,11 @@ class NotificationService {
 
   //GENERATE NOTIFICATIONS
   List<Map<String, dynamic>> generateNotifications(){
-    List<Map<String, dynamic>> map = [];
+    List<Map<String, dynamic>> arr = [];
     //LOOP PARA TITULARES
     for (var i = 1; i <= 50; i++) {
       //ADICIONAR JOGADOR A LISTA
-      map.add({
+      arr.add({
         'title': faker.sport.name(),
         'user': "${faker.person.firstName()} ${faker.person.lastName()}",
         'description': faker.lorem.sentence().toString(),
@@ -22,11 +21,11 @@ class NotificationService {
       });
     }
     //AGRUPAR NOTIFICAÇÕES
-    map = groupNotifications(map);
+    arr = groupNotifications(arr);
     //ORDENAR NOTIFICAÇÕES DA MAIS RECENTE PARA A MAIS ANTIGA
-    map = orderNotifications(map);
+    arr = orderNotifications(arr);
     //RETORNAR LISTA DE NOTIFICAÇÕES
-    return map;
+    return arr;
   }
 
   //AGRUPAR NOTIFICAÇÕES

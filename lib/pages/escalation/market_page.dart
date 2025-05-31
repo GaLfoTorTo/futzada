@@ -7,7 +7,7 @@ import 'package:futzada/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_player_market_widget.dart';
-import 'package:futzada/widget/dialogs/market_dialog_widget.dart';
+import 'package:futzada/widget/dialogs/market_dialog.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -114,7 +114,7 @@ class MarketPageState extends State<MarketPage> {
                             icon: AppIcones.filter_solid,
                             iconAfter: true,
                             width: ( dimensions.width / 3 ) - 50,
-                            action: () => Get.bottomSheet(MarketDialogWidget(), isScrollControlled: true)
+                            action: () => Get.bottomSheet(MarketDialog(), isScrollControlled: true)
                           ),
                         ],
                       );
@@ -131,8 +131,8 @@ class MarketPageState extends State<MarketPage> {
                         //RESGATAR ITENS 
                         final item = entry;
                         return  CardPlayerMarketWidget(
-                          player: item,
-                          escalation: controller.escalation['starters']!
+                          participant: item,
+                          escalation: controller.starters
                         );
                       }).toList(),
                     ]else...[

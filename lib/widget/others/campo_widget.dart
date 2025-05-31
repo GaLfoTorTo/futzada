@@ -8,15 +8,11 @@ import 'package:futzada/widget/buttons/button_player_widget.dart';
 import 'package:get/get.dart';
 
 class CampoWidget extends StatelessWidget {
-  final String? categoria;
-  final String formation;
   final double? width;
   final double? height;
 
   const CampoWidget({
     super.key,
-    this.categoria = 'Futebol',
-    this.formation = '4-3-3',
     this.width = 342,
     this.height = 518,
   });
@@ -95,7 +91,7 @@ class CampoWidget extends StatelessWidget {
     //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO
     List<int> setPositions(){
       //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
-      var listFormation = formation.split('-').map((e) => int.parse(e)).toList();
+      var listFormation = controller.selectedFormation.split('-').map((e) => int.parse(e)).toList();
       //ADICIONAR O GOLEIRO NO INICIO DO ARRAY
       listFormation.insert(0, 1);
       //INVERTER ORDEM DO ARRAY DE POSIÇÕES
@@ -161,12 +157,12 @@ class CampoWidget extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            if(categoria == 'Futebol')...[
+            if(controller.selectedCategory == 'Futebol')...[
               grassField(),
             ],
             SvgPicture.asset(
               height: height! - 40,
-              fieldType(categoria),
+              fieldType(controller.selectedCategory),
             )
           ]
         ),
@@ -184,9 +180,11 @@ class CampoWidget extends StatelessWidget {
           child: renderField()
         ),
         Obx(() {
-          final escalation = controller.escalation['starters']!;
+          //OBSERVAR ATUALIZAÇÕES DA ESCALAÇÃO
+          final escalation = controller.starters;
+          //RESGATAR POSIÇÕES DA ESCALAÇÃO
           final positions = setPositions();
-          
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: positions.asMap().entries.map((entry) {
@@ -222,14 +220,14 @@ class CampoWidget extends StatelessWidget {
                         Container(
                           alignment: setAligmentPositions(index, qtd),
                           child: ButtonPlayerWidget(
-                            player: player,
+                            participant: player,
                             index: realPosition,
                             ocupation: 'starters',
                             size: 60,
                             borderColor: AppHelper.setColorPosition(position),
                           )
                         ),
-                        if(player != null && player.id == controller.playerCapitan.value)...[
+                        if(player != null && player.id == controller.selectedPlayerCapitan.value)...[
                           Positioned(
                             top: 100,
                             left: 15,

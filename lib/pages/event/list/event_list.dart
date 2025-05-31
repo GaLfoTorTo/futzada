@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/models/event_model.dart';
 import 'package:futzada/widget/cards/card_event_list_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -36,17 +37,15 @@ class EventListPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Obx(() {
-                  return Column(
-                    children: controller.events.map((entry) {
-                      //RESGATAR ITENS 
-                      Map<String, dynamic> item = entry;
-                      return  CardEventListWidget(
-                        event: item,
-                      );
-                    }).toList(),
-                  );
-                }),
+                Column(
+                  children: controller.events.map((entry) {
+                    //RESGATAR ITENS 
+                    EventModel item = entry;
+                    return  CardEventListWidget(
+                      event: item,
+                    );
+                  }).toList(),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Row(
@@ -60,17 +59,15 @@ class EventListPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Obx(() {
-                  return Column(
-                    children: controller.sugestions.map((entry) {
-                      //RESGATAR ITENS 
-                      Map<String, dynamic> sugestion = entry;
-                      return  CardEventListWidget(
-                        event: sugestion,
-                      );
-                    }).toList(),
-                  );
-                }),
+                Column(
+                  children: controller.sugestions.map((entry) {
+                    //RESGATAR ITENS 
+                    EventModel sugestion = entry;
+                    return  CardEventListWidget(
+                      event: sugestion,
+                    );
+                  }).toList(),
+                ),
               ]
             ),
           ),
