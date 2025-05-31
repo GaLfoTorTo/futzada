@@ -38,7 +38,7 @@ class EventListPage extends StatelessWidget {
                   ),
                 ),
                 Column(
-                  children: controller.events.map((entry) {
+                  children: controller.myEvents.map((entry) {
                     //RESGATAR ITENS 
                     EventModel item = entry;
                     return  CardEventListWidget(

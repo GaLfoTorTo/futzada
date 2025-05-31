@@ -25,7 +25,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE TAB
-    tabController = TabController(length: 7, vsync: this);
+    tabController = TabController(length: 6, vsync: this);
   }
   
   @override

@@ -14,6 +14,5 @@ class GameController extends GetxController {
   void onInit() {
     super.onInit();
     //RESGATAR JOGO ATUAL
-    gameService.getCurrentGame();
   }
 }

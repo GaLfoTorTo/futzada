@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/models/avaliation_model.dart';
-import 'package:futzada/services/event_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
+import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/services/event_service.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/services/form_service.dart';
-import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/models/avaliation_model.dart';
+import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
+import 'package:futzada/controllers/game_controller.dart';
 
 class EventController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
@@ -20,15 +21,17 @@ class EventController extends GetxController {
   //*
   //*
   //*
-  //LISTA DE EVENTOS
-  List<EventModel> events = [];
+  //RESGATAR USUARIO LOGADO
+  UserModel user = Get.find(tag: 'user');
+  //LISTA DE EVENTOS DO USUARIO
+  List<EventModel> myEvents = Get.find(tag: 'events');
   //LISTA DE EVENTOS SUGERIDOS
   List<EventModel> sugestions = [];
   //EVENT
   //*
   //*
   //*
-  //LISTA DE EVENTOS
+  //LISTA DE DESTAQUES DO EVENTOS
   List<Map<String, dynamic>> highlights = [];
 
   @override
@@ -36,21 +39,20 @@ class EventController extends GetxController {
     super.onInit();
     //INICIALIZAR CONTROLLER DE GAME
     Get.put(GameController());
-    //RESGATAR PELADAS DO USUARIO
-    events = eventService.getEvents();
     //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
     sugestions = eventService.getEvents();
     //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
     highlights = eventService.getHighlightsEvent();
   }
 
+  //RESGATAR AVALIAÇÕES DO EVENTO
   double getAvaliations(List<AvaliationModel>? avaliations){
     //DEFINIR VALOR INICIAL DE AVALIAÇÕES
     double avaliation = 0.0;
     //VERIFICAR SE EXISTEM AVALIAÇÕES DO EVENTO
-    if(avaliations != null){
+    if(avaliations != null && avaliations.isNotEmpty){
       //CALCULAR MEDIA TOTAL DE AVALIAÇÃO DO EVENTOS
-      avaliations.map((item){
+      avaliations.forEach((item){
         avaliation = avaliation + item.avaliation!;
       });
       //CALCULAR MEDIA DE AVALIAÇÃO

@@ -17,7 +17,7 @@ class ParticipantService {
   UserRepository userRepository = UserRepository();
 
   //FUNÇÃO DE GERAÇÃO DE TECNICO
-  ParticipantModel generateParticipant(i){
+  ParticipantModel generateParticipant(i, {bool hasRole = true}) {
     //DEFINIR STATUS DE PERMISSÃO
     bool roleState = random.nextBool();
     //DEFINIR PERMISSÕES DO EVENTO
@@ -37,7 +37,7 @@ class ParticipantService {
       "updatedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       "deletedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
-      "user" : userRepository.generateUser(i, true).toMap()
+      "user" : userRepository.generateUser(i, hasRole).toMap()
     });
   }
 

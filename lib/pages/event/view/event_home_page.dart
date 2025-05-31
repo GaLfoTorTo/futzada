@@ -77,7 +77,12 @@ class _EventHomePageState extends State<EventHomePage> {
       },
     ];
     //RESGATAR FOTO DOS 3 PRIMEIROS PARTICIPANTES
-    var imgParticipantes = List.generate(3, (i) => event.participants![i].user.photo);
+    List<String?> imgParticipantes = [];
+    //VERIFICAR SE EXISTEM PARTICIPANTES
+    if(event.participants != null && event.participants!.isNotEmpty){
+      //RESGATAR FOTOS DOS 3 PRIMEIROS PARTICIPANTES
+      imgParticipantes = event.participants!.take(3).map((participante) => participante.user.photo).toList();
+    }
 
     return SingleChildScrollView(
       child: Column(
@@ -213,7 +218,7 @@ class _EventHomePageState extends State<EventHomePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                              width: dimensions.width / 2,
+                              width: dimensions.width * 0.50,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -283,7 +288,7 @@ class _EventHomePageState extends State<EventHomePage> {
                               ),
                             ),
                             Container(
-                              width: dimensions.width / 2.5,
+                              width: dimensions.width * 0.40,
                               height: 160,
                               decoration: BoxDecoration(
                                 color: AppColors.gray_300,
@@ -343,14 +348,16 @@ class _EventHomePageState extends State<EventHomePage> {
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 5),
-                                    child: ImgGroupCircularWidget(
-                                      width: 40,
-                                      height: 40,
-                                      images: imgParticipantes
+                                  if(imgParticipantes.isNotEmpty)...[
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 5),
+                                      child: ImgGroupCircularWidget(
+                                        width: 40,
+                                        height: 40,
+                                        images: imgParticipantes
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                   if(event.participants!.length > 3)...[
                                     Padding(
                                       padding: const EdgeInsets.only(right: 10),
@@ -375,135 +382,137 @@ class _EventHomePageState extends State<EventHomePage> {
               ]
             )
           ),
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Destaques",
-                        style: Theme.of(context).textTheme.headlineSmall,
+          if(controller.highlights.isNotEmpty)...[
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "Destaques",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ), 
+                      ButtonTextWidget(
+                        text: "Ver Mais",
+                        width: 80,
+                        height: 20,
+                        textColor: AppColors.green_300,
+                        backgroundColor: Colors.transparent,
+                        action: () {},
                       ),
-                    ), 
-                    ButtonTextWidget(
-                      text: "Ver Mais",
-                      width: 80,
-                      height: 20,
-                      textColor: AppColors.green_300,
-                      backgroundColor: Colors.transparent,
-                      action: () {},
-                    ),
-                  ]
-                ),
-              ),
-              SizedBox(
-                width: dimensions.width,
-                height: 250,
-                child: PageView(
-                  controller: highligtsController,
-                  children: [
-                    ...controller.highlights.map((item) {
-                      //RESGATAR LISTA DE IMAGENS PARA NOTIFICAÇÃO
-                      List<dynamic> imgHighlights = [];
-                      //RESGATAR PARTICIPANTES DO DESTAQUE
-                      List<UserModel> participants = item['participants'];
-                      //ADICIONAR PHOTOS DOS PARTICIPANTES AO ARRAY
-                      for (var user in participants) {
-                        imgHighlights.add(user.photo);
-                      }
-
-                      return Container(
-                        width: dimensions.width,
-                        height: 200,
-                        margin: const EdgeInsets.all(10),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.dark_500.withAlpha(30),
-                              spreadRadius: 0.5,
-                              blurRadius: 5,
-                              offset: Offset(2, 5),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            if(imgHighlights.isNotEmpty)...[
-                              if (imgHighlights.length > 1) ...[
-                                ImgGroupCircularWidget(
-                                  width: 70,
-                                  height: 70,
-                                  images: imgHighlights,
-                                ),
-                              ] else ...[
-                                ImgCircularWidget(
-                                  width: 70,
-                                  height: 70,
-                                  image: imgHighlights[0],
-                                ),
-                              ],
-                            ],
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      item['description'],
-                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
-                                    ),
-                                    if(item['params'] != null && item['params']['value'] != null)...[
-                                      Row(
-                                        children: [
-                                          Text(
-                                            item['params']['label'],
-                                            style: Theme.of(context).textTheme.titleSmall,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 10.0),
-                                            child: Text(
-                                              "${item['params']['value']}",
-                                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.green_300),
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ]
-                                  ]
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ]
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: SmoothPageIndicator(
-                  controller: highligtsController,
-                  count: controller.highlights.length,
-                  effect: const ExpandingDotsEffect(
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    activeDotColor: AppColors.blue_500,
-                    dotColor: AppColors.gray_300,
-                    expansionFactor: 2,
+                    ]
                   ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(
+                  width: dimensions.width,
+                  height: 250,
+                  child: PageView(
+                    controller: highligtsController,
+                    children: [
+                      ...controller.highlights.map((item) {
+                        //RESGATAR LISTA DE IMAGENS PARA NOTIFICAÇÃO
+                        List<dynamic> imgHighlights = [];
+                        //RESGATAR PARTICIPANTES DO DESTAQUE
+                        List<UserModel> participants = item['participants'];
+                        //ADICIONAR PHOTOS DOS PARTICIPANTES AO ARRAY
+                        for (var user in participants) {
+                          imgHighlights.add(user.photo);
+                        }
+
+                        return Container(
+                          width: dimensions.width,
+                          height: 200,
+                          margin: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: AppColors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.dark_500.withAlpha(30),
+                                spreadRadius: 0.5,
+                                blurRadius: 5,
+                                offset: Offset(2, 5),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              if(imgHighlights.isNotEmpty)...[
+                                if (imgHighlights.length > 1) ...[
+                                  ImgGroupCircularWidget(
+                                    width: 70,
+                                    height: 70,
+                                    images: imgHighlights,
+                                  ),
+                                ] else ...[
+                                  ImgCircularWidget(
+                                    width: 70,
+                                    height: 70,
+                                    image: imgHighlights[0],
+                                  ),
+                                ],
+                              ],
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        item['description'],
+                                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
+                                      ),
+                                      if(item['params'] != null && item['params']['value'] != null)...[
+                                        Row(
+                                          children: [
+                                            Text(
+                                              item['params']['label'],
+                                              style: Theme.of(context).textTheme.titleSmall,
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 10.0),
+                                              child: Text(
+                                                "${item['params']['value']}",
+                                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.green_300),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ]
+                                    ]
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ]
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SmoothPageIndicator(
+                    controller: highligtsController,
+                    count: controller.highlights.length,
+                    effect: const ExpandingDotsEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: AppColors.blue_500,
+                      dotColor: AppColors.gray_300,
+                      expansionFactor: 2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ]
         ],
       ),
     );

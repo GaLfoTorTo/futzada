@@ -5,13 +5,13 @@ import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/result_model.dart';
 import 'package:futzada/models/team_model.dart';
-import 'package:futzada/models/user_model.dart';
+import 'package:futzada/models/participant_model.dart';
 
 class GameModel {
   final int id;
   final int? number;
   final EventModel? event;
-  final UserModel? referee;
+  final ParticipantModel? referee;
   final int? duration;
   final String? startTime;
   final String? endTime;
@@ -42,7 +42,7 @@ class GameModel {
     int? id,
     int? number,
     EventModel? event,
-    UserModel? referee,
+    ParticipantModel? referee,
     int? duration,
     String? startTime,
     String? endTime,
@@ -93,7 +93,7 @@ class GameModel {
       id: map['id'] as int,
       number: map['number'] != null ? map['number'] as int : null,
       event: map['event'] != null ? EventModel.fromMap(map['event'] as Map<String,dynamic>) : null,
-      referee: map['referee'] != null ? UserModel.fromMap(map['referee'] as Map<String,dynamic>) : null,
+      referee: map['referee'] != null ? ParticipantModel.fromMap(map['referee'] as Map<String,dynamic>) : null,
       duration: map['duration'] != null ? map['duration'] as int : null,
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,

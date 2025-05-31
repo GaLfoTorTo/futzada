@@ -51,7 +51,7 @@ class EventService {
       "permissions" : permissions,
       "photo" : random.nextBool() == true ? faker.image.loremPicsum() : null,
       //GERAR AVALIAÇÕES DO EVENTO (PELADA)
-      "avaliation" : List.generate(qtdAvaliations, (u){
+      "avaliations" : List.generate(qtdAvaliations, (u){
         return avaliationService.generateAvaliation(u + 1).toMap();
       }),
       //GERAR PARTICIPANTES DO EVENTO (PELADA)
@@ -76,6 +76,12 @@ class EventService {
     return events;
   }
   
+  //FUNÇÃO PARA BUSCAR EVENTOS POR ID
+  EventModel getEventById(int id){
+    //BUSCAR EVENTO PELO ID
+    return getEvents().firstWhere((event) => event.id == id, orElse: () => EventModel());
+  }
+
   //FUNÇÃO PARA BUSCAR DESTAQUES DO EVENTOS
   List<Map<String, dynamic>> getHighlightsEvent(){
     List<Map<String, dynamic>> arr = [];

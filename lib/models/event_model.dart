@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/avaliation_model.dart';
+import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/participant_model.dart';
 
 class EventModel {
@@ -29,6 +30,7 @@ class EventModel {
   final String? photo;
   final List<ParticipantModel>? participants;
   final List<AvaliationModel>? avaliations;
+  final List<GameModel>? games;
   final String? createdAt;
   final String? updatedAt;
   final String? deletedAt;
@@ -57,6 +59,7 @@ class EventModel {
     this.photo,
     this.avaliations,
     this.participants,
+    this.games,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -86,6 +89,7 @@ class EventModel {
     String? photo,
     List<AvaliationModel>? avaliations,
     List<ParticipantModel>? participants,
+    List<GameModel>? games,
     String? createdAt,
     String? updatedAt,
     String? deletedAt,
@@ -114,6 +118,7 @@ class EventModel {
       photo: photo ?? this.photo,
       avaliations: avaliations ?? this.avaliations,
       participants: participants ?? this.participants,
+      games: games ?? this.games,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -145,6 +150,7 @@ class EventModel {
       'photo': photo,
       'avaliations': avaliations,
       'participants': participants!.map((x) => x.toMap()).toList(),
+      'games': games!.map((x) => x.toMap()).toList(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'deletedAt': deletedAt,
@@ -176,11 +182,14 @@ class EventModel {
       allowCollaborators: map['allowCollaborators'] != null ? map['allowCollaborators'] as bool : null,
       permissions: map['permissions'] != null ? map['permissions'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
+      avaliations: map['avaliations'] != null 
+        ? List<AvaliationModel>.from((map['avaliations'] as List<Map<String, dynamic>>).map<AvaliationModel?>((x) => AvaliationModel.fromMap(x),),) 
+        : null,
       participants: map['participants'] != null 
         ? List<ParticipantModel>.from((map['participants'] as List<Map<String, dynamic>>).map<ParticipantModel?>((x) => ParticipantModel.fromMap(x),),) 
         : null,
-      avaliations: map['avaliations'] != null 
-        ? List<AvaliationModel>.from((map['avaliations'] as List<Map<String, dynamic>>).map<AvaliationModel?>((x) => AvaliationModel.fromMap(x),),) 
+      games: map['games'] != null 
+        ? List<GameModel>.from((map['games'] as List<Map<String, dynamic>>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
         : null,
       createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
       updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
@@ -194,7 +203,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, address: $address, number: $number, city: $city, state: $state, complement: $complement, country: $country, zipCode: $zipCode, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, category: $category, qtdPlayers: $qtdPlayers, visibility: $visibility, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, avaliations: $avaliations, participants: $participants, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, address: $address, number: $number, city: $city, state: $state, complement: $complement, country: $country, zipCode: $zipCode, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, category: $category, qtdPlayers: $qtdPlayers, visibility: $visibility, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, avaliations: $avaliations, participants: $participants, games: $games, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -225,6 +234,7 @@ class EventModel {
       other.photo == photo &&
       other.avaliations == avaliations &&
       listEquals(other.participants, participants) &&
+      listEquals(other.games, games) &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
       other.deletedAt == deletedAt;
@@ -255,6 +265,7 @@ class EventModel {
       photo.hashCode ^
       avaliations.hashCode ^
       participants.hashCode ^
+      games.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
       deletedAt.hashCode;
