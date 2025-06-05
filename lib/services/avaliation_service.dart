@@ -20,8 +20,8 @@ class AvaliationService {
       "user" : userRepository.generateUser(i, false).toMap(),
       "avaliation" : double.parse(setValues(0.0, 5.0).toStringAsFixed(2)),
       "comment" : faker.lorem.sentence().toString(),
-      "createdAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "updatedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

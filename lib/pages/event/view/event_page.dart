@@ -1,12 +1,12 @@
+import 'package:futzada/widget/buttons/float_button_event_widget.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/pages/event/view/event_games_page.dart';
-import 'package:futzada/pages/event/view/event_home_page.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/pages/event/view/event_games_page.dart';
+import 'package:futzada/pages/event/view/event_home_page.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -18,8 +18,10 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
   //CONTROLLER DE BARRA NAVEGAÇÃO
   EventController controller = EventController.instace;
-  //CONTROLLER DE ABAS
+  //CONTROLLER DE TABS
   late final TabController tabController;
+  //CONTROLADOR DE INDEX DAS TABS
+  int tabIndex = 0;
 
   @override
   void initState() {
@@ -27,13 +29,26 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
   }
+
+  //FUNÇÃO PARA EXIBIR OU NÃO FLOAT ACTION BUTTON
+  Widget? buildFloatingButton() {
+    //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
+    if(controller.nextGames.isNotEmpty){
+      //VERIFICAR TAB SELECIONADA
+      switch (tabIndex) {
+        case 1:
+          return FloatButtonEventWidget(index:tabController.index);
+        default:
+          return null;
+      }
+    }
+    return null;
+  }
   
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTO RECEBIDO POR PARAMETRO
-    EventModel event = Get.arguments;
     //LISTA DE TABS
     List<String> tabs = [
       'Visão Geral',
@@ -50,6 +65,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
         leftAction: () => Get.back(),
         rightIcon: AppIcones.cog_solid,
         rightAction: () => print('event settings'),//Get.toNamed('/event/settings'),
+        extraIcon: tabController.index == 1 ? Icons.history : null,
+        extraAction: () => tabController.index == 1 ? Get.toNamed('/event/historic') : null,
         shadow: false,
       ),
       body: SafeArea(
@@ -59,6 +76,9 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
               color: AppColors.white,
               child: TabBar(
                 controller: tabController,
+                onTap: (i) => setState(() {
+                  tabIndex = i;
+                }),
                 indicator: UnderlineTabIndicator(
                   borderSide: const BorderSide(
                     width: 5,
@@ -75,11 +95,38 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 tabs: tabs.map((tab){
-                  return SizedBox(
-                    width: 100,
-                    height: 50,
-                    child: Tab(text: tab)
-                  );
+                  if(tab == 'Partidas'){
+                    return SizedBox(
+                      width: 100,
+                      height: 50,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children:[
+                          Tab(text: tab),
+                          if(controller.currentGames.isNotEmpty)...[
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: AppColors.red_300,
+                                  borderRadius: BorderRadius.circular(50)
+                                ),
+                              )
+                            )
+                          ]
+                        ]
+                      )
+                    );
+                  }else{
+                    return SizedBox(
+                      width: 100,
+                      height: 50,
+                      child: Tab(text: tab)
+                    );
+                  }
                 }).toList()
               ),
             ),
@@ -87,8 +134,10 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
               child: TabBarView(
                 controller: tabController,
                 children: [
-                  EventHomePage(event:event),
-                  EventGamesPage(event:event),
+                  const EventHomePage(),
+                  EventGamesPage(
+                    tabController: tabController
+                  ),
                   Container(),
                   Container(),
                   Container(),
@@ -98,7 +147,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ), 
           ]
         )
-      )
+      ),
+      floatingActionButton: buildFloatingButton()
     );
   }
 }

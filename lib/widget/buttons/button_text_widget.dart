@@ -31,7 +31,9 @@ class ButtonTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //DEFINIR PADDING APARTIR DE TAMANHO DO BOTÃO
-    var padding = width! * 0.03;
+    final effectiveWidth = width ?? 40;
+    final padding = effectiveWidth * 0.03;
+    
     return TextButton(
       onPressed: () {
         //VERIFICAR SE BOTÃO FOI DESABILITADO

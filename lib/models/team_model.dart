@@ -8,15 +8,17 @@ class TeamModel {
   final int id;
   final String uuid;
   final String? name;
+  final String? emblema;
   final List<ParticipantModel> players;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   TeamModel({
     required this.id,
     required this.uuid,
     this.name,
+    this.emblema,
     required this.players,
     this.createdAt,
     this.updatedAt,
@@ -28,15 +30,17 @@ class TeamModel {
     String? uuid,
     EventModel? event,
     String? name,
+    String? emblema,
     List<ParticipantModel>? players,
-    String? createdAt,
-    String? updatedAt,
-    String? deletedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return TeamModel(
       id: id ?? this.id,
       uuid: uuid ?? this.uuid,
       name: name ?? this.name,
+      emblema: emblema ?? this.emblema,
       players: players ?? this.players,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -49,6 +53,7 @@ class TeamModel {
       'id': id,
       'uuid': uuid,
       'name': name,
+      'emblema': emblema,
       'players': players.map((x) => x.toMap()).toList(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -61,10 +66,15 @@ class TeamModel {
       id: map['id'] as int,
       uuid: map['uuid'] as String,
       name: map['name'] != null ? map['name'] as String : null,
-      players: List<ParticipantModel>.from((map['players'] as List<int>).map<ParticipantModel>((x) => ParticipantModel.fromMap(x as Map<String,dynamic>),),),
-      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as String : null,
+      emblema: map['emblema'] != null ? map['emblema'] as String : null,
+      players: List<ParticipantModel>.from((map['players'] as List<Map<String, dynamic>>)
+        .map<ParticipantModel>(
+          (x) => ParticipantModel.fromMap(x as Map<String,dynamic>),
+        ),
+      ),
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }
 
@@ -74,7 +84,7 @@ class TeamModel {
 
   @override
   String toString() {
-    return 'TeamModel(id: $id, uuid: $uuid, name: $name, players: $players, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'TeamModel(id: $id, uuid: $uuid, name: $name, emblema: $emblema, players: $players, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -85,6 +95,7 @@ class TeamModel {
       other.id == id &&
       other.uuid == uuid &&
       other.name == name &&
+      other.emblema == emblema &&
       listEquals(other.players, players) &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
@@ -96,6 +107,7 @@ class TeamModel {
     return id.hashCode ^
       uuid.hashCode ^
       name.hashCode ^
+      emblema.hashCode ^
       players.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^

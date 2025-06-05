@@ -7,6 +7,8 @@ class EconomyModel {
   final double? valuation;
   final double? points;
   final double? totalPoints;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   EconomyModel({
     this.patrimony,
@@ -14,6 +16,8 @@ class EconomyModel {
     this.valuation,
     this.points,
     this.totalPoints,
+    this.createdAt,
+    this.updatedAt,
   });
 
   EconomyModel copyWith({
@@ -22,6 +26,8 @@ class EconomyModel {
     double? valuation,
     double? points,
     double? totalPoints,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return EconomyModel(
       patrimony: patrimony ?? this.patrimony,
@@ -29,6 +35,8 @@ class EconomyModel {
       valuation: valuation ?? this.valuation,
       points: points ?? this.points,
       totalPoints: totalPoints ?? this.totalPoints,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -39,6 +47,8 @@ class EconomyModel {
       'valuation': valuation,
       'points': points,
       'totalPoints': totalPoints,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -49,6 +59,8 @@ class EconomyModel {
       valuation: map['valuation'] != null ? map['valuation'] as double : null,
       points: map['points'] != null ? map['points'] as double : null,
       totalPoints: map['totalPoints'] != null ? map['totalPoints'] as double : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -58,7 +70,7 @@ class EconomyModel {
 
   @override
   String toString() {
-    return 'EconomyModel(patrimony: $patrimony, price: $price, valuation: $valuation, points: $points, totalPoints: $totalPoints)';
+    return 'EconomyModel(patrimony: $patrimony, price: $price, valuation: $valuation, points: $points, totalPoints: $totalPoints, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -70,7 +82,9 @@ class EconomyModel {
       other.price == price &&
       other.valuation == valuation &&
       other.points == points &&
-      other.totalPoints == totalPoints;
+      other.totalPoints == totalPoints &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -79,6 +93,8 @@ class EconomyModel {
       price.hashCode ^
       valuation.hashCode ^
       points.hashCode ^
-      totalPoints.hashCode;
+      totalPoints.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

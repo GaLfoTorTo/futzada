@@ -24,50 +24,50 @@ class EventListPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Participando',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
+                if(controller.myEvents.isNotEmpty)...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Participando',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Column(
-                  children: controller.myEvents.map((entry) {
-                    //RESGATAR ITENS 
-                    EventModel item = entry;
-                    return  CardEventListWidget(
-                      event: item,
-                    );
-                  }).toList(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sugestões',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ],
+                  Column(
+                    children: controller.myEvents.map((entry) {
+                      //RESGATAR ITENS 
+                      EventModel item = entry;
+                      return  CardEventListWidget(event: item);
+                    }).toList(),
                   ),
-                ),
-                Column(
-                  children: controller.sugestions.map((entry) {
-                    //RESGATAR ITENS 
-                    EventModel sugestion = entry;
-                    return  CardEventListWidget(
-                      event: sugestion,
-                    );
-                  }).toList(),
-                ),
+                ],
+                if(controller.sugestions.isNotEmpty)...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Sugestões',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: controller.sugestions.map((entry) {
+                      //RESGATAR ITENS 
+                      EventModel sugestion = entry;
+                      return  CardEventListWidget(event: sugestion);
+                    }).toList(),
+                  ),
+                ]
               ]
             ),
           ),

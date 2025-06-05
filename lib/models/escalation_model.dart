@@ -8,12 +8,16 @@ class EscalationModel {
   final String? formation;
   final Map<int, ParticipantModel?>? starters;
   final Map<int, ParticipantModel?>? reserves;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   EscalationModel({
     this.id,
     this.formation,
     this.starters,
     this.reserves,
+    this.createdAt,
+    this.updatedAt,
   });
 
   EscalationModel copyWith({
@@ -21,12 +25,16 @@ class EscalationModel {
     String? formation,
     Map<int, ParticipantModel?>? starters,
     Map<int, ParticipantModel?>? reserves,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return EscalationModel(
       id: id ?? this.id,
       formation: formation ?? this.formation,
       starters: starters ?? this.starters,
       reserves: reserves ?? this.reserves,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -36,6 +44,8 @@ class EscalationModel {
       'formation': formation,
       'starters': starters,
       'reserves': reserves,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -45,6 +55,8 @@ class EscalationModel {
       formation: map['formation'] != null ? map['formation'] as String : null,
       starters: map['starters'] != null ? Map<int, ParticipantModel?>.from((map['starters'] as Map<int, ParticipantModel?>)) : null,
       reserves: map['reserves'] != null ? Map<int, ParticipantModel?>.from((map['reserves'] as Map<int, ParticipantModel?>)) : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -54,7 +66,7 @@ class EscalationModel {
 
   @override
   String toString() {
-    return 'EscalationModel(id: $id, formation: $formation, starters: $starters, reserves: $reserves)';
+    return 'EscalationModel(id: $id, formation: $formation, starters: $starters, reserves: $reserves, $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -65,7 +77,9 @@ class EscalationModel {
       other.id == id &&
       other.formation == formation &&
       mapEquals(other.starters, starters) &&
-      mapEquals(other.reserves, reserves);
+      mapEquals(other.reserves, reserves) &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -73,6 +87,8 @@ class EscalationModel {
     return id.hashCode ^
       formation.hashCode ^
       starters.hashCode ^
-      reserves.hashCode;
+      reserves.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

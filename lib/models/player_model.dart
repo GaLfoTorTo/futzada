@@ -9,6 +9,8 @@ class PlayerModel {
   final String mainPosition;
   final String positions;
   final RatingModel? rating;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   PlayerModel({
     this.id,
@@ -17,6 +19,8 @@ class PlayerModel {
     required this.mainPosition,
     required this.positions,
     this.rating,
+    this.createdAt,
+    this.updatedAt,
   });
 
   PlayerModel copyWith({
@@ -26,6 +30,8 @@ class PlayerModel {
     String? mainPosition,
     String? positions,
     RatingModel? rating,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return PlayerModel(
       id: id ?? this.id,
@@ -34,6 +40,8 @@ class PlayerModel {
       mainPosition: mainPosition ?? this.mainPosition,
       positions: positions ?? this.positions,
       rating: rating ?? this.rating,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -45,6 +53,8 @@ class PlayerModel {
       'mainPosition': mainPosition,
       'positions': positions,
       'rating': rating?.toMap(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -58,6 +68,8 @@ class PlayerModel {
       rating: map['rating'] != null 
         ? RatingModel.fromMap(map['rating'] as Map<String,dynamic>) 
         : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -67,7 +79,7 @@ class PlayerModel {
 
   @override
   String toString() {
-    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, rating: $rating)';
+    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, rating: $rating, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -80,7 +92,9 @@ class PlayerModel {
       other.type == type &&
       other.mainPosition == mainPosition &&
       other.positions == positions &&
-      other.rating == rating;
+      other.rating == rating &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -90,6 +104,8 @@ class PlayerModel {
       type.hashCode ^
       mainPosition.hashCode ^
       positions.hashCode ^
-      rating.hashCode;
+      rating.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

@@ -1,7 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/team_model.dart';
 
 class ResultModel {
@@ -10,9 +8,9 @@ class ResultModel {
   final int teamAScore;
   final int teamBScore;
   final int? duration;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   ResultModel({
     required this.teamA,
@@ -31,9 +29,9 @@ class ResultModel {
     int? teamAScore,
     int? teamBScore,
     int? duration,
-    String? createdAt,
-    String? updatedAt,
-    String? deletedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return ResultModel(
       teamA: teamA ?? this.teamA,
@@ -67,9 +65,9 @@ class ResultModel {
       teamAScore: map['teamAScore'] as int,
       teamBScore: map['teamBScore'] as int,
       duration: map['duration'] != null ? map['duration'] as int : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as String : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }
 

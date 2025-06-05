@@ -5,6 +5,7 @@ import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/services/rating_service.dart';
 import 'package:futzada/models/player_model.dart';
+import 'package:intl/intl.dart';
 
 class PlayerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -27,6 +28,8 @@ class PlayerService {
       'mainPosition': getPositionFromEscalation(num),
       'positions' : jsonEncode(setPositions()),
       "rating" : ratingService.generateRating(Roles.Player).toMap(),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

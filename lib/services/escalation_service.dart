@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/models/escalation_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:intl/intl.dart';
 
 class EscalationService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -19,6 +20,8 @@ class EscalationService {
       "formation" : listFormations[random.nextInt(listFormations.length)],
       "starters" : setEscalation(category, 'starters'),
       "reserves" : setEscalation(category, 'reserves'),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

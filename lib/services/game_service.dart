@@ -22,24 +22,106 @@ class GameService {
   TeamService teamService = TeamService();
   
   //FUNÇÃO DE GERAÇÃO DE PARTIDA
-  GameModel generateGame(int i, EventModel event) {
-    //GERAR TIMES DO JOGO 
-    List<TeamModel> teams = List.generate(2, (i){
-      return teamService.generateTeam(i + 1, event);
-    });
+  GameModel generateGame(int i, EventModel event){
+    //CALCULAR HORARIO DE INICIO E FIM DA PARTIDA
+    var startGame = DateFormat('HH:mm').parse("${random.nextInt(21)}:${random.nextInt(30)}");
+    var endGame = DateFormat('HH:mm').parse("${random.nextInt(21)}:${random.nextInt(30)}");
+    //GERAR TIMES DA PARTIDA
+    var teams = teamService.generateTeams(event, 2);
     //GERAR JOGO (PARTIDA)
     return GameModel.fromMap({
-      'id': i,
-      'number': i,
-      'referee': participantService.generateParticipant(1, hasRole: false).toMap(),
-      'duration': random.nextInt(10),
-      'startTime': "${random.nextInt(17 - 20)}:${random.nextInt(00 - 59)}",
-      'endTime': "${random.nextInt(17 - 20)}:${random.nextInt(00 - 59)}",
-      'status': setStatus(random.nextInt(3)),
-      'result': resultService.generateResult(teams).toMap(),
-      'teams': teams,
-      "createdAt" : DateFormat('dd/MM/yyyy HH:ii:ss').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "updatedAt" : DateFormat('dd/MM/yyyy HH:ii:ss').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
+      "id": i,
+      "number": i,
+      "referee": participantService.generateParticipant(1, hasRole: false).toMap(),
+      "duration": random.nextInt(10),
+      "startTime": "${startGame.hour.toString().padLeft(2, '0')}:${startGame.minute.toString().padLeft(2, '0')}",
+      "endTime": "${endGame.hour.toString().padLeft(2, '0')}:${endGame.minute.toString().padLeft(2, '0')}",
+      "status": setStatus(random.nextInt(3)),
+      "result": resultService.generateResult(teams).toMap(),
+      "teams": teams,
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+    });
+  }
+
+  //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
+  List<GameModel?>getProgramaticGames(EventModel event, int duration){
+    //RESGATAR INICIO E FIM DO DIA DE EVENTO
+    DateTime timeStart = DateFormat("HH:mm").parse("${event.startTime}");
+    DateTime timeEnd = DateFormat("HH:mm").parse("${event.endTime}");
+    //CONTABILIZAR QUANTOS MINUTOS TEM DURANTE O PERIODO DE VENTO 
+    int totalMinutes = timeEnd.difference(timeStart).inMinutes;
+    //CALCULAR QUANTAS PARTIDAS CABEM NO PERIODO DE VENTO
+    int totalGames = (totalMinutes / duration).floor();
+    //VERIFICAR SE TOTAL DE PARTIDAS É MENOR QUE 1
+    if (totalGames < 1) {
+      //RETORNAR LISTA VAZIA
+      return [];
+    }
+    //GERAR LISTA DE PARTIDAS PRÉ PROGRAMADAS
+    return List.generate(totalGames, (i) {
+      //CALCULAR HORARIO DE INICIO E FIM DA PARTIDA
+      var calcStartGame = timeStart.add(Duration(minutes: i * duration));
+      var calcEndGame = calcStartGame.add(Duration(minutes: duration));
+      String startGame = DateFormat('HH:mm').format(calcStartGame);
+      String endGame = DateFormat('HH:mm').format(calcEndGame);
+      //GERAR PARTIDA PRÉ PROGRAMADA
+      return GameModel.fromMap({
+        "id": i + 1,
+        "number": i + 1,
+        "referee": participantService.generateParticipant(1, hasRole: false).toMap(),
+        "duration": duration,
+        "startTime": startGame,
+        "endTime": endGame,
+        "status": GameStatus.Scheduled,
+        "result": null,
+        "teams": [],
+        "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+        "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+      });
+    });
+  }
+  
+  //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
+  List<GameModel?>getHistoricGames(EventModel event, int duration){
+    //RESGATAR INICIO E FIM DO DIA DE EVENTO
+    DateTime timeStart = DateFormat("HH:mm").parse("${event.startTime}");
+    DateTime timeEnd = DateFormat("HH:mm").parse("${event.endTime}");
+    //CONTABILIZAR QUANTOS MINUTOS TEM DURANTE O PERIODO DE VENTO 
+    int totalMinutes = timeEnd.difference(timeStart).inMinutes;
+    //CALCULAR QUANTAS PARTIDAS CABEM NO PERIODO DE VENTO
+    int totalGames = (totalMinutes / duration).floor();
+    //VERIFICAR SE TOTAL DE PARTIDAS É MENOR QUE 1
+    if (totalGames < 1) {
+      //RETORNAR LISTA VAZIA
+      return [];
+    }
+    //GERAR HISTÓRICO DE PARTIDAS
+    return List.generate(totalGames, (i) {
+      //CALCULAR HORARIO DE INICIO E FIM DA PARTIDA
+      var calcStartGame = timeStart.add(Duration(minutes: i * duration));
+      var calcEndGame = calcStartGame.add(Duration(minutes: duration));
+      String startGame = DateFormat('HH:mm').format(calcStartGame);
+      String endGame = DateFormat('HH:mm').format(calcEndGame);
+      //GERAR TIMES DO JOGO 
+      List<Map<String, dynamic>> teams = List.generate(2, (i){
+        var team = teamService.generateTeam(i + 1, event);
+        return team.toMap();
+      });
+      //GERAR PARTIDA PRÉ PROGRAMADA
+      return GameModel.fromMap({
+        'id': i + 1,
+        'number': i + 1,
+        'referee': participantService.generateParticipant(1, hasRole: false).toMap(),
+        'duration': duration,
+        'startTime': startGame,
+        'endTime': endGame,
+        'status': GameStatus.Scheduled,
+        'result': resultService.generateResult(teams).toMap(),
+        'teams': teams,
+        "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+        "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
+      });
     });
   }
 
@@ -53,7 +135,7 @@ class GameService {
   }
   
   //FUNÇÃO PARA GERAR PROXIMAS PARTIDAS
-  GameModel?  getNextGame(EventModel event, GameModel? lastGame){
+  GameModel? getNextGame(EventModel event, GameModel? lastGame){
     //VERIFICAR SE EVENTOS TEM JOGOS
     if(event.games == null || event.games!.isEmpty){
       //VERIFICAR SE ÚLTIMO JOGO É NULO

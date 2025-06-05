@@ -5,6 +5,7 @@ import 'package:faker/faker.dart';
 import 'package:futzada/services/economy_service.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/models/manager_model.dart';
+import 'package:intl/intl.dart';
 
 class ManagerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -27,6 +28,8 @@ class ManagerService {
       "emblem" : faker.company.name(),
       "uniform" : faker.company.name(),
       "economy" : economyService.generateEconomy(i).toMap(),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

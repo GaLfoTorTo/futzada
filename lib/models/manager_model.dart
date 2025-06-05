@@ -14,6 +14,8 @@ class ManagerModel {
   final String? uniform;
   final EscalationModel? escalation;
   final EconomyModel? economy;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   ManagerModel({
     this.id,
@@ -25,6 +27,8 @@ class ManagerModel {
     this.uniform,
     this.escalation,
     this.economy,
+    this.createdAt,
+    this.updatedAt,
   });
 
   ManagerModel copyWith({
@@ -37,6 +41,8 @@ class ManagerModel {
     String? uniform,
     EscalationModel? escalation,
     EconomyModel? economy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return ManagerModel(
       id: id ?? this.id,
@@ -48,6 +54,8 @@ class ManagerModel {
       uniform: uniform ?? this.uniform,
       escalation: escalation ?? this.escalation,
       economy: economy ?? this.economy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -62,6 +70,8 @@ class ManagerModel {
       'uniform': uniform,
       'escalation': escalation?.toMap(),
       'economy': economy?.toMap(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -76,6 +86,8 @@ class ManagerModel {
       uniform: map['uniform'] != null ? map['uniform'] as String : null,
       escalation: map['escalation'] != null ? EscalationModel.fromMap(map['escalation'] as Map<String,dynamic>) : null,
       economy: map['economy'] != null ? EconomyModel.fromMap(map['economy'] as Map<String,dynamic>) : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -85,7 +97,7 @@ class ManagerModel {
 
   @override
   String toString() {
-    return 'ManagerModel(id: $id, team: $team, alias: $alias, primary: $primary, secondary: $secondary, emblem: $emblem, uniform: $uniform, escalation: $escalation, economy: $economy)';
+    return 'ManagerModel(id: $id, team: $team, alias: $alias, primary: $primary, secondary: $secondary, emblem: $emblem, uniform: $uniform, escalation: $escalation, economy: $economy, $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -101,7 +113,9 @@ class ManagerModel {
       other.emblem == emblem &&
       other.uniform == uniform &&
       other.escalation == escalation &&
-      other.economy == economy;
+      other.economy == economy &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -114,6 +128,8 @@ class ManagerModel {
       emblem.hashCode ^
       uniform.hashCode ^
       escalation.hashCode ^
-      economy.hashCode;
+      economy.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

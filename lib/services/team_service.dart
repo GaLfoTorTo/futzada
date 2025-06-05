@@ -12,21 +12,35 @@ class TeamService {
   
   //FUNÇÃO DE GERAÇÃO DE PARTIDA
   TeamModel generateTeam(int i, EventModel event) {
+    //GERAR NUMERO ALEATORIO PARA INDEX DE EMBLEMA
+    int index = Random().nextInt(8);
+    //DEFINIR NOME DE PARA EMBLEMA DA EQUIPE
+    String emblema = "emblema_${index == 0 ? 1 : index}";
     //GERAR EQUIPE (TIME)
     return TeamModel.fromMap({
       "id": i,
-      "uuid": i,
+      "uuid": "$i",
       "name": "Time ${i + 1}",
+      "emblema": emblema,
       "players": setPlayersTeam(event.participants!, event.qtdPlayers!),
-      "createdAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "updatedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 
+  //GERAR TIMES DO JOGO 
+  List<dynamic> generateTeams(event, qtd){
+    var teams = [];
+    List.generate(qtd, (i){
+      teams.add(generateTeam(i + 1, event).toMap());
+    });
+    return teams;
+  }
+
   //GERAR JOGADORES DO TIME
-  List<ParticipantModel> setPlayersTeam(List<ParticipantModel> participants, int qtd) {
+  List<Map<String, dynamic>> setPlayersTeam(List<ParticipantModel> participants, int qtd) {
     //DEFINIR LISTA DE JOGADORES
-    List<ParticipantModel> players = [];
+    List<Map<String, dynamic>> players = [];
     int indexPlayer = 0;
     //LOOP PARA GERAR JOGADORES
     List.generate(qtd, (i) {
@@ -35,7 +49,7 @@ class TeamService {
       indexPlayer = indexPlayer == newIndexPlayer ? (newIndexPlayer + 1) % participants.length : newIndexPlayer;
       //ADICIONAR JOGADOR A LISTA
       players.add(
-        participants[indexPlayer]
+        participants[indexPlayer].toMap()
       );
     });
     return players;

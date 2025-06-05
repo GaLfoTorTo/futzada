@@ -1,3 +1,6 @@
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/game_model.dart';
+import 'package:futzada/services/game_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
@@ -9,15 +12,19 @@ import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/controllers/game_controller.dart';
+import 'package:intl/intl.dart';
 
 class EventController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
   static EventController get instace => Get.find();
   //INSTANCIAR MODEL DE ENVETOS
   EventModel? model;
-  //INSTANCIAR SERVICE DE EVENTOS
+  //INSTANCIAR SERVIÇO DE EVENTOS
   EventService eventService = EventService();
-  //lIST
+  //INSTANCIAR SERVIÇO DE PARTIDAS
+  GameService gameService = GameService();
+
+  //EVENT
   //*
   //*
   //*
@@ -25,24 +32,66 @@ class EventController extends GetxController {
   UserModel user = Get.find(tag: 'user');
   //LISTA DE EVENTOS DO USUARIO
   List<EventModel> myEvents = Get.find(tag: 'events');
-  //LISTA DE EVENTOS SUGERIDOS
+  //VARIAVEL DE VERUFUCAÇÕES DE EVENTO AO VIVO
+  bool isLive = false;
+  //VISÃO GERAL SECTION
+  //*
+  //*
+  //RESGATAR EVENTO SELECIONADO
+  late EventModel event;
+  //LISTA DE EVENTOS SUGERIDOS DE EVENTOS
   List<EventModel> sugestions = [];
-  //EVENT
-  //*
-  //*
-  //*
   //LISTA DE DESTAQUES DO EVENTOS
   List<Map<String, dynamic>> highlights = [];
+  //PARTIDAS SECTION
+  //*
+  //*
+  //LISTA DE PROXIMAS PARTIDAS 
+  RxList<GameModel?> currentGames = <GameModel?>[].obs;
+  //LISTA DE PROXIMAS PARTIDAS 
+  RxList<GameModel?> nextGames = <GameModel?>[].obs;
+  //LISTA DE PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
+  RxList<GameModel?> programaticGames = <GameModel?>[].obs;
+  //LISTA DE PARTIDAS REALIZADAS
+  RxList<GameModel?> previousGames = <GameModel?>[].obs;
+  //CONTROLADOR DE DIA DE EVENTO
+  DateTime? eventDate;
+  //RESGATAR DATA DO DIA
+  final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   @override
   void onInit() {
     super.onInit();
+  }
+
+  void setSelectedEvent(EventModel event) {
+    //SETAR EVENTO SELECIONADO
+    this.event = event;
     //INICIALIZAR CONTROLLER DE GAME
     Get.put(GameController());
     //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
     sugestions = eventService.getEvents();
     //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
     highlights = eventService.getHighlightsEvent();
+    //RESGATAR DATA DO EVENTO
+    //eventDate = eventService.getNextEventDate(event);
+    //RESGATAR HISTÓRICO DE PARTIDAS
+    //isLive = eventService.isEventLive(event);
+    //VARAIVEIS PRA TESTE
+    eventDate = DateFormat("dd/MM/yyyy").parse("04/06/2025");
+    //VERIFICAR SE O EVENTO ESTA ACONTECENDO AGORA
+    isLive = true;
+    previousGames.assignAll(gameService.getHistoricGames(event, 10));
+    //VERIFICAR SE EVENTO ESTA ACONTECENDO HOJE
+    if(today.isAtSameMomentAs(eventDate!)){
+      //GERAR PROXIMAS PARTIDAS DO DIA 
+      nextGames.assignAll(gameService.getProgramaticGames(event, 10));
+    }else{
+      //GERAR PARTIDAS PROGRAMADAS AUTOMATICAMENTE
+      programaticGames.assignAll(gameService.getProgramaticGames(event, 10));
+    }
+    //ATUALIZAR CONTROLLER
+    update();
   }
 
   //RESGATAR AVALIAÇÕES DO EVENTO

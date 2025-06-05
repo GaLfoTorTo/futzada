@@ -31,9 +31,9 @@ class EventModel {
   final List<ParticipantModel>? participants;
   final List<AvaliationModel>? avaliations;
   final List<GameModel>? games;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
   
   EventModel({
     this.id,
@@ -90,9 +90,9 @@ class EventModel {
     List<AvaliationModel>? avaliations,
     List<ParticipantModel>? participants,
     List<GameModel>? games,
-    String? createdAt,
-    String? updatedAt,
-    String? deletedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return EventModel(
       id: this.id,
@@ -191,9 +191,9 @@ class EventModel {
       games: map['games'] != null 
         ? List<GameModel>.from((map['games'] as List<Map<String, dynamic>>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as String : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }
 

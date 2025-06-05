@@ -10,6 +10,8 @@ class RatingModel {
   final double? valuation;
   final double? price;
   final int? games;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   RatingModel({
     this.modality = Roles.Player,
@@ -18,6 +20,8 @@ class RatingModel {
     this.valuation = 0.0,
     this.price = 0.0,
     this.games = 0,
+    this.createdAt,
+    this.updatedAt,
   });
 
   RatingModel copyWith({
@@ -27,6 +31,8 @@ class RatingModel {
     double? valuation,
     double? price,
     int? games,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return RatingModel(
       modality: modality ?? this.modality,
@@ -35,6 +41,8 @@ class RatingModel {
       valuation: valuation ?? this.valuation,
       price: price ?? this.price,
       games: games ?? this.games,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -46,6 +54,8 @@ class RatingModel {
       'valuation': valuation,
       'price': price,
       'games': games,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -59,6 +69,8 @@ class RatingModel {
       valuation: map['valuation'] != null ? map['valuation'] as double : null,
       price: map['price'] != null ? map['price'] as double : null,
       games: map['games'] != null ? map['games'] as int : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -68,7 +80,7 @@ class RatingModel {
 
   @override
   String toString() {
-    return 'RatingModel(modality: $modality, points: $points, avarage: $avarage, valuation: $valuation, price: $price, games: $games)';
+    return 'RatingModel(modality: $modality, points: $points, avarage: $avarage, valuation: $valuation, price: $price, games: $games, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -81,7 +93,9 @@ class RatingModel {
       other.avarage == avarage &&
       other.valuation == valuation &&
       other.price == price &&
-      other.games == games;
+      other.games == games &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -91,6 +105,8 @@ class RatingModel {
       avarage.hashCode ^
       valuation.hashCode ^
       price.hashCode ^
-      games.hashCode;
+      games.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

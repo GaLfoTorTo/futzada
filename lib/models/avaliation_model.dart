@@ -7,8 +7,8 @@ class AvaliationModel {
   final UserModel user;
   final double? avaliation;
   final String? comment;
-  final String? createdAt;
-  final String? updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   AvaliationModel({
     required this.id,
@@ -24,8 +24,8 @@ class AvaliationModel {
     UserModel? user,
     double? avaliation,
     String? comment,
-    String? createdAt,
-    String? updatedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return AvaliationModel(
       id: id ?? this.id,
@@ -54,8 +54,8 @@ class AvaliationModel {
       user: UserModel.fromMap(map['user'] as Map<String,dynamic>),
       avaliation: map['avaliation'] != null ? map['avaliation'] as double : null,
       comment: map['comment'] != null ? map['comment'] as String : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 

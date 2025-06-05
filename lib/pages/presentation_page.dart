@@ -41,11 +41,16 @@ class PresentationPageWidget extends StatelessWidget {
     //RESGATAR CONTROLLERDE NAVEGACAO DE TABS
     final navigationTab = Get.find<NavigationController>();
     //DEFINIR VARAIVEL DE VERIFICAÇÃO DE USUARIO
-    bool canManager = false;
+    bool canManager = true;
     //FUNÇÃO DE MENSAGEM DE ERRO CASO O USUARIO NÃO POSSA ACESSAR 
-    void buttonErroAction(){
-      //EXIBIR DIALOG DE ERRO
-      Get.dialog(const ErroEscalationDialog());
+    void firstAction(){
+      //VERIIFCAR SE EXISTE ALGUM IMPEDITIVO DE AVANÇO DO USUARIO
+      if(canManager){
+        buttonFirstAction();
+      }else{
+        //EXIBIR DIALOG DE ERRO
+        Get.dialog(const ErroEscalationDialog());
+      }
     }
     //VERIFICAR ROTA PARA INICIALIZAÇÃO DE CONTROLLER
     switch (route) {
@@ -139,7 +144,7 @@ class PresentationPageWidget extends StatelessWidget {
                             text: buttonFirstText,
                             width: dimensions.width,
                             icon: buttonFirstIcon,
-                            action: canManager ? buttonFirstAction : buttonErroAction,
+                            action: firstAction,
                           ),
                           const Padding(padding: EdgeInsets.all(10)),
                           ButtonOutlineWidget(

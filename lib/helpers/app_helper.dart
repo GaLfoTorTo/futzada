@@ -146,10 +146,10 @@ class AppHelper {
   }
 
   //VERIFICAR SE EVENTO ESTA ACONTECENDO NO MOMENTO
-  static bool verifyInLive(event){
+  static bool verifyInLive(startDate, endDate) {
     //CONVERTER DATA E HORARIO DO EVENTO
-    DateTime eventDateTimeStart = DateFormat("dd/MM/yyyy HH:mm").parse("${event.date} ${event.startTime}");
-    DateTime eventDateTimeEnd = DateFormat("dd/MM/yyyy HH:mm").parse("${event.date} ${event.endTime}");
+    DateTime eventDateTimeStart = DateFormat("dd/MM/yyyy HH:mm").parse("$startDate");
+    DateTime eventDateTimeEnd = DateFormat("dd/MM/yyyy HH:mm").parse("$endDate");
     //COMPARAR DATAS PARA VERIFICAÇÃO DE AO VIVO
     return DateTime.now().isAfter(eventDateTimeStart) && DateTime.now().isBefore(eventDateTimeEnd);
   }
@@ -315,7 +315,7 @@ class AppHelper {
     } else if (difference <= 14) {
       return 'Semana passada';
     } else {
-      return DateFormat('dd/MM/yyyy').format(date);
+      return DateFormat('yyyy-MM-dd').format(date);
     }
   }  
 

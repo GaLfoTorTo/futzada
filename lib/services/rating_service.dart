@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:faker/faker.dart' as fakerData;
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/rating_model.dart';
+import 'package:intl/intl.dart';
 
 class RatingService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -21,7 +22,9 @@ class RatingService {
       "avarage" : avarage,
       "valuation" : double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
       "price" : double.parse(setValues(0.0, 10.0).toStringAsFixed(2)),
-      "games" : games
+      "games" : games,
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

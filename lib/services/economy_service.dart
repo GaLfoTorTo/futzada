@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart' as fakerData;
 import 'package:futzada/models/economy_model.dart';
+import 'package:intl/intl.dart';
 
 class EconomyService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -20,6 +21,8 @@ class EconomyService {
       "valuation" : double.parse(setValues(0.0, 5.0).toStringAsFixed(2)),
       "points" : double.parse(setValues(0.0, 100.0).toStringAsFixed(2)),
       "totalPoints" : double.parse(setValues(0.0, 500.0).toStringAsFixed(2)),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

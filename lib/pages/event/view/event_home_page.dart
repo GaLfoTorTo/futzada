@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -14,14 +13,13 @@ import 'package:futzada/widget/images/img_group_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:futzada/widget/text/expandable_text_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class EventHomePage extends StatefulWidget {
-  final EventModel event;
   
   const EventHomePage({
     super.key,
-    required this.event
   });
 
   @override
@@ -35,21 +33,23 @@ class _EventHomePageState extends State<EventHomePage> {
     var dimensions = MediaQuery.of(context).size;
     //CONTROLLER DE BARRA NAVEGAÇÃO
     EventController controller = EventController.instace;
+    //RESGATAR EVENT
+    EventModel event = controller.event;
     //CONTROLLADOR DE DESTAQUES
     final PageController highligtsController = PageController();
-    //RESGATAR EVENT
-    EventModel event = widget.event;
     //FUNÇÃO PARA RESGATAR DATA DA PELADA
     String getEventDate(EventModel event){
+      //VARIAVEL PARA RESGATAR DATA DO EVENTO
+      String date = "";
       //VERIFICAR SE FORAM DEFINIDOS DIAS DA SEMANA
       if(event.daysWeek != null){
-        return event.daysWeek!.replaceAll("[", '').replaceAll("]", '');
+        date = event.daysWeek!.replaceAll("[", '').replaceAll("]", '');
       }else{
-        return event.date.toString();
+        date = event.date.toString();
       }
+      return "$date - ${event.startTime} as ${event.endTime}";
     }
-    //VERIFICAR SE O EVENTO ESTA ACONTECENDO AGORA
-    bool isLive = AppHelper.verifyInLive(event);
+
     //RESGATAR AVALIAÇÃO DO EVENTO
     double avaliation = controller.getAvaliations(event.avaliations);
     //LISTA DE INFORMAÇÕES SOBRE O EVENT
@@ -63,7 +63,7 @@ class _EventHomePageState extends State<EventHomePage> {
       {
         'item': "Iniciada em",
         'icon': AppIcones.calendar_solid,
-        'value' : "Abril de 2025",
+        'value' : DateFormat("dd/MM/yyyy").format(event.createdAt!),
       },
       {
         'item': "Participantes:",
@@ -164,50 +164,41 @@ class _EventHomePageState extends State<EventHomePage> {
                       ],
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
+                        child: Column(
                           children: [
-                            const Icon(
-                              AppIcones.calendar_solid,
-                              color: AppColors.gray_300,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                getEventDate(event),
-                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: AppColors.gray_300
-                                ),
-                              ),
-                            ),
-                          ]
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              AppIcones.clock_solid,
-                              color: AppColors.gray_300,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Text(
-                                "${event.startTime} as ${event.endTime}",
-                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                  color: AppColors.gray_300
-                                ),
-                              ),
-                            ),
-                            if(isLive)...[
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child:IndicatorLiveWidget(
-                                  size: 15,
+                            if(controller.currentGames.isNotEmpty)...[
+                              Container(
+                                width: 100,
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                margin: const EdgeInsets.symmetric(vertical: 5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
                                   color: AppColors.red_300,
                                 ),
+                                child: const IndicatorLiveWidget(
+                                  size: 15,
+                                  color: AppColors.white,
+                                ),
                               ),
-                            ]
+                            ],
+                            Row(
+                              children: [
+                                const Icon(
+                                  AppIcones.calendar_solid,
+                                  color: AppColors.gray_300,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    getEventDate(event),
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                      color: AppColors.gray_300
+                                    ),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ]
+                            ),
                           ],
                         ),
                       ),
@@ -231,13 +222,16 @@ class _EventHomePageState extends State<EventHomePage> {
                                           color: AppColors.green_300,
                                           size: 25,
                                         ),
-                                        Text(
-                                          "${event.address}",
-                                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                            color: AppColors.green_300
+                                        SizedBox(
+                                          width: dimensions.width * 0.43,
+                                          child: Text(
+                                            "${event.address}",
+                                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                              color: AppColors.green_300
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ],
                                     ),

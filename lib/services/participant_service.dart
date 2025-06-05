@@ -33,11 +33,9 @@ class ParticipantService {
       "role" : roles,
       "permissions" : permissions,
       "status" : setStatus(random.nextInt(3)),
-      "createdAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "updatedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "deletedAt" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
-      "user" : userRepository.generateUser(i, hasRole).toMap()
+      "user" : userRepository.generateUser(i, hasRole).toMap(), //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
 

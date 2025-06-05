@@ -19,6 +19,8 @@ class UserModel {
   String? token;
   PlayerModel? player;
   ManagerModel? manager;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   UserModel({
     this.id,
@@ -34,6 +36,8 @@ class UserModel {
     this.token,
     this.player,
     this.manager,
+    this.createdAt,
+    this.updatedAt,
   });
 
   UserModel copyWith({
@@ -50,6 +54,8 @@ class UserModel {
     String? token,
     PlayerModel? player,
     ManagerModel? manager,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -65,6 +71,8 @@ class UserModel {
       token: token ?? this.token,
       player: player ?? this.player,
       manager: manager ?? this.manager,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -83,6 +91,8 @@ class UserModel {
       'token': token,
       'player': player?.toMap(),
       'manager': manager?.toMap(),
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 
@@ -107,6 +117,8 @@ class UserModel {
       manager: map['manager'] != null 
         ? ManagerModel.fromMap(map['manager'] as Map<String, dynamic>) 
         : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
   }
 
@@ -116,7 +128,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, visibility: $visibility, photo: $photo, token: $token, player: $player, manager: $manager)';
+    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, visibility: $visibility, photo: $photo, token: $token, player: $player, manager: $manager, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -136,7 +148,9 @@ class UserModel {
       other.photo == photo &&
       other.token == token &&
       other.player == player &&
-      other.manager == manager;
+      other.manager == manager &&
+      other.createdAt == createdAt &&
+      other.updatedAt == updatedAt;
   }
 
   @override
@@ -153,6 +167,8 @@ class UserModel {
       photo.hashCode ^
       token.hashCode ^
       player.hashCode ^
-      manager.hashCode;
+      manager.hashCode ^
+      createdAt.hashCode ^
+      updatedAt.hashCode;
   }
 }

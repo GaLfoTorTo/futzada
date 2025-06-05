@@ -18,9 +18,9 @@ class GameModel {
   final GameStatus? status;
   final ResultModel? result;
   final List<TeamModel>? teams;
-  final String? createdAt;
-  final String? updatedAt;
-  final String? deletedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   GameModel({
     required this.id,
@@ -49,9 +49,9 @@ class GameModel {
     GameStatus? status,
     ResultModel? result,
     List<TeamModel>? teams,
-    String? createdAt,
-    String? updatedAt,
-    String? deletedAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return GameModel(
       id: id ?? this.id,
@@ -81,7 +81,7 @@ class GameModel {
       'endTime': endTime,
       'status': status,
       'result': result?.toMap(),
-      'teams': teams!.map((x) => x.toMap()).toList(),
+      'teams': teams != null && teams!.isNotEmpty ? teams!.map((x) => x.toMap()).toList() : [],
       'createdAt': createdAt,
       'updatedAt': updatedAt,
       'deletedAt': deletedAt,
@@ -98,19 +98,21 @@ class GameModel {
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,
       status: map['status'] != null
-        ? GameStatus.values.firstWhere((e) => e.name == map['status'])
+        ? GameStatus.values.firstWhere((e) => e == map['status'])
         : null,
-      result: map['result'] != null ? ResultModel.fromMap(map['result'] as Map<String,dynamic>) : null,
+      result: map['result'] != null 
+        ? ResultModel.fromMap(map['result'] as Map<String,dynamic>) 
+        : null,
       teams: map['teams'] != null 
         ? List<TeamModel>.from(
-            (map['teams'] as List<int>).map<TeamModel?>(
+            (map['teams'] as List<dynamic>).map<TeamModel?>(
               (x) => TeamModel.fromMap(x as Map<String,dynamic>),
             ),
           ) 
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as String : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as String : null,
+      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
+      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }
 

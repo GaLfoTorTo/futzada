@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/services/avaliation_service.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
@@ -41,7 +42,7 @@ class EventService {
       "country" : faker.address.country().toString(),
       "zipCode" : faker.address.zipCode(),
       "daysWeek" : "[Seg, Qua, Sex]",
-      "date" : DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
+      "date" : null,//DateFormat('yyyy-MM-dd').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       "startTime" : faker.date.justTime(),
       "endTime" : faker.date.justTime(),
       "category" : getCategory(),
@@ -58,6 +59,8 @@ class EventService {
       "participants" : List.generate(qtdParticipants, (u){
         return participantService.generateParticipant(u + 1).toMap();
       }),
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
   }
   
@@ -113,6 +116,49 @@ class EventService {
     });
     //RETORNAR LISTA DE NOTIFICAÇÕES
     return arr;
+  }
+
+  //FUNÇÃO PARA VERIFICAR SE EVENTO ESTA AO VIVO
+  bool isEventLive(EventModel event){
+    //VERIFICAR SE EVENTO TEM DATA FIXA
+    if(event.date != null){
+      //VERIFICAR SE O EVENTO ESTA ACONTECENDO AGORA
+      return AppHelper.verifyInLive("${event.date} ${event.startTime}", "${event.date} ${event.endTime}");
+      //return = AppHelper.verifyInLive("31/05/2025 11:00", "31/05/2025 13:00");
+    }
+    //RESGATAR DATAS DE ACONTECIMENTO DO EVENTO
+    var eventDateTime = getNextEventDate(event);
+    var eventDate = DateFormat("dd/MM/yyyy").format(eventDateTime);
+    //VERIFICAR SE O EVENTO ESTA ACONTECENDO AGORA
+    return AppHelper.verifyInLive("$eventDate ${event.startTime}", "$eventDate ${event.endTime}");
+  }
+
+  //FUNÇÃO PARA RESGATAR A DATA DO PROXIMO DIA DO EVENTO
+  DateTime getNextEventDate(EventModel event) {
+    //RESGATAR DATA FIXA DO EVENTO
+    if (event.date != null) return DateFormat("dd/MM/yyyy").parse(event.date!);
+    //LISTA DE DIAS DA SEMANA ABREVIADOS
+    List<String> weekDays = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    //RESGATAR DIAS DA SEMANA DO EVENTO
+    final eventDaysWeek = event.daysWeek!
+      .replaceAll(RegExp(r'[\[\]]'), '')
+      .split(',')
+      .map((d) => weekDays.indexOf(d.trim()))
+      .toList();
+    //RESGATAR DATA DE HOJE E INDEX DO DIA DA SEMANA
+    DateTime today = DateTime.now();
+    final todayIndex = today.weekday % 7;
+    //VERIFICAR SE INDEX DO DIA DE HOJE (NA SEMANA) É MAIOR DO QUE INDEX DO ULTIMA DATA DO EVENTO (NA SEMANA)
+    final nextDay = eventDaysWeek.firstWhere(
+      (day) => day > todayIndex,
+      orElse: () => eventDaysWeek.first + 7,
+    );
+    //ADICIONAR NOVA DATA DO EVENTO BASEADO NA DATA DE HOJE E NO INDEX DE PROXMO EVENTO ADIQUIRIDO;
+    return DateTime(
+      today.year,
+      today.month,
+      today.day + (nextDay - todayIndex),
+    );
   }
 
   //FUNÇÃO PARA GERAÇÃO DE VALORES (TEMPORARIAMENTE)
