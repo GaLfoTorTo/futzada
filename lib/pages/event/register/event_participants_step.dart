@@ -27,7 +27,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = EventController.instace;
+  final controller = EventController.instance;
   //TITULO DA PÁGINA
   String titulo = 'Cadastro Pelada';
   //MENSAGEM DE ERRO
@@ -114,7 +114,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
     }else{
       Get.back();
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(context, errorMessage);
+      AppHelper.feedbackMessage(context, errorMessage);
     }
   }
 

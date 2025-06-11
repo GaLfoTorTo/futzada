@@ -4,8 +4,9 @@ import 'package:futzada/pages/escalation/market_page.dart';
 import 'package:futzada/pages/event/list/event_list.dart';
 import 'package:futzada/pages/event/view/event_historic_page.dart';
 import 'package:futzada/pages/event/view/event_page.dart';
-import 'package:futzada/pages/games/game_detail_page.dart';
-import 'package:futzada/pages/games/games_list_page%20.dart';
+import 'package:futzada/pages/games/config/game_config_page.dart';
+import 'package:futzada/pages/games/detail/game_detail_page.dart';
+import 'package:futzada/pages/games/detail/games_list_page%20.dart';
 import 'package:get/get.dart';
 import 'package:futzada/pages/splash_page.dart';
 import 'package:futzada/pages/auth/login_page.dart';
@@ -48,6 +49,7 @@ class AppRoutes {
       //PARTIDAS
       GetPage(name: "/games/list", page: () => const GamesListPage()),
       GetPage(name: "/games/game_detail", page: () => const GameDetailPage()),
+      GetPage(name: "/games/game_config", page: () => const GameConfigPage()),
       //EVENTS - CADASTRO 
       GetPage(name: "/event/register/event_basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),

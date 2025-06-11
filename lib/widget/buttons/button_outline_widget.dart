@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ButtonOutlineWidget extends StatelessWidget {
   final String? text;
   final Color? textColor;
+  final double? textSize;
   final Color? backgroundColor;
   final dynamic icon;
   final double? iconSize;
@@ -16,6 +17,7 @@ class ButtonOutlineWidget extends StatelessWidget {
     super.key,
     this.text,
     this.textColor,
+    this.textSize,
     this.backgroundColor,
     this.icon,
     this.iconSize,
@@ -33,6 +35,9 @@ class ButtonOutlineWidget extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor ?? backgroundColor,
         foregroundColor: textColor ?? textColor,
+        textStyle: TextStyle(
+          fontSize: textSize ?? textSize,
+        ),
       ),
       child: SizedBox(
         width: width,

@@ -1,0 +1,86 @@
+name: "Novo Módulo: "
+description: "Ex: Template para criação de Modulos e Componentes"
+title: "[NEW] - [NOME DO COMPONENTE] - [NOME DO MODULO] "
+labels: [Novo]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🧩 Descrição Geral  
+        Preencha os campos abaixo para documentar o novo módulo.
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição
+      description: Descreva com o máximo de detalhes possíveis sobre o novo modulo.
+      placeholder: "Ex: O módulo tem como objetivo garantir a rastreabilidade dos pontos de coleta..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: estrutura
+    attributes:
+      label: Estrutura da Tabela
+      description: Liste os campos (e tipos de dados) da tabela que será utilizada por este modulo.
+      placeholder: |
+        - codigo: VARCHAR(255)
+        - codificacao: ENUM (Automática, Manual)
+        - cliente_id: FOREIGN KEY (Clientes)
+        - ...
+    validations:
+      required: true
+  
+  - type: textarea
+    id: relacionamentos
+    attributes:
+      label: Relacionamentos
+      description: Liste os relacionamentos externos a tabela caso existam juntos as seus tipos relação. Em caso de mais campos nas tabelas relacionadas adicionar um atributo "campos" e especificar os tipos de dados.
+      placeholder: |
+        - Jogador:
+          - tipo: um-para-Muitos
+          - tabela_intermediaria: jogador_usuario
+        - Escalação:
+          - tipo: Muitos-para-Muitos
+          - tabela_intermediaria: usuario_escalacao
+          - campos: 
+            - current_escalation (BOOLEAN),
+        - ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: funcionalidades
+    attributes:
+      label: Funcionalidades
+      description: Liste os critérios mínimos que definem quando uma funcionalidade estará concluída com sucesso.
+      placeholder: |
+        - A criação de novos registros deve validar campos obrigatórios.
+        - Exportações devem conter todos os dados visíveis em tela.
+        - O campo de periodo não deve permitir datas retroativas.
+        - ...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: controle_avanco
+    attributes:
+      label: Controle de Avanço
+      description: Os checkbox abaixo servirão de controle de avanço da equipe de desenvolvimento e testadores.
+      options:
+        - label: Criação de Pagina
+        - label: Gestão de estado
+        - label: Processamento de dados
+        - label: Consumo de Api
+
+  - type: textarea
+    id: testes
+    attributes:
+      label: Testes Esperados
+      description: Quais testes unitários, de integração e manuais devem ser realizados?
+      placeholder: |
+        - Testes unitários de criação, edição e remoção
+        - Testes de Navegação
+        - ...

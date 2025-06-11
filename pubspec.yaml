@@ -63,10 +63,10 @@ dependencies:
   geolocator: ^13.0.1
   intl: ^0.20.2
   timeago: ^3.7.1
-  #remover despois
-  faker: ^2.1.0
+  multi_select_flutter: ^4.1.3
 
 dev_dependencies:
+  faker: ^2.1.0
   flutter_test:
     sdk: flutter
 
@@ -116,6 +116,12 @@ flutter:
         - asset: assets/fonts/Nunito-Medium.ttf
         - asset: assets/fonts/Nunito-Regular.ttf
         - asset: assets/fonts/Nunito-Light.ttf
+    
+    - family: DS-DIGITAL
+      fonts:
+        - asset: assets/fonts/DS-DIGI.TTF
+        - asset: assets/fonts/DS-DIGIB.TTF
+        - asset: assets/fonts/DS-DIGIT.TTF
         
     - family: AppIcons
       fonts:

@@ -46,7 +46,7 @@ class EventService {
       "startTime" : faker.date.justTime(),
       "endTime" : faker.date.justTime(),
       "category" : getCategory(),
-      "qtdPlayers" : qtdParticipants,
+      "qtdPlayers" : random.nextInt(11),
       "visibility" : random.nextBool() == true ? VisibilityPerfil.Public.name : VisibilityPerfil.Private.name,
       "allowCollaborators" : permissionState,
       "permissions" : permissions,

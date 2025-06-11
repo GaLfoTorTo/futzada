@@ -7,7 +7,6 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/cards/card_ranking_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:futzada/widget/others/user_stack_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class CardUltimosJogosWidget extends StatelessWidget {
@@ -182,22 +181,6 @@ class CardUltimosJogosWidget extends StatelessWidget {
                       List<dynamic>? assistentes = equipe['assistentes'];
                       return Column(
                         children: [
-                          Padding(
-                            padding: key == 0 ? const EdgeInsets.only(right: 30) : const EdgeInsets.only(left: 30),
-                            child: UserStackWidget(
-                              usuarios: artilheiros,
-                              icone: LineAwesomeIcons.futbol,
-                              side: key == 0 ? 'right' : 'left',
-                            ),
-                          ),
-                          Padding(
-                            padding: key == 0 ? const EdgeInsets.only(right: 30) : const EdgeInsets.only(left: 30),
-                            child: UserStackWidget(
-                              usuarios: assistentes,
-                              icone: LineAwesomeIcons.hand_holding_solid,
-                              side: key == 0 ? 'right' : 'left',
-                            )
-                          )
                         ],
                       );
                     }).toList(),

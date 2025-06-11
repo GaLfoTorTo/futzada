@@ -11,7 +11,7 @@ class EventListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE CHAT
-    var controller = EventController.instace;
+    var controller = EventController.instance;
     
     return Scaffold(
       appBar: HeaderWidget(

@@ -336,10 +336,10 @@ class AppHelper {
   }
 
   //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO
-  static void erroMessage(context, message) {
+  static void feedbackMessage(context, message, {String? type}) {
     final snackBar = AlertMessageWidget.createSnackBar(
       message: message,
-      type: 'Error'
+      type: type ?? 'Error'
     );
     //EXIBIR ALERTA
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

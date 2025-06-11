@@ -1,5 +1,5 @@
 import 'package:futzada/widget/cards/card_game_live_widget.dart';
-import 'package:futzada/widget/dialogs/erro_partidas_dialog%20copy.dart';
+import 'package:futzada/widget/dialogs/erro_game_dialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class EventGamesPage extends StatefulWidget {
 
 class _EventGamesPageState extends State<EventGamesPage> {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  EventController controller = EventController.instace;
+  EventController controller = EventController.instance;
   //QUANTIDADE DE ITENS PARA EXIBIÇÃO
   int qtdView = 3;
 
@@ -34,11 +34,11 @@ class _EventGamesPageState extends State<EventGamesPage> {
     //VERIFICAR SE EXISTEM PARTIDAS AGENDADAS OU AO VIVO
     WidgetsBinding.instance.addPostFrameCallback((_) {
       //VERIFICAR SE EXISTEM PARTIDAS AGENDADAS OU AO VIVO
-      if (controller.nextGames.isEmpty && controller.programaticGames.isEmpty && controller.currentGames.isEmpty) {
+      if (controller.nextGames.isEmpty && controller.scheduledGames.isEmpty && controller.inProgressGames.isEmpty) {
         //VERIFICAR SE PAGINA JA FOI MONTADA
         if (mounted) { 
         //EXIBIR DIALOG DE ERRO
-          Get.dialog(const ErroPartidasDialog()).then((_) {
+          Get.dialog(const ErroGameDialog()).then((_) {
             //VERIFICAR SE DIALOG FOI MONTADO
             if (mounted) {
               //RETORNAR PARA PRIMEIRA TAB
@@ -66,6 +66,8 @@ class _EventGamesPageState extends State<EventGamesPage> {
         qtdView = qtdView - 3 > 3 ? qtdView - 3 : 3;
       }
     }
+    //RESGATAR DATA DO PROXIMO DIA DO EVENTO
+    var eventDate = DateFormat("EEE - dd/MM/y").format(controller.eventDate!);
 
     return SingleChildScrollView(
       child: Container(
@@ -76,7 +78,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
             //EXIBIR CARD DO DIA DE JOGO DO EVENTO
             if(controller.eventDate != null && controller.today.isAtSameMomentAs(controller.eventDate!))...[
               //EXIBIR CARD DE PARTIDA AO VIVO 
-              if(controller.currentGames.isNotEmpty)...[
+              if(controller.inProgressGames.isNotEmpty)...[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Row(
@@ -99,13 +101,13 @@ class _EventGamesPageState extends State<EventGamesPage> {
                 //EXIBIR PARTIDAS AO VIVO
                 Obx(() {
                   //RESGATAR PARTIDAS AO VIVO
-                  final currentGames = controller.currentGames;
+                  final inProgressGames = controller.inProgressGames;
                   //VERIFICAR SE EXISTE PARTIDAS AO VIVO            
-                  if (controller.currentGames.isEmpty) {
+                  if (controller.inProgressGames.isEmpty) {
                     return const SizedBox.shrink();
                   }
                   //RESGATAR QUANTIDADE DE PARTIDAS AO VIVO
-                  int qtdGames = currentGames.length;
+                  int qtdGames = inProgressGames.length;
 
                   return Column(
                     children: [
@@ -129,7 +131,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                             child: Column(
                               spacing: 20,
                               children: [
-                                ...currentGames.take(qtdView).map((game){
+                                ...inProgressGames.take(qtdView).map((game){
 
                                   return CardGameLiveWidget(
                                     event: event,
@@ -238,6 +240,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                                   width: dimensions.width - 10,
                                   event: event,
                                   game: game!,
+                                  gameDate: eventDate,
                                   navigate: key < 2 ? true : false,
                                   active: key < 2 ? true : false,
                                 );
@@ -301,17 +304,15 @@ class _EventGamesPageState extends State<EventGamesPage> {
                 );
               }),
             ],
-            //EXIBIR PARTIDAS PROGRAMADAS
+            //EXIBIR PARTIDAS AGENDADAS
             Obx(() {
-              final programaticGames = controller.programaticGames;
+              final scheduledGames = controller.scheduledGames;
               //VERIFICAR SE EXISTE PARTIDAS PROGRAMADAS                
-              if (controller.programaticGames.isEmpty) {
+              if (controller.scheduledGames.isEmpty) {
                 return const SizedBox.shrink();
               }
-              //RESGATAR DATA DO PROXIMO DIA DO EVENTO
-              var eventDate = DateFormat("EEE - dd/MM/y").format(controller.eventDate!);
               //RESGATAR QUANTIDADE DE PARTIDAS PROGRAMADAS
-              int qtdGames = programaticGames.length;
+              int qtdGames = scheduledGames.length;
 
               return Column(
                 children: [
@@ -346,11 +347,12 @@ class _EventGamesPageState extends State<EventGamesPage> {
                         child: Column(
                           spacing: 20,
                           children: [
-                            ...programaticGames.take(qtdView).map((game){
+                            ...scheduledGames.take(qtdView).map((game){
                               return CardGameWidget(
                                 width: dimensions.width - 10,
                                 event: event,
                                 game: game!,
+                                gameDate: eventDate,
                                 active: false
                               );
                             })

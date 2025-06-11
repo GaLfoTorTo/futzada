@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.of(context).pop();
       setState(() {});
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(context, errorMessage);
+      AppHelper.feedbackMessage(context, errorMessage);
     }
   }
 

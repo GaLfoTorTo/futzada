@@ -1,58 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class ImgGroupCircularWidget extends StatelessWidget {
   final double width;
   final double height;
   final List<dynamic>? images;
   final Color? borderColor;
+  final String side;
 
   const ImgGroupCircularWidget({
     super.key, 
     required this.width, 
     required this.height,
     this.images,
-    this.borderColor
+    this.borderColor,
+    this.side = "right"
   });
 
   @override
   Widget build(BuildContext context) {
-    //VERIFICAR SE FORAM RECEBIDAS IMAGENS
     final imgs = images ?? const [AppImages.userDefault, AppImages.userDefault];
     
-    return SizedBox(
-      width: width + (imgs.length * 10) * 2,
+    return Container(
+      width: width + (imgs.length - 1) * (width - 10),
       height: height,
+      alignment: side == "left" ? Alignment.centerRight : Alignment.centerLeft,
       child: Stack(
-        alignment: Alignment.center,
-        children: List.generate(imgs.length, (i) {
-          //RESGATAR IMAGEM
-          var image = imgs[i];
-          return Positioned(
-            left: i * 25.0,
-            child: Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: image != null 
-                      ? CachedNetworkImageProvider(image) 
-                      : AssetImage(image) as ImageProvider,
-                  fit: BoxFit.cover
-                ),
-                color: AppColors.gray_300,
-                border: Border.all(
-                  color: borderColor != null ? borderColor! : AppColors.gray_500,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(width / 2),
-              ),
-            )
-          );
-        }),
-      ),
+        children: _buildStackChildren(imgs),
+      ), 
     );
+  }
+
+  List<Widget> _buildStackChildren(List<dynamic> imgs) {
+    final children = <Widget>[];
+    
+    for (int i = 0; i < imgs.length; i++) {
+      final index = side == "left" ? imgs.length - 1 - i : i;
+      final position = i * 20.0;
+      
+      children.add(
+        Positioned(
+          left: side == "right" ? position : null,
+          right: side == "left" ? position : null,
+          child: ImgCircularWidget(
+            width: width ,
+            height: height ,
+            image: images != null ? imgs[index] : null,
+            borderColor: borderColor,
+          ),
+        ),
+      );
+    }
+    
+    return children;
   }
 }

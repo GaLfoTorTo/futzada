@@ -57,7 +57,7 @@ class _ConclusionStepStateState extends State<ConclusionStep>  with SingleTicker
       setState(() {
         Navigator.of(context).pop();
       });
-      AppHelper.erroMessage(context, errorMessage);
+      AppHelper.feedbackMessage(context, errorMessage);
     }
   }
 
@@ -192,7 +192,7 @@ class _ConclusionStepStateState extends State<ConclusionStep>  with SingleTicker
       }else{
         //ALERTAR ERRO
         errorMessage = 'Aceite os termos de uso e políticas para finalizar o cadastro';
-        AppHelper.erroMessage(context, errorMessage);
+        AppHelper.feedbackMessage(context, errorMessage);
       }
     });
   }

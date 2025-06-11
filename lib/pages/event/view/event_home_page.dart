@@ -32,7 +32,7 @@ class _EventHomePageState extends State<EventHomePage> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //CONTROLLER DE BARRA NAVEGAÇÃO
-    EventController controller = EventController.instace;
+    EventController controller = EventController.instance;
     //RESGATAR EVENT
     EventModel event = controller.event;
     //CONTROLLADOR DE DESTAQUES
@@ -166,7 +166,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Column(
                           children: [
-                            if(controller.currentGames.isNotEmpty)...[
+                            if(controller.inProgressGames.isNotEmpty)...[
                               Container(
                                 width: 100,
                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),

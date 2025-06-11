@@ -16,7 +16,7 @@ class EventHistoricPage extends StatefulWidget {
 
 class _EventHistoricPageState extends State<EventHistoricPage> with SingleTickerProviderStateMixin {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  EventController controller = EventController.instace;
+  EventController controller = EventController.instance;
   //CONTROLLER DE TABS
   late final TabController tabController;
   //LISTA DE TABS
@@ -36,7 +36,7 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
     //NOVO ARRAY DE TABS
     final newTabs = <String>[];
     //PERCORRER PARTIDAS PASSADAS
-    controller.previousGames.forEach((game) {
+    controller.finishedGames.forEach((game) {
       //VERIFICAR SE JOGO TEM DATA DE CRIAÇÃO
       if (game != null && game.createdAt != null) {
         //FORMATAR DATA
@@ -65,7 +65,7 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
       body: SafeArea(
         child: Column(
           children:[ 
-            if(controller.previousGames.isNotEmpty)...[
+            if(controller.finishedGames.isNotEmpty)...[
               Container(
                 color: AppColors.white,
                 child: TabBar(
@@ -103,13 +103,13 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
                         child: Column(
                           children: [
                             Obx(() {
-                              final previousGames = controller.previousGames;
+                              final finishedGames = controller.finishedGames;
                               //VERIFICAR SE EXISTE PARTIDAS PROGRAMADAS                
-                              if (controller.previousGames.isEmpty) {
+                              if (controller.finishedGames.isEmpty) {
                                 return const SizedBox.shrink();
                               }
                               //RESGATAR DATA DA PARTIDA
-                              var gameDate = DateFormat("EEE - dd/MM/y").format(previousGames[0]!.createdAt!);
+                              var gameDate = DateFormat("EEE - dd/MM/y").format(finishedGames[0]!.createdAt!);
                             
                               return Column(
                                 children: [
@@ -119,12 +119,13 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
                                         child: Column(
                                           spacing: 20,
                                           children: [
-                                            ...previousGames.take(5).map((game){
+                                            ...finishedGames.take(5).map((game){
                                               
                                               return CardGameWidget(
                                                 width: dimensions.width - 10,
                                                 event: event,
                                                 game: game!,
+                                                gameDate: gameDate,
                                                 navigate: true,
                                                 active: false,
                                                 historic: true

@@ -1,3 +1,4 @@
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/widget/buttons/float_button_event_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  EventController controller = EventController.instace;
+  EventController controller = EventController.instance;
   //CONTROLLER DE TABS
   late final TabController tabController;
   //CONTROLADOR DE INDEX DAS TABS
@@ -28,6 +29,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     super.initState();
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
+    //ATRIBUIR EVENTO ATUAL NO CONTROLLER DE JOGOS
+    GameController.instance.event = controller.event;
   }
 
   //FUNÇÃO PARA EXIBIR OU NÃO FLOAT ACTION BUTTON
@@ -103,7 +106,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                         alignment: Alignment.center,
                         children:[
                           Tab(text: tab),
-                          if(controller.currentGames.isNotEmpty)...[
+                          if(controller.inProgressGames.isNotEmpty)...[
                             Positioned(
                               right: 0,
                               top: 0,

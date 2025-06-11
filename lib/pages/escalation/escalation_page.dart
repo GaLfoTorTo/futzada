@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
 import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
 import 'package:futzada/widget/lists/escalation_list_widget.dart';
 import 'package:get/get.dart';
@@ -115,7 +116,7 @@ class EscalationPageState extends State<EscalationPage> {
                     children: [
                       SizedBox(
                         width: dimensions.width * 0.25,
-                        child: ButtonDropdownWidget(
+                        child: ButtonDropdownIconWidget(
                           selectedItem: controller.selectedEvent!.id,
                           items: userEvents,
                           onChange: selectEvent,

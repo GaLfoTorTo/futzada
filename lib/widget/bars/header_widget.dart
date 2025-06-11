@@ -10,6 +10,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final VoidCallback? extraAction;
   final IconData? extraIcon;
   final bool shadow;
+  final PreferredSizeWidget? bottom;
 
   const HeaderWidget({
     super.key, 
@@ -21,10 +22,14 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
     this.extraAction, 
     this.extraIcon = Icons.history,
     this.shadow = true,
+    this.bottom
   });
 
   @override
   Widget build(BuildContext context) {
+    //DEFINIR SOMBRA DO HEADER
+    var shadowHeader = shadow ? AppColors.dark_500.withAlpha(100) : null;
+
     return AppBar(
       backgroundColor: AppColors.green_300,
       title: title != null 
@@ -56,9 +61,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           ]
         ], 
       elevation: 8,
-      shadowColor: shadow 
-        ? AppColors.dark_500.withAlpha(100) 
-        : null,
+      shadowColor: shadowHeader,
+      bottom: bottom,
     );
   }
 

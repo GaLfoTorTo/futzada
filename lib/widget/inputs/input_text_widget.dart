@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class InputTextWidget extends StatefulWidget {
   final String? name;
@@ -8,6 +9,7 @@ class InputTextWidget extends StatefulWidget {
   final IconData? sufixIcon;
   final IconData? prefixIcon;
   final Color? bgColor;
+  final bool? borderColor;
   final String? placeholder;
   final Function? onChanged;
   final Function? onSaved;
@@ -15,6 +17,8 @@ class InputTextWidget extends StatefulWidget {
   final int? maxLength;
   final Function? validator;
   final Function? showModal;
+  final Function? suffixFunction;
+  final bool? disabled;
   final dynamic controller;
   final TextEditingController textController;
 
@@ -26,6 +30,7 @@ class InputTextWidget extends StatefulWidget {
     this.sufixIcon,
     this.prefixIcon,
     this.bgColor,
+    this.borderColor = false,
     this.placeholder,
     this.onChanged,
     this.onSaved,
@@ -33,6 +38,8 @@ class InputTextWidget extends StatefulWidget {
     this.maxLength,
     this.validator,
     this.showModal,
+    this.suffixFunction,
+    this.disabled = false,
     required this.textController, 
     this.controller, 
   });
@@ -50,6 +57,8 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   Icon? sufixIcon;
   //VARIAVEL PARA CONTROLAR EXIBIÇÃO ICONE NO FIM DO INPUT
   Icon? prefixIcon;
+  //DEFINIR COR DO INPUT
+  Color bgColor = AppColors.white;
 
   @override
   void initState() {
@@ -64,8 +73,17 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     prefixIcon = widget.prefixIcon != null 
       ? Icon(widget.prefixIcon) 
       : null;
+    //VERIFICAR SE INPUT ESTA DESABILITADO E AJUSTAR BG
+    if(widget.disabled == true){
+      bgColor = Colors.white60;
+    }
+    //VERIFICAR SE FOI DEFINIDA COR DE BG PARA INPUT
+    if(widget.bgColor != null){
+      bgColor = widget.bgColor!;
+    }
   }
 
+  //FUNÇÃO DE EXIBIÇÃO OU OCULTAÇÃO DE TEXTO NO INPUT
   void showText(){
     setState(() {
       visible = AppHelper.toggleVisibility(visible);
@@ -75,8 +93,29 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     });
   }
 
+  //FUNÇÃO DE DEFINIDÇÃO DE WIDGET DE SUFIXO DO INPUT
+  Widget? setSuffix(){
+    //VERIFICAR SE FOI DEFINIDO ICONE DE SUFIXO
+    if(sufixIcon != null){
+      //VERIFICAR SE FOI DEFINIDA FUNÇÃO DE SUFIXO
+      if(widget.suffixFunction != null){
+        return IconButton(
+          icon: sufixIcon!,
+          onPressed: (){
+            //VERIFICAR SE FUNÇÃO DE SUFIXO FOI DEFINIDA
+            if(widget.suffixFunction != null){
+              showText();
+            }
+          }
+        );
+      }
+      return sufixIcon;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
@@ -90,13 +129,11 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           hintText: widget.hint,
           labelText: widget.label,
           prefixIcon: prefixIcon,
-          fillColor: widget.bgColor ?? widget.bgColor,
-          suffixIcon: sufixIcon != null 
-            ? IconButton(
-              icon: sufixIcon!,
-              onPressed: () => showText(),
-            )
-            : null
+          fillColor: bgColor,
+          enabledBorder: OutlineInputBorder(
+            borderSide: widget.borderColor != null && widget.borderColor == true ? const BorderSide(color: AppColors.gray_300) : BorderSide.none,
+          ),
+          suffixIcon: setSuffix()
         ),
         onChanged: (value){
           if(widget.onChanged != null){
@@ -123,13 +160,17 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           return result;
         },
         onTap: () {
-          if(widget.type == TextInputType.streetAddress){
-            //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
-            widget.showModal!();
-            //REMOVER FOCO DO BOTÃO
-            FocusScope.of(context).requestFocus(FocusNode());
+          //VERIFICAR SE INPUT NÃO ESTA DESATIVADO
+          if(widget.disabled != false){
+            if(widget.type == TextInputType.streetAddress){
+              //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
+              widget.showModal!();
+              //REMOVER FOCO DO BOTÃO
+              FocusScope.of(context).requestFocus(FocusNode());
+            }
           }
         },
+        readOnly: widget.disabled ?? true,
       ),
     );
   }

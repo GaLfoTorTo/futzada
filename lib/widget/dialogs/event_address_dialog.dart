@@ -13,7 +13,7 @@ class EventAddressDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //CONTROLLER DE REGISTRO DA PELADA
-    final controller = EventController.instace;
+    final controller = EventController.instance;
     //TIMER DE CONSULTA ENDEREÇO
     Timer? debounce;
 

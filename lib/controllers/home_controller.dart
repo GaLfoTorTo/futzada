@@ -1,17 +1,25 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/services/timer_service.dart';
+import 'package:get/get.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/services/manager_service.dart';
 import 'package:futzada/services/home_service.dart';
 import 'package:futzada/services/user_service.dart';
+import 'package:futzada/controllers/chat_controller.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/controllers/explorer_controller.dart';
+import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/controllers/notification_controller.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 
 class HomeController extends GetxController{
-  //CONTROLLER DE BARRA NAVEGAÇÃO
-  final authController = AuthController.instance;
   //DEFINIR CONTROLLER UNICO NO GETX
   static HomeController get instance => Get.find();
+  //CONTROLLER DE BARRA NAVEGAÇÃO
+  final authController = AuthController.instance;
+
   //INSTANCIAR SERVIÇO DE USUARIO
   UserService userService = UserService();
   //INSTANCIAR SERVIÇO DE TECNICO  (MANAGER)
@@ -33,6 +41,8 @@ class HomeController extends GetxController{
     super.onInit();
     //RESGATAR EVENTOS DO USUARIO
     _loadUserEvents();
+    //INICIALIZAR SERVIÇO DE CRONOMETRO
+    Get.put(TimerService());
   }
 
   //FUNÇÃO PARA SIMULAR BUSCA DE TODAS AS INFORMAÇÕES EXIBIDAS NA HOME PAGE
@@ -64,6 +74,18 @@ class HomeController extends GetxController{
       UserModel user = Get.find(tag: 'user');
       //ADICIONAR DADOS DE TECNICO CASO EXISTAM
       user.manager = managerService.generateManager(1);
+      //INICIALIZAR CONTROLLER DE EVENTO
+      Get.put(EventController());
+      //INICIALIZAR CONTROLLER DE EVENTO
+      Get.put(EscalationController());
+      //INICIALIZAR CONTROLLER DE PARTIDAS
+      Get.put(GameController());
+      //INICIALIZAR CONTROLLER DE EXPLORER
+      Get.put(ExplorerController());
+      //INICIALIZAR CONTROLLER CHAT PAGE
+      Get.put(ChatController());
+      //INICIALIZAR CONTROLLER DE NOTIFICAÇÕES
+      Get.put(NotificationController());
     }
   }
 }

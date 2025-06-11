@@ -8,6 +8,7 @@ class ImgCircularWidget extends StatelessWidget {
   final double width;
   final double height;
   final String? image;
+  final String? element;
   final Color? borderColor;
 
   const ImgCircularWidget({
@@ -15,13 +16,14 @@ class ImgCircularWidget extends StatelessWidget {
     required this.width, 
     required this.height,
     this.image,
+    this.element,
     this.borderColor
   });
 
   @override
   Widget build(BuildContext context) {
     //RESGATAR URL DA IMAGEM DO USUARIO
-    String urlImage = AppImages.userDefault;
+    String urlImage = element == "event" ? AppImages.gramado : AppImages.userDefault;
     //VERIFI CAR SE IMAGEM NÃO SETÁ VAZIA
     if(image != null){
       if (image!.contains('/storage')) {

@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/controllers/chat_controller.dart';
-import 'package:futzada/controllers/notification_controller.dart';
 import 'package:get/get.dart';
-import 'package:futzada/controllers/home_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/widget/drawers/drawer_widget.dart';
 import 'package:futzada/widget/tabs/navigation_bar_widget.dart';
+import 'package:futzada/controllers/home_controller.dart';
+import 'package:futzada/controllers/navigation_controller.dart';
 
 class AppBase extends StatelessWidget {
   const AppBase({super.key});
@@ -16,10 +14,6 @@ class AppBase extends StatelessWidget {
     final controller = NavigationController.instace;
     //INICIALIZAR CONTROLLER HOME PAGE
     Get.put(HomeController());
-    //INICIALIZAR CONTROLLER CHAT PAGE
-    Get.put(ChatController());
-    //INICIALIZAR CONTROLLER DE NOTIFICAÇÕES
-    Get.put(NotificationController());
     
     return Scaffold(
       key: controller.scaffoldKey,

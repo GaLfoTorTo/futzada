@@ -1,0 +1,52 @@
+name: "ATUALIZAÇÃO/NOVA FUNCIONALIDADE: "
+description: "Template para criação de issues para novas funcionalidades ou atulizações de funcionalidades existentes"
+title: "[FEAT/UPD] - [FUNCIONALIDADE] - [NOME DO SUB MODULO SE EXISTIR] "
+labels: [Novo, Atualização]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Descrição da Funcionalidade
+        Preencha os campos abaixo e informe os detalhes sobre a funcionalidade que deve ser criada ou atualizada.
+
+  - type: dropdown
+    id: Tipo
+    attributes:
+      label: Tipo de Issue 
+      description: Informe o tipo de issue que está sendo registrada.
+      multiple: false
+      options:
+        - Nova (Criação de funcionalidade)
+        - Atualização (Atualização de funcionalidade)
+      default: 0
+    validations:
+      required: true
+
+  - type: input
+    id: modulo
+    attributes:
+      label: Módulo/Sub Modulo
+      description: Informe o nome do(s) módulo(s) e componente(s) onde a funcionalidade será/está implementada.
+      placeholder: "Ex: Módulo: Pessoal - Sub Modulo: Colaboradores"
+    validations:
+      required: true
+
+  - type: textarea
+    id: descricao
+    attributes:
+      label: Descrição da Funcionalidade
+      description: Descreva com o máximo de detalhes possíveis sobre o comportamento que a funcionalidade deve ter.
+      placeholder: "Ex: O campo de seleção deve habilitar a escolha de multiplos ensaios no campo..."
+    validations:
+      required: true
+
+  - type: input
+    id: data
+    attributes:
+      label: Data
+      description: Informe a data em que foi idealizado a funcionalidade.
+      placeholder: "Ex: 12/10/2023"
+    validations:
+      required: true

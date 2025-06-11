@@ -8,11 +8,13 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
+import 'package:intl/intl.dart';
 
 class CardGameWidget extends StatelessWidget {
   final double? width;
   final EventModel event;
   final GameModel game;
+  final String gameDate;
   final bool? navigate;
   final bool? active;
   final bool? historic;
@@ -22,6 +24,7 @@ class CardGameWidget extends StatelessWidget {
     this.width,
     required this.event,
     required this.game,
+    required this.gameDate,
     this.navigate = false,
     this.active = false,
     this.historic = false,
@@ -35,12 +38,10 @@ class CardGameWidget extends StatelessWidget {
     var propActive = active != null ? active! : false;
     //RESGATAR PROP DE HISTÓRICO PADRÃO DO CARD
     var propHistoric = historic != null ? historic! : false;
-
-    //RESAGTAR DATA DO EVENTO
-    String eventDate = event.date != null ? event.date! : event.daysWeek!.replaceAll(RegExp(r'[\[\]]'), ''); 
+ 
     //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
-    var gameStartTime = game.startTime!;
-    var gameEndTime = game.endTime!;
+    var gameStartTime = DateFormat.Hm().format(game.startTime!);
+    var gameEndTime = DateFormat.Hm().format(game.endTime!);
     //RESGATAR RESULTADO DA PARTIDA
     int teamAScore = game.result != null && game.result!.teamAScore > 0 ? game.result!.teamAScore: 0;
     int teamBScore = game.result != null && game.result!.teamBScore > 0 ? game.result!.teamBScore: 0;
@@ -125,7 +126,7 @@ class CardGameWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "${event.address}",
+                    gameDate,
                     style: Theme.of(context).textTheme.displaySmall!.copyWith(
                       color: AppColors.gray_500,
                     ),
@@ -139,7 +140,7 @@ class CardGameWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    eventDate,
+                    "${event.address}",
                     style: Theme.of(context).textTheme.displaySmall!.copyWith(
                       color: AppColors.gray_500,
                     ),

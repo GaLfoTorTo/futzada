@@ -319,7 +319,7 @@ class EscalationController extends GetxController{
     //VERIFICAR SE JOGADOR FOI ENCONTRADO
     if (player == null) {
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(Get.context, 'Jogador não encontrado!');
+      AppHelper.feedbackMessage(Get.context, 'Jogador não encontrado!');
       return;
     }
     try {
@@ -352,7 +352,7 @@ class EscalationController extends GetxController{
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
+      AppHelper.feedbackMessage(Get.context, 'Houve um erro, Tente novamente!');
     }
     //RESETAR POSIÇÃO E OCUPAÇÃO DO JOGADOR SELECIONADO
     selectedPlayer.value = 0;
@@ -421,7 +421,7 @@ class EscalationController extends GetxController{
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.erroMessage(Get.context, 'Houve um erro, Tente novamente!');
+      AppHelper.feedbackMessage(Get.context, 'Houve um erro, Tente novamente!');
     }
   }
 

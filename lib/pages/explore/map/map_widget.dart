@@ -50,7 +50,7 @@ class _MapaPageState extends State<MapaPage> {
       });
     } else {
       //CASO PERMISSÃO SEJA NEGADA EXIBIR MENSAGEM DE NECESSIDADE DE PERMISSÃO
-      AppHelper.erroMessage(context, 'Permissão Negada');
+      AppHelper.feedbackMessage(context, 'Permissão Negada');
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class EventGamesDialog extends StatelessWidget {
   const EventGamesDialog({super.key});
@@ -13,7 +14,7 @@ class EventGamesDialog extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //CONTROLLER DE REGISTRO DA PELADA
-    final controller = EventController.instace;
+    final controller = EventController.instance;
 
     return Container(
       padding: const EdgeInsets.all(15),
@@ -51,6 +52,8 @@ class EventGamesDialog extends StatelessWidget {
             return Expanded(
               child: ListView(
                 children: controller.nextGames.map((game) {
+                  //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
+                  var gameTime = "${DateFormat.Hm().format(game!.startTime!)} - ${DateFormat.Hm().format(game!.endTime!)}";
                   
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 5),
@@ -72,9 +75,10 @@ class EventGamesDialog extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20),
                       ),
                       onPressed: (){
+                        //VERIFICAR SE PARTIDA JA FOI INICIADA
                         Get.back();
                         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                        Get.toNamed('/games/game_detail', arguments: {
+                        Get.toNamed('/games/game_config', arguments: {
                           'game': game,
                           'event': controller.event,
                         });
@@ -89,6 +93,7 @@ class EventGamesDialog extends StatelessWidget {
                                   width: 70, 
                                   height: 70,
                                   image: controller.event.photo,
+                                  element: "event",
                                 ),
                               ),
                               Column(
@@ -133,7 +138,7 @@ class EventGamesDialog extends StatelessWidget {
                                           ),
                                         ),
                                       Text(
-                                        "Hoje: ${game.startTime} - ${game.endTime}",
+                                        "Hoje: $gameTime",
                                         style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
                                           color: AppColors.gray_500,
                                           overflow: TextOverflow.ellipsis

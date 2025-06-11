@@ -27,7 +27,7 @@ class EventBasicStepState extends State<EventBasicStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //RESGATAR CONTROLLER DE CHAT
-  var controller = EventController.instace;
+  var controller = EventController.instance;
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER

@@ -30,7 +30,7 @@ class EventAddressStepState extends State<EventAddressStep> {
   //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
-  final controller = EventController.instace;
+  final controller = EventController.instance;
   //DATA FIXA
   bool dataFixa = false;
   //LISTA DE DIAS DA SEMANA

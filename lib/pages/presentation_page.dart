@@ -1,14 +1,14 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:futzada/controllers/explorer_controller.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/dialogs/erro_escalation_dialog.dart';
-import 'package:get/get.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/controllers/explorer_controller.dart';
+import 'package:futzada/controllers/navigation_controller.dart';
 
 class PresentationPageWidget extends StatelessWidget {
   final String image;
@@ -38,10 +38,13 @@ class PresentationPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR CONTROLLERDE NAVEGACAO DE TABS
+    //INICIALIZAR CONTROLLER DE NAVEGACAO DE TABS E ESCALATION
     final navigationTab = Get.find<NavigationController>();
+    final escalationController = Get.find<EscalationController>();
+
     //DEFINIR VARAIVEL DE VERIFICAÇÃO DE USUARIO
     bool canManager = true;
+    
     //FUNÇÃO DE MENSAGEM DE ERRO CASO O USUARIO NÃO POSSA ACESSAR 
     void firstAction(){
       //VERIIFCAR SE EXISTE ALGUM IMPEDITIVO DE AVANÇO DO USUARIO
@@ -52,20 +55,16 @@ class PresentationPageWidget extends StatelessWidget {
         Get.dialog(const ErroEscalationDialog());
       }
     }
+
     //VERIFICAR ROTA PARA INICIALIZAÇÃO DE CONTROLLER
     switch (route) {
       case 'Peladas':
-        //INICIALIZAR CONTROLLER DE EVENTO
-        Get.put(EventController());
+        
         break;
       case 'Escalação':
-        //INICIALIZAR CONTROLLER DE ESCALÇAO
-        var controller = Get.put(EscalationController());
-        canManager = controller.canManager;
+        canManager = escalationController.canManager;
         break;
       case 'Explore':
-        //INICIALIZAR CONTROLLER DE EXPLORER
-        Get.put(ExplorerController());
         break;
       case 'Notificações':
         break;

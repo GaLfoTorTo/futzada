@@ -17,7 +17,7 @@ class GamesListPage extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE CHAT
-    var controller = GameController.instace;
+    //var controller = GameController.instace;
 
     return Scaffold(
       appBar: HeaderWidget(

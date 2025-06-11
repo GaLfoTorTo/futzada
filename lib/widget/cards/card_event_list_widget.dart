@@ -21,7 +21,7 @@ class CardEventListWidget extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //CONTROLLER DE BARRA NAVEGAÇÃO
-    EventController controller = EventController.instace;
+    EventController controller = EventController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
     double avaliation = controller.getAvaliations(event.avaliations);
     //RESGATAR DATA DO EVENTO
@@ -136,7 +136,7 @@ class CardEventListWidget extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                  if(controller.currentGames.isNotEmpty)...[
+                  if(controller.inProgressGames.isNotEmpty)...[
                     const IndicatorLiveWidget(
                       size: 15,
                       color: AppColors.red_300,

@@ -11,13 +11,13 @@ class GameModel {
   final int id;
   final int? number;
   final EventModel? event;
-  final ParticipantModel? referee;
+  ParticipantModel? referee;
   final int? duration;
-  final String? startTime;
-  final String? endTime;
-  final GameStatus? status;
-  final ResultModel? result;
-  final List<TeamModel>? teams;
+  DateTime? startTime;
+  DateTime? endTime;
+  GameStatus? status;
+  ResultModel? result;
+  List<TeamModel>? teams;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
@@ -44,8 +44,8 @@ class GameModel {
     EventModel? event,
     ParticipantModel? referee,
     int? duration,
-    String? startTime,
-    String? endTime,
+    DateTime? startTime,
+    DateTime? endTime,
     GameStatus? status,
     ResultModel? result,
     List<TeamModel>? teams,
@@ -95,8 +95,8 @@ class GameModel {
       event: map['event'] != null ? EventModel.fromMap(map['event'] as Map<String,dynamic>) : null,
       referee: map['referee'] != null ? ParticipantModel.fromMap(map['referee'] as Map<String,dynamic>) : null,
       duration: map['duration'] != null ? map['duration'] as int : null,
-      startTime: map['startTime'] != null ? map['startTime'] as String : null,
-      endTime: map['endTime'] != null ? map['endTime'] as String : null,
+      startTime: map['startTime'] != null ? map['startTime'] as DateTime : null,
+      endTime: map['endTime'] != null ? map['endTime'] as DateTime : null,
       status: map['status'] != null
         ? GameStatus.values.firstWhere((e) => e == map['status'])
         : null,
