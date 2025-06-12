@@ -247,7 +247,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    children: List.generate(gameController.event!.qtdPlayers!, (item){
+                    children: List.generate(gameController.event!.gameConfig!.playersPerTeam!, (item){
                       return InkWell(
                         onTap: () => Get.bottomSheet(
                           GamePlayersDialog(),
@@ -294,7 +294,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                     })
                   ),
                   Column(
-                    children: List.generate(gameController.event!.qtdPlayers!, (item){
+                    children: List.generate(gameController.event!.gameConfig!.playersPerTeam!, (item){
                       return InkWell(
                         onTap: () => Get.bottomSheet(
                           GamePlayersDialog(),

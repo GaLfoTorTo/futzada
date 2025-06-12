@@ -115,7 +115,7 @@ class CardEventListWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${event.city}/${event.state}",
+                    "${event.address!.city}/${event.address!.state}",
                     style: const TextStyle(
                       color: AppColors.dark_500,
                       fontSize: 12,

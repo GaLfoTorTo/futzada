@@ -83,7 +83,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
         child: SingleChildScrollView(
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: currentPage == 0 ? dimensions.height : dimensions.height + (gameController.event!.qtdPlayers! * 40),
+              maxHeight: dimensions.height + (gameController.event!.gameConfig!.playersPerTeam! * 40),
             ),
             child: Column(
               children: [

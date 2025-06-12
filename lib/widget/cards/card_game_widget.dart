@@ -140,7 +140,7 @@ class CardGameWidget extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "${event.address}",
+                    "${event.address!.state}",
                     style: Theme.of(context).textTheme.displaySmall!.copyWith(
                       color: AppColors.gray_500,
                     ),

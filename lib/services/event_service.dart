@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/address_model.dart';
 import 'package:futzada/services/avaliation_service.dart';
+import 'package:futzada/services/game_service.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
@@ -34,31 +36,41 @@ class EventService {
       "uuid" : "$i",
       "title" : faker.company.name(),
       "bio" : faker.lorem.sentence().toString(),
-      "address" : faker.address.streetAddress(),
+      "daysWeek" : "[Seg, Qua, Sex]",
+      "date" : null,//DateFormat('yyyy-MM-dd').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
+      "startTime" : faker.date.justTime(),
+      "endTime" : faker.date.justTime(),
+      "category" : getCategory(),
+      "allowCollaborators" : permissionState,
+      "permissions" : permissions,
+      "photo" : random.nextBool() == true ? faker.image.loremPicsum() : null,
+      //GERAR ENDEREÇO DO EVENTO (PELADA)
+      "address" : generateAddress(i).toMap(),
+      //GERAR CONFIGURAÇÕES DE PARTIDA DO EVENTO (PELADA)
+      "gameConfig" : GameService.generateGameConfig(i).toMap(),
+      //GERAR AVALIAÇÕES DO EVENTO (PELADA)
+      "avaliations" : List.generate(qtdAvaliations, (u) => avaliationService.generateAvaliation(u + 1).toMap()),
+      //GERAR PARTICIPANTES DO EVENTO (PELADA)
+      "participants" : List.generate(qtdParticipants, (u) => participantService.generateParticipant(u + 1).toMap()),
+      "visibility" : random.nextBool() == true ? VisibilityPerfil.Public.name : VisibilityPerfil.Private.name,
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+    });
+  }
+
+  //FUNÇÃO PARA GERAÇÃO DE ENDEREÇO
+  AddressModel generateAddress(int i){
+    return AddressModel.fromMap({
+      "id" : i,
+      "street" : faker.address.streetAddress(),
       "number" : random.nextInt(10).toString(),
       "city" : faker.address.city(),
       "state" : faker.address.stateAbbreviation(),
       "complement" : faker.address.streetSuffix(),
       "country" : faker.address.country().toString(),
       "zipCode" : faker.address.zipCode(),
-      "daysWeek" : "[Seg, Qua, Sex]",
-      "date" : null,//DateFormat('yyyy-MM-dd').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
-      "startTime" : faker.date.justTime(),
-      "endTime" : faker.date.justTime(),
-      "category" : getCategory(),
-      "qtdPlayers" : random.nextInt(11),
-      "visibility" : random.nextBool() == true ? VisibilityPerfil.Public.name : VisibilityPerfil.Private.name,
-      "allowCollaborators" : permissionState,
-      "permissions" : permissions,
-      "photo" : random.nextBool() == true ? faker.image.loremPicsum() : null,
-      //GERAR AVALIAÇÕES DO EVENTO (PELADA)
-      "avaliations" : List.generate(qtdAvaliations, (u){
-        return avaliationService.generateAvaliation(u + 1).toMap();
-      }),
-      //GERAR PARTICIPANTES DO EVENTO (PELADA)
-      "participants" : List.generate(qtdParticipants, (u){
-        return participantService.generateParticipant(u + 1).toMap();
-      }),
+      "latitude" : faker.geo.latitude(),
+      "longitude" : faker.geo.longitude(),
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });

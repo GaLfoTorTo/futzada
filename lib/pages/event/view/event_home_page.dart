@@ -225,7 +225,7 @@ class _EventHomePageState extends State<EventHomePage> {
                                         SizedBox(
                                           width: dimensions.width * 0.43,
                                           child: Text(
-                                            "${event.address}",
+                                            "${event.address!.state}",
                                             style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                               color: AppColors.green_300
                                             ),
@@ -239,7 +239,7 @@ class _EventHomePageState extends State<EventHomePage> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                     child: Text(
-                                      "${event.city} - ${event.complement}, \n${event.state} - ${event.country}, ${event.zipCode}",
+                                      "${event.address!.city} - ${event.address!.complement}, \n${event.address!.state} - ${event.address!.country}, ${event.address!.zipCode}",
                                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                         color: AppColors.gray_300
                                       ),

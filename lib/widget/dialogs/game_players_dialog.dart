@@ -105,7 +105,7 @@ class GamePlayersDialog extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          "${controller.event.address}",
+                                          "${controller.event.address!.state}",
                                           style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
                                             color: AppColors.gray_500,
                                             overflow: TextOverflow.ellipsis

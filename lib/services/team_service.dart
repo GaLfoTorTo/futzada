@@ -22,7 +22,7 @@ class TeamService {
       "uuid": "$i",
       "name": "Time ${i + 1}",
       "emblema": emblema,
-      "players": setPlayersTeam(event.participants!, event.qtdPlayers!),
+      "players": event.gameConfig != null ? setPlayersTeam(event.participants!, event.gameConfig!.playersPerTeam!) : [],
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });

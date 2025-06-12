@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/models/game_config_model.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
@@ -35,6 +36,25 @@ class GameService {
       "status": setStatus(random.nextInt(3)),
       "result": resultService.generateResult(teams).toMap(),
       "teams": teams,
+      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
+      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
+    });
+  }
+
+  //FUNÇÃO PARA GERAR CONFIGURAÇÕES DE PARTIDA
+  static GameConfigModel generateGameConfig(int i){
+    //GERAR JOGO (PARTIDA)
+    return GameConfigModel.fromMap({
+      "id": i,
+      "category" : getCategory(),
+      "duration" : random.nextInt(10),
+      "hasTwoHalves" : random.nextBool(),
+      "hasExtraTime" : random.nextBool(),
+      "hasPenalty" : random.nextBool(),
+      "hasGoalLimit" : random.nextBool(),
+      "playersPerTeam" : random.nextInt(11) ,
+      "extraTime" : random.nextInt(15),
+      "goalLimit" : random.nextInt(5),
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
     });
@@ -130,6 +150,21 @@ class GameService {
         return GameStatus.Completed;
       default:
         return GameStatus.Completed;
+    }
+  }
+
+  //FUNÇÃO PARA RESGATAR CATEGORIA DO EVENTO
+  static String getCategory(){
+    int num = random.nextInt(3);
+    switch (num) {
+      case 1:
+        return "Futebol";
+      case 2:
+        return "Fut7";
+      case 3:
+        return "Futsal";
+      default:
+        return "Fut7";
     }
   }
 }

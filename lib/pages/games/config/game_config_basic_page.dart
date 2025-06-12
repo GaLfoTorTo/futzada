@@ -8,6 +8,7 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
+import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:intl/intl.dart';
 
@@ -27,37 +28,6 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
   GameController gameController = GameController.instance;
   //RESGATAR EVENTO DA PARTIDA
   EventModel event = EventController.instance.event;
-  //CAMPOS DE PROPRIEDADES DA PARTIDA
-  Map<String, Map<String, dynamic>> gameConfig = {
-    'number' : {
-      'name': 'Nº',
-      'value' : ''
-    },
-    'category': {
-      'name': 'Categoria',
-      'value' : ''
-    },
-    'qtdPlayers': {
-      'name': 'Qtd. Jogadores (Por equipe)',
-      'value' : ''
-    },
-    'duration' : {
-      'name': 'Duração da partida',
-      'value' : ''
-    },
-    'startTime' : {
-      'name': 'Previsão de Início',
-      'value' : ''
-    },
-    'endTime' : {
-      'name': 'Previsão de Fim',
-      'value' : ''
-    },
-    'referee' : {
-      'name': 'Árbitro',
-      'value' : ''
-    },
-  };
   
   @override
   Widget build(BuildContext context) {
@@ -66,13 +36,14 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
     //DEFINIR CONTROLLERS DE CAMPOS DE CONFIGURAÇÃO DA PARTIDA
     final TextEditingController numberController = TextEditingController(text: "#${widget.game.number.toString()}");
     final TextEditingController categoryController = TextEditingController(text: event.category.toString());
-    final TextEditingController durationController = TextEditingController(text: widget.game.duration.toString());
     final TextEditingController startTimeController = TextEditingController(text: DateFormat.Hm().format(widget.game.startTime!).toString());
     final TextEditingController endTimeController = TextEditingController(text: DateFormat.Hm().format(widget.game.endTime!).toString());
-    final TextEditingController qtdPlayersController = TextEditingController(text: event.qtdPlayers.toString());
-    final TextEditingController allowColaboratorsController = TextEditingController(text: event.allowCollaborators.toString());
+    final TextEditingController durationController = TextEditingController(text: event.gameConfig!.duration.toString());
+    final TextEditingController limitGolsController = TextEditingController(text: event.gameConfig!.goalLimit.toString());
+    final TextEditingController qtdPlayersController = TextEditingController(text: event.gameConfig!.playersPerTeam.toString());
+    final TextEditingController refferController = TextEditingController(text: event.allowCollaborators.toString());
     //LISTA DE QTD DE JOGADORES POR EQUIPE DE ACORDO COM A CATEGORIA DO EVENTO
-    double qtdPlayers = event.qtdPlayers!.toDouble();
+    double qtdPlayers = event.gameConfig!.playersPerTeam!.toDouble();
     double minPlayers = 9;
     double maxPlayers = 11;
     int divisions = 2;
@@ -143,17 +114,6 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: InputTextWidget(
-              name: 'duration',
-              label: 'Duração (min)',
-              prefixIcon: AppIcones.stopwatch_outline,
-              textController: durationController,
-              controller: gameController,
-              type: TextInputType.number,
-            ),
-          ),
           Row(
             children: [
               Expanded(
@@ -186,6 +146,17 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                 ),
               ),
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: InputTextWidget(
+              name: 'duration',
+              label: 'Duração (min)',
+              prefixIcon: AppIcones.stopwatch_outline,
+              textController: durationController,
+              controller: gameController,
+              type: TextInputType.number,
+            ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 5),
@@ -224,6 +195,18 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   )
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(int.parse(qtdPlayersController.text), (i){
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
+                      child: ImgCircularWidget(
+                        width: 30, 
+                        height: 30
+                      ),
+                    );
+                  }).toList()
+                )
               ],
             )
           ),
@@ -235,10 +218,47 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
+              value: event.gameConfig!.hasGoalLimit!,
+              onChanged: (value){
+                setState(() {
+                  limitGolsController.text = value.toString();
+                });
+              },
+              activeColor: AppColors.green_300,
+              inactiveTrackColor: AppColors.gray_300,
+              inactiveThumbColor: AppColors.gray_500,
+              title: Text(
+                'Limite de Gols',
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+              ),
+              secondary: const Icon(
+                AppIcones.futbol_ball_solid,
+                color: AppColors.dark_300,
+              ),
+            ),
+          ),
+          if(true)...[
+            InputTextWidget(
+              name: 'limitGols',
+              label: 'Qtd. Gols',
+              prefixIcon: AppIcones.futbol_ball_outline,
+              textController: limitGolsController,
+              controller: gameController,
+              type: TextInputType.number,
+            ),
+          ],
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            margin: const EdgeInsets.symmetric(vertical: 20),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(5)
+            ),
+            child: SwitchListTile(
               value: event.allowCollaborators!,
               onChanged: (value){
                 setState(() {
-                  allowColaboratorsController.text = value.toString();
+                  refferController.text = value.toString();
                 });
               },
               activeColor: AppColors.green_300,
