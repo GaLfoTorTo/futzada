@@ -1,5 +1,5 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:futzada/pages/games/config/game_config_basic_page.dart';
@@ -10,9 +10,6 @@ import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/dialogs/game_config_dialog.dart';
-import 'package:futzada/widget/indicators/indicator_form_widget.dart';
-import 'package:futzada/widget/inputs/input_text_widget.dart';
-import 'package:get/get.dart';
 
 class GameConfigPage extends StatefulWidget {
   final GameModel? game;
@@ -30,16 +27,22 @@ class _GameConfigPageState extends State<GameConfigPage> {
   GameController gameController = GameController.instance;
   //RESGATAR PARTIDA
   GameModel game = Get.arguments['game'];
-  //DEFINIR CONTROLADOR DE PAGINAS DE CONFIGURAÇÃO
-  PageController _pageController = PageController();
   //CONTROLADOR DE INDEX DO STEP
   int currentPage = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //ADICIONAR PARTIDA RECEBIDA POR ARGUMENTO COMO JOGO ATUAL NO CONTROLLER
+    gameController.currentGame = game;
+    //DEFINIR CONFIGURAÇÕES DE PARTIDA DA PELADA
+    gameController.setGameConfig();
+  }
   
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-
+    //FUNÇÃO PARA PROSSEGUIR OU RETROCEDER NAS CONFIGURAÇÕES
     void stepForm(String step){
       //VERIFICAR BOTÃO CLICADO
       if (step == 'continue') {
@@ -47,11 +50,6 @@ class _GameConfigPageState extends State<GameConfigPage> {
           setState(() {
             currentPage += 1;
           });
-          _pageController.animateToPage(
-            currentPage,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
         }else{
           //EXIBIR MODAL DE CONFIRMAÇÃO
           Get.dialog(GameConfigDialog(
@@ -64,11 +62,6 @@ class _GameConfigPageState extends State<GameConfigPage> {
           setState(() {
             currentPage -= 1;
           });
-          _pageController.animateToPage(
-            currentPage,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
         }
       }
     }
@@ -81,10 +74,6 @@ class _GameConfigPageState extends State<GameConfigPage> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: dimensions.height + (gameController.event!.gameConfig!.playersPerTeam! * 40),
-            ),
             child: Column(
               children: [
                 Container(
@@ -116,7 +105,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          "Defina os parametros iniciais para o inicio da partida. Você pode reaproveitar as configurações para as próximas partidas.",
+                          "Defina os parâmetros da partida que deseja iniciar. Você pode salvar as configurações para reutilizá-las nas próximas partidas.",
                           style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             color: AppColors.blue_500,
                           ),
@@ -126,20 +115,11 @@ class _GameConfigPageState extends State<GameConfigPage> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      GameConfigBasicPage(
-                        game: game
-                      ),
-                      GameConfigTeamsPage(
-                        game: game
-                      ),
-                    ],
-                  ),
-                ),
+                if(currentPage == 0)...[
+                  const GameConfigBasicPage(),
+                ]else ...[
+                  const GameConfigTeamsPage(),
+                ],
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
@@ -148,7 +128,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => stepForm('voltar')
+                        action: () => currentPage == 0 ? Get.back() : stepForm('voltar')
                       ),
                       ButtonTextWidget(
                         text: currentPage == 0 ? "Continuar" : "Iniciar",
@@ -163,7 +143,6 @@ class _GameConfigPageState extends State<GameConfigPage> {
             ),
           ),
         ),
-      )
     );
   }
 }

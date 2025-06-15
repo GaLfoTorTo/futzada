@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'package:futzada/models/game_config_model.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/services/result_service.dart';
 import 'package:futzada/services/team_service.dart';
 import 'package:futzada/services/participant_service.dart';
@@ -42,17 +42,20 @@ class GameService {
   }
 
   //FUNÇÃO PARA GERAR CONFIGURAÇÕES DE PARTIDA
-  static GameConfigModel generateGameConfig(int i){
+  GameConfigModel generateGameConfig(int i){
+    //DEFINIR CATEGORIA
+    String category = getCategory();
     //GERAR JOGO (PARTIDA)
     return GameConfigModel.fromMap({
       "id": i,
-      "category" : getCategory(),
+      "category" : category,
       "duration" : random.nextInt(10),
       "hasTwoHalves" : random.nextBool(),
       "hasExtraTime" : random.nextBool(),
       "hasPenalty" : random.nextBool(),
       "hasGoalLimit" : random.nextBool(),
-      "playersPerTeam" : random.nextInt(11) ,
+      "hasRefereer" : random.nextBool(),
+      "playersPerTeam" : getQtdPlayers(category)['qtdPlayers'],
       "extraTime" : random.nextInt(15),
       "goalLimit" : random.nextInt(5),
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
@@ -154,7 +157,7 @@ class GameService {
   }
 
   //FUNÇÃO PARA RESGATAR CATEGORIA DO EVENTO
-  static String getCategory(){
+  String getCategory(){
     int num = random.nextInt(3);
     switch (num) {
       case 1:
@@ -165,6 +168,45 @@ class GameService {
         return "Futsal";
       default:
         return "Fut7";
+    }
+  }
+
+  //FUNÇÃO PARA DEFINIÇÃO DE QUANTIDADE DE JOGADORES POR CATEGORIA
+  Map<String, int> getQtdPlayers(String category){
+    //SELECIONAR TIPO DE CAMPO
+    switch (category) {
+      case "Futebol":
+        //DEFINIR VALOR PARA SLIDER
+        return {
+          "qtdPlayers" : 11,
+          "minPlayers" :  9,
+          "maxPlayers" : 11,
+          "divisions" : 2,
+        };
+      case "Fut7":
+        //DEFINIR VALOR PARA SLIDER
+        return {
+          "qtdPlayers" : 4,
+          "minPlayers" :  4,
+          "maxPlayers" : 8,
+          "divisions" : 4,
+        };
+      case "Futsal":
+        //DEFINIR VALOR PARA SLIDER
+        return {
+          "qtdPlayers" : 5,
+          "minPlayers" :  4,
+          "maxPlayers" : 16,
+          "divisions" : 2,
+        };
+      default:
+      //DEFINIR VALOR PARA SLIDER
+        return {
+          "qtdPlayers" : 11,
+          "minPlayers" :  9,
+          "maxPlayers" : 11,
+          "divisions" : 2,
+        };
     }
   }
 }

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/game_config_model.dart';
+import 'package:futzada/models/team_model.dart';
 import 'package:futzada/services/result_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/enum/enums.dart';
@@ -23,14 +25,34 @@ class GameController extends GetxController {
   EventModel? event;
   //DEFINIR CONTROLLADOR DE PARTIDA ATUAL
   GameModel? currentGame;
+  //DEFINIR CONTROLLADOR DE CONFIGURAÇÕES DE PARTIDA ATUAL
+  GameConfigModel? currentGameConfig;
   //DEFINIR VARIAVEL DE OBSERVAÇÃO DE TEMPO DA PARTIDA
   RxString currentTime = '00:00'.obs;
+  //DEFINIR CONTROLADOR DE EQUIPES
+  TeamModel teamA = TeamModel(players: []);
+  TeamModel teamB = TeamModel(players: []);
+  //GETTERS DE TAMANHO DA EQUIPE A E B
+  RxInt teamAlength = 0.obs;
+  RxInt teamBlength = 0.obs;
   //CONTROLADOR DE PLACAR - EQUIPE A E B
   RxInt teamAScore = 0.obs;
   RxInt teamBScore = 0.obs;
   //DEFINIR CONFIGURAÇÕES DAS PARTIDAS
   //STREAM SUBSTRIPTION
   StreamSubscription<String>? _timeSubscription;
+
+  //FUNÇÃO PARA DEFINIR CONFIGURAÇÕES DA PARTIDA
+  void setGameConfig({GameConfigModel? gameConfig}){
+    //VERIFICAR SE EXISTE OBJETO DE CONFIGURAÇÕES DE PARTIDAS RECEBIDO POR PARAMETRO
+    if(gameConfig != null){
+      //RESGATAR CONFIGURAÇÕES DE PARTIDA DO EVENTO
+      currentGameConfig = gameConfig;
+    }else{
+      //RESGATAR CONFIGURAÇÕES DE PARTIDA DO EVENTO
+      currentGameConfig = event!.gameConfig!;
+    }
+  }
 
   //FUNÇÃO PARA INICIAR UMA PARTIDA
   /// [game]: PARTIDA QUE DEVE SER INICIADA/RETOMADA

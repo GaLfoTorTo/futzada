@@ -71,7 +71,7 @@ class EventController extends GetxController {
     //RESGATAR DATA DO EVENTO
     //eventDate = eventService.getNextEventDate(event);
     //VARAIVEIS PRA TESTE
-    eventDate = DateFormat("dd/MM/yyyy").parse("12/06/2025");
+    eventDate = DateFormat("dd/MM/yyyy").parse("15/06/2025");
     finishedGames.assignAll(gameService.getHistoricGames(event, 10));
     //VERIFICAR SE EVENTO ESTA ACONTECENDO HOJE
     if(today.isAtSameMomentAs(eventDate!)){

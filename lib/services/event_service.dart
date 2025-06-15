@@ -15,6 +15,8 @@ class EventService {
   static var faker = Faker();
   static var random = Random();
 
+  //INSTANCIAR SERVIÇO DE PARTIDAS
+  GameService gameService = GameService();
   //INSTANCIAR SERVIÇO DE PARTICIPANTES
   ParticipantService participantService = ParticipantService();
   //INSTANCIAR SERVIÇO DE AVALIAÇÃO
@@ -23,7 +25,7 @@ class EventService {
   //FUNÇÃO PARA GERAR EVENTO
   EventModel generateEvent(i){
     //DEFINIR QUANTIDADE DE PARTICIPANTES
-    int qtdParticipants = random.nextInt(25);
+    int qtdParticipants = random.nextInt(50);
     //DEFINIR QUANTIDADE DE AVALIAÇÕES
     int qtdAvaliations = random.nextInt(25);
     //DEFINIR STATUS DE PERMISSÃO
@@ -40,14 +42,14 @@ class EventService {
       "date" : null,//DateFormat('yyyy-MM-dd').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       "startTime" : faker.date.justTime(),
       "endTime" : faker.date.justTime(),
-      "category" : getCategory(),
+      "category" : gameService.getCategory(),
       "allowCollaborators" : permissionState,
       "permissions" : permissions,
       "photo" : random.nextBool() == true ? faker.image.loremPicsum() : null,
       //GERAR ENDEREÇO DO EVENTO (PELADA)
       "address" : generateAddress(i).toMap(),
       //GERAR CONFIGURAÇÕES DE PARTIDA DO EVENTO (PELADA)
-      "gameConfig" : GameService.generateGameConfig(i).toMap(),
+      "gameConfig" : gameService.generateGameConfig(i).toMap(),
       //GERAR AVALIAÇÕES DO EVENTO (PELADA)
       "avaliations" : List.generate(qtdAvaliations, (u) => avaliationService.generateAvaliation(u + 1).toMap()),
       //GERAR PARTICIPANTES DO EVENTO (PELADA)
@@ -176,20 +178,5 @@ class EventService {
   //FUNÇÃO PARA GERAÇÃO DE VALORES (TEMPORARIAMENTE)
   static double setValues(double min, double max){
     return min + random.nextDouble() * (max - min);
-  }
-
-  //FUNÇÃO PARA RESGATAR CATEGORIA DO EVENTO
-  String getCategory(){
-    int num = random.nextInt(3);
-    switch (num) {
-      case 1:
-        return "Futebol";
-      case 2:
-        return "Fut7";
-      case 3:
-        return "Futsal";
-      default:
-        return "Fut7";
-    }
   }
 }

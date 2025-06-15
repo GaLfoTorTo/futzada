@@ -1,150 +1,189 @@
-import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/widget/cards/card_palyer_team_widget.dart';
 
-class GamePlayersDialog extends StatelessWidget {
-  const GamePlayersDialog({super.key});
+class GamePlayersDialog extends StatefulWidget {
+  final int team;
+  final int qtdPlayers;
+  const GamePlayersDialog({
+    super.key,
+    required this.team,
+    required this.qtdPlayers
+  });
+
+  @override
+  State<GamePlayersDialog> createState() => _GamePlayersDialogState();
+}
+
+class _GamePlayersDialogState extends State<GamePlayersDialog> {
+  //CONTROLLER DE REGISTRO DA PELADA
+  final gameController = GameController.instance;
+  //OBSERVAR PARTICIPANTES SELECIONADOS
+  late List<ParticipantModel>? participants;
+  //DEFINIR ARRAY DE SELECIONADOS
+  late RxList<ParticipantModel?> selectedPlayers = <ParticipantModel?>[].obs;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // RESGATAR PARTICIPANTES DO EVENTO
+    final allParticipants = gameController.event!.participants!;
+    // FILTRAR SOMENTE OS PARTICIPANTES QUE NÃO ESTÃO EM NENHUM TIME
+    participants = allParticipants
+      .where((p) =>
+        !gameController.teamA.players.contains(p) &&
+        !gameController.teamB.players.contains(p))
+      .toList()
+      .obs;
+    //RESGATAR JOGADOR DO TIME RECEBIDO
+    selectedPlayers.value = widget.team == 0 
+      ? gameController.teamA.players
+      : gameController.teamB.players; 
+  }
+
+  //FUNÇÃO PARA DEFINIR PARTICIPANTE NA EQUIPE
+  void setPlayerTeam(ParticipantModel participant, String action){
+    //VERIFICAR AÇÃO 
+    if(action == 'add'){
+      //VERIFICAR SE TIME JA ATINGIO O LIMITE DE JOGADORES POR EQUIPE
+      if(selectedPlayers.length < widget.qtdPlayers!){
+        //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
+        if (!selectedPlayers.contains(participant)) {
+          //ADICIONAR JOGADOR AO ARRAY DO TIME
+          selectedPlayers.add(participant);
+          //REMOVER PARTICIPANTE DA LISA
+          participants!.remove(participant);
+        }
+      }else{
+        //FECHAR DIALOG
+        Get.back();
+        //MENSAGEM DE ERRO DE LIMITE DE JOGADORES
+        AppHelper.feedbackMessage(context, "A equipe ja atingiu o número de jogadores!", type: "danger");
+      }
+    }else{
+      //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
+      if (selectedPlayers.contains(participant)) {
+        //REMOVER JOGADOR DO ARRAY DO TIME
+        selectedPlayers.remove(participant);
+        //ADICIONAR PARTICIPANTE DA LISA
+        participants!.insert(0, participant);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    //RESGATAR DIMENSOES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //CONTROLLER DE REGISTRO DA PELADA
-    final controller = EventController.instance;
 
     return Container(
-      padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              const BackButton(),
-              Text(
-                'Participantes',
-                style: Theme.of(context).textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                const BackButton(),
+                Padding(
+                  padding: const EdgeInsets.only(left: 90),
+                  child: Text(
+                    'Participantes',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const Divider(color: AppColors.gray_300),
-          Obx(() {
-            return Expanded(
-              child: ListView(
-                children: controller.nextGames.map((game) {
-                  //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
-                  var gameTime = "${DateFormat.Hm().format(game!.startTime!)} - ${DateFormat.Hm().format(game!.endTime!)}";
-                  
-                  return Container(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.dark_500.withAlpha(30),
-                          spreadRadius: 0.5,
-                          blurRadius: 5,
-                          offset: const Offset(2, 5),
-                        ),
-                      ],
-                    ),
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: AppColors.white,
-                        foregroundColor: AppColors.gray_500,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                      ),
-                      onPressed: (){
-                        //VERIFICAR SE PARTIDA JA FOI INICIADA
-                        Get.back();
-                        //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                        Get.toNamed('/games/game_config', arguments: {
-                          'game': game,
-                          'event': controller.event,
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [ 
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: ImgCircularWidget(
-                                  width: 70, 
-                                  height: 70,
-                                  image: controller.event.photo,
-                                  element: "event",
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+            child: Text(
+              'Escolha os jogadores que iram compor as equipes da partida',
+              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+                color: AppColors.gray_500,
+              ),
+              textAlign: TextAlign.center
+            ),
+          ),
+          Obx((){
+            if(selectedPlayers.isNotEmpty){
+              return Container(
+                alignment: Alignment.centerLeft,
+                color: AppColors.gray_300.withAlpha(100),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                        ...selectedPlayers.map((participant){
+                          return InkWell(
+                            onTap: () => setPlayerTeam(participant, 'remove'),
+                            child: Stack(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: ImgCircularWidget(
+                                    width: 50, 
+                                    height: 50,
+                                    image: participant!.user.photo,
+                                  ),
                                 ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Partida #${game!.number}",
-                                    style: Theme.of(Get.context!).textTheme.titleSmall!.copyWith(
-                                      overflow: TextOverflow.ellipsis
-                                    ),
+                                const Positioned(
+                                  right: 5,
+                                  bottom: 0,
+                                  child: Icon(
+                                    AppIcones.times_circle_solid,
+                                    color: AppColors.gray_300,
+                                    size: 15,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 5),
-                                    child: Row(
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.only(right: 5),
-                                          child: Icon(
-                                            AppIcones.marker_solid,
-                                            size: 20,
-                                            color: AppColors.gray_300,
-                                          ),
-                                        ),
-                                        Text(
-                                          "${controller.event.address!.state}",
-                                          style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
-                                            color: AppColors.gray_500,
-                                            overflow: TextOverflow.ellipsis
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Padding(
-                                          padding: EdgeInsets.only(right: 10),
-                                          child: Icon(
-                                            AppIcones.clock_solid,
-                                            size: 15,
-                                            color: AppColors.gray_300,
-                                          ),
-                                        ),
-                                      Text(
-                                        "Hoje: $gameTime",
-                                        style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
-                                          color: AppColors.gray_500,
-                                          overflow: TextOverflow.ellipsis
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ]
-                          ),
-                        ],
-                      ),
-                    )
-                  );
+                                )
+                              ],
+                            ),
+                          );
+                        }),
+                    ]
+                  ),
+                )
+              );
+            }else{
+              return SizedBox.shrink();
+            }
+          }),
+          Expanded(
+            child: Obx(() => Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView(
+                children: participants!.map((participant) {
+                  //VERIFICAR SE PARTICIPANTE ESTA HABILITADO COMO JOGADOR
+                  if(participant.user.player != null){
+                    return CardPalyerTeamWidget(
+                      participant: participant,
+                      onPressed: () => setPlayerTeam(participant, 'add'),
+                    );
+                  }
+                  return SizedBox.shrink();
                 }).toList(),
               ),
-            );
-          }),
+            )),
+          ),
         ],
       ),
     );

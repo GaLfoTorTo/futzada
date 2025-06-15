@@ -5,8 +5,8 @@ import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/participant_model.dart';
 
 class TeamModel {
-  final int id;
-  final String uuid;
+  final int? id;
+  final String? uuid;
   final String? name;
   final String? emblema;
   final List<ParticipantModel> players;
@@ -15,8 +15,8 @@ class TeamModel {
   final DateTime? deletedAt;
 
   TeamModel({
-    required this.id,
-    required this.uuid,
+    this.id,
+    this.uuid,
     this.name,
     this.emblema,
     required this.players,

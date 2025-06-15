@@ -335,6 +335,30 @@ class AppHelper {
     }
   }
 
+  //FUNÇÃO PARA EXIBIÇÃO DE OVERLAY
+  static void showLoadOverlay(BuildContext context, int duration) {
+    final overlay = Overlay.of(context);
+    late OverlayEntry entry;
+
+    entry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          Container(
+            color: Colors.black.withAlpha(150),
+          ),
+          const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.green_300,
+            )
+          ),
+        ],
+      ),
+    );
+    //ADICIONAR OVERLAY NA PAGINA
+    overlay.insert(entry);
+    Future.delayed(Duration(seconds: duration), () => entry.remove());
+  }
+
   //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO
   static void feedbackMessage(context, message, {String? type}) {
     final snackBar = AlertMessageWidget.createSnackBar(

@@ -9,6 +9,7 @@ class GameConfigModel {
   final bool? hasExtraTime;
   final bool? hasPenalty;
   final bool? hasGoalLimit;
+  final bool? hasRefereer;
   final int? playersPerTeam; 
   final int? extraTime;
   final int? goalLimit;
@@ -24,6 +25,7 @@ class GameConfigModel {
     this.hasExtraTime = true,
     this.hasPenalty = true,
     this.hasGoalLimit = true,
+    this.hasRefereer = true,
     this.playersPerTeam = 7,
     this.extraTime = 10,
     this.goalLimit,
@@ -40,6 +42,7 @@ class GameConfigModel {
     bool? hasExtraTime,
     bool? hasPenalty,
     bool? hasGoalLimit,
+    bool? hasRefereer,
     int? playersPerTeam,
     int? extraTime,
     int? goalLimit,
@@ -55,6 +58,7 @@ class GameConfigModel {
       hasExtraTime: hasExtraTime ?? this.hasExtraTime,
       hasPenalty: hasPenalty ?? this.hasPenalty,
       hasGoalLimit: hasGoalLimit ?? this.hasGoalLimit,
+      hasRefereer: hasRefereer ?? this.hasRefereer,
       playersPerTeam: playersPerTeam ?? this.playersPerTeam,
       extraTime: extraTime ?? this.extraTime,
       goalLimit: goalLimit ?? this.goalLimit,
@@ -73,6 +77,7 @@ class GameConfigModel {
       'hasExtraTime': hasExtraTime,
       'hasPenalty': hasPenalty,
       'hasGoalLimit': hasGoalLimit,
+      'hasRefereer': hasRefereer,
       'playersPerTeam': playersPerTeam,
       'extraTime': extraTime,
       'goalLimit': goalLimit,
@@ -91,6 +96,7 @@ class GameConfigModel {
       hasExtraTime: map['hasExtraTime'] != null ? map['hasExtraTime'] as bool : null,
       hasPenalty: map['hasPenalty'] != null ? map['hasPenalty'] as bool : null,
       hasGoalLimit: map['hasGoalLimit'] != null ? map['hasGoalLimit'] as bool : null,
+      hasRefereer: map['hasRefereer'] != null ? map['hasRefereer'] as bool : null,
       playersPerTeam: map['playersPerTeam'] != null ? map['playersPerTeam'] as int : null,
       extraTime: map['extraTime'] != null ? map['extraTime'] as int : null,
       goalLimit: map['goalLimit'] != null ? map['goalLimit'] as int : null,
@@ -106,7 +112,7 @@ class GameConfigModel {
 
   @override
   String toString() {
-    return 'GameConfigModel(id: $id, category: $category, duration: $duration, hasTwoHalves: $hasTwoHalves, hasExtraTime: $hasExtraTime, hasPenalty: $hasPenalty, hasGoalLimit: $hasGoalLimit, playersPerTeam: $playersPerTeam, extraTime: $extraTime, goalLimit: $goalLimit, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'GameConfigModel(id: $id, category: $category, duration: $duration, hasTwoHalves: $hasTwoHalves, hasExtraTime: $hasExtraTime, hasPenalty: $hasPenalty, hasGoalLimit: $hasGoalLimit, hasRefereer: $hasRefereer, playersPerTeam: $playersPerTeam, extraTime: $extraTime, goalLimit: $goalLimit, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -121,6 +127,7 @@ class GameConfigModel {
       other.hasExtraTime == hasExtraTime &&
       other.hasPenalty == hasPenalty &&
       other.hasGoalLimit == hasGoalLimit &&
+      other.hasRefereer == hasRefereer &&
       other.playersPerTeam == playersPerTeam &&
       other.extraTime == extraTime &&
       other.goalLimit == goalLimit &&
@@ -138,6 +145,7 @@ class GameConfigModel {
       hasExtraTime.hashCode ^
       hasPenalty.hashCode ^
       hasGoalLimit.hashCode ^
+      hasRefereer.hashCode ^
       playersPerTeam.hashCode ^
       extraTime.hashCode ^
       goalLimit.hashCode ^
