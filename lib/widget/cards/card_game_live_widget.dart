@@ -27,7 +27,7 @@ class CardGameLiveWidget extends StatefulWidget {
 
 class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
   //DEFINIR COR DO CARD
-  late Color cardColor;
+  late Color cardColor = AppColors.green_300;
 
   @override
   void initState() {
@@ -38,8 +38,11 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
   }
   //LOAD PREDOMINANTE COR DE IMAGEM DO EVENTO
   void loadColorEvent() async {
-    //RETORNAR COR PREDOMINANTE
-    cardColor = await AppColors.getDominantColor(widget.event.photo);
+    //RESGATAR COR DOMINANT NO CACHE
+    final dominantColor = await AppColors.getCachedDominantColor(widget.event.photo);
+    setState(() {
+      cardColor = dominantColor;
+    });
   }
 
   @override

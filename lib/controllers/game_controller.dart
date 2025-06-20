@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/game_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/enum/enums.dart';
@@ -63,13 +66,15 @@ class GameController extends GetxController
   @override
   TimerService timerService = TimerService();
   
-  //GETTER DE EVENTO E PARTIDA ATUAL
+  //GETTER DE ESTADOS
   @override
   late EventModel event;
   @override
   late GameModel currentGame;
   @override
   late DateTime? eventDate;
+  @override
+  late GameConfigModel? currentGameConfig;
 
   @override
   void onInit() {
@@ -131,12 +136,15 @@ mixin GameMatchMixin on GetxController implements GameBase{
   }
 
   //FUNÇÃO PARA DEFINIR CONFIGURAÇÕES DA PARTIDA
-  GameModel setGame({GameModel? newGame}) {
-    //VERIFICAR SE FOI RECEBIDO OBJETO DE PARTIDA
-    if (newGame != null) {
-      return newGame;
-    }
-    //GERAR RESULTADO DA PARTIDA
+  void setGame() {
+    //RESGATAR INSTANCIA DO CONTROLLER
+    GameController gameController = GameController.instance;
+    //RESGATAR DURAÇÃO TOTAL DA PARTIDA
+    int totalDuration = gameController.currentGameConfig!.hasTwoHalves! 
+      ? int.parse(gameController.durationController.text) * 2 
+      : int.parse(gameController.durationController.text);
+
+    //INICIALIZAR RESULTADO DA PARTIDA
     final result = ResultModel(
       teamA: teamA, 
       teamB: teamB, 
@@ -144,33 +152,135 @@ mixin GameMatchMixin on GetxController implements GameBase{
       teamBScore: teamBScore.value, 
       duration: null
     );
-    //RETORNAR PARTIDA COM MODIFICAÇÕES DO USUARIO
-    return currentGame.copyWith(
-      duration: currentGameConfig!.duration,
-      startTime: DateTime.now(),
-      endTime: DateTime.now().add(Duration(minutes: currentGameConfig!.duration!)),
-      status: currentGame.status,
-      result: result,
-      teams: [teamA, teamB],
-      updatedAt: DateTime.now(),
+    //ATUALIZAR EQUIPES DA PARTIDA
+    gameController.teamA = TeamModel(
+      id: gameController.teamA.id,
+      uuid: gameController.teamA.uuid,
+      name: gameController.teamANameController.text,
+      emblema: gameController.teamAEmblemaController.text,
+      players: teamA.players,
+      createdAt : DateTime.now(),
+      updatedAt : DateTime.now(),
+    );
+    gameController.teamB = TeamModel(
+      id: gameController.teamB.id,
+      uuid: gameController.teamB.uuid,
+      name: gameController.teamBNameController.text,
+      emblema: gameController.teamBEmblemaController.text,
+      players: teamB.players,
+      createdAt : DateTime.now(),
+      updatedAt : DateTime.now(),
+    );
+    //ATUALIZAR PARTIDA ATUAL
+    gameController.currentGame = gameController.currentGame.copyWith(
+      id : gameController.currentGame.id,
+      number : gameController.currentGame.number,
+      event : null,
+      referee : gameController.refereerController,
+      duration : int.parse(gameController.durationController.text),
+      startTime : DateFormat.Hm().parse(gameController.startTimeController.text),
+      endTime : gameController.currentGame.startTime!.add(Duration(minutes: totalDuration)),
+      status : gameController.currentGame.status,
+      result : result,
+      teams : [ gameController.teamA, gameController.teamB ],
+      createdAt : DateTime.now(),
+      updatedAt : DateTime.now(),
     );
   }
 }
 
 //===MIXIN - CONFIGURAÇÕES DAS PARTIDAS===
 mixin GameConfigMixin on GetxController implements GameBase{
-  //ESTADO - CONFIGURAÇÕES DE PARTIDA
-  @override
-  GameConfigModel? currentGameConfig;
+  //CONTROLLERS DE CAMPOS DE CONFIGURAÇÕES
+  late TextEditingController numberController;
+  late TextEditingController categoryController;
+  late TextEditingController startTimeController;
+  late TextEditingController endTimeController;
+  late TextEditingController durationController;
+  late TextEditingController hasTwoHalvesController;
+  late TextEditingController hasExtraTimeController;
+  late TextEditingController hasPenaltyController;
+  late TextEditingController hasGoalLimitController;
+  late TextEditingController hasRefereerController;
+  late TextEditingController playersPerTeamController;
+  late TextEditingController extraTimeController;
+  late TextEditingController goalLimitController;
+  late ParticipantModel? refereerController;
+  //CONTROLADORES DE CAMPOS DE EQUIPE
+  late TextEditingController teamANameController;
+  late TextEditingController teamAEmblemaController;
+  late TextEditingController teamBNameController;
+  late TextEditingController teamBEmblemaController;
+  late TextEditingController qtdPlayersController;
 
-  //FUNÇÃO DE DEFINIÇÃO DE CONFIGURAÇÕES DA PARTIDA
-  void setGameConfig({GameConfigModel? gameConfig}) {
-    currentGameConfig = gameConfig ?? event!.gameConfig;
+  //FUNÇÃO PARA INICIALIZAR CONTROLLERS
+  void initTextControllers() {
+    numberController = TextEditingController(text: currentGame.number.toString());
+    categoryController = TextEditingController(text: event!.category);
+    startTimeController = TextEditingController(text: DateFormat.Hm().format(currentGame.startTime!));
+    endTimeController = TextEditingController(text: DateFormat.Hm().format(currentGame.endTime!));
+    durationController = TextEditingController(text: event!.gameConfig?.duration.toString() ?? '');
+    hasTwoHalvesController = TextEditingController(text: currentGameConfig!.hasTwoHalves.toString());
+    hasExtraTimeController = TextEditingController(text: currentGameConfig!.hasExtraTime.toString());
+    hasPenaltyController = TextEditingController(text: currentGameConfig!.hasPenalty.toString());
+    hasGoalLimitController = TextEditingController(text: currentGameConfig!.hasGoalLimit.toString());
+    hasRefereerController = TextEditingController(text: currentGameConfig!.hasRefereer.toString());
+    playersPerTeamController = TextEditingController(text: currentGameConfig!.playersPerTeam.toString());
+    extraTimeController = TextEditingController(text: currentGameConfig!.extraTime.toString());
+    goalLimitController = TextEditingController(text: currentGameConfig!.goalLimit.toString());
+    goalLimitController = TextEditingController(text: event!.gameConfig?.goalLimit.toString() ?? '');
+    refereerController = currentGame.referee ?? event!.participants![0];
+    teamANameController = TextEditingController(text: currentGame.teams?.first.name?.toString() ?? '');
+    teamBNameController = TextEditingController(text: currentGame.teams?.last.name?.toString() ?? '');
+    teamAEmblemaController = TextEditingController(text: currentGame.teams?.first.emblema?.toString() ?? 'emblema_1');
+    teamBEmblemaController = TextEditingController(text: currentGame.teams?.last.emblema?.toString() ?? 'emblema_2');
+    qtdPlayersController = TextEditingController(text: event!.gameConfig?.playersPerTeam.toString() ?? '');
   }
 
-  //FUNÇÃO DE SALVAMENTO DE CONFIGURAÇÕES DA PARTIDA
-  void saveGameConfig() {
-    event!.gameConfig = currentGameConfig;
+  //FUNÇÃO DE DEFINIÇÃO DE CONFIGURAÇÕES DA PARTIDA
+  void setGameConfig() {
+    //RESGATAR INSTANCIA DO CONTROLLER
+    GameController gameController = GameController.instance;
+    //ATUALIZAR CONFIGURAÇÕES DE PARTIDA
+    gameController.currentGameConfig = GameConfigModel(
+      id: currentGameConfig!.id,
+      category: categoryController.text,
+      duration: int.parse(durationController.text),
+      hasTwoHalves: bool.parse(hasTwoHalvesController.text),
+      hasExtraTime: bool.parse(hasExtraTimeController.text),
+      hasPenalty: bool.parse(hasPenaltyController.text),
+      hasGoalLimit: bool.parse(hasGoalLimitController.text),
+      hasRefereer: bool.parse(hasRefereerController.text),
+      playersPerTeam: int.parse(playersPerTeamController.text),
+      extraTime: bool.parse(hasExtraTimeController.text) ? int.parse(extraTimeController.text) : null,
+      goalLimit: bool.parse(hasGoalLimitController.text) ? int.parse(goalLimitController.text) : null,
+      createdAt : DateTime.now(),
+      updatedAt : DateTime.now(),
+    );
+    //SALVAR CONFIGURAÇÕES DO EVENTO
+    event!.gameConfig = gameController.currentGameConfig;
+    //EXIBIR MENSAGEM DE SUCESSO
+    AppHelper.feedbackMessage(Get.context, "Configurações Salvas com sucesso", type: "Success");
+  }
+
+  //FUNÇÃO PARA VERIFICAR SE PARTIDA ESTA CONFIGURADA PARA INICIAR
+  bool checkGame(GameModel? game){
+    //RESGATAR INSTANCIA DO CONTROLLER
+    GameController gameController = GameController.instance;
+    //VERIFICAR SE PARTIDA ESTA COM AS CONFIGURAÇÕES DEFINIDAS
+    if(gameController.currentGameConfig == null){
+      //VERIFICAR SE EQUIPES DA PARTIDA ESTÃO DEFINIDAS
+      if(game!.teams != null){
+        //VERIFICAR SE JOGADORES DAS DUAS EQUIPES ESTÃO DEFINDOS
+        if(game.teams!.first.players.isNotEmpty && game.teams!.first.players.isNotEmpty){
+          //VERIFICAR SE AS DUAS EQUIPES TEM A MESMA QUANTIDADE DE JOGADORES
+          if(game.teams!.first.players.length == game.teams!.first.players.length){
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
 

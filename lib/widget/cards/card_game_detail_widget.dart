@@ -1,7 +1,6 @@
-import 'dart:math';
-import 'package:futzada/enum/enums.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/enum/enums.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/models/event_model.dart';
@@ -28,34 +27,32 @@ class CardGameDetailWidget extends StatefulWidget {
 }
 
 class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
-  //DEFINIR COR DO CARD
-  late Color cardColor;
+  //RESGATAR CONTROLLER DE PARTIDA
+  GameController gameController = GameController.instance;
+  //CONTROLADOR DE TIMES DEFINIDO
+  bool teamDefined = false;
+  //LISTA DE IMAGENS DOS JOGADORES
+  List<String?>teamAplayersImg = [];
+  List<String?>teamBplayersImg = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //RESGATAR COR PREDOMINANTE DA FOTO DO EVENTO
-    loadColorEvent();
-  }
-  //LOAD PREDOMINANTE COR DE IMAGEM DO EVENTO
-  void loadColorEvent() async {
-    //RETORNAR COR PREDOMINANTE
-    cardColor = await AppColors.getDominantColor(widget.event.photo);
+    teamAplayersImg = gameController.currentGame.teams!.first.players.take(3).map((item){
+      return item.user.photo;
+    }).toList();
+    teamBplayersImg = gameController.currentGame.teams!.first.players.take(3).map((item){
+      return item.user.photo;
+    }).toList();
+    print(teamAplayersImg);
+    print(teamBplayersImg);
   }
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE PARTIDA
-    final gameController = GameController.instance;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //GERAR NUMERO ALEATORIO PARA INDEX DE EMBLEMAS
-    int indexA = Random().nextInt(8);
-    int indexB = Random().nextInt(8);
-    //GERAR INDEX ALEATORIO PARA EMBLEMA DE EQUIPES
-    String emblemaIndexA = "emblema_${indexA == 0 ? 1 : indexA}";
-    String emblemaIndexB = "emblema_${indexB == 0 ? 1 : indexB}";
     
     return Container(
       width: dimensions.width,
@@ -102,7 +99,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                 image: const AssetImage(AppImages.gramado) as ImageProvider,
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  cardColor.withAlpha(150), 
+                  AppColors.green_300.withAlpha(150), 
                   BlendMode.srcATop,
                 )
               ),
@@ -137,7 +134,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                           ],
                         ),
                         child: SvgPicture.asset(
-                          AppIcones.emblemas[emblemaIndexA]!,
+                          AppIcones.emblemas[gameController.currentGame.teams!.first.emblema!]!,
                           width: 50,
                           height: 50,
                           colorFilter: const ColorFilter.mode(
@@ -158,7 +155,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       //INDICADOR DE AO VIVO
-                      if (widget.game.status == GameStatus.In_progress)...[
+                      if (gameController.currentGame.status == GameStatus.In_progress)...[
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           decoration: BoxDecoration(
@@ -263,7 +260,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                           ],
                         ),
                         child: SvgPicture.asset(
-                          AppIcones.emblemas[emblemaIndexB]!,
+                          AppIcones.emblemas[gameController.currentGame.teams!.last.emblema!]!,
                           width: 50,
                           height: 50,
                           colorFilter: const ColorFilter.mode(
@@ -284,11 +281,11 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const ImgGroupCircularWidget(
+                ImgGroupCircularWidget(
                   width: 30,
                   height: 30,
                   side: "right",
-                  images: null,
+                  images: teamAplayersImg
                 ),
                 Obx(() {
                   //RESGATAR TEMPO DA PARTIDA
@@ -331,11 +328,11 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                     ],
                   );
                 }),
-                const ImgGroupCircularWidget(
+                ImgGroupCircularWidget(
                   width: 30,
                   height: 30,
                   side: "right",
-                  images: null,//teamA.take(3)
+                  images: teamBplayersImg
                 ),
               ],
             ),

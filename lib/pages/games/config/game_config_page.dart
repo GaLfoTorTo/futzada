@@ -37,10 +37,8 @@ class _GameConfigPageState extends State<GameConfigPage> {
     super.initState();
     //ADICIONAR PARTIDA RECEBIDA POR ARGUMENTO COMO JOGO ATUAL NO CONTROLLER
     gameController.currentGame = game;
-    //INICIALIZAR CONFIGURAÇÕES DE PARTIDA DA PELADA
-    gameController.setGameConfig();
-    //DEFINIR CONFIGURAÇÕES DA PARTIDA ATUAL
-    gameController.setGame();
+    //INICIARLIZAR CONTROLLERS DE TEXTO
+    gameController.initTextControllers();
   }
 
   //FUNÇÃO PARA PROSSEGUIR OU RETROCEDER NAS CONFIGURAÇÕES
@@ -59,7 +57,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
         ){
           //EXIBIR MODAL DE CONFIRMAÇÃO
           Get.dialog(GameConfigDialog(
-            event: gameController.event!,
+            event: gameController.event,
             game: game,
           ));
         }else{

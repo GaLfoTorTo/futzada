@@ -50,7 +50,10 @@ class EventController extends GetxController
   void setSelectedEvent(EventModel event) {
     //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
     this.event = event;
+    //ATUALIZAR EVENTO NO CONTROLLER DE PARTIDAS
     GameController.instance.event = event;
+    //ATUALIZAR CONFIGURAÇÕES DE PARTIDA NO CONTROLLER DE PARTIDAS
+    GameController.instance.currentGameConfig = event.gameConfig;
   }
 }
 

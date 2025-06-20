@@ -139,8 +139,6 @@ class _EventGamesPageState extends State<EventGamesPage> {
                   //RESGATAR QUANTIDADE DE PARTIDAS PROGRAMADAS E QUANTIDADE DE ITEMS DE EXIBIÇÃO
                   int qtdGames = gameController.nextGames.length;
                   int qtdView = gameController.qtdView.value;
-                  //VERIFICAR SE EVENTO CONTEM CONFIGURAÇÕES DE PARTIDA DEFINIDA
-                  bool hasConfigGame= event.gameConfig != null;
                   //ADICIONAR CARD DE PARTIDAS AO VIVO NA LISTA
                   listGames.addAll([
                     Padding(
@@ -168,6 +166,8 @@ class _EventGamesPageState extends State<EventGamesPage> {
                                 var key = item.key;
                                 //RESGATAR PARTIDA
                                 var game = item.value;
+                                //VERIFICAR SE TODAS AS CONFIGURAÇÕES DA PARTIDA ESTÃO DEFINIDAS
+                                bool readyToStart = gameController.checkGame(game);
 
                                 return CardGameWidget(
                                   width: dimensions.width - 10,
@@ -176,7 +176,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                                   gameDate: eventDate,
                                   navigate: key < 2 ? true : false,
                                   active: key < 2 ? true : false,
-                                  route: hasConfigGame ? 'detail' : 'config',
+                                  route: readyToStart ? 'detail' : 'config',
                                 );
                               })
                             ]

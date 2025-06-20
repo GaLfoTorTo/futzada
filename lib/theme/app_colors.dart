@@ -107,6 +107,22 @@ class AppColors {
     'white': white,
   };
 
+  //CACHE DE COR PREDOMINANTES DAS IMAGENS DO EVENTO
+  static final Map<String, Color> _imageColorCache = {};
+
+  //RESGATAR COR DOMINANTE DA IMAGEM NO CACHE
+  static Future<Color> getCachedDominantColor(String? imageUrl) async {
+    if (imageUrl == null) return gray_300;
+
+    if (_imageColorCache.containsKey(imageUrl)) {
+      return _imageColorCache[imageUrl]!;
+    }
+
+    final dominantColor = await getDominantColor(imageUrl);
+    _imageColorCache[imageUrl] = dominantColor;
+    return dominantColor;
+  }
+
   //FUNÇÃO PARA CALCULAR A DISTANCIA ENTRE DUAS CORES NO ESPAÇO RGB
   static double colorDistance(Color color1, Color color2) {
     //RESGATAR DIFERENÇA DE VALORES RGB ENTRE AS DUAS CORES
@@ -159,7 +175,6 @@ class AppColors {
         final dominantColor = paletteGenerator.dominantColor?.color;
         //VERIFICAR SE COR PREDOMINANTE FOI ENCONTRADA
         if (dominantColor != null) {
-          return dominantColor;
           //ENCONTRAR A COR MAIS PRÓXIMA EM AppColors
           return findClosestColor(dominantColor);
         }

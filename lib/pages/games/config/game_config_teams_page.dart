@@ -38,9 +38,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   //DEFINIR CONFIGURAÇÕES DE PARTIDA DO EVENTO
   late GameConfigModel gameConfig;
   //DEFINIR CONTROLADORES DE TEXTO 
-  late TextEditingController teamAController;
-  late TextEditingController teamBController;
-  late TextEditingController qtdPlayersController;
+  
   //DEFINIR VARIAVEIS DE CONTROLLE DE SLIDER
   late int qtdPlayers;
   late int minPlayers;
@@ -48,9 +46,6 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   late int divisions;
   //DEFINIR CONTROLADOR DE PARTICIPANTS DA PELADA
   List<ParticipantModel>? participants = [];
-  //GERAR INDEX ALEATORIO PARA EMBLEMA DE EQUIPES
-  late String emblemaIndexA;
-  late String emblemaIndexB;
   //CONTROLADOR DE VISUALIZAÇÃO DE EQUIPE
   bool teamDefined = false;
   
@@ -67,7 +62,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     //RESGATAR PARTICIPANTES JOGADORES DO EVENTO
     participants = event.participants;
     //RESGATAR QUANTIDADE DE JOGADORE POR EQUIPE
-    qtdPlayersController = TextEditingController(text: gameConfig.playersPerTeam.toString());
+
     //INICIALIZAR VALORES DE SLIDER
     qtdPlayers = event.gameConfig!.playersPerTeam!;
     minPlayers = gameService.getQtdPlayers(gameConfig.category!)['minPlayers']!;
@@ -75,24 +70,11 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     divisions = gameService.getQtdPlayers(gameConfig.category!)['divisions']!;
     //VERIFICAR SE TIME JA ESTA DEFINIDO
     if(game.teams != null && game.teams!.isNotEmpty){
-      //INICIALIZAR CAMPOS DE TEXTO
-      teamAController = TextEditingController(text: game.teams!.first.name);
-      teamBController = TextEditingController(text: game.teams!.last.name);
-      //INICIALIZAR EMBLEMAS PADRÃO
-      emblemaIndexA = game.teams!.first.emblema!;
-      emblemaIndexB = game.teams!.last.emblema!;
       //VERIFICAR SE JOGADORES DE CADA EQUIPE FORAM DEFINIDOS
       if(game.teams!.first.players.isNotEmpty && game.teams!.last.players.isNotEmpty){
         //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
         teamDefined = true;
       }
-    }else{
-      //INICIALIZAR CAMPOS DE TEXTO
-      teamAController = TextEditingController(text: "Team A");
-      teamBController = TextEditingController(text: "Team B");
-      //INICIALIZAR EMBLEMAS PADRÃO
-      emblemaIndexA = "emblema_${Random().nextInt(8)}";
-      emblemaIndexB = "emblema_${Random().nextInt(8)}";
     }
   }
 
@@ -178,7 +160,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                       InputTextWidget(
                         name: 'teamAName',
                         label: 'Time 1',
-                        textController: teamAController,
+                        textController: gameController.teamANameController,
                         controller: gameController,
                       ),
                     ],
@@ -191,7 +173,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                       InputTextWidget(
                         name: 'teamBName',
                         label: 'Time 2',
-                        textController: teamBController,
+                        textController: gameController.teamBNameController,
                         controller: gameController,
                       ),
                     ],
@@ -219,7 +201,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                   InkWell(
                     onTap: () => Get.bottomSheet(
                       EmblemasDialog(
-                        emblema: emblemaIndexA
+                        emblema: gameController.teamAEmblemaController.text
                       ), 
                       isScrollControlled: true
                     ),
@@ -240,7 +222,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                         ],
                       ),
                       child: SvgPicture.asset(
-                        AppIcones.emblemas[emblemaIndexA]!,
+                        AppIcones.emblemas[gameController.teamAEmblemaController.text]!,
                         width: 100,
                         colorFilter: const ColorFilter.mode(
                           AppColors.gray_300, 
@@ -260,7 +242,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                   InkWell(
                     onTap: () => Get.bottomSheet(
                       EmblemasDialog(
-                        emblema: emblemaIndexA
+                        emblema: gameController.teamBEmblemaController.text
                       ), 
                       isScrollControlled: true
                     ),
@@ -280,7 +262,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                         ],
                       ),
                       child: SvgPicture.asset(
-                        AppIcones.emblemas[emblemaIndexB]!,
+                        AppIcones.emblemas[gameController.teamBEmblemaController.text]!,
                         width: 100,
                         colorFilter: const ColorFilter.mode(
                           AppColors.gray_300, 
@@ -349,7 +331,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                               width: dimensions.width,
                               height: 30,
                               backgroundColor: gameController.teamA.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
-                              text: teamAController.text,
+                              text: gameController.teamANameController.text,
                               textSize: 15,
                               icon: AppIcones.users_solid,
                               textColor: AppColors.blue_500,
@@ -413,7 +395,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                               width: dimensions.width,
                               height: 30,
                               backgroundColor: gameController.teamB.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
-                              text: teamBController.text,
+                              text: gameController.teamBNameController.text,
                               textSize: 15,
                               icon: AppIcones.users_solid,
                               textColor: AppColors.blue_500,

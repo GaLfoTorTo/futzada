@@ -5,7 +5,6 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
@@ -26,31 +25,19 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
   EventModel event = EventController.instance.event;
   //DEFINIR CONFIGURAÇÕES DE PARTIDA DO EVENTO
   late GameConfigModel gameConfig;
-  //DEFINIR CONTROLADORES DE TEXTO 
-  late TextEditingController numberController;
-  late TextEditingController categoryController;
-  late TextEditingController startTimeController;
-  late TextEditingController endTimeController;
-  late TextEditingController durationController;
-  late TextEditingController goalLimitController;
-  late ParticipantModel? refereerController;
+  //CONTROLADOR DE EXIBIÇÃO DE CAMPOS
+  bool hasRefereer = false;
+  bool hasGoalLimit = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //RESGATAR CONFIGURAÇÕES DE PARTIDA DO EVENTO
-    gameConfig = gameController.event.gameConfig!;
-    //RESGATAR VALORES DE CAMPO DE TEXTO 
-    numberController = TextEditingController(text: gameController.currentGame.number.toString());
-    categoryController = TextEditingController(text: gameController.event.category);
-    startTimeController = TextEditingController(text: DateFormat.Hm().format(gameController.currentGame.startTime!).toString());
-    endTimeController = TextEditingController(text: DateFormat.Hm().format(gameController.currentGame.endTime!).toString());
-    durationController = TextEditingController(text: gameController.event.gameConfig!.duration.toString());
-    goalLimitController = TextEditingController(text: gameController.event.gameConfig!.goalLimit.toString());
-    refereerController = gameController.currentGame.referee;
     //REDEFINIR HORARIOS DE ACORDO COM DURAÇÃO
-    setDuration(durationController.text);
+    setDuration(gameController.durationController.text);
+    //RESGATAR VALORES DEFINIDOS NAS CONFIGURAÇÕES
+    hasRefereer = bool.parse(gameController.hasRefereerController.text);
+    hasGoalLimit = bool.parse(gameController.hasGoalLimitController.text);
   }
 
   //FUNÇÃO PARA AJUSTAR DATA DE INICIO, FIM E DURAÇÃO DE PARTIDA
@@ -59,47 +46,21 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
     if(duration != null){
       setState(() {
         //RESGATAR CONFIGURAÇÃO DE 2 TEMPOS
-        var totalDuration = gameController.currentGameConfig!.hasTwoHalves! ? int.parse(duration) * 2 : int.parse(duration);
+        var totalDuration = bool.parse(gameController.hasTwoHalvesController.text) ? int.parse(duration) * 2 : int.parse(duration);
         //REDEFINIR DATA DE INICIO E FIM DA PARTIDA
         var endTime = gameController.currentGame.startTime!.add(Duration(minutes: totalDuration));
         //ATUALIZAR HORARIO DE FIM DA PARTIDA
         gameController.currentGame.endTime = endTime;
         //ATUALIZAR TEXTO DO INPUT
-        endTimeController.text = DateFormat.Hm().format(endTime).toString();
+        gameController.endTimeController.text = DateFormat.Hm().format(endTime).toString();
       });
     }
   }
 
-  //FUNÇÃO PARA SALVAR CONFIGURAÇÕES 
-  void saveConfigGame(){
-    //RESGATAR DURAÇÃO TOTAL DA PARTIDA
-    var totalDuration = gameController.currentGameConfig!.hasTwoHalves! 
-      ? int.parse(durationController.text) * 2 
-      : int.parse(durationController.text);
-    //ATUALIZAR MAP DE PARTIDA ATUAL NO CONTROLLER
-    gameController.currentGame.copyWith(
-      id : gameController.currentGame.id,
-      number : gameController.currentGame.number,
-      event : gameController.currentGame.event,
-      referee : refereerController,
-      duration : int.parse(durationController.text),
-      startTime : DateFormat.Hm().parse(startTimeController.text),
-      endTime : gameController.currentGame.startTime!.add(Duration(minutes: totalDuration)),
-      status : gameController.currentGame.status,
-      result : gameController.currentGame.result,
-      teams : gameController.currentGame.teams,
-      createdAt : DateTime.now(),
-      updatedAt : DateTime.now(),
-    );
-  }
-
   @override
   void dispose() {
-    //DEFINIR CONFIGURAÇÕES PREENCHIDAS PELO USUARIO
-    saveConfigGame();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +89,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                   child: InputTextWidget(
                     name: 'number',
                     label: 'Nº',
-                    initialValue: gameController.currentGame.number.toString(),
+                    textController: gameController.numberController,
                     disabled: true,
                   ),
                 ),
@@ -140,7 +101,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                   child: InputTextWidget(
                     name: 'category',
                     label: 'Categoria',
-                    initialValue: gameController.event.category,
+                    textController: gameController.categoryController,
                     disabled: true,
                   ),
                 ),
@@ -157,7 +118,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                     name: 'startTime',
                     label: 'Início',
                     prefixIcon: Icons.access_time_rounded,
-                    textController: startTimeController,
+                    textController: gameController.startTimeController,
                     controller: gameController,
                     disabled: true,
                   ),
@@ -171,7 +132,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                     name: 'endTime',
                     label: 'Fim',
                     prefixIcon: Icons.access_time_rounded,
-                    textController: endTimeController,
+                    textController: gameController.endTimeController,
                     controller: gameController,
                     type: TextInputType.text,
                     disabled: true,
@@ -184,11 +145,11 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: InputTextWidget(
               name: 'duration',
-              label: gameController.event.gameConfig!.hasTwoHalves != null && gameController.event.gameConfig!.hasTwoHalves! 
+              label: bool.parse(gameController.hasTwoHalvesController.text)
                 ? "Duração (min. por tempo)" 
                 : "Duração (min.)",
               prefixIcon: Icons.timer_outlined,
-              textController: durationController,
+              textController: gameController.durationController,
               controller: gameController,
               type: TextInputType.number,
               onChanged: (value) => setDuration(value),
@@ -202,13 +163,13 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
-              value: gameController.event.gameConfig!.hasTwoHalves!,
+              value: bool.parse(gameController.hasTwoHalvesController.text),
               onChanged: (value){
                 setState(() {
                   //ATUALIZAR VALOR DO SWITCH
-                  gameController.event.gameConfig!.hasTwoHalves = value;
+                  gameController.hasTwoHalvesController.text = value.toString();
                   //RECLACULAR PERIODO DE PARTIDA
-                  setDuration(durationController.text);
+                  setDuration(gameController.durationController.text);
                 });
               },
               activeColor: AppColors.green_300,
@@ -233,10 +194,11 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
-              value: gameController.event.gameConfig!.hasExtraTime!,
+              value: bool.parse(gameController.hasExtraTimeController.text),
               onChanged: (value){
                 setState(() {
-                  gameController.event.gameConfig!.hasExtraTime = value;
+                  //ATUALIZAR VALOR 
+                  gameController.hasTwoHalvesController.text = value.toString();
                 });
               },
               activeColor: AppColors.green_300,
@@ -261,7 +223,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
-              value: gameController.event.gameConfig!.hasPenalty!,
+              value: bool.parse(gameController.hasPenaltyController.text),
               onChanged: (value){
                 setState(() {
                   gameController.event.gameConfig!.hasPenalty = value;
@@ -292,10 +254,11 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
-              value: gameController.event.gameConfig!.hasGoalLimit!,
+              value: bool.parse(gameController.hasGoalLimitController.text),
               onChanged: (value){
                 setState(() {
-                  gameController.event.gameConfig!.hasGoalLimit = value;
+                  hasGoalLimit = value;
+                  gameController.hasGoalLimitController.text = value.toString();
                 });
               },
               activeColor: AppColors.green_300,
@@ -312,12 +275,12 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               ),
             ),
           ),
-          if(gameController.event.gameConfig!.hasGoalLimit != null && gameController.event.gameConfig!.hasGoalLimit!)...[
+          if(hasGoalLimit)...[
             InputTextWidget(
               name: 'limitGols',
               label: 'Qtd. Gols',
               prefixIcon: AppIcones.futbol_ball_outline,
-              textController: goalLimitController,
+              textController: gameController.goalLimitController,
               controller: gameController,
               type: TextInputType.number,
               onChanged: (value) => gameController.event.gameConfig!.goalLimit = int.parse(value),
@@ -331,10 +294,11 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               borderRadius: BorderRadius.circular(5)
             ),
             child: SwitchListTile(
-              value: gameController.event.gameConfig!.hasRefereer!,
+              value: bool.parse(gameController.hasRefereerController.text),
               onChanged: (value) {
                 setState(() {
-                  gameController.currentGameConfig!.hasRefereer = value;
+                  hasRefereer = value;
+                  gameController.hasRefereerController.text = value.toString();
                 });
               },
               activeColor: AppColors.green_300,
@@ -350,7 +314,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               ),
             ),
           ),
-          if(gameController.event.gameConfig!.hasRefereer != null && gameController.event.gameConfig!.hasRefereer!)...[
+          if(hasRefereer)...[
             ButtonDropdownIconWidget(
               width: dimensions.width,
               menuWidth: dimensions.width, 
@@ -362,11 +326,10 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               onChange: (newValue) {
                 setState(() {
                   //DEFINIR ARBITRO DA PARTIDA
-                  gameController.event.gameConfig!.hasRefereer = newValue;
-                  gameController.currentGame.referee = newValue;
+                  gameController.refereerController = newValue;
                 });
               },
-              selectedItem: event.participants![0].id,
+              selectedItem: gameController.refereerController!.id,
               items: List.generate(event.participants!.length, (i){
                 return {
                   'id': event.participants![i].user.id,

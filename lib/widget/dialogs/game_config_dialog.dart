@@ -1,13 +1,13 @@
-import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/game_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/game_model.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class GameConfigDialog extends StatelessWidget {
@@ -80,13 +80,11 @@ class GameConfigDialog extends StatelessWidget {
                   icon: AppIcones.save_solid,
                   action: () {
                     //SALVAR CONFIGURAÇÕES DE PARTIDA DA PELADA
-                    gameController.saveGameConfig();
-                    //DEFINIR CONFIGURAÇÕES DA PARTIDA ATUAL
-                    gameController.setGame(newGame: game);
-                    //EXIBIR MENSAGEM DE SUCESSO
-                    AppHelper.feedbackMessage(context, "Configurações Salvas com sucesso", type: "Success");
+                    gameController.setGameConfig();
+                    //DEFINIR PARTIDA ATUAL
+                    gameController.setGame();
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                    Get.toNamed('/games/overview', arguments: {
+                    Get.offNamed('/games/overview', arguments: {
                       'game': game,
                       'event': event,
                     });
@@ -98,10 +96,10 @@ class GameConfigDialog extends StatelessWidget {
                   width: dimensions.width,
                   icon: AppIcones.apito,
                   action: (){
-                    //DEFINIR CONFIGURAÇÕES DA PARTIDA ATUAL
-                    gameController.setGame(newGame: game);
+                    //DEFINIR PARTIDA ATUAL
+                    gameController.setGame();
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                    Get.toNamed('/games/overview', arguments: {
+                    Get.offNamed('/games/overview', arguments: {
                       'game': game,
                       'event': event,
                     });
