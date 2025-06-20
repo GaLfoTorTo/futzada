@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/enum/enums.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,7 +13,7 @@ import 'package:futzada/widget/animated/animated_ellipsis.dart';
 import 'package:futzada/widget/images/img_group_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 
-class CardGameDetailWidget extends StatelessWidget {
+class CardGameDetailWidget extends StatefulWidget {
   final EventModel event;
   final GameModel game;
   
@@ -21,6 +22,27 @@ class CardGameDetailWidget extends StatelessWidget {
     required this.event,
     required this.game,
   });
+
+  @override
+  State<CardGameDetailWidget> createState() => _CardGameDetailWidgetState();
+}
+
+class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
+  //DEFINIR COR DO CARD
+  late Color cardColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //RESGATAR COR PREDOMINANTE DA FOTO DO EVENTO
+    loadColorEvent();
+  }
+  //LOAD PREDOMINANTE COR DE IMAGEM DO EVENTO
+  void loadColorEvent() async {
+    //RETORNAR COR PREDOMINANTE
+    cardColor = await AppColors.getDominantColor(widget.event.photo);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +84,7 @@ class CardGameDetailWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "${event.title}",
+                  "${widget.event.title}",
                   style: Theme.of(context).textTheme.displayMedium!.copyWith(
                     color: AppColors.gray_500,
                   ),
@@ -80,7 +102,7 @@ class CardGameDetailWidget extends StatelessWidget {
                 image: const AssetImage(AppImages.gramado) as ImageProvider,
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  AppColors.green_300.withAlpha(150), 
+                  cardColor.withAlpha(150), 
                   BlendMode.srcATop,
                 )
               ),
@@ -92,7 +114,7 @@ class CardGameDetailWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        "Team A",
+                        gameController.currentGame.teams!.first.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           color: AppColors.blue_500
                         )
@@ -128,7 +150,7 @@ class CardGameDetailWidget extends StatelessWidget {
                   ),
                 ),
                 Obx(() {
-                  final isRunning = gameController.isGameRunning;
+                  final isRunning = gameController.isGameRunning.value;
                   final teamAScore = gameController.teamAScore.value;
                   final teamBScore = gameController.teamBScore.value;
                   //PLACAR
@@ -136,7 +158,7 @@ class CardGameDetailWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       //INDICADOR DE AO VIVO
-                      if (isRunning)...[
+                      if (widget.game.status == GameStatus.In_progress)...[
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           decoration: BoxDecoration(
@@ -218,7 +240,7 @@ class CardGameDetailWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        "Team B",
+                        gameController.currentGame.teams!.last.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           color: AppColors.blue_500
                         )
@@ -274,7 +296,7 @@ class CardGameDetailWidget extends StatelessWidget {
                   final parts = currentTime.split(':');
                   final minutes = int.tryParse(parts[0]) ?? 0;
                   //VERIFICAR SE TEMPO ULTRAPAÇOU LIMITE DA PARTIDA
-                  final isExtraTime = minutes > (game.duration ?? 0);
+                  final isExtraTime = minutes > (widget.game.duration ?? 0);
 
                   return Column(
                     children: [

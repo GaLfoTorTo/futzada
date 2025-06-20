@@ -1,13 +1,14 @@
 import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/widget/buttons/float_button_event_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/pages/event/view/event_games_page.dart';
 import 'package:futzada/pages/event/view/event_home_page.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/buttons/float_button_event_widget.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -17,8 +18,12 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
-  //CONTROLLER DE BARRA NAVEGAÇÃO
-  EventController controller = EventController.instance;
+  //DEFINIR CONTROLLER DE EVENTO
+  EventController eventController = EventController.instance;
+  //DEFINIR CONTROLLER DE PARTIDA
+  GameController gameController = GameController.instance;
+  //RESGATAR EVENTO ATUAL
+  EventModel event = Get.arguments;
   //CONTROLLER DE TABS
   late final TabController tabController;
   //CONTROLADOR DE INDEX DAS TABS
@@ -29,23 +34,16 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     super.initState();
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
-    //ATRIBUIR EVENTO ATUAL NO CONTROLLER DE JOGOS
-    GameController.instance.event = controller.event;
-  }
-
-  //FUNÇÃO PARA EXIBIR OU NÃO FLOAT ACTION BUTTON
-  Widget? buildFloatingButton() {
-    //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
-    if(controller.nextGames.isNotEmpty){
-      //VERIFICAR TAB SELECIONADA
-      switch (tabIndex) {
-        case 1:
-          return FloatButtonEventWidget(index:tabController.index);
-        default:
-          return null;
-      }
-    }
-    return null;
+    //DEFINIR EVENTO ATUAL NO CONTROLLER
+    eventController.setSelectedEvent(event);
+    //BINDING DE CARREGAMENTO DA PAGINA
+    WidgetsBinding.instance.addPostFrameCallback((_) async{   
+      //CARREGAR PARTIDAS DO EVENTO
+      gameController.loadGames.value = false;
+      gameController.loadGames.value = await gameController.setGamesEvent(event);
+      //BUSCAR HISTORICO
+      gameController.loadHistoricGames.value = await gameController.getHistoricGames();
+    });
   }
   
   @override
@@ -106,7 +104,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                         alignment: Alignment.center,
                         children:[
                           Tab(text: tab),
-                          if(controller.inProgressGames.isNotEmpty)...[
+                          if(gameController.inProgressGames.isNotEmpty)...[
                             Positioned(
                               right: 0,
                               top: 0,
@@ -151,7 +149,13 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           ]
         )
       ),
-      floatingActionButton: buildFloatingButton()
+      floatingActionButton: Obx(() {
+        //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
+        if (gameController.hasGames.value && tabIndex == 1) {
+          return FloatButtonEventWidget(index: tabController.index);
+        }
+        return const SizedBox.shrink();
+      })
     );
   }
 }

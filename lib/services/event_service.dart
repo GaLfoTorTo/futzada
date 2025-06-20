@@ -1,14 +1,14 @@
 import 'dart:math';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/models/address_model.dart';
-import 'package:futzada/services/avaliation_service.dart';
-import 'package:futzada/services/game_service.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
-import 'package:futzada/services/participant_service.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/address_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/user_model.dart';
+import 'package:futzada/services/avaliation_service.dart';
+import 'package:futzada/services/game_service.dart';
+import 'package:futzada/services/participant_service.dart';
 
 class EventService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

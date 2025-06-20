@@ -1,26 +1,92 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/models/game_model.dart';
-import 'package:futzada/services/timer_service.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:get/get.dart';
+import 'package:futzada/widget/overlays/stopwatch_overlay_widget.dart';
 
-class StopWatchDialog extends StatelessWidget {
-  final GameModel game;
-
+class StopWatchDialog extends StatefulWidget {
   const StopWatchDialog({
     super.key,
-    required this.game,
   });
 
   @override
+  State<StopWatchDialog> createState() => _StopWatchDialogState();
+}
+
+class _StopWatchDialogState extends State<StopWatchDialog> {
+  @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE PARTIDAS E SERVIÇO DE CRONOMETRO DO GET
-    final timerService = Get.find<TimerService>();
-    final gameController = Get.find<GameController>();
-    //RESGATAR DURAÇÃO DA PARTIDA
-    final duration = Duration(minutes: game.duration ?? 10);
- 
+    final gameController = GameController.instance;
+
+    //FUNÇÃO DE EXIBIÇÃO DE OVERLAY
+    void showOverlay(function, action){
+      //DELAY PARA EXIBIÇÃO DO OVERLAY
+      Future.delayed(const Duration(milliseconds: 300), () async {
+        await Get.showOverlay(
+          asyncFunction: () async {
+            //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
+            await Future.delayed(const Duration(seconds: 5));
+            //FINALIZAR PARTIDA
+            function();
+          },
+          loadingWidget:  Material(
+            color: Colors.transparent,
+            child: StopWatchOverlayWidget(
+              seconds: 5,
+              action: action
+            ),
+          ),
+          opacity: 0.7,
+          opacityColor: AppColors.dark_700,
+        );
+      });
+    }
+
+    //FUNÇÃO PARA EXIBIR OVERLAY ANTES DE INICIAR/CONTINUAR CRONOMETRO
+    Future<bool> handleStopWatch(String action) async{
+      switch (action) {
+        case "pause":
+          //PAUSAR PARTIDA
+          gameController.pauseGame();  
+          break;
+        case "start":
+          //FECHAR DIALOG
+          Get.back();
+          //EXIBIR OVERLAY
+          showOverlay(gameController.startGame, action);
+          break;
+        case "stop":
+          //FECHAR DIALOG
+          Get.back();
+          //EXIBIR OVERLAY
+          showOverlay(gameController.stopGame, action);
+          break;
+        case "reset":
+          //FECHAR DIALOG
+          Get.back();
+          //EXIBIR OVERLAY
+          showOverlay(gameController.resetGame, action);
+          break;
+      }
+      //VERIFICAR SE PARTIDA ESTA ROLANDO
+      setState(() {});
+      //FINALIZAR FUNÇÃO
+      return true;
+    }
+    
+    //FUNÇÃO PARA RESGATAR DURAÇÃO DA PARTIDA
+    Duration getDuration(){
+      //VERIFICAR DURAÇÃO DA PARTIDA FOI CONFIGURADA
+      if(gameController.currentGameConfig != null && gameController.currentGameConfig!.duration != null ){
+        return Duration(minutes: gameController.currentGameConfig!.duration!);
+      }else if(gameController.currentGame.duration != null){
+        return Duration(minutes: gameController.currentGame.duration!);
+      }else{
+        return Duration(minutes: 10);
+      }
+    }
+    
     return Dialog(
       backgroundColor: AppColors.green_300,
       insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -30,10 +96,12 @@ class StopWatchDialog extends StatelessWidget {
       ),
       shadowColor: AppColors.dark_300,
       child: Obx((){
+        //RESGATAR DURAÇÃO DA PARTIDA
+        final duration = getDuration();
+        final minutesDuration = duration.inMinutes.toString().padLeft(2, '0');;
         //RESGATAR TEMPO DA PARTIDA
         final currentTime = gameController.currentTime;
-        final isRunning = timerService.isRunning(game.id);
-        print(isRunning);
+        final isRunning = gameController.timerService.isRunning(gameController.currentGame.id);
         //SEPARAR TEMPO RECEBIDO POR ":"
         final parts = currentTime.split(':');
         //RESGATAR MINUTOS E SEGUNDOS
@@ -45,7 +113,7 @@ class StopWatchDialog extends StatelessWidget {
         //CALCULAR PROGRESSO DECORRIDO DE PARTIDA
         final progress = totalDurationSeconds > 0 
           ? totalElapsedSeconds / totalDurationSeconds
-                        : 0.0;
+          : 0.0;
         return SizedBox(
           height: 150,
           child: Column(
@@ -60,7 +128,7 @@ class StopWatchDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
-                      onPressed: () => timerService.resetStopwatch(game.id),
+                      onPressed: () => handleStopWatch("reset"),
                       icon: const Icon(
                         Icons.restart_alt_rounded,
                         color: AppColors.blue_500,
@@ -71,9 +139,9 @@ class StopWatchDialog extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: IconButton(
-                        onPressed: () => isRunning 
-                            ? gameController.pauseGame(game)
-                            : gameController.startGame(game),
+                        onPressed: () async{
+                          handleStopWatch(isRunning ? "pausar" : "start",);
+                        },
                         alignment: Alignment.center,
                         icon: Icon(
                           isRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
@@ -84,13 +152,13 @@ class StopWatchDialog extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      onPressed: () => timerService.stopStopwatch(game.id),
+                      onPressed: () => handleStopWatch("stop"),
                       icon: const Icon(
                         Icons.stop_rounded,
                         color: AppColors.blue_500,
                         size: 50,
                       ),
-                      tooltip: "Parar",
+                      tooltip: "Finalizar",
                     )
                   ],
                 ),
@@ -107,7 +175,7 @@ class StopWatchDialog extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${duration.inMinutes}:00",
+                      "$minutesDuration:00",
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: AppColors.blue_500
                       ),

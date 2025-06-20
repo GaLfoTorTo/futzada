@@ -1,8 +1,8 @@
-import 'package:futzada/models/game_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/services/timer_service.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/models/game_model.dart';
+import 'package:futzada/controllers/game_controller.dart';
 
 class TimerCounterWidget extends StatelessWidget {
    final GameModel game;
@@ -14,13 +14,13 @@ class TimerCounterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR SERVIÇO DE CRONOMETRO DO GET
-    final timerService = TimerService.instance;
+    //RESGATAR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
 
     //FUNÇÃO PARA RETORNAR TEXTO DE MINUTOS PASSADOS OU INICIADOS
     String timeElapsedText(minutesElapsed){
       //VERIFICAR MINUTOS RESTANTES
-      if (minutesElapsed >= 0) {
+      if (minutesElapsed >= gameController.currentGame.duration) {
         //EXIBIÇÃO QUANDO 
         return "Tempo Extra";
       } else if (DateTime.now().isBefore(game.startTime!)) {
@@ -33,11 +33,8 @@ class TimerCounterWidget extends StatelessWidget {
     }
 
     return Obx(() {
-      //OBTER O TEMPO DECORRIDO DO CONTROLLER OU SERVICE
-      final minutesElapsed = timerService.elapsedMinutesStream(game.id);
-
       return Text(
-        timeElapsedText(minutesElapsed),
+        timeElapsedText(gameController.minutesElapsed.value),
         style: Theme.of(context).textTheme.titleMedium!.copyWith(
           color: AppColors.gray_300,
         ),

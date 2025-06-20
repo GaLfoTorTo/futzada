@@ -75,9 +75,9 @@ class RandomTeamDialog extends StatelessWidget {
                   text: "Escolher manualmente",
                   width: dimensions.width,
                   iconSize: 30,
-                  action: () async {
+                  action: () {
                     //FECHAR DIALOG
-                    await actionSet();
+                    actionSet();
                     
                     Get.back();
                   }

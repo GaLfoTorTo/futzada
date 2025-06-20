@@ -2,20 +2,20 @@
 import 'dart:convert';
 
 class GameConfigModel {
-  final int? id;
-  final String? category;
-  final int? duration;
-  final bool? hasTwoHalves;
-  final bool? hasExtraTime;
-  final bool? hasPenalty;
-  final bool? hasGoalLimit;
-  final bool? hasRefereer;
-  final int? playersPerTeam; 
-  final int? extraTime;
-  final int? goalLimit;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final DateTime? deletedAt;
+  int? id;
+  String? category;
+  int? duration;
+  bool? hasTwoHalves;
+  bool? hasExtraTime;
+  bool? hasPenalty;
+  bool? hasGoalLimit;
+  bool? hasRefereer;
+  int? playersPerTeam; 
+  int? extraTime;
+  int? goalLimit;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  DateTime? deletedAt;
 
   GameConfigModel({
     this.id,

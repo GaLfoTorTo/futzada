@@ -1,4 +1,3 @@
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -11,8 +10,9 @@ import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/animated/animated_ellipsis.dart';
 import 'package:futzada/widget/others/timer_counter_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:futzada/controllers/game_controller.dart';
 
-class CardGameLiveWidget extends StatelessWidget {
+class CardGameLiveWidget extends StatefulWidget {
   final EventModel event;
   final GameModel game;
   const CardGameLiveWidget({
@@ -22,23 +22,45 @@ class CardGameLiveWidget extends StatelessWidget {
   });
 
   @override
+  State<CardGameLiveWidget> createState() => _CardGameLiveWidgetState();
+}
+
+class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
+  //DEFINIR COR DO CARD
+  late Color cardColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //RESGATAR COR PREDOMINANTE DA FOTO DO EVENTO
+    loadColorEvent();
+  }
+  //LOAD PREDOMINANTE COR DE IMAGEM DO EVENTO
+  void loadColorEvent() async {
+    //RETORNAR COR PREDOMINANTE
+    cardColor = await AppColors.getDominantColor(widget.event.photo);
+  }
+
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE PARTIDA
-    final gameController = GameController.instance;
+    GameController gameController = GameController.instance;
 
     //RESGATAR EQUIPES DA PARTIDA
-    TeamModel teamA = game.teams!.first;
-    TeamModel teamB = game.teams!.last;
+    TeamModel teamA = widget.game.teams!.first;
+    TeamModel teamB = widget.game.teams!.last;
 
     return InkWell(
       onTap: (){
+        //DEFINIR PARTIDA ATUAL
+        gameController.currentGame = widget.game;
         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-        Get.toNamed('/games/game_detail', arguments: {
-          'game': game,
-          'event': event,
+        Get.toNamed('/games/overview', arguments: {
+          'game': widget.game,
+          'event': widget.event,
         });
       },
       borderRadius: BorderRadius.circular(20),
@@ -46,7 +68,6 @@ class CardGameLiveWidget extends StatelessWidget {
         width: dimensions.width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.dark_500.withAlpha(30),
@@ -55,6 +76,16 @@ class CardGameLiveWidget extends StatelessWidget {
               offset: const Offset(2, 5),
             ),
           ],
+          image: DecorationImage(
+            image: widget.event.photo != null 
+              ? CachedNetworkImageProvider(widget.event.photo!) 
+              : const AssetImage(AppImages.gramado) as ImageProvider,
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              cardColor.withAlpha(150), 
+              BlendMode.srcATop,
+            )
+          ),
         ),
         child: 
         Obx(() {
@@ -64,37 +95,11 @@ class CardGameLiveWidget extends StatelessWidget {
 
           return Column(
             children: [
-              Stack(
-                children:[ 
-                  Container(
-                    width: dimensions.width,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      borderRadius:const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      image: DecorationImage(
-                        image: event.photo != null 
-                          ? CachedNetworkImageProvider(event.photo!) 
-                          : const AssetImage(AppImages.gramado) as ImageProvider,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "#${game.number}",
-                      style: Theme.of(context).textTheme.headlineLarge
-                    ),
-                  ),
-                ]
-              ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  "${game.startTime} as ${game.endTime}",
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: AppColors.gray_500,
-                  ),
+                  "#${widget.game.number}",
+                  style: Theme.of(context).textTheme.headlineLarge
                 ),
               ),
               Row(
@@ -196,7 +201,7 @@ class CardGameLiveWidget extends StatelessWidget {
                   Column(
                     children: [
                       TimerCounterWidget(
-                        game: game,
+                        game: widget.game,
                       ),
                       Container(
                         height: 20,

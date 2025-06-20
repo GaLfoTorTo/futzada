@@ -10,7 +10,6 @@ import 'package:futzada/widget/dialogs/event_address_dialog.dart';
 import 'package:futzada/widget/inputs/input_date_widget.dart';
 import 'package:futzada/widget/inputs/select_days_week_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
-import 'package:futzada/widget/others/campo_widget.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
@@ -27,8 +26,22 @@ class EventAddressStep extends StatefulWidget {
 }
 
 class EventAddressStepState extends State<EventAddressStep> {
+  @override
+  void initState() {
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Placeholder();
+  }
   //DEFINIR FORMkEY
-  final formKey = GlobalKey<FormState>();
+  /* final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
   final controller = EventController.instance;
   //DATA FIXA
@@ -47,12 +60,6 @@ class EventAddressStepState extends State<EventAddressStep> {
   String? categoria;
   //TIMER DE CONSULTA ENDEREÇO
   Timer? debounce;
-
-  @override
-  void initState() {
-    super.initState();
-    categoria = controller.categoryController.text;
-  }
 
   //FUNÇÃO PARA ABRIR BOTTOMSHEET
   void openAdressSearch() {
@@ -455,11 +462,5 @@ class EventAddressStepState extends State<EventAddressStep> {
           ),
         ),
       ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+    ); */
 }

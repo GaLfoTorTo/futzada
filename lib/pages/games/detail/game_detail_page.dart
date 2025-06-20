@@ -1,19 +1,20 @@
-import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/services/timer_service.dart';
-import 'package:futzada/widget/buttons/float_button_timer_widget.dart';
-import 'package:futzada/widget/dialogs/stopWatch_dialog.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/services/timer_service.dart';
+import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
+import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/pages/games/detail/game_escalation_page.dart';
 import 'package:futzada/pages/games/detail/game_overview_page.dart';
 import 'package:futzada/pages/games/detail/game_statistics_page.dart';
-import 'package:futzada/pages/games/detail/game_timeline_page%20copy.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/cards/card_game_detail_widget.dart';
+import 'package:futzada/pages/games/detail/game_timeline_page.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/dialogs/stop_watch_dialog.dart';
+import 'package:futzada/widget/cards/card_game_detail_widget.dart';
+import 'package:futzada/widget/buttons/float_button_timer_widget.dart';
 
 class GameDetailPage extends StatefulWidget {
   const GameDetailPage({super.key});
@@ -119,6 +120,15 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
       appBar: HeaderWidget(
         title: "Partida #${game.number}",
         leftAction: () => Get.back(),
+        rightIcon: AppIcones.cog_solid,
+        rightAction: () {
+          //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+          Get.toNamed('/games/config', arguments: {
+            'game': game,
+            'event': event,
+            'index': 1,
+          });
+        },
         shadow: false,
       ),
       body: SafeArea(
@@ -185,16 +195,16 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           ],
         ),
       ),
-      floatingActionButton: FloatButtonTimerWidget(
-        actionButton: () => Get.dialog(StopWatchDialog(
-            game: game,
+      floatingActionButton: Obx((){
+        return FloatButtonTimerWidget(
+          actionButton: () => Get.dialog(StopWatchDialog(),
+            barrierColor: Colors.transparent,
+            useSafeArea: true,
+            transitionDuration: Durations.short1
           ),
-          barrierColor: Colors.transparent,
-          useSafeArea: true,
-          transitionDuration: Durations.short1
-        ),
-        isRunning: gameController.isGameRunning,
-      ),
+          isRunning: gameController.isGameRunning.value,
+        );
+      }),
       floatingActionButtonLocation: _fabLocation,
     );
   }

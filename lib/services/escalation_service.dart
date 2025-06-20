@@ -243,4 +243,36 @@ class EscalationService {
         return 'Jogador';
     }
   }
+
+  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
+  List<int> setFormation(qtd){
+    switch (qtd) {
+      case 4:
+        //SETORES PARA 4 JOGADORES
+        return [0, 2, 1];
+      case 5:
+        //SETORES PARA 5 JOGADORES
+        return [1, 2, 1];
+      case 6:
+        //SETORES PARA 6 JOGADORES
+        return [1, 2, 2];
+      case 7:
+        //SETORES PARA 7 JOGADORES
+        return [1, 3, 2];
+      case 8:
+        //SETORES PARA 8 JOGADORES
+        return [2, 3, 2];
+      case 9:
+        //SETORES PARA 9 JOGADORES
+        return [2, 3, 3];
+      case 10:
+        //SETORES PARA 10 JOGADORES
+        return [3, 3, 3];
+      case 11:
+        //SETORES PARA 11 JOGADORES
+        return [3, 4, 4];
+      default:
+        return [3, 4, 4];
+    }
+  }
 }

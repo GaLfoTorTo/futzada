@@ -1,3 +1,4 @@
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -20,10 +21,12 @@ class CardEventListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //CONTROLLER DE BARRA NAVEGAÇÃO
-    EventController controller = EventController.instance;
+    //DEFINIR CONTROLLER DE EVENTO 
+    EventController eventController = EventController.instance;
+    //DEFINIR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliation = controller.getAvaliations(event.avaliations);
+    double avaliation = eventController.getAvaliations(event.avaliations);
     //RESGATAR DATA DO EVENTO
     String eventDate = event.date != null 
       ? event.date! 
@@ -31,8 +34,8 @@ class CardEventListWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () => {
-        //DEFINIR EVENTO SELECIONADO NO CONTROLLER
-        controller.setSelectedEvent(event),
+        //DEFINIR EVENTO ATUAL NO CONTROLLER
+        eventController.setSelectedEvent(event),
         //NAVEGAR PARA PAGINA DO EVENTO
         Get.toNamed(
           "/event/geral",
@@ -136,7 +139,7 @@ class CardEventListWidget extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                  if(controller.inProgressGames.isNotEmpty)...[
+                  if(gameController.inProgressGames.isNotEmpty)...[
                     const IndicatorLiveWidget(
                       size: 15,
                       color: AppColors.red_300,

@@ -1,14 +1,11 @@
-import 'dart:math';
-
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/alerts/alert_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:palette_generator/palette_generator.dart';
 
 class AppHelper {
   //VERIFICAÇÃO DE COMPLEXIDADE DE SENHAS
@@ -63,63 +60,6 @@ class AppHelper {
     String svgString = await rootBundle.loadString(assetPath);
     //RETORNAR SVG EM FORMATO DE STRING
     return svgString;
-  }
-  
-  //FUNÇÃO PARA RESGATAR COR PREDOMINANTE DA IMAGEM
-  static Future<Color> getDominantColor(String imageUrl) async {
-    try {
-      //RESGATAR IMAGEM 
-      final imageProvider = NetworkImage(imageUrl);
-      //GERAR PALETA DE CORES APARTIR DA IMAGEM
-      final paletteGenerator = await PaletteGenerator.fromImageProvider(
-        imageProvider,
-        size: const Size(200, 200), //TAMANHO DA IMAGEM PARA ANALISE
-        maximumColorCount: 10, //NUMERO MAXIMO DE CORES A SEREM COLETADAS
-      );
-      //VERIFICAR SE FOI POSSIVEL GERAR A PALETA DE CORES
-      if (paletteGenerator.colors.isNotEmpty) {
-        //RESGATAR A PRIMERA COR DA PALETA DE CORES
-        return paletteGenerator.colors.first;
-      } else {
-        //COR PADÃO CASO NENHUMA COR TENHA SIDO SELECIONADA
-        return AppColors.dark_500;
-      }
-    } catch (e) {
-      //COR PADÃO CASO DE ERRO
-      return AppColors.dark_500;
-    }
-  }
-  
-  //ESCOLHER TOM MAIS CLARO DA COR
-  static Color brightnessColor(color){
-    var newKey; 
-    //LOOP NAS CORES
-    AppColors.colors.forEach((key, value){
-      //FILTRAR CORES DO TIPO 100
-      if(value == color){
-        newKey = key.split('_');
-      }
-    });
-    return AppColors.colors['${newKey[0]}']!;
-  }
-
-  //ESCOLHER A COR DO CARD ALEATORIAMENTE
-  static Color randomColor(){
-    //DEFINIR ARRAY DE ITEMS
-    List items = [];
-    //LOOP NAS CORES
-    AppColors.colors.forEach((key, value){
-      //FILTRAR CORES DO TIPO 100
-      if(key.contains('100')){
-        items.add(value);
-      }
-    });
-    //INSTANCIAR RANDOM
-    Random random = Random();
-    //SELECIONAR ITEM ALEATORIAMENTE
-    int i = random.nextInt(items.length);
-    //RETORNAR COR ALEATORIA
-    return items[i];
   }
   
   //FUNÇÃO PARA AJUSTAR A COR DA BORDAS DAS POSIÇÕES

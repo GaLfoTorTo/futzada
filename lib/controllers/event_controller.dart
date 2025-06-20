@@ -1,110 +1,83 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:futzada/api/api.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/services/form_service.dart';
-import 'package:futzada/services/game_service.dart';
 import 'package:futzada/services/event_service.dart';
-import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:futzada/controllers/game_controller.dart';
 
-class EventController extends GetxController {
-  //DEFINIR CONTROLLER UNICO NO GETX
+//===EVENT BASE===
+abstract class EventBase {
+  //GETTER - SERVIÇO DE EVENTO
+  EventService get eventService;
+  //GETTER - USUARIO
+  UserModel get user;
+  //GETTER - EVENTOS DO USUARIO
+  List<EventModel> get myEvents;
+  //GETTER - EVENTO
+  EventModel get event;
+  //SETTER - EVENTO
+  set event(EventModel event);
+}
+
+//===CONTROLLER PRINCIPALS===
+class EventController extends GetxController 
+  with EventOverview, EventRegister implements EventBase {
+  
+  //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS
   static EventController get instance => Get.find();
-  //INSTANCIAR MODEL DE ENVETOS
-  EventModel? model;
-  //INSTANCIAR SERVIÇO DE EVENTOS
-  EventService eventService = EventService();
-  //INSTANCIAR SERVIÇO DE PARTIDAS
-  GameService gameService = GameService();
 
-  //EVENT
-  //*
-  //*
-  //*
-  //RESGATAR USUARIO LOGADO
-  UserModel user = Get.find(tag: 'user');
-  //LISTA DE EVENTOS DO USUARIO
-  late List<EventModel> myEvents = Get.find(tag: 'events');
-  //VISÃO GERAL SECTION
-  //*
-  //*
-  //RESGATAR EVENTO SELECIONADO
-  late EventModel event;
-  //LISTA DE EVENTOS SUGERIDOS DE EVENTOS
-  List<EventModel> sugestions = [];
-  //LISTA DE DESTAQUES DO EVENTOS
-  List<Map<String, dynamic>> highlights = [];
-  //PARTIDAS SECTION
-  //*
-  //*
-  //LISTA DE PROXIMAS PARTIDAS 
-  RxList<GameModel?> inProgressGames = <GameModel?>[].obs;
-  //LISTA DE PROXIMAS PARTIDAS 
-  RxList<GameModel?> nextGames = <GameModel?>[].obs;
-  //LISTA DE PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
-  RxList<GameModel?> scheduledGames = <GameModel?>[].obs;
-  //LISTA DE PARTIDAS REALIZADAS
-  RxList<GameModel?> finishedGames = <GameModel?>[].obs;
-  //CONTROLADOR DE DIA DE EVENTO
-  DateTime? eventDate;
-  //RESGATAR DATA DO DIA
-  final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
+  //DEFINIR SERVIÇO DE EVENTO - OBRIGATÓRIO
   @override
-  void onInit() {
-    super.onInit();
-  }
+  final EventService eventService = EventService();
+  
+  //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
+  @override
+  final UserModel user = Get.find(tag: 'user');
+  
+  //DEFINIR EVENTOS DO USUARIO LOGADO - OBRIGATÓRIO
+  @override
+  final List<EventModel> myEvents = Get.find(tag: 'events');
+  
+  //DEFINIR EVENTO ATUAL SENDO MANIPULADO - OBRIGATÓRIO
+  @override
+  late EventModel event;
 
   void setSelectedEvent(EventModel event) {
-    //SETAR EVENTO SELECIONADO
+    //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
     this.event = event;
-    //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
-    sugestions = eventService.getEvents();
-    //RESGATAR SUGESTÕES DE PELADA PARA USUÁRIO
-    highlights = eventService.getHighlightsEvent();
-    //RESGATAR DATA DO EVENTO
-    //eventDate = eventService.getNextEventDate(event);
-    //VARAIVEIS PRA TESTE
-    eventDate = DateFormat("dd/MM/yyyy").parse("15/06/2025");
-    finishedGames.assignAll(gameService.getHistoricGames(event, 10));
-    //VERIFICAR SE EVENTO ESTA ACONTECENDO HOJE
-    if(today.isAtSameMomentAs(eventDate!)){
-      //GERAR PROXIMAS PARTIDAS DO DIA 
-      nextGames.assignAll(gameService.getscheduledGames(event, 10));
-    }else{
-      //GERAR PARTIDAS PROGRAMADAS AUTOMATICAMENTE
-      scheduledGames.assignAll(gameService.getscheduledGames(event, 10));
-    }
-    //ATUALIZAR CONTROLLER
-    update();
+    GameController.instance.event = event;
   }
+}
 
-  //RESGATAR AVALIAÇÕES DO EVENTO
-  double getAvaliations(List<AvaliationModel>? avaliations){
-    //DEFINIR VALOR INICIAL DE AVALIAÇÕES
-    double avaliation = 0.0;
-    //VERIFICAR SE EXISTEM AVALIAÇÕES DO EVENTO
-    if(avaliations != null && avaliations.isNotEmpty){
-      //CALCULAR MEDIA TOTAL DE AVALIAÇÃO DO EVENTOS
-      avaliations.forEach((item){
-        avaliation = avaliation + item.avaliation!;
-      });
-      //CALCULAR MEDIA DE AVALIAÇÃO
-      return avaliation / avaliations.length;
-    }
-    return avaliation;
+//===MIXIN - VISÃO GERAL===
+mixin EventOverview on GetxController{
+  //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
+  List<EventModel> getSuggestions() {
+    //REGATAR SERVIÇO DE VENTO
+    EventService eventService = EventController.instance.eventService;
+    return eventService.getEvents();
   }
-  //REGISTER
-  //*
-  //*
-  //*
-  // CONTROLLERS DE CADA CAMPO
+  //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
+  List<Map<String, dynamic>> getHighlights(EventModel event) {
+    //REGATAR SERVIÇO DE VENTO
+    EventService eventService = EventController.instance.eventService;
+    return eventService.getHighlightsEvent();
+  }
+  //FUNÇÃO PARA BUSCAR AVALIAÇÕES DO EVNTO
+  double getAvaliations(List<AvaliationModel>? avaliations) {
+    if(avaliations == null || avaliations.isEmpty) return 0.0;
+    return avaliations.map((a) => a.avaliation!).reduce((a, b) => a + b) / avaliations.length;
+  }
+}
+
+//===MIXIN - REGISTRO EVENTO===
+mixin EventRegister on GetxController{
+  //CONTROLLERS DE CADA CAMPO
   late final TextEditingController titleController = TextEditingController();
   late final TextEditingController bioController = TextEditingController();
   late final TextEditingController addressController = TextEditingController();
@@ -125,59 +98,23 @@ class EventController extends GetxController {
   late final TextEditingController photoController = TextEditingController();
   late final TextEditingController participantsController = TextEditingController();
   late final TextEditingController permissionsController = TextEditingController();
-  //CONTROLLER DE DIAS DA SEMANA
+  //ESTADO - DIAS DA SEMANA
   final RxList<dynamic> daysOfWeek = [].obs;
-  //CONTROLLER DE PERMISSÕES
-  //LISTA DE INPUTS CHECKBOX
+  //ESTADO - PERMISSÕES
   final RxMap<String, dynamic> permissions = <String, dynamic>{
     'Adicionar': false,
     'Editar': false,
     'Remover': false,
   }.obs;
-  //CONTROLLER DE COLABORADORES
+  //ESTADO - COLABORADORES
   bool activeColaboradors = false;
-  //CONTROLLER DE SLIDER
-  int qtdPlayers = 11;
-  int minPlayers = 8;
-  int maxPlayers = 11;
-  int divisions = 3;
-  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
-  List<int> setFormation(qtd){
-    switch (qtd) {
-      case 4:
-        //SETORES PARA 4 JOGADORES
-        return [0, 2, 1];
-      case 5:
-        //SETORES PARA 5 JOGADORES
-        return [1, 2, 1];
-      case 6:
-        //SETORES PARA 6 JOGADORES
-        return [1, 2, 2];
-      case 7:
-        //SETORES PARA 7 JOGADORES
-        return [1, 3, 2];
-      case 8:
-        //SETORES PARA 8 JOGADORES
-        return [2, 3, 2];
-      case 9:
-        //SETORES PARA 9 JOGADORES
-        return [2, 3, 3];
-      case 10:
-        //SETORES PARA 10 JOGADORES
-        return [3, 3, 3];
-      case 11:
-        //SETORES PARA 11 JOGADORES
-        return [3, 4, 4];
-      default:
-        return [3, 4, 4];
-    }
-  }
-  //CONTROLADOR DE PESQUISA DE ENDEREÇOS
+  //ESTADO - PESQUISA DE ENDEREÇOS
   RxBool isSearching = false.obs;
+  //ESTADO - MENSAGEM DE ENDEREÇO
   RxString enderecoMessage = ''.obs;
-  //LISTA DE ENDEREÇOS
+  //ESTADO - ENDEREÇOS
   final RxList<dynamic> enderecos = [].obs;
-  // CONFIGURAÇÕES DE invite
+  //ESTADO - CONFIGURAÇÕES DE CONVITE
   final RxList<Map<String, dynamic>> invite = <Map<String, dynamic>>[
     {
       'label': 'Participar como Jogador',
@@ -204,9 +141,9 @@ class EventController extends GetxController {
       'checked': false,
     },
   ].obs;
-  //LISTA DE PARTICIPANTES CONVIDADOS
+  //ESTADO - PARTICIPANTES CONVIDADOS
   final RxList<dynamic> participantes = [].obs;
-  //LISTA DE AMIGOS
+  //ESTADO - AMIGOS
   final RxList<Map<String, dynamic>> amigos = [
     for(var i = 0; i <= 15; i++)
       {
@@ -218,19 +155,13 @@ class EventController extends GetxController {
         'checked': false,
       },
   ].obs;
-
-  String? validateEmpty(String? value, String label) {
-    if(value?.isEmpty ?? true){
-      return "$label deve ser preenchido(a)!";
-    }
-    return null;
-  }
-
-  void onSaved(Map<String, dynamic> updates) {
-    //model = model!.copyWith(updates);
-  }
-
+  
+  //FUNÇÃO DE VALIDAÇÃO DE CAMPOS
+  String? validateEmpty(String? value, String label) => (value?.isEmpty ?? true) ? "$label deve ser preenchido(a)!" : null;
+  //FUNÇÃO DE ENVIO DE FORMULARIO
   Future<Map<String, dynamic>> registerEvent() async {
+    //RESGATAR EVENTO SELECIONADO
+    EventModel event = EventModel();
     //BUSCAR URL BASICA
     var url = AppApi.url+AppApi.createEvent;
     //RESGATAR USUARIO
@@ -238,7 +169,7 @@ class EventController extends GetxController {
     //RESGATAR OPTIONS
     var options = await FormService.setOption(user);
     //ENVIAR FORMULÁRIO
-    var response = await FormService.sendForm(model, options, url);
+    var response = await FormService.sendForm(event, options, url);
     return response;
   }
 }

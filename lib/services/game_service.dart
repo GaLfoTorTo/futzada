@@ -64,7 +64,7 @@ class GameService {
   }
 
   //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
-  List<GameModel?>getscheduledGames(EventModel event, int duration){
+  List<GameModel?>getScheduledGames(EventModel event, int duration){
     //RESGATAR INICIO E FIM DO DIA DE EVENTO
     DateTime timeStart = DateFormat("HH:mm").parse("${event.startTime}");
     DateTime timeEnd = DateFormat("HH:mm").parse("${event.endTime}");
@@ -75,13 +75,15 @@ class GameService {
     //VERIFICAR SE TOTAL DE PARTIDAS É MENOR QUE 1
     if (totalGames < 1) {
       //RETORNAR LISTA VAZIA
-      return [];
+      totalGames = 1;
     }
     //GERAR LISTA DE PARTIDAS PRÉ PROGRAMADAS
     return List.generate(totalGames, (i) {
       //CALCULAR HORARIO DE INICIO E FIM DA PARTIDA
       DateTime startGame = timeStart.add(Duration(minutes: i * duration));
       DateTime endGame = startGame.add(Duration(minutes: duration));
+      //GERAR TIMES DA PARTIDA
+      var teams = teamService.generateTeams(event, 2);
       //GERAR PARTIDA PRÉ PROGRAMADA
       return GameModel.fromMap({
         "id": i + 1,
@@ -92,7 +94,7 @@ class GameService {
         "endTime": endGame,
         "status": GameStatus.Scheduled,
         "result": null,
-        "teams": [],
+        "teams": teams,
         "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
         "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2026).toString()),
       });
@@ -100,7 +102,8 @@ class GameService {
   }
   
   //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
-  List<GameModel?>getHistoricGames(EventModel event, int duration){
+  List<GameModel?>getHistoricGames(EventModel event){
+    var duration = random.nextInt(10);
     //RESGATAR INICIO E FIM DO DIA DE EVENTO
     DateTime timeStart = DateFormat("HH:mm").parse("${event.startTime}");
     DateTime timeEnd = DateFormat("HH:mm").parse("${event.endTime}");
@@ -111,7 +114,7 @@ class GameService {
     //VERIFICAR SE TOTAL DE PARTIDAS É MENOR QUE 1
     if (totalGames < 1) {
       //RETORNAR LISTA VAZIA
-      return [];
+      totalGames = 1;
     }
     //GERAR HISTÓRICO DE PARTIDAS
     return List.generate(totalGames, (i) {
@@ -120,7 +123,7 @@ class GameService {
       DateTime endGame = startGame.add(Duration(minutes: duration));
       //GERAR TIMES DO JOGO 
       List<Map<String, dynamic>> teams = List.generate(2, (i){
-        var team = teamService.generateTeam(i + 1, event);
+        var team = teamService.generateTeam(event, i + 1, true);
         return team.toMap();
       });
       //GERAR PARTIDA PRÉ PROGRAMADA

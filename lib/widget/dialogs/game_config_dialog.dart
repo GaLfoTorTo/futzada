@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:get/get.dart';
@@ -23,6 +23,8 @@ class GameConfigDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //RESHATAR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
     //CONTROLLADOR DE DESTAQUES
     final PageController pageController = PageController();
 
@@ -77,9 +79,14 @@ class GameConfigDialog extends StatelessWidget {
                   width: dimensions.width,
                   icon: AppIcones.save_solid,
                   action: () {
+                    //SALVAR CONFIGURAÇÕES DE PARTIDA DA PELADA
+                    gameController.saveGameConfig();
+                    //DEFINIR CONFIGURAÇÕES DA PARTIDA ATUAL
+                    gameController.setGame(newGame: game);
+                    //EXIBIR MENSAGEM DE SUCESSO
                     AppHelper.feedbackMessage(context, "Configurações Salvas com sucesso", type: "Success");
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                    Get.toNamed('/games/game_detail', arguments: {
+                    Get.toNamed('/games/overview', arguments: {
                       'game': game,
                       'event': event,
                     });
@@ -91,8 +98,10 @@ class GameConfigDialog extends StatelessWidget {
                   width: dimensions.width,
                   icon: AppIcones.apito,
                   action: (){
+                    //DEFINIR CONFIGURAÇÕES DA PARTIDA ATUAL
+                    gameController.setGame(newGame: game);
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                    Get.toNamed('/games/game_detail', arguments: {
+                    Get.toNamed('/games/overview', arguments: {
                       'game': game,
                       'event': event,
                     });
@@ -124,7 +133,7 @@ class FirstConfgGamePage extends StatelessWidget {
               Positioned(
                 top: 60,
                 left: dimensions.width / 5,
-                child: Icon(
+                child: const Icon(
                   Icons.content_paste_go_rounded,
                   size: 120,
                   color: AppColors.blue_500,
@@ -133,7 +142,7 @@ class FirstConfgGamePage extends StatelessWidget {
               Positioned(
                 top: 123,
                 left: dimensions.width / 3.2,
-                child: Icon(
+                child: const Icon(
                   AppIcones.cog_solid,
                   size: 105,
                   color: AppColors.blue_500,
@@ -145,7 +154,7 @@ class FirstConfgGamePage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: Text(
-            'Você pode salvar suas configurações de partida para reutiliza-las toda vez que for iniciar uma nova partida.',
+            'Você pode salvar suas configurações de partida para reutiliza-las toda vez que for iniciar uma nova partida desta pelada.',
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),

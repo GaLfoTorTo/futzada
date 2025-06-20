@@ -24,7 +24,21 @@ class EventParticipantsStep extends StatefulWidget {
 }
 
 class _EventParticipantsStepState extends State<EventParticipantsStep> {
-  //DEFINIR FORMkEY
+  @override
+  void initState() {
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Placeholder();
+  }
+  /* //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //CONTROLLER DE REGISTRO DA PELADA
   final controller = EventController.instance;
@@ -504,5 +518,5 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
         )
       )
     );            
-  }
+  } */
 }

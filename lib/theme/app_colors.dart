@@ -1,4 +1,7 @@
+import 'dart:math';
+import 'package:futzada/theme/app_images.dart';
 import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 class AppColors {
   AppColors._();
@@ -103,4 +106,101 @@ class AppColors {
     'light': light,
     'white': white,
   };
+
+  //FUNÇÃO PARA CALCULAR A DISTANCIA ENTRE DUAS CORES NO ESPAÇO RGB
+  static double colorDistance(Color color1, Color color2) {
+    //RESGATAR DIFERENÇA DE VALORES RGB ENTRE AS DUAS CORES
+    final rDiff = color1.r - color2.r;
+    final gDiff = color1.g - color2.g;
+    final bDiff = color1.b - color2.b;
+    //RETORNAR VALOR DE COR OBTIDO
+    return rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
+  }
+
+  //FUNÇÃO PARA ENCONTRAR A COR MAIS PROXIMA DA CLASSE
+  static Color findClosestColor(Color targetColor) {
+    //LISTA DE CORES
+    List<Color> listColors = AppColors.colors.values.toList();
+    //COR PADRÃO 
+    Color nearestColor = AppColors.green_300;
+    //DISTANCIA MINIMA
+    double minDistance = double.infinity;
+    //PERCORRER TODAS AS CORES
+    for (final appColor in listColors) {
+      //CALCULAR DISTANCIA DE COR RECEBIDA COM COR DO LOOP
+      final distance = colorDistance(targetColor, appColor);
+      //VERIFICAR DISTANCI ENTRE CORES
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestColor = appColor;
+      }
+    }
+    //RETORNAR COR MAIS PROXIMA
+    return nearestColor;
+  }
+  
+  //FUNÇÃO PARA RESGATAR COR PREDOMINANTE DA IMAGEM
+  static Future<Color> getDominantColor(String? image) async {
+    //DEFINIR COR PADRÃO
+    Color colorDefault = AppColors.green_300;
+    try {
+      //RESGATAR IMAGEM A SER ANALISADA 
+      final imageProvider = image != null
+        ? NetworkImage(image)
+        : const AssetImage(AppImages.gramado) as ImageProvider;
+      //GERAR PALETA DE CORES APARTIR DA IMAGEM
+      final paletteGenerator = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        maximumColorCount: 10, //NUMERO MAXIMO DE CORES A SEREM COLETADAS
+      );
+      //VERIFICAR SE FOI POSSIVEL GERAR A PALETA DE CORES
+      if (paletteGenerator.colors.isNotEmpty) {
+        // RESGATAR A PRIMEIRA COR DA PALETA DE CORES
+        final dominantColor = paletteGenerator.dominantColor?.color;
+        //VERIFICAR SE COR PREDOMINANTE FOI ENCONTRADA
+        if (dominantColor != null) {
+          return dominantColor;
+          //ENCONTRAR A COR MAIS PRÓXIMA EM AppColors
+          return findClosestColor(dominantColor);
+        }
+      }
+      //RETORNAR COR PADRÃO
+      return colorDefault;
+    } catch (e) {
+      //RETORNAR COR PADRÃO
+      return colorDefault;
+    }
+  }
+  
+  //ESCOLHER TOM MAIS CLARO DA COR
+  static Color brightnessColor(color){
+    var newKey = []; 
+    //LOOP NAS CORES
+    AppColors.colors.forEach((key, value){
+      //FILTRAR CORES DO TIPO 100
+      if(value == color){
+        newKey = key.split('_');
+      }
+    });
+    return AppColors.colors['${newKey[0]}']!;
+  }
+
+  //ESCOLHER A COR DO CARD ALEATORIAMENTE
+  static Color randomColor(){
+    //DEFINIR ARRAY DE ITEMS
+    List items = [];
+    //LOOP NAS CORES
+    AppColors.colors.forEach((key, value){
+      //FILTRAR CORES DO TIPO 100
+      if(key.contains('100')){
+        items.add(value);
+      }
+    });
+    //INSTANCIAR RANDOM
+    Random random = Random();
+    //SELECIONAR ITEM ALEATORIAMENTE
+    int i = random.nextInt(items.length);
+    //RETORNAR COR ALEATORIA
+    return items[i];
+  }
 }

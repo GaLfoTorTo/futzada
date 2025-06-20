@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
@@ -13,8 +14,11 @@ class EventGamesDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //CONTROLLER DE REGISTRO DA PELADA
-    final controller = EventController.instance;
+    //DEFINIR CONTROLLER DE EVENTO 
+    EventController eventController = EventController.instance;
+    //DEFINIR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
+    
 
     return Container(
       padding: const EdgeInsets.all(15),
@@ -47,11 +51,11 @@ class EventGamesDialog extends StatelessWidget {
               textAlign: TextAlign.center
             ),
           ),
-          Divider(color: AppColors.gray_300),
+          const Divider(color: AppColors.gray_300),
           Obx(() {
             return Expanded(
               child: ListView(
-                children: controller.nextGames.map((game) {
+                children: gameController.nextGames.map((game) {
                   //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
                   var gameTime = "${DateFormat.Hm().format(game!.startTime!)} - ${DateFormat.Hm().format(game!.endTime!)}";
                   
@@ -75,12 +79,14 @@ class EventGamesDialog extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 20),
                       ),
                       onPressed: (){
+                        //DEFINIR PARTIDA ATUAL
+                        gameController.currentGame = game;
                         //VERIFICAR SE PARTIDA JA FOI INICIADA
                         Get.back();
                         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                        Get.toNamed('/games/game_config', arguments: {
+                        Get.toNamed('/games/config', arguments: {
                           'game': game,
-                          'event': controller.event,
+                          'event': eventController.event,
                         });
                       },
                       child: Column(
@@ -92,7 +98,7 @@ class EventGamesDialog extends StatelessWidget {
                                 child: ImgCircularWidget(
                                   width: 70, 
                                   height: 70,
-                                  image: controller.event.photo,
+                                  image: eventController.event.photo,
                                   element: "event",
                                 ),
                               ),
@@ -118,7 +124,7 @@ class EventGamesDialog extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          "${controller.event.address!.state}",
+                                          "${eventController.event.address!.state}",
                                           style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
                                             color: AppColors.gray_500,
                                             overflow: TextOverflow.ellipsis

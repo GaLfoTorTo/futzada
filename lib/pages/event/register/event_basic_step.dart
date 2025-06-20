@@ -24,7 +24,21 @@ class EventBasicStep extends StatefulWidget {
 }
 
 class EventBasicStepState extends State<EventBasicStep> {
-  //DEFINIR FORMkEY
+  @override
+  void initState() {
+    super.initState();
+  }
+  
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Placeholder();
+  }
+  /* //DEFINIR FORMkEY
   final formKey = GlobalKey<FormState>();
   //RESGATAR CONTROLLER DE CHAT
   var controller = EventController.instance;
@@ -365,10 +379,5 @@ class EventBasicStepState extends State<EventBasicStep> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  } */
 }

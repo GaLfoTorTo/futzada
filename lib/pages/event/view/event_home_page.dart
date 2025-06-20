@@ -1,20 +1,20 @@
+import 'package:futzada/controllers/game_controller.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/images/img_group_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:futzada/widget/text/expandable_text_widget.dart';
-import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:futzada/controllers/event_controller.dart';
 
 class EventHomePage extends StatefulWidget {
   
@@ -27,31 +27,48 @@ class EventHomePage extends StatefulWidget {
 }
 
 class _EventHomePageState extends State<EventHomePage> {
+  //DEFINIR CONTROLLER DE EVENTO
+  EventController eventController = EventController.instance;
+  //DEFINIR CONTROLLER DE PARTIDA
+  GameController gameController = GameController.instance;
+  //RESGATAR EVENT
+  late EventModel event = eventController.event;
+  //CONTROLLADOR DE DESTAQUES
+  late PageController highligtsController;
+  //ESTADO - DESTAQUES
+  late List<Map<String, dynamic>> highlights;
+  //ESTADO - AVALIAÇÕES
+  late double avaliation;
+  
+  @override
+  void initState() {
+    super.initState();
+    //INICIALIZAR CONTROLLER DE HIGHLIGHTS
+    highligtsController = PageController();
+    //RESGATAR DESTAQUES DO EVENTO
+    highlights = eventController.getHighlights(event);
+    //RESGATAR AVALIAÇÕES DO EVENTO
+    avaliation = eventController.getAvaliations(event.avaliations);
+  }
+
+  //FUNÇÃO PARA RESGATAR DATA DA PELADA
+  String getEventDate(EventModel event){
+    //VARIAVEL PARA RESGATAR DATA DO EVENTO
+    String date = "";
+    //VERIFICAR SE FORAM DEFINIDOS DIAS DA SEMANA
+    if(event.daysWeek != null){
+      date = event.daysWeek!.replaceAll("[", '').replaceAll("]", '');
+    }else{
+      date = event.date.toString();
+    }
+    return "$date - ${event.startTime} as ${event.endTime}";
+  }
+    
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //CONTROLLER DE BARRA NAVEGAÇÃO
-    EventController controller = EventController.instance;
-    //RESGATAR EVENT
-    EventModel event = controller.event;
-    //CONTROLLADOR DE DESTAQUES
-    final PageController highligtsController = PageController();
-    //FUNÇÃO PARA RESGATAR DATA DA PELADA
-    String getEventDate(EventModel event){
-      //VARIAVEL PARA RESGATAR DATA DO EVENTO
-      String date = "";
-      //VERIFICAR SE FORAM DEFINIDOS DIAS DA SEMANA
-      if(event.daysWeek != null){
-        date = event.daysWeek!.replaceAll("[", '').replaceAll("]", '');
-      }else{
-        date = event.date.toString();
-      }
-      return "$date - ${event.startTime} as ${event.endTime}";
-    }
-
-    //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliation = controller.getAvaliations(event.avaliations);
+    
     //LISTA DE INFORMAÇÕES SOBRE O EVENT
     List<Map<String, dynamic>> infoEvent = [
       {
@@ -166,7 +183,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Column(
                           children: [
-                            if(controller.inProgressGames.isNotEmpty)...[
+                            if(gameController.inProgressGames.isNotEmpty)...[
                               Container(
                                 width: 100,
                                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -376,7 +393,7 @@ class _EventHomePageState extends State<EventHomePage> {
               ]
             )
           ),
-          if(controller.highlights.isNotEmpty)...[
+          if(highlights.isNotEmpty)...[
             Column(
               children: [
                 Padding(
@@ -408,7 +425,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   child: PageView(
                     controller: highligtsController,
                     children: [
-                      ...controller.highlights.map((item) {
+                      ...highlights.map((item) {
                         //RESGATAR LISTA DE IMAGENS PARA NOTIFICAÇÃO
                         List<dynamic> imgHighlights = [];
                         //RESGATAR PARTICIPANTES DO DESTAQUE
@@ -494,7 +511,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: SmoothPageIndicator(
                     controller: highligtsController,
-                    count: controller.highlights.length,
+                    count: highlights.length,
                     effect: const ExpandingDotsEffect(
                       dotHeight: 8,
                       dotWidth: 8,

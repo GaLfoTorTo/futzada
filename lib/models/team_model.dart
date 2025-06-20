@@ -67,11 +67,13 @@ class TeamModel {
       uuid: map['uuid'] as String,
       name: map['name'] != null ? map['name'] as String : null,
       emblema: map['emblema'] != null ? map['emblema'] as String : null,
-      players: List<ParticipantModel>.from((map['players'] as List<Map<String, dynamic>>)
-        .map<ParticipantModel>(
-          (x) => ParticipantModel.fromMap(x as Map<String,dynamic>),
-        ),
-      ),
+      players: map['players'] != null
+        ? List<ParticipantModel>.from((map['players'] as List<Map<String, dynamic>>)
+          .map<ParticipantModel>(
+            (x) => ParticipantModel.fromMap(x as Map<String,dynamic>),
+          ),
+        )
+        : [],
       createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
       updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
       deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,

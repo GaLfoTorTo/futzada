@@ -13,7 +13,7 @@ class EventAddressDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //CONTROLLER DE REGISTRO DA PELADA
-    final controller = EventController.instance;
+    EventController controller = EventController.instance;
     //TIMER DE CONSULTA ENDEREÇO
     Timer? debounce;
 
@@ -100,7 +100,7 @@ class EventAddressDialog extends StatelessWidget {
             prefixIcon: AppIcones.marker_solid,
             controller: controller,
             onChanged: searchAddress,
-            onSaved: controller.onSaved,
+            //onSaved: controller.onSaved,
             type: TextInputType.text,
           ),
           const Divider(),

@@ -6,6 +6,7 @@ class InputTextWidget extends StatefulWidget {
   final String? name;
   final String? label;
   final String? hint;
+  final String? initialValue;
   final IconData? sufixIcon;
   final IconData? prefixIcon;
   final Color? bgColor;
@@ -20,13 +21,14 @@ class InputTextWidget extends StatefulWidget {
   final Function? suffixFunction;
   final bool? disabled;
   final dynamic controller;
-  final TextEditingController textController;
+  final TextEditingController? textController;
 
   const InputTextWidget({
     super.key,
     this.name, 
     this.label,
     this.hint,
+    this.initialValue,
     this.sufixIcon,
     this.prefixIcon,
     this.bgColor,
@@ -39,9 +41,9 @@ class InputTextWidget extends StatefulWidget {
     this.validator,
     this.showModal,
     this.suffixFunction,
-    this.disabled = false,
-    required this.textController, 
     this.controller, 
+    this.textController, 
+    this.disabled = false,
   });
 
   @override
@@ -119,7 +121,8 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
-        controller: widget.textController,
+        initialValue: widget.initialValue,
+        controller: widget.textController ?? null,
         keyboardType: widget.type,
         textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
         obscureText: visible,

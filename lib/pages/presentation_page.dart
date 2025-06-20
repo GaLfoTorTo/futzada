@@ -6,8 +6,6 @@ import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/dialogs/erro_escalation_dialog.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:futzada/controllers/explorer_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 
 class PresentationPageWidget extends StatelessWidget {

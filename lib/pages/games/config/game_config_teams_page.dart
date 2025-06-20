@@ -1,24 +1,23 @@
 import 'dart:math';
-import 'package:futzada/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/widget/dialogs/random_team_dialog.dart';
+import 'package:futzada/widget/inputs/silder_players_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/services/game_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/services/game_service.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/widget/dialogs/emblemas_dialog.dart';
 import 'package:futzada/widget/dialogs/game_players_dialog.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/dialogs/random_team_dialog.dart';
 
 class GameConfigTeamsPage extends StatefulWidget {
   const GameConfigTeamsPage({super.key});
@@ -49,14 +48,10 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   late int divisions;
   //DEFINIR CONTROLADOR DE PARTICIPANTS DA PELADA
   List<ParticipantModel>? participants = [];
-  //GERAR NUMERO ALEATORIO PARA INDEX DE EMBLEMAS
-  int indexA = Random().nextInt(8);
-  int indexB = Random().nextInt(8);
   //GERAR INDEX ALEATORIO PARA EMBLEMA DE EQUIPES
   late String emblemaIndexA;
   late String emblemaIndexB;
   //CONTROLADOR DE VISUALIZAÇÃO DE EQUIPE
-  String viewType = 'escalation';
   bool teamDefined = false;
   
   @override
@@ -64,33 +59,41 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     // TODO: implement initState
     super.initState();
     //RESGATAR EVENTO 
-    event = gameController.event!;
+    event = gameController.event;
     //RESGATAR CONFIGURAÇÕES DE PARTIDA DO EVENTO
-    gameConfig = gameController.event!.gameConfig!;
+    gameConfig = gameController.event.gameConfig!;
     //RESGATAR PARTIDA ATUAL
-    game = gameController.currentGame!;
+    game = gameController.currentGame;
     //RESGATAR PARTICIPANTES JOGADORES DO EVENTO
     participants = event.participants;
-    //INICIALIZAR CAMPOS DE TEXTO
-    teamAController = TextEditingController(text: "Team A");
-    teamBController = TextEditingController(text: "Team B");
+    //RESGATAR QUANTIDADE DE JOGADORE POR EQUIPE
     qtdPlayersController = TextEditingController(text: gameConfig.playersPerTeam.toString());
     //INICIALIZAR VALORES DE SLIDER
     qtdPlayers = event.gameConfig!.playersPerTeam!;
     minPlayers = gameService.getQtdPlayers(gameConfig.category!)['minPlayers']!;
     maxPlayers = gameService.getQtdPlayers(gameConfig.category!)['maxPlayers']!;
     divisions = gameService.getQtdPlayers(gameConfig.category!)['divisions']!;
-    //INICIALIZAR EMBLEMAS PADRÃO
-    emblemaIndexA = "emblema_${indexA == 0 ? 1 : indexA}";
-    emblemaIndexB = "emblema_${indexB == 0 ? 1 : indexB}";
-  }
-
-  //FUNÇÃO PARA SELECIONAR TIPO DE VISUALIZAÇÃO
-  void selectView(type){
-    setState(() {
-      //VERIFICAR O TIPO RECEBIDO
-      viewType = type;
-    });
+    //VERIFICAR SE TIME JA ESTA DEFINIDO
+    if(game.teams != null && game.teams!.isNotEmpty){
+      //INICIALIZAR CAMPOS DE TEXTO
+      teamAController = TextEditingController(text: game.teams!.first.name);
+      teamBController = TextEditingController(text: game.teams!.last.name);
+      //INICIALIZAR EMBLEMAS PADRÃO
+      emblemaIndexA = game.teams!.first.emblema!;
+      emblemaIndexB = game.teams!.last.emblema!;
+      //VERIFICAR SE JOGADORES DE CADA EQUIPE FORAM DEFINIDOS
+      if(game.teams!.first.players.isNotEmpty && game.teams!.last.players.isNotEmpty){
+        //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
+        teamDefined = true;
+      }
+    }else{
+      //INICIALIZAR CAMPOS DE TEXTO
+      teamAController = TextEditingController(text: "Team A");
+      teamBController = TextEditingController(text: "Team B");
+      //INICIALIZAR EMBLEMAS PADRÃO
+      emblemaIndexA = "emblema_${Random().nextInt(8)}";
+      emblemaIndexB = "emblema_${Random().nextInt(8)}";
+    }
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE METODO DE ESCOLHA DE EQUIPES
@@ -99,7 +102,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     //VERIFICAR SE FUNÇÃO DEVE SORTEAR AUTOMATICAMENTE OS JOGADORES DA EQUIPE
     if(action){
       //RESGATAR PARTICIPANTES DO EVENTO
-      final participants = gameController.event!.participants!.take(qtdPlayers * 2);
+      final participants = gameController.event.participants!.take(qtdPlayers * 2);
       //EMBARALHAR LISTA
       final shuffled = [...participants]..shuffle(Random());
       //LIMPAR JOGADORES SELECIONADOS DAS EQUIPES
@@ -118,6 +121,32 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     });
     //FINALIZAR FUNÇÃO
     return true;
+  }
+
+  //FUNÇÃO PARA DEFINIR LIMITE DE JOGADORES POR EQUIPE
+  void setPlayersPerTime(double newValue){
+    setState(() {
+      //DEFINIR LIMITE DE JOGADORES POR TIME
+      qtdPlayers = newValue.toInt();
+      gameController.currentGameConfig!.playersPerTeam = qtdPlayers;
+      //ATUALIZAR OBSERVADOR DE TAMANHO DE EQUIPES
+      gameController.teamAlength.value = qtdPlayers;
+      gameController.teamBlength.value = qtdPlayers;
+      //VERIFICAR SE TIMES FORAM DEFINIDOS
+      if(teamDefined){
+        //VERIFICAR QUANTOS JOGADORES ESTÃO DEFINIDOS EM CADA TIME
+        if(gameController.teamA.players.length > qtdPlayers || gameController.teamB.players.length > qtdPlayers){
+          //REMOVER JOGADORES EXCEDENTES DO TIME A
+          while (gameController.teamA.players.length > qtdPlayers) {
+            gameController.teamA.players.removeLast();
+          }
+          //REMOVER JOGADORES EXCEDENTES DO TIME B
+          while (gameController.teamB.players.length > qtdPlayers) {
+            gameController.teamB.players.removeLast();
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -148,7 +177,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                     children: [
                       InputTextWidget(
                         name: 'teamAName',
-                        label: 'Time A',
+                        label: 'Time 1',
                         textController: teamAController,
                         controller: gameController,
                       ),
@@ -161,7 +190,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                     children: [
                       InputTextWidget(
                         name: 'teamBName',
-                        label: 'Time B',
+                        label: 'Time 2',
                         textController: teamBController,
                         controller: gameController,
                       ),
@@ -263,58 +292,12 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(5)
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Nº de Jogadores (Por time)",
-                      style: Theme.of(context).textTheme.titleSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Slider(
-                    value: qtdPlayers.toDouble(),
-                    min: minPlayers.toDouble(),
-                    max: maxPlayers.toDouble(),
-                    divisions: divisions,
-                    label: qtdPlayers.toInt().toString(),
-                    activeColor: AppColors.green_300,
-                    inactiveColor: AppColors.white,
-                    onChanged: (double newValue) {
-                      setState(() {
-                        qtdPlayers = newValue.toInt();
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    child: Text(
-                      "$qtdPlayers",
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    )
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(qtdPlayers, (i){
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
-                        child: ImgCircularWidget(
-                          width: 30, 
-                          height: 30
-                        ),
-                      );
-                    }).toList()
-                  )
-                ],
-              )
+            SilderPlayersWidget(
+              onChange: (value) => setPlayersPerTime(value),
+              qtdPlayers: qtdPlayers.toDouble(),
+              minPlayers: minPlayers.toDouble(),
+              maxPlayers: maxPlayers.toDouble(),
+              divisions: divisions,
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
@@ -352,19 +335,20 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
-                                if (gameController.teamAlength.value == qtdPlayers)
+                                if (qtdPlayers == gameController.teamAlength.value && qtdPlayers == gameController.teamA.players.length)...[
                                   BoxShadow(
                                     color: AppColors.green_300.withAlpha(70),
                                     spreadRadius: 5,
                                     blurRadius: 1,
                                     offset: const Offset(0,0),
                                   ),
+                                ]
                               ],
                             ),
                             child: ButtonTextWidget(
                               width: dimensions.width,
                               height: 30,
-                              backgroundColor: gameController.teamAlength.value == qtdPlayers ? AppColors.green_300 : AppColors.white,
+                              backgroundColor: gameController.teamA.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
                               text: teamAController.text,
                               textSize: 15,
                               icon: AppIcones.users_solid,
@@ -376,10 +360,16 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                                   qtdPlayers: qtdPlayers
                                 ),
                                 isScrollControlled: true
-                              )
+                              ).whenComplete(() {
+                                setState(() {
+                                  //ATUALIZAR QTD DE JOGADORES POR EQUIE
+                                  gameController.teamAlength.value = gameController.teamA.players.length;
+                                  gameController.teamBlength.value = gameController.teamB.players.length;
+                                });
+                              }),
                             )
                           ),
-                          if(gameController.teamAlength.value < qtdPlayers)...[
+                          if(gameController.teamA.players.length < qtdPlayers)...[
                             Positioned(
                               right: 5,
                               bottom: 0,
@@ -408,19 +398,21 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
-                                if (gameController.teamBlength.value == qtdPlayers)
+                                if (qtdPlayers == gameController.teamAlength.value &&
+                                    qtdPlayers == gameController.teamA.players.length)...[
                                   BoxShadow(
                                     color: AppColors.green_300.withAlpha(70),
                                     spreadRadius: 5,
                                     blurRadius: 1,
                                     offset: const Offset(0,0),
                                   ),
+                                ]
                               ],
                             ),
                             child: ButtonTextWidget(
                               width: dimensions.width,
                               height: 30,
-                              backgroundColor: gameController.teamBlength.value == qtdPlayers ? AppColors.green_300 : AppColors.white,
+                              backgroundColor: gameController.teamB.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
                               text: teamBController.text,
                               textSize: 15,
                               icon: AppIcones.users_solid,
@@ -433,13 +425,15 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                                 ),
                                 isScrollControlled: true
                               ).whenComplete(() {
-                                //ATUALIZAR QTD DE JOGADORES POR EQUIE
-                                gameController.teamAlength.value = gameController.teamA.players.length;
-                                gameController.teamBlength.value = gameController.teamB.players.length;
+                                setState(() {
+                                  //ATUALIZAR QTD DE JOGADORES POR EQUIE
+                                  gameController.teamAlength.value = gameController.teamA.players.length;
+                                  gameController.teamBlength.value = gameController.teamB.players.length;
+                                });
                               }),
                             )
                           ),
-                          if(gameController.teamBlength.value < qtdPlayers)...[
+                          if(gameController.teamB.players.length < qtdPlayers)...[
                             Positioned(
                               left: 5,
                               bottom: 0,
@@ -490,10 +484,9 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                           String name = "Jogador";
                           String userName = "jogador";
                           dynamic photo;
-                          //RESGATAR QUANTIDADE DE INTEGRANETES DA EQUIPE
-                          int teamAlength = gameController.teamAlength.value;
                           //VERIFICAR SE TIME CONTEM A MESMA QUANTIDADE DE JOGADORES DEFINIDOS 
-                          if(teamAlength > item){
+                          if (item < gameController.teamAlength.value &&
+                              item < gameController.teamA.players.length) {
                             //RESGATAR PARTICIPANT NA EQUIPE 
                             final participant = gameController.teamA.players[item];
                             //RESGATAR NOME, USER NAME E FOTO DO PARTICIPANTE
@@ -506,7 +499,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             width: dimensions.width * 0.45,
                             decoration: BoxDecoration(
                               color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
-                              border: Border(
+                              border: const Border(
                                 bottom: BorderSide(width: 1, color: AppColors.gray_300)
                               )
                             ),
@@ -558,10 +551,9 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                           String name = "Jogador";
                           String userName = "jogador";
                           dynamic photo;
-                          //RESGATAR QUANTIDADE DE INTEGRANETES DA EQUIPE
-                          int teamBlength = gameController.teamBlength.value;
                           //VERIFICAR SE TIME CONTEM A MESMA QUANTIDADE DE JOGADORES DEFINIDOS 
-                          if(teamBlength > item){
+                          if (item < gameController.teamBlength.value &&
+                              item < gameController.teamB.players.length) {
                             //RESGATAR PARTICIPANT NA EQUIPE 
                             final participant = gameController.teamB.players[item];
                             //RESGATAR NOME, USER NAME E FOTO DO PARTICIPANTE
@@ -574,7 +566,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             width: dimensions.width * 0.45,
                             decoration: BoxDecoration(
                               color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
-                              border: Border(
+                              border: const Border(
                                 bottom: BorderSide(width: 1, color: AppColors.gray_300)
                               )
                             ),

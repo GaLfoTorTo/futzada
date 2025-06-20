@@ -28,7 +28,7 @@ class CardPopularWidget extends StatelessWidget {
               margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                color: AppHelper.randomColor(),
+                color: AppColors.randomColor(),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.dark_500.withOpacity(0.5),

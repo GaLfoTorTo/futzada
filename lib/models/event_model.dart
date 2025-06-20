@@ -9,27 +9,27 @@ import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/participant_model.dart';
 
 class EventModel {
-  final int? id;
-  final String? uuid;
-  final String? title;
-  final String? bio;
-  final String? daysWeek;
-  final String? date;
-  final String? startTime;
-  final String? endTime;
-  final String? category;
-  final bool? allowCollaborators;
-  final String? permissions;
-  final String? photo;
-  final AddressModel? address;
-  final GameConfigModel? gameConfig;
-  final List<ParticipantModel>? participants;
-  final List<AvaliationModel>? avaliations;
-  final List<GameModel>? games;
-  final VisibilityPerfil? visibility;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final DateTime? deletedAt;
+  int? id;
+  String? uuid;
+  String? title;
+  String? bio;
+  String? daysWeek;
+  String? date;
+  String? startTime;
+  String? endTime;
+  String? category;
+  bool? allowCollaborators;
+  String? permissions;
+  String? photo;
+  AddressModel? address;
+  GameConfigModel? gameConfig;
+  List<ParticipantModel>? participants;
+  List<AvaliationModel>? avaliations;
+  List<GameModel>? games;
+  VisibilityPerfil? visibility;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  DateTime? deletedAt;
   
   EventModel({
     this.id,

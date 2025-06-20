@@ -8,8 +8,8 @@ class SkeletonHomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: AppColors.gray_300.withOpacity(0.3),
-      highlightColor: AppColors.gray_300.withOpacity(0.6),
+      baseColor: AppColors.gray_300.withAlpha(80),
+      highlightColor: AppColors.gray_300.withAlpha(100),
       period: Duration(milliseconds: 1000),
       child: Column(
         children: [

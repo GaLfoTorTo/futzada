@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,16 +16,18 @@ class CardGameWidget extends StatelessWidget {
   final EventModel event;
   final GameModel game;
   final String gameDate;
+  final String? route;
   final bool? navigate;
   final bool? active;
   final bool? historic;
 
-  const CardGameWidget({
+  CardGameWidget({
     super.key,
     this.width,
     required this.event,
     required this.game,
     required this.gameDate,
+    this.route,
     this.navigate = false,
     this.active = false,
     this.historic = false,
@@ -32,13 +35,15 @@ class CardGameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
     //RESGATAR PROP DE NAVEGAÇÃO PADRÃO
     var propNavigate = navigate != null ? navigate! : false;
     //RESGATAR PROP DE ATIVAÇÃO PADRÃO DO CARD
     var propActive = active != null ? active! : false;
     //RESGATAR PROP DE HISTÓRICO PADRÃO DO CARD
     var propHistoric = historic != null ? historic! : false;
- 
+
     //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
     var gameStartTime = DateFormat.Hm().format(game.startTime!);
     var gameEndTime = DateFormat.Hm().format(game.endTime!);
@@ -56,11 +61,22 @@ class CardGameWidget extends StatelessWidget {
       onTap: (){
         //VERIFICAR SE CLICK ESTA HABILITADO
         if(propNavigate) {
-          //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-          Get.toNamed('/games/game_detail', arguments: {
-            'game': game,
-            'event': event,
-          });
+          //DEFINIR PARTIDA ATUAL
+          gameController.currentGame = game;
+          //VERIFICAR ROTA DE NAVEGAÇÃO
+          if(route == 'config'){
+            //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+            Get.toNamed('/games/config', arguments: {
+              'game': game,
+              'event': event,
+            });
+          }else{
+            //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+            Get.toNamed('/games/overview', arguments: {
+              'game': game,
+              'event': event,
+            });
+          }
         }
       },
       borderRadius: BorderRadius.circular(20),
@@ -94,9 +110,9 @@ class CardGameWidget extends StatelessWidget {
                       fit: BoxFit.cover,
                       colorFilter: !propActive
                         ? const ColorFilter.mode(
-                            AppColors.gray_300, 
-                            BlendMode.saturation,
-                          )
+                          AppColors.gray_300, 
+                          BlendMode.saturation,
+                        )
                         : null
                     ),
                   ),

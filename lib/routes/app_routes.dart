@@ -48,8 +48,8 @@ class AppRoutes {
       GetPage(name: "/escalation/historic", page: () => const HistoricPage()),
       //PARTIDAS
       GetPage(name: "/games/list", page: () => const GamesListPage()),
-      GetPage(name: "/games/game_detail", page: () => const GameDetailPage()),
-      GetPage(name: "/games/game_config", page: () => const GameConfigPage()),
+      GetPage(name: "/games/overview", page: () => const GameDetailPage()),
+      GetPage(name: "/games/config", page: () => const GameConfigPage()),
       //EVENTS - CADASTRO 
       GetPage(name: "/event/register/event_basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
       GetPage(name: "/event/register/event_address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),
