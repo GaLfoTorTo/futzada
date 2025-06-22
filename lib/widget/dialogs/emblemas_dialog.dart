@@ -1,16 +1,16 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:futzada/controllers/game_controller.dart';
 
 class EmblemasDialog extends StatelessWidget {
+  final bool team;
   final String emblema;
   const EmblemasDialog({
     super.key,
+    required this.team,
     required this.emblema
   });
 
@@ -18,6 +18,8 @@ class EmblemasDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //RESHATAR CONTROLLER DE PARTIDA
+    GameController gameController = GameController.instance;
     //RESGATAR EMBLEMAS
     List<String> emblemas = AppIcones.emblemas.values.toList();
 
@@ -58,9 +60,16 @@ class EmblemasDialog extends StatelessWidget {
             child: Wrap(
               alignment: WrapAlignment.center,
               children: List.generate(emblemas.length, (key){
-                
                 return InkWell(
-                  onTap: (){},
+                  onTap: (){
+                    if(team){
+                      gameController.teamAEmblemaController.text = "emblema_${key + 1}";
+                    }else{
+                      gameController.teamBEmblemaController.text = "emblema_${key + 1}";
+                    }
+                    print(gameController.teamBEmblemaController.text);
+                    Get.back();
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.all(10),

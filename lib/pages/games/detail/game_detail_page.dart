@@ -24,12 +24,8 @@ class GameDetailPage extends StatefulWidget {
 }
 
 class GameDetailPageState extends State<GameDetailPage> with SingleTickerProviderStateMixin {
-  //RESGATAR CONTROLLER DE EVENTO
-  EventController eventController = EventController.instance;
   //RESGATAR CONTROLLER DE PARTIDAS
   GameController gameController = GameController.instance;
-  //DEFINIR SERVIÇO DE CRONOMETRO
-  late TimerService timerService;
   //DEFINIR EVENTO
   late EventModel event;
   //CONTROLLER DE TABS
@@ -48,12 +44,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
   @override
   void initState() {
     super.initState();
-    //INICIARLIZAR SERVIÇO DE TIMER
-    timerService = TimerService();
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 4, vsync: this);
     //RESGATAR EVENTO 
-    event = eventController.event;
+    event = gameController.event;
     //INICIAR LISTENER DE SCROLL DA PAGINA
     _scrollController.addListener(_handleScroll);
   }
@@ -144,7 +138,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
                 )
               ]),
             ),
-            //TABS DE INFORMAÇÕES DA PARRIDA
+            //TABS DE INFORMAÇÕES DA PARTIDA
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(

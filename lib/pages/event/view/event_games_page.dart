@@ -102,7 +102,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                     ),
                     SizedBox(
                       width: dimensions.width,
-                      height: 350,
+                      height: 300,
                       child: PageView(
                         controller: inProgressController,
                         children: [
@@ -118,7 +118,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                     ),
                     if(gameController.inProgressGames.length > 1)...[
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: SmoothPageIndicator(
                           controller: inProgressController,
                           count: gameController.inProgressGames.length < 3 ? gameController.inProgressGames.length : 3,

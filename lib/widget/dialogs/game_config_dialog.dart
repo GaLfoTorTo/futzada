@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -83,6 +82,8 @@ class GameConfigDialog extends StatelessWidget {
                     gameController.setGameConfig();
                     //DEFINIR PARTIDA ATUAL
                     gameController.setGame();
+                    //FECHAR DIALOG
+                    Get.back();
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
                     Get.offNamed('/games/overview', arguments: {
                       'game': game,
@@ -98,6 +99,8 @@ class GameConfigDialog extends StatelessWidget {
                   action: (){
                     //DEFINIR PARTIDA ATUAL
                     gameController.setGame();
+                    //FECHAR DIALOG
+                    Get.back();
                     //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
                     Get.offNamed('/games/overview', arguments: {
                       'game': game,

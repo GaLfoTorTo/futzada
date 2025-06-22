@@ -45,8 +45,6 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
     teamBplayersImg = gameController.currentGame.teams!.first.players.take(3).map((item){
       return item.user.photo;
     }).toList();
-    print(teamAplayersImg);
-    print(teamBplayersImg);
   }
 
   @override

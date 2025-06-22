@@ -55,11 +55,20 @@ class _GameConfigPageState extends State<GameConfigPage> {
           gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam && 
           gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam
         ){
-          //EXIBIR MODAL DE CONFIRMAÇÃO
-          Get.dialog(GameConfigDialog(
-            event: gameController.event,
-            game: game,
-          ));
+          //VERIFICAR SE EVENTO JA TEM CONFIGURAÇÕES SALVAS
+          if(gameController.event.gameConfig == null){
+            //EXIBIR MODAL DE CONFIRMAÇÃO
+            Get.dialog(GameConfigDialog(
+              event: gameController.event,
+              game: game,
+            ));
+          }else{
+            //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+            Get.offNamed('/games/overview', arguments: {
+              'game': game,
+              'event': gameController.event,
+            });
+          }
         }else{
           AppHelper.feedbackMessage(context, "Os times não tem jogadores suficientes para continuar");
         }

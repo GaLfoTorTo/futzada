@@ -80,7 +80,7 @@ class EventGamesDialog extends StatelessWidget {
                       ),
                       onPressed: (){
                         //DEFINIR PARTIDA ATUAL
-                        gameController.currentGame = game;
+                        gameController.setCurrentGame(game);
                         //VERIFICAR SE PARTIDA JA FOI INICIADA
                         Get.back();
                         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO

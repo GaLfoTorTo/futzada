@@ -37,12 +37,15 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     //DEFINIR EVENTO ATUAL NO CONTROLLER
     eventController.setSelectedEvent(event);
     //BINDING DE CARREGAMENTO DA PAGINA
-    WidgetsBinding.instance.addPostFrameCallback((_) async{   
-      //CARREGAR PARTIDAS DO EVENTO
-      gameController.loadGames.value = false;
-      gameController.loadGames.value = await gameController.setGamesEvent(event);
-      //BUSCAR HISTORICO
-      gameController.loadHistoricGames.value = await gameController.getHistoricGames();
+    WidgetsBinding.instance.addPostFrameCallback((_) async{  
+      //VERIFICAR SE PARTIDAS JÁ FORAM CARREGADAS
+      if(gameController.nextGames.isEmpty && gameController.finishedGames.isEmpty){
+        //CARREGAR PARTIDAS DO EVENTO
+        gameController.loadGames.value = false;
+        gameController.loadGames.value = await gameController.setGamesEvent(event);
+        //BUSCAR HISTORICO
+        gameController.loadHistoricGames.value = await gameController.getHistoricGames();
+      } 
     });
   }
   
@@ -151,7 +154,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       ),
       floatingActionButton: Obx(() {
         //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
-        if (gameController.hasGames.value && tabIndex == 1) {
+        if (gameController.hasGames.value && tabIndex == 1 && gameController.isToday()) {
           return FloatButtonEventWidget(index: tabController.index);
         }
         return const SizedBox.shrink();

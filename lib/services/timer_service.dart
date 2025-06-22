@@ -8,19 +8,15 @@ class TimerService extends GetxService {
   //MAPA DE ARMAZENAMENTO DE CRONOEMTROS POR PARTIDA
   final Map<int, _GameStopwatch> _gameTimers = {};
 
-  //STREAM DE CRONOMETRO DA PARTIDA(mm:ss || mm passado || mm faltante)
-  Stream<dynamic> stopwatchStream(int gameId, String type){
-    switch (type) {
-      case 'clock':
-        return _gameTimers[gameId]?._timeController.stream ?? Stream.value('00:00');
-      case 'remaining':
-        return _gameTimers[gameId]?._remainingMinutesController.stream ?? Stream.value(0);
-      case 'elapsed':
-        return _gameTimers[gameId]?._elapsedMinutesController.stream ?? Stream.value(0);
-      default:
-        return _gameTimers[gameId]?._timeController.stream ?? Stream.value('00:00');
-    }
-  }
+  //STREAM DE CRONOMETRO DA PARTIDA (CRONOMETRO)
+  Stream<String> clockStream(int gameId) => _gameTimers[gameId]?._timeController.stream ?? Stream.value('00:00');
+
+  //STREAM DE CRONOMETRO DA PARTIDA (CONTADOR DE MINUTOS RESTANTES)
+  Stream<int> elapsedStream(int gameId) => _gameTimers[gameId]?._elapsedMinutesController.stream ?? Stream.value(0);
+
+  //STREAM DE CRONOMETRO DA PARTIDA (CONTADOR DE MINUTOS PASSADOS)
+  Stream<int> remainingStream(int gameId) => _gameTimers[gameId]?._remainingMinutesController.stream ?? Stream.value(0);
+
 
   //FUNÇÃO PARA INICIO OU RETOMADA DE CRONOMETRO DA PARTIDA 
   /// [gameId]: IDENTIFICADOR DA PARTIDA

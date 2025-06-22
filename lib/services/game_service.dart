@@ -170,7 +170,7 @@ class GameService {
       case 3:
         return "Futsal";
       default:
-        return "Fut7";
+        return "Futebol";
     }
   }
 
@@ -178,8 +178,8 @@ class GameService {
   Map<String, int> getQtdPlayers(String category){
     //SELECIONAR TIPO DE CAMPO
     switch (category) {
+      //DEFINIR VALOR PARA SLIDER
       case "Futebol":
-        //DEFINIR VALOR PARA SLIDER
         return {
           "qtdPlayers" : 11,
           "minPlayers" :  9,
@@ -187,7 +187,6 @@ class GameService {
           "divisions" : 2,
         };
       case "Fut7":
-        //DEFINIR VALOR PARA SLIDER
         return {
           "qtdPlayers" : 4,
           "minPlayers" :  4,
@@ -195,7 +194,6 @@ class GameService {
           "divisions" : 4,
         };
       case "Futsal":
-        //DEFINIR VALOR PARA SLIDER
         return {
           "qtdPlayers" : 5,
           "minPlayers" :  4,
@@ -203,7 +201,6 @@ class GameService {
           "divisions" : 2,
         };
       default:
-      //DEFINIR VALOR PARA SLIDER
         return {
           "qtdPlayers" : 11,
           "minPlayers" :  9,

@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+import 'package:rxdart/rxdart.dart' as rxdart;
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/game_service.dart';
-import 'package:get/get.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/services/timer_service.dart';
 import 'package:futzada/models/event_model.dart';
@@ -12,7 +14,6 @@ import 'package:futzada/models/team_model.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/result_model.dart';
 import 'package:futzada/controllers/event_controller.dart';
-import 'package:intl/intl.dart';
 
 //===DEPENDENCIAS BASE===
 abstract class GameBase {
@@ -22,10 +23,10 @@ abstract class GameBase {
   TimerService get timerService;
   //GETTER - EVENTO
   EventModel? get event;
-  //ESTADO PARTIDA
-  GameModel get currentGame;
   //GETTER - CONFIGURAÇÕES DAS PARTIDAS
   GameConfigModel? get currentGameConfig;
+  //ESTADO PARTIDA
+  GameModel get currentGame;
 
   //===PARTIDA===
   //ESTADO - EQUIPES DA PARTIDA
@@ -82,14 +83,15 @@ class GameController extends GetxController
     //RESGATAR DATA DO EVENTO
     //eventDate = eventService.getNextEventDate(event);
     //VARAIVEIS PRA TESTE
-    eventDate = DateFormat("dd/MM/yyyy").parse("20/06/2025");
+    eventDate = DateFormat("dd/MM/yyyy").parse("22/06/2025");
   }
 
   @override
   void onClose() {
     //LIMPAR SUBCRIBES DO STREAM
     _timeSubscription?.cancel();
-    
+    //FINALIZAR CONTROLLERS DE TEXTO
+    disposeTextControllers();
     //ENCERRAR CRONOMETRO DE TODAS AS PARTIDAS ATIVAS
     inProgressGames.forEach((game) {
       //VERIFICAR SE PARTIDA NÃO ESTA VAZIA
@@ -123,7 +125,7 @@ mixin GameMatchMixin on GetxController implements GameBase{
   //FUNÇÃO PARA DEFINIR TIME ESPECIFICO DA PARTIDA
   void setTeam(TeamModel team, bool flag) {
     //VERIFICAR FLAG E DEFINIR EQUIPE
-    if(flag == true){
+    if(flag){
       teamA = team;
     }else{
       teamB = team;
@@ -136,6 +138,21 @@ mixin GameMatchMixin on GetxController implements GameBase{
   }
 
   //FUNÇÃO PARA DEFINIR CONFIGURAÇÕES DA PARTIDA
+  void setCurrentGame(GameModel game){
+    //RESGATAR INSTANCIA DO CONTROLLER
+    late final gameController = this as GameController;
+    //DEFINIR PARTIDA ATUAL
+    gameController.currentGame = game;
+    //RESGATAR INFORMAÇÕES DA PARTIDA
+    gameController.teamA = game.teams != null ? game.teams!.first : TeamModel(players: []);
+    gameController.teamB = game.teams != null ? game.teams!.last : TeamModel(players: []);
+    gameController.teamAlength = game.teams != null ? game.teams!.first.players.length.obs : 0.obs;
+    gameController.teamBlength = game.teams != null ? game.teams!.last.players.length.obs : 0.obs;
+    gameController.teamAScore = game.result != null ? game.result!.teamAScore.obs : 0.obs;
+    gameController.teamBScore = game.result != null ? game.result!.teamBScore.obs : 0.obs;
+  }
+
+  //FUNÇÃO PARA DEFINIR CONFIGURAÇÕES DA PARTIDA (ANTES DE INICIAR)
   void setGame() {
     //RESGATAR INSTANCIA DO CONTROLLER
     GameController gameController = GameController.instance;
@@ -175,7 +192,7 @@ mixin GameMatchMixin on GetxController implements GameBase{
     gameController.currentGame = gameController.currentGame.copyWith(
       id : gameController.currentGame.id,
       number : gameController.currentGame.number,
-      event : null,
+      event : gameController.event,
       referee : gameController.refereerController,
       duration : int.parse(gameController.durationController.text),
       startTime : DateFormat.Hm().parse(gameController.startTimeController.text),
@@ -186,6 +203,13 @@ mixin GameMatchMixin on GetxController implements GameBase{
       createdAt : DateTime.now(),
       updatedAt : DateTime.now(),
     );
+    // ENCONTRAR ÍNDICE DO ITEM NA LISTA
+    final index = gameController.nextGames.indexWhere((item) => item!.id == gameController.currentGame.id);
+    //VERIFICAR SE FOI ENCONTRADO O INDEX DA PARTIDA
+    if (index != -1) {
+      //ATUALIZAR REGISTRO DE PARTIDA NA LISTA DE PROXIMAS PARTIDAS
+      gameController.nextGames[index] = gameController.currentGame;
+    }
   }
 }
 
@@ -237,6 +261,29 @@ mixin GameConfigMixin on GetxController implements GameBase{
     qtdPlayersController = TextEditingController(text: event!.gameConfig?.playersPerTeam.toString() ?? '');
   }
 
+  //FUNÇÃO PARA FINALIZAR CONTROLLERS
+  void disposeTextControllers(){
+    numberController.dispose();
+    categoryController.dispose();
+    startTimeController.dispose();
+    endTimeController.dispose();
+    durationController.dispose();
+    hasTwoHalvesController.dispose();
+    hasExtraTimeController.dispose();
+    hasPenaltyController.dispose();
+    hasGoalLimitController.dispose();
+    hasRefereerController.dispose();
+    playersPerTeamController.dispose();
+    extraTimeController.dispose();
+    goalLimitController.dispose();
+    goalLimitController.dispose();
+    teamANameController.dispose();
+    teamBNameController.dispose();
+    teamAEmblemaController.dispose();
+    teamBEmblemaController.dispose();
+    qtdPlayersController .dispose();
+  }
+
   //FUNÇÃO DE DEFINIÇÃO DE CONFIGURAÇÕES DA PARTIDA
   void setGameConfig() {
     //RESGATAR INSTANCIA DO CONTROLLER
@@ -270,15 +317,13 @@ mixin GameConfigMixin on GetxController implements GameBase{
     //VERIFICAR SE PARTIDA ESTA COM AS CONFIGURAÇÕES DEFINIDAS
     if(gameController.currentGameConfig == null){
       //VERIFICAR SE EQUIPES DA PARTIDA ESTÃO DEFINIDAS
-      if(game!.teams != null){
-        //VERIFICAR SE JOGADORES DAS DUAS EQUIPES ESTÃO DEFINDOS
-        if(game.teams!.first.players.isNotEmpty && game.teams!.first.players.isNotEmpty){
-          //VERIFICAR SE AS DUAS EQUIPES TEM A MESMA QUANTIDADE DE JOGADORES
-          if(game.teams!.first.players.length == game.teams!.first.players.length){
-            return true;
-          }
-        }
+      if (game!.teams?.length == 2) {
+        final playersA = game.teams![0].players;
+        final playersB = game.teams![1].players;
+        //VERIFICAR SE AS DUAS EQUIPES TEM A MESMA QUANTIDADE DE JOGADORES
+        return playersA.isNotEmpty && playersB.isNotEmpty && playersA.length == playersB.length;
       }
+      return false;
     }
     return false;
   }
@@ -300,6 +345,11 @@ mixin GamesEventMixin on GetxController implements GameBase{
   final RxList<GameModel?> nextGames = <GameModel?>[].obs;
   final RxList<GameModel?> scheduledGames = <GameModel?>[].obs;
   final RxMap<String, List<GameModel>?> finishedGames = <String, List<GameModel>?>{}.obs;
+
+  //FUNÇÃO PARA VERIFICAR SE EVENTO É HOJE
+  bool isToday(){
+    return today.isAtSameMomentAs(eventDate!);
+  }
 
   //FUNÇÃO DE BUSCA DE HISTÓRICO
   Future<bool> getHistoricGames() async {
@@ -353,9 +403,6 @@ mixin GamesEventMixin on GetxController implements GameBase{
   Future<bool> setGamesEvent(EventModel event) async{
     //RESETAR ESTADO DE CARREGAMENTO
     loadGames.value = false;
-    //RESETAR LISTA DE PARIDAS
-    nextGames.value = [];
-    scheduledGames.value = [];
     try {
       await Future.delayed(const Duration(seconds: 3));
       //BUSCAR PARTIDAS DO EVENTO (SIMULAÇÃO)
@@ -414,8 +461,6 @@ mixin GameStopwatchMixin on GetxController implements GameBase{
   final RxBool isGameRunning = false.obs;
 
   //FUNÇÃO PARA INICIAR UMA PARTIDA
-  /// [game]: PARTIDA QUE DEVE SER INICIADA/RETOMADA
-  /// [duration]: DURAÇÃO DA PARTIDA
   void startGame() {
     //RESGATAR CONTROLLER PRINCIPAL
     GameController gameController = GameController.instance;
@@ -457,7 +502,7 @@ mixin GameStopwatchMixin on GetxController implements GameBase{
     GameController gameController = GameController.instance;
     //FINALIZAR CRONOMETRO E TIMER DA PARTIDA
     timerService.stopStopwatch(gameController.currentGame.id);
-    ////ATUALIZAR STATUS PARA COMPLETO
+    //ATUALIZAR STATUS PARA COMPLETO
     gameController.currentGame.status = GameStatus.Completed;
     gameController.currentGame.endTime = DateTime.now();
     //MOVER PARTIDA DA LISTA DE PARTIDAS ATUAIS PARA PARTIDAS FINALIZADAS
@@ -496,28 +541,30 @@ mixin GameStopwatchMixin on GetxController implements GameBase{
     gameController.update();
   }
 
+  //FUNÇÃO DE DEFINIÇÃO DE STREAM
+  void _setupTimeListener() {
+    //RESGATAR CONTROLLER PRINCIPAL
+    final id = GameController.instance.currentGame.id;
+    //REGISTRAR STREMS DE CRONOMETRO
+    final clockStream = timerService.clockStream(id);
+    final elapsedStream = timerService.elapsedStream(id);
+    //ESCUTAR LISTENERS DO CRONOMETRO
+    GameController.instance._timeSubscription = rxdart.CombineLatestStream.combine2<String, int, void>(
+      clockStream,
+      elapsedStream,
+      (clock, elapsed) {
+        currentTime.value = clock;
+        minutesElapsed.value = elapsed;
+      },
+    ).listen((_) {});
+  }
+
   //GETTER DE TEMPO ATUAL DE PARTIDA EM ANDAMENTO
   String get currentGameTime {
     //RESGATAR CONTROLLER PRINCIPAL
     GameController gameController = GameController.instance;
     //VERIFICAR SE PARTIDA NÃO ESTA VAZIA
     if(gameController.currentGame == null) return '00:00';
-    return timerService.stopwatchStream(currentGame.id, 'clock').last.toString();
-  }
-
-  //FUNÇÃO DE DEFINIÇÃO DE STREAM
-  void _setupTimeListener() {
-    //RESGATAR CONTROLLER PRINCIPAL
-    GameController gameController = GameController.instance;
-    //ESCUTAR LISTENER DO CRONOMETRO (TEMPO)
-    gameController._timeSubscription = timerService.stopwatchStream(currentGame.id, 'clock').listen((time) {
-      //ATUALIZAR TEMPO DA PARTIDA
-      currentTime.value = time;
-    });
-    //ESCUTAR LISTENER DO CRONOMETRO (MINUTOS PASSADOS)
-    gameController._timeSubscription = timerService.stopwatchStream(currentGame.id, 'elapsed').listen((time) {
-      //ATUALIZAR TEMPO DA PARTIDA
-      minutesElapsed.value = time;
-    });
+    return timerService.clockStream(currentGame.id).last.toString();
   }
 }

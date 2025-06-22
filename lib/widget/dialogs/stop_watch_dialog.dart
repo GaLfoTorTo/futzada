@@ -140,7 +140,7 @@ class _StopWatchDialogState extends State<StopWatchDialog> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: IconButton(
                         onPressed: () async{
-                          handleStopWatch(isRunning ? "pausar" : "start",);
+                          handleStopWatch(isRunning ? "pause" : "start",);
                         },
                         alignment: Alignment.center,
                         icon: Icon(

@@ -1,23 +1,20 @@
 import 'dart:math';
-import 'package:futzada/widget/inputs/silder_players_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/services/game_service.dart';
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/game_model.dart';
+import 'package:futzada/services/game_service.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/widget/dialogs/emblemas_dialog.dart';
 import 'package:futzada/widget/dialogs/game_players_dialog.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/dialogs/random_team_dialog.dart';
+import 'package:futzada/widget/inputs/silder_players_widget.dart';
 
 class GameConfigTeamsPage extends StatefulWidget {
   const GameConfigTeamsPage({super.key});
@@ -31,13 +28,6 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   GameController gameController = GameController.instance;
   //DEFINIR SERVIÇO DE EVENTO
   GameService gameService = GameService();
-  //DEFINIR EVENTO DA PARTIDA
-  late EventModel event;
-  //DEFINIR PARTIDA ATUAL
-  late GameModel game;
-  //DEFINIR CONFIGURAÇÕES DE PARTIDA DO EVENTO
-  late GameConfigModel gameConfig;
-  //DEFINIR CONTROLADORES DE TEXTO 
   
   //DEFINIR VARIAVEIS DE CONTROLLE DE SLIDER
   late int qtdPlayers;
@@ -53,28 +43,15 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    //RESGATAR EVENTO 
-    event = gameController.event;
-    //RESGATAR CONFIGURAÇÕES DE PARTIDA DO EVENTO
-    gameConfig = gameController.event.gameConfig!;
-    //RESGATAR PARTIDA ATUAL
-    game = gameController.currentGame;
-    //RESGATAR PARTICIPANTES JOGADORES DO EVENTO
-    participants = event.participants;
-    //RESGATAR QUANTIDADE DE JOGADORE POR EQUIPE
-
     //INICIALIZAR VALORES DE SLIDER
-    qtdPlayers = event.gameConfig!.playersPerTeam!;
-    minPlayers = gameService.getQtdPlayers(gameConfig.category!)['minPlayers']!;
-    maxPlayers = gameService.getQtdPlayers(gameConfig.category!)['maxPlayers']!;
-    divisions = gameService.getQtdPlayers(gameConfig.category!)['divisions']!;
+    qtdPlayers = gameController.currentGameConfig!.playersPerTeam!;
+    minPlayers = gameService.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
+    maxPlayers = gameService.getQtdPlayers(gameController.categoryController.text)['maxPlayers']!;
+    divisions = gameService.getQtdPlayers(gameController.categoryController.text)['divisions']!;
     //VERIFICAR SE TIME JA ESTA DEFINIDO
-    if(game.teams != null && game.teams!.isNotEmpty){
-      //VERIFICAR SE JOGADORES DE CADA EQUIPE FORAM DEFINIDOS
-      if(game.teams!.first.players.isNotEmpty && game.teams!.last.players.isNotEmpty){
-        //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
-        teamDefined = true;
-      }
+    if(gameController.teamA.players.isNotEmpty && gameController.teamB.players.isNotEmpty){
+      //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
+      teamDefined = true;
     }
   }
 
@@ -201,10 +178,11 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                   InkWell(
                     onTap: () => Get.bottomSheet(
                       EmblemasDialog(
-                        emblema: gameController.teamAEmblemaController.text
+                        emblema: gameController.teamAEmblemaController.text,
+                        team: true,
                       ), 
                       isScrollControlled: true
-                    ),
+                    ).whenComplete(() => setState(() {})),
                     child: Container(
                       width: dimensions.width * 0.37,
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -231,21 +209,23 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Icon(
-                      Icons.close_rounded,
-                      color: AppColors.dark_500,
-                      size: 50,
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Text(
+                      "VS",
+                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                        color: AppColors.blue_500
+                      ),
+                    )
                   ),
                   InkWell(
                     onTap: () => Get.bottomSheet(
                       EmblemasDialog(
-                        emblema: gameController.teamBEmblemaController.text
+                        emblema: gameController.teamBEmblemaController.text,
+                        team: false,
                       ), 
                       isScrollControlled: true
-                    ),
+                    ).whenComplete(() => setState(() {})),
                     child: Container(
                       width: dimensions.width * 0.37,
                       padding: const EdgeInsets.symmetric(vertical: 20),

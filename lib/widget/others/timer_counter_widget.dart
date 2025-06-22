@@ -1,3 +1,4 @@
+import 'package:futzada/enum/enums.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -5,11 +6,13 @@ import 'package:futzada/models/game_model.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 class TimerCounterWidget extends StatelessWidget {
-   final GameModel game;
+  final GameModel game;
+  final Color? color;
 
   const TimerCounterWidget({
     super.key,
     required this.game,
+    this.color = AppColors.gray_300
   });
 
   @override
@@ -26,6 +29,9 @@ class TimerCounterWidget extends StatelessWidget {
       } else if (DateTime.now().isBefore(game.startTime!)) {
         //EXIBIÇÃO ANTERIOR AO INICIO DA PARTIDA
         return "Aguardando Inicio";
+      } else if(gameController.currentGame.status == GameStatus.Completed || gameController.currentGame.status == GameStatus.Cancelled){
+        //EXIBIÇÃO DE MENSAGEM DE FINALIZAÇÃO
+        return "Finalizado";
       } else {
         //EXIBIÇÃO DURANTE O DECORRER DA PARTIDA
         return "$minutesElapsed'";
@@ -33,10 +39,22 @@ class TimerCounterWidget extends StatelessWidget {
     }
 
     return Obx(() {
-      return Text(
-        timeElapsedText(gameController.minutesElapsed.value),
-        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-          color: AppColors.gray_300,
+      return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: AppColors.white.withAlpha(100),
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: color!,
+            width: 2            
+          )
+        ),
+        child: Text(
+          timeElapsedText(gameController.minutesElapsed.value),
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+            color: color,
+          ),
         ),
       );
     });

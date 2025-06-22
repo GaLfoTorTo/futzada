@@ -62,7 +62,7 @@ class CardGameWidget extends StatelessWidget {
         //VERIFICAR SE CLICK ESTA HABILITADO
         if(propNavigate) {
           //DEFINIR PARTIDA ATUAL
-          gameController.currentGame = game;
+          gameController.setCurrentGame(game);
           //VERIFICAR ROTA DE NAVEGAÇÃO
           if(route == 'config'){
             //NAVEGAR PARA PAGINA DE DETALHES DO JOGO

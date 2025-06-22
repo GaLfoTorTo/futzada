@@ -47,8 +47,6 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
 
@@ -59,7 +57,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
     return InkWell(
       onTap: (){
         //DEFINIR PARTIDA ATUAL
-        gameController.currentGame = widget.game;
+        gameController.setCurrentGame(widget.game);
         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
         Get.toNamed('/games/overview', arguments: {
           'game': widget.game,
@@ -68,7 +66,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        width: dimensions.width,
+        margin: const EdgeInsets.only(right: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -99,101 +97,96 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  "#${widget.game.number}",
-                  style: Theme.of(context).textTheme.headlineLarge
+                  "${gameController.event.title}",
+                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                    color: AppColors.white,
+                  ),
+                ),
+              ),
+              Text(
+                "#${widget.game.number}",
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  color: AppColors.white,
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 80,
-                    height: 80,
+                  Padding(
                     padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: AppColors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.dark_500.withAlpha(30),
-                          spreadRadius: 0.5,
-                          blurRadius: 5,
-                          offset: const Offset(2, 5),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(
+                          AppIcones.emblemas[teamA.emblema]!,
+                          width: 60,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.white, 
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "${teamA.name}",
+                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                              color: AppColors.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    child: SvgPicture.asset(
-                      AppIcones.emblemas[teamA.emblema]!,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.gray_300, 
-                        BlendMode.srcIn,
-                      ),
-                    ),
                   ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.green_100.withAlpha(100),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "$teamAScore",
                       style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                        color: teamAScore > teamBScore? AppColors.green_300 : AppColors.gray_700,
+                        fontSize: 40,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
                   Text(
-                    "x",
-                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                      color: AppColors.gray_300,
+                    ":",
+                    style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                      fontSize: 35,
+                      color: AppColors.white,
                     ),
                   ),
-                  Container(
-                    width: 50,
-                    height: 50,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.green_100.withAlpha(100),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "$teamBScore",
                       style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                        color: teamBScore > teamAScore? AppColors.green_300 : AppColors.gray_700,
+                        fontSize: 40,
+                        color: AppColors.white,
                       ),
                     ),
                   ),
-                  Container(
-                    width: 80,
-                    height: 80,
+                  Padding(
                     padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: AppColors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.dark_500.withAlpha(30),
-                          spreadRadius: 0.7,
-                          blurRadius: 5,
-                          offset: const Offset(-2, 5),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(
+                          AppIcones.emblemas[teamB.emblema]!,
+                          width: 60,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.white, 
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "${teamB.name}",
+                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                              color: AppColors.white,
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: SvgPicture.asset(
-                      AppIcones.emblemas[teamB.emblema]!,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.gray_300, 
-                        BlendMode.srcIn,
-                      ),
                     ),
                   ),
                 ],
@@ -205,19 +198,20 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                     children: [
                       TimerCounterWidget(
                         game: widget.game,
+                        color: AppColors.white
                       ),
                       Container(
                         height: 20,
                         width: 50,
                         alignment: Alignment.bottomCenter,
-                        margin: EdgeInsets.symmetric(vertical: 15),
+                        margin: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
-                          color: AppColors.green_100.withAlpha(100),
-                          borderRadius: BorderRadius.all(Radius.circular(5))
+                          color: AppColors.white.withAlpha(100),
+                          borderRadius: const BorderRadius.all(Radius.circular(5))
                         ),
                         child: const AnimatedEllipsis(
                           dotSize: 5,
-                          dotColor: AppColors.green_500,
+                          dotColor: AppColors.white,
                         ),
                       ),
                     ],
