@@ -21,7 +21,7 @@ class MarketPage extends StatefulWidget {
 
 class MarketPageState extends State<MarketPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
   void selectFilter(String name, dynamic newValue){

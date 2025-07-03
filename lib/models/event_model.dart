@@ -17,16 +17,15 @@ class EventModel {
   String? date;
   String? startTime;
   String? endTime;
-  String? category;
   bool? allowCollaborators;
   String? permissions;
   String? photo;
+  VisibilityPerfil? visibility;
   AddressModel? address;
   GameConfigModel? gameConfig;
   List<ParticipantModel>? participants;
   List<AvaliationModel>? avaliations;
   List<GameModel>? games;
-  VisibilityPerfil? visibility;
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
@@ -40,7 +39,6 @@ class EventModel {
     this.date,
     this.startTime,
     this.endTime,
-    this.category,
     this.allowCollaborators,
     this.permissions,
     this.photo,
@@ -64,7 +62,6 @@ class EventModel {
     String? date,
     String? startTime,
     String? endTime,
-    String? category,
     bool? allowCollaborators,
     String? permissions,
     String? photo,
@@ -87,7 +84,6 @@ class EventModel {
       date: date ?? this.date,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
-      category: category ?? this.category,
       allowCollaborators: allowCollaborators ?? this.allowCollaborators,
       permissions: permissions ?? this.permissions,
       photo: photo ?? this.photo,
@@ -113,7 +109,6 @@ class EventModel {
       'date': date,
       'startTime': startTime,
       'endTime': endTime,
-      'category': category,
       'photo': photo,
       'address': address,
       'gameConfig': gameConfig,
@@ -139,7 +134,6 @@ class EventModel {
       date: map['date'] != null ? map['date'] as String : null,
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,
-      category: map['category'] != null ? map['category'] as String : null,
       allowCollaborators: map['allowCollaborators'] != null ? map['allowCollaborators'] as bool : null,
       permissions: map['permissions'] != null ? map['permissions'] as String : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
@@ -173,7 +167,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, category: $category, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -189,7 +183,6 @@ class EventModel {
       other.date == date &&
       other.startTime == startTime &&
       other.endTime == endTime &&
-      other.category == category &&
       other.allowCollaborators == allowCollaborators &&
       other.permissions == permissions &&
       other.photo == photo &&
@@ -214,7 +207,6 @@ class EventModel {
       date.hashCode ^
       startTime.hashCode ^
       endTime.hashCode ^
-      category.hashCode ^
       visibility.hashCode ^
       allowCollaborators.hashCode ^
       permissions.hashCode ^

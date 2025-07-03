@@ -16,7 +16,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
     super.key, 
     this.title, 
     this.leftAction, 
-    this.leftIcon = Icons.arrow_back, 
+    this.leftIcon = Icons.arrow_back_rounded, 
     this.rightAction, 
     this.rightIcon = Icons.close,
     this.extraAction, 

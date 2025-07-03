@@ -39,7 +39,9 @@ class CardEventListWidget extends StatelessWidget {
         //NAVEGAR PARA PAGINA DO EVENTO
         Get.toNamed(
           "/event/geral",
-          arguments: event
+          arguments: {
+            'event': event,
+          }
         )
       },
       child: Container(

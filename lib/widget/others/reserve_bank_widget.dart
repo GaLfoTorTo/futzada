@@ -17,7 +17,7 @@ class ReserveBankWidget extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instace;
+    var controller = EscalationController.instance;
     //FUNÇÃO PARA RESGATAR POSIÇÃO NO BANCO DE RESERVAS
     String getReservePosition(index){
       switch (index) {

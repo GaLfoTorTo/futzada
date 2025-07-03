@@ -192,7 +192,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           child: ButtonCircularWidget(
                             color: AppColors.green_300,
-                            icon: AppIcones.foot_field_solid,
+                            icon: AppIcones.foot_futebol_solid,
                             iconColor: AppColors.white,
                             iconSize: 40.0,
                             checked: true,

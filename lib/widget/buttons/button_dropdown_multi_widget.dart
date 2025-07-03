@@ -45,7 +45,7 @@ class ButtonDropdownMultiWidget extends StatefulWidget {
 
 class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
   //CONTROLDOR DE MENU
   bool isMenuOpen = false;
 

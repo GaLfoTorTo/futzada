@@ -47,9 +47,12 @@ class AppIcones {
   static const String facebook = "assets/icones/facebook.svg";
   static const String google = "assets/icones/google.svg";
   //LINHAS CAMPO
-  static const String linhasCampo = "assets/icones/linhas_campo.svg";
-  static const String linhasSociety = "assets/icones/linhas_society.svg";
-  static const String linhasQuadra = "assets/icones/linhas_quadra.svg";
+  static const String futebol_sm = "assets/icones/linhas/futebol_sm.svg";
+  static const String fut7_sm = "assets/icones/linhas/fut7_sm.svg";
+  static const String futsal_sm = "assets/icones/linhas/futsal_sm.svg";
+  static const String futebol_xl = "assets/icones/linhas/futebol_xl.svg";
+  static const String fut7_xl = "assets/icones/linhas/fut7_xl.svg";
+  static const String futsal_xl = "assets/icones/linhas/futsal_xl.svg";
 
   /* CUSTOM ICONE */
   static const IconData apito = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
@@ -128,16 +131,16 @@ class AppIcones {
   static const IconData filter_solid = IconData(0xe849, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData fixed_outline = IconData(0xe84a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData fixed_solid = IconData(0xe84b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData foot_field_outline = IconData(0xe84c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData foot_field_solid = IconData(0xe84d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData foot_futebol_outline = IconData(0xe84c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData foot_futebol_solid = IconData(0xe84d, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData foot_fut7_outline = IconData(0xe854, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData foot_fut7_solid = IconData(0xe855, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_futsal_outline = IconData(0xe84e, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_futsal_solid = IconData(0xe84f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_left_outline = IconData(0xe850, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_right_outline = IconData(0xe851, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_left_solid = IconData(0xe852, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_right_solid = IconData(0xe853, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData foot_society_outline = IconData(0xe854, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData foot_society_solid = IconData(0xe855, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData futbol_ball_outline = IconData(0xe856, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData futbol_ball_solid = IconData(0xe857, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData globe_outline = IconData(0xe858, fontFamily: _kFontFam, fontPackage: _kFontPkg);

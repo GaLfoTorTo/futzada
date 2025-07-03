@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  final navigationController = NavigationController.instace;
+  final navigationController = NavigationController.instance;
   final controller = HomeController.instance;
   late UserModel? user;
   @override

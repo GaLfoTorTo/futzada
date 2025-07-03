@@ -55,15 +55,11 @@ class TeamService {
   List<Map<String, dynamic>> setPlayersTeam(List<ParticipantModel> participants, int qtd) {
     //DEFINIR LISTA DE JOGADORES
     List<Map<String, dynamic>> players = [];
-    int indexPlayer = 0;
     //LOOP PARA GERAR JOGADORES
     List.generate(qtd, (i) {
-      //GERAR ÍNDICE ALEATÓRIO DE PARTICIPANTE
-      int newIndexPlayer = random.nextInt(participants.length);
-      indexPlayer = indexPlayer == newIndexPlayer ? (newIndexPlayer + 1) % participants.length : newIndexPlayer;
       //ADICIONAR JOGADOR A LISTA
       players.add(
-        participants[indexPlayer].toMap()
+        participants[i].toMap()
       );
     });
     return players;

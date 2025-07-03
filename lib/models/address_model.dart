@@ -5,7 +5,8 @@ class AddressModel {
   final int? id;
   final String? street;
   final String? number;
-  final String? complement;
+  final String? suburb;
+  final String? borough;
   final String? city;
   final String? state;
   final String? country;
@@ -20,7 +21,8 @@ class AddressModel {
     this.id,
     this.street,
     this.number,
-    this.complement,
+    this.suburb,
+    this.borough,
     this.city,
     this.state,
     this.country,
@@ -36,7 +38,8 @@ class AddressModel {
     int? id,
     String? street,
     String? number,
-    String? complement,
+    String? suburb,
+    String? borough,
     String? city,
     String? state,
     String? country,
@@ -51,7 +54,8 @@ class AddressModel {
       id: id ?? this.id,
       street: street ?? this.street,
       number: number ?? this.number,
-      complement: complement ?? this.complement,
+      suburb: suburb ?? this.suburb,
+      borough: borough ?? this.borough,
       city: city ?? this.city,
       state: state ?? this.state,
       country: country ?? this.country,
@@ -69,7 +73,8 @@ class AddressModel {
       'id': id,
       'street': street,
       'number': number,
-      'complement': complement,
+      'suburb': suburb,
+      'borough': borough,
       'city': city,
       'state': state,
       'country': country,
@@ -87,7 +92,8 @@ class AddressModel {
       id: map['id'] != null ? map['id'] as int : null,
       street: map['street'] != null ? map['street'] as String : null,
       number: map['number'] != null ? map['number'] as String : null,
-      complement: map['complement'] != null ? map['complement'] as String : null,
+      suburb: map['suburb'] != null ? map['suburb'] as String : null,
+      borough: map['borough'] != null ? map['borough'] as String : null,
       city: map['city'] != null ? map['city'] as String : null,
       state: map['state'] != null ? map['state'] as String : null,
       country: map['country'] != null ? map['country'] as String : null,
@@ -106,7 +112,7 @@ class AddressModel {
 
   @override
   String toString() {
-    return 'AddressModel(id: $id, street: $street, number: $number, complement: $complement, city: $city, state: $state, country: $country, zipCode: $zipCode, latitude: $latitude, longitude: $longitude, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'AddressModel(id: $id, street: $street, number: $number, suburb: $suburb, borough: $borough, city: $city, state: $state, country: $country, zipCode: $zipCode, latitude: $latitude, longitude: $longitude, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -117,7 +123,8 @@ class AddressModel {
       other.id == id &&
       other.street == street &&
       other.number == number &&
-      other.complement == complement &&
+      other.suburb == suburb &&
+      other.borough == borough &&
       other.city == city &&
       other.state == state &&
       other.country == country &&
@@ -134,7 +141,8 @@ class AddressModel {
     return id.hashCode ^
       street.hashCode ^
       number.hashCode ^
-      complement.hashCode ^
+      suburb.hashCode ^
+      borough.hashCode ^
       city.hashCode ^
       state.hashCode ^
       country.hashCode ^

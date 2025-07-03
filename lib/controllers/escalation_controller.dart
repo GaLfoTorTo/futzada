@@ -14,7 +14,7 @@ import 'package:futzada/services/participant_service.dart';
 
 class EscalationController extends GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
-  static EscalationController get instace => Get.find();
+  static EscalationController get instance => Get.find();
   //INSTANCIAR SERVIÇO DE ESCALAÇÃO
   static EscalationService escalationService = EscalationService();
   //INSTANCIAR SERVIÇO DE PARTICIPANTES
@@ -92,7 +92,7 @@ class EscalationController extends GetxController{
     //ATUALIZAR EVENTO SELECIONADO
     selectedEvent = myEvents.firstWhere((event) => event.id == id);
     //ATUALIZAR CATEGORIA DO EVENTO SELECIONADOS
-    selectedCategory =  myEvents.firstWhere((event) => event.id == selectedEvent!.id).category!;
+    selectedCategory =  myEvents.firstWhere((event) => event.id == selectedEvent!.id).gameConfig!.category!;
     //ADICIONAR DADOS DE TECNICO CASO EXISTAM
     user.manager = managerService.generateManager(1);
     //DEFINIR JOGADORES DO MERCADO DO EVENTO SELECIONADO

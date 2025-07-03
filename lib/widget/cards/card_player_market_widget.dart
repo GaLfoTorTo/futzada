@@ -28,7 +28,7 @@ class CardPlayerMarketWidget extends StatefulWidget {
 
 class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
 

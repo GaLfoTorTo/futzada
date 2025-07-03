@@ -83,7 +83,7 @@ class GameController extends GetxController
     //RESGATAR DATA DO EVENTO
     //eventDate = eventService.getNextEventDate(event);
     //VARAIVEIS PRA TESTE
-    eventDate = DateFormat("dd/MM/yyyy").parse("22/06/2025");
+    eventDate = DateFormat("dd/MM/yyyy").parse("23/06/2025");
   }
 
   @override
@@ -240,7 +240,7 @@ mixin GameConfigMixin on GetxController implements GameBase{
   //FUNÇÃO PARA INICIALIZAR CONTROLLERS
   void initTextControllers() {
     numberController = TextEditingController(text: currentGame.number.toString());
-    categoryController = TextEditingController(text: event!.category);
+    categoryController = TextEditingController(text: event!.gameConfig!.category);
     startTimeController = TextEditingController(text: DateFormat.Hm().format(currentGame.startTime!));
     endTimeController = TextEditingController(text: DateFormat.Hm().format(currentGame.endTime!));
     durationController = TextEditingController(text: event!.gameConfig?.duration.toString() ?? '');

@@ -20,23 +20,23 @@ class CampoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instace;
+    var controller = EscalationController.instance;
     
     //FUNÇÕES DE ESTAMPA DO CAMPO
     String fieldType(String? category){
       switch (category) {
         case 'Futebol':
           //DEFINIR LINHAS DE CAMPO
-          return AppIcones.linhasCampo;
+          return AppIcones.futebol_sm;
         case 'Fut7':
           //DEFINIR LINHAS DE CAMPO
-          return AppIcones.linhasSociety;
+          return AppIcones.fut7_sm;
         case 'Futsal':
           //DEFINIR LINHAS DE CAMPO
-          return AppIcones.linhasQuadra;
+          return AppIcones.futsal_sm;
         default:
           //DEFINIR LINHAS DE CAMPO
-          return AppIcones.linhasCampo;
+          return AppIcones.futebol_sm;
       }
     }
     

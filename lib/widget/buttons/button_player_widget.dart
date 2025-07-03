@@ -37,7 +37,7 @@ class ButtonPlayerWidget extends StatelessWidget {
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
     void showDialogPlayer(ParticipantModel? participant) {
       //RESGATAR CONTROLLER DE ESCALAÇÃO
-      var controller = EscalationController.instace;
+      var controller = EscalationController.instance;
       //ATUALIZAR INDEX DE JOGADOR SELECIONADO
       controller.selectedPlayer.value = index ?? 0;
       controller.selectedOcupation.value = ocupation;

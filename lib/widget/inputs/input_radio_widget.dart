@@ -52,8 +52,8 @@ class _InputRadioWidgetState extends State<InputRadioWidget> {
                 widget.onChanged(value!);
               },
               activeColor: AppColors.green_300,
-              fillColor: MaterialStateColor.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
+              fillColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
                   return AppColors.green_300;
                 }
                 return AppColors.gray_500;

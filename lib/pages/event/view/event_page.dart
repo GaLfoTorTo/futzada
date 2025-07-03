@@ -23,11 +23,11 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   //DEFINIR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
   //RESGATAR EVENTO ATUAL
-  EventModel event = Get.arguments;
+  EventModel event = Get.arguments['event'];
   //CONTROLLER DE TABS
   late final TabController tabController;
   //CONTROLADOR DE INDEX DAS TABS
-  int tabIndex = 0;
+  int tabIndex = Get.arguments['index'] ?? 0;
 
   @override
   void initState() {

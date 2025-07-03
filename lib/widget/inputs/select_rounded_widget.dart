@@ -27,8 +27,8 @@ class SelectRoundedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<IconData>list = [
-      AppIcones.foot_field_solid,
-      AppIcones.foot_society_solid,
+      AppIcones.foot_futebol_solid,
+      AppIcones.foot_fut7_solid,
       AppIcones.foot_futsal_solid,
     ];
     return InkWell(

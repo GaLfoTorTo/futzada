@@ -59,10 +59,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
         //DEFINIR PARTIDA ATUAL
         gameController.setCurrentGame(widget.game);
         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-        Get.toNamed('/games/overview', arguments: {
-          'game': widget.game,
-          'event': widget.event,
-        });
+        Get.toNamed('/games/overview');
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(

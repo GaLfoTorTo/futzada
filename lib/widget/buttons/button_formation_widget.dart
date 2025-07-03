@@ -15,7 +15,7 @@ class ButtonFormationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instace;
+    var controller = EscalationController.instance;
     //RESGATAR FORMAÇÕES
     final List<String> itens = controller.formations;
     

@@ -72,10 +72,7 @@ class CardGameWidget extends StatelessWidget {
             });
           }else{
             //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-            Get.toNamed('/games/overview', arguments: {
-              'game': game,
-              'event': event,
-            });
+            Get.toNamed('/games/overview');
           }
         }
       },

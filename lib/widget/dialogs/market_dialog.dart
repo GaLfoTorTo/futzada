@@ -21,7 +21,7 @@ class MarketDialog extends StatefulWidget {
 
 class MarketDialogState extends State<MarketDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
 
   @override
   void initState() {

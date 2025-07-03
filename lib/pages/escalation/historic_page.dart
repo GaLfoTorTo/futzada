@@ -17,7 +17,7 @@ class _HistoricPageState extends State<HistoricPage> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE CHAT
-    var controller = EscalationController.instace;
+    var controller = EscalationController.instance;
 
     return Scaffold(
       appBar: HeaderWidget(

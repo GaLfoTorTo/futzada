@@ -25,7 +25,7 @@ class PlayerDialog extends StatefulWidget {
 
 class PlayerDialogState extends State<PlayerDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
   bool isCapitan = false;

@@ -7,11 +7,10 @@ import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/pages/presentation_page.dart';
 import 'package:futzada/pages/home/home_page.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class NavigationController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
-  static NavigationController get instace => Get.find();
+  static NavigationController get instance => Get.find();
   //SCAFFOLD KEY
   final scaffoldKey = GlobalKey<ScaffoldState>();
   @override
@@ -118,10 +117,10 @@ class NavigationController extends GetxController {
       titulo: 'Nunca foi tão facil organizar suas peladas',
       subTitulo: 'Sua pelada agora está na palma da suas mãos! Organize e gerencie suas peladas entre os amigos de forma simples e colaborativa.',
       buttonFirstText: 'Criar nova pelada',
-      buttonFirstIcon: LineAwesomeIcons.plus_circle_solid,
+      buttonFirstIcon: Icons.add_circle_rounded,
       buttonSecoundText: 'Ver minhas peladas',
       buttonSecoundIcon: null,
-      buttonFirstAction: () => Get.toNamed('/event/register/event_basic'),
+      buttonFirstAction: () => Get.toNamed('/event/register/basic'),
       buttonSecoundAction: () => Get.toNamed('/event/list')
     ),
     //APRENSENTAÇÃO PAGE EXPLORE

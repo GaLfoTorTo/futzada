@@ -67,7 +67,7 @@ class _CardEscalationListWidgetState extends State<CardEscalationListWidget> {
 
     return Obx(() {
       //RESGATAR CONTROLLER
-      final controller = EscalationController.instace;
+      final controller = EscalationController.instance;
       //RESGATAR JOGADOR NA ESCALAÇÃO
       ParticipantModel? participant = widget.ocupation == "starters" 
           ? controller.starters[widget.index]

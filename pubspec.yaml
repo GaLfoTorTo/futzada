@@ -136,6 +136,7 @@ flutter:
     - assets/icones/emblemas/
     - assets/icones/chuteiras/
     - assets/icones/posicoes/
+    - assets/icones/linhas/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

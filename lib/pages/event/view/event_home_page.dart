@@ -256,7 +256,7 @@ class _EventHomePageState extends State<EventHomePage> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                                     child: Text(
-                                      "${event.address!.city} - ${event.address!.complement}, \n${event.address!.state} - ${event.address!.country}, ${event.address!.zipCode}",
+                                      "${event.address!.street} ${event.address!.suburb} - ${event.address!.city}, \n${event.address!.state} - ${event.address!.country}, ${event.address!.zipCode}",
                                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                                         color: AppColors.gray_300
                                       ),

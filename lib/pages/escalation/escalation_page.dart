@@ -29,7 +29,7 @@ class EscalationPageState extends State<EscalationPage> {
   bool listButton = false;
   String viewType = 'escalation';
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instace;
+  var controller = EscalationController.instance;
 
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(newValue){

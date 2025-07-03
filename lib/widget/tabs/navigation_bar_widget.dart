@@ -10,7 +10,7 @@ class NavigationBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //BUSCAR CONTROLLADOR DE NAVEGAÇÃO
-    final controller = NavigationController.instace;
+    final controller = NavigationController.instance;
     return Obx(
       () => NavigationBar(
         selectedIndex: controller.index.value,

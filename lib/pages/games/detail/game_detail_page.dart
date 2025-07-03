@@ -100,8 +100,6 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR PARTIDA
-    GameModel game = Get.arguments['game'];
     //LISTA DE TABS
     List<String> tabs = [
       'Resumo',
@@ -112,13 +110,21 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     
     return Scaffold(
       appBar: HeaderWidget(
-        title: "Partida #${game.number}",
-        leftAction: () => Get.back(),
+        title: "Partida #${gameController.currentGame.number}",
+        leftAction: () {
+          Get.toNamed(
+            "/event/geral",
+            arguments: {
+              'event': event,
+              'index': 1
+            }
+          );
+        },
         rightIcon: AppIcones.cog_solid,
         rightAction: () {
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
           Get.toNamed('/games/config', arguments: {
-            'game': game,
+            'game': gameController.currentGame,
             'event': event,
             'index': 1,
           });
@@ -134,7 +140,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
               delegate: SliverChildListDelegate([
                 CardGameDetailWidget(
                   event: event,
-                  game: game
+                  game: gameController.currentGame
                 )
               ]),
             ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,24 +25,12 @@ class EventBasicStep extends StatefulWidget {
 }
 
 class EventBasicStepState extends State<EventBasicStep> {
-  @override
-  void initState() {
-    super.initState();
-  }
-  
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Placeholder();
-  }
-  /* //DEFINIR FORMkEY
+  //RESGATAR CONTROLLER DE NAVEGAÇÃO
+  NavigationController navigationController = NavigationController.instance;
+  //RESGATAR CONTROLLER DE EVENTO
+  EventController eventController = EventController.instance;
+  //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
-  //RESGATAR CONTROLLER DE CHAT
-  var controller = EventController.instance;
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
@@ -50,21 +39,23 @@ class EventBasicStepState extends State<EventBasicStep> {
   @override
   void initState() {
     super.initState();
+    //INICIALIZAR CONTROLLER DE EVENTO
+    eventController.initTextControllers();
   }
 
-  //FUNÇÃO PARA BUSCAR IMAGEM
+  //FUNÇÃO PARA BUSCAR IMAGEM DE CAPA
   Future<void> getImage() async {
     final image = await imagePicker.pickImage(source: ImageSource.gallery);
     //VERIFICAR SE IMAGEM FOI SELECIONADA
     if (image != null) {
       setState(() {
         imageFile = File(image.path);
-        controller.onSaved({'photo': image.path});
+        //eventController.onSaved({'photo': image.path});
       });
     }
   }
 
-  //FUNÇÃO DE EXIBIÇÃO DE CAPA DA PELADA
+  //FUNÇÃO DE EXIBIÇÃO DE CAPA
   dynamic capaImage(imageFile, dimensions){
     if(imageFile != null){
       return Padding(
@@ -112,80 +103,68 @@ class EventBasicStepState extends State<EventBasicStep> {
     }
   }
 
-  //SELECIONAR A VISIBILIDADE DO PERFIL
-  void selectedVisibility(value){
-    setState(() {
-      var visibility = VisibilityPerfil.values.firstWhere((e) => e.name == value);
-      controller.visibilityController.text = value;
-      controller.onSaved({'visibility': visibility});
-    });
-  }
-  //ATIVAR COLABORADORES
-  void selectColaboradors(value){
-    setState(() {
-      controller.allowCollaboratorsController.text = jsonEncode(value);
-      controller.activeColaboradors = value;
-      controller.onSaved({'allowCollaborators': jsonEncode(value)});
-    });
-  }
-
-  //SELECIONAR A VISIBILIDADE
+  //FUNÇÃO PARA SELECIONAR PERMISSÇOES DE COLABORADORES
   void selectedPermissions(String name){
     setState(() {
       //ENCONTRAR O DIA ESPECIFICO NO ARRAY
-      controller.permissions.update(
-        name,
-        (value) => !value
-      );
-      //NOTIFICAR MUDANÇA AO CONTROLLER
-      controller.permissions.refresh();
+      eventController.permissions.update(name,(value) => !value);
       //ADICIONAR A MODEL DE PELADA
-      controller.permissionsController.text = jsonEncode(controller.permissions);
-      controller.onSaved({"permissions": jsonEncode(controller.permissions)});
+      eventController.permissionsController.text = jsonEncode(eventController.permissions);
+      //eventController.onSaved({"permissions": jsonEncode(eventController.permissions)});
     });
+  }
+
+  //FUNÇÃO PARA VALIDAR FORMULÁRIO
+  bool validForm(){
+    //RESGATAR O FORMULÁRIO
+    var formData = formKey.currentState;
+    //VERIFIAR SE CAMPOS DE TEXTO FORAM PREENCHIDOS
+    if(formData?.validate() ?? false){
+      //VERIFICAR SE VISIBILIDADE FOI SELECIONADA
+      if(eventController.visibilityController.text.isNotEmpty){
+        return true;
+      }
+      AppHelper.feedbackMessage(context, 'Selecione a visibilidade da pelada.', type: 'error');
+    }
+    return false;
   }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
-    //RESGATAR O FORMULÁRIO
-    var formData = formKey.currentState;
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (formData?.validate() ?? false) {
-      formData?.save();
+    if (validForm()) {
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/event_address');
+      Get.toNamed('/event/register/address');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
+
     //LISTA DE INPUTS RADIO
     final List<Map<String, dynamic>> radios = [
       {
         'name': 'visibility',
         'placeholder' : 'Qualquer usuário pode visualizar as informações.',
-        'value': 'Publico',
+        'value': VisibilityPerfil.Public.name,
         'icon' : AppIcones.door_open_solid,
-        'controller': controller.visibilityController,
+        'controller': eventController.visibilityController,
       },
       {
         'name': 'visibility',
         'placeholder' : 'Apenas os participantes podem visualizar as informações.',
-        'value': 'Privado',
+        'value': VisibilityPerfil.Private.name,
         'icon' : AppIcones.door_close_solid,
-        'controller': controller.visibilityController,
+        'controller': eventController.visibilityController,
       },
     ];
-
-    //CONTROLLER DE BARRA NAVEGAÇÃO
-    final navigationController = Get.find<NavigationController>();
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: HeaderWidget(
-        title: "Cadastro Pelada", 
+        title: "Registro ", 
         leftAction: () => Get.back(),
         rightAction: () => navigationController.backHome(context),
       ),
@@ -216,7 +195,7 @@ class EventBasicStepState extends State<EventBasicStep> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
-                      "Certo então vamos lá! Informe o Nome, a Bio, a Imagem de capa e a Visibilidade da pelada. Você também pode definir as configurações de colaboradores da pelada.",
+                      "Certo, vamos lá! Informe o Nome, a Bio e defina uma Imagem para capa da sua pelada. Você também pode definir as configurações de visibilidade e se sua pelada contará com colaboradores.",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
@@ -246,18 +225,17 @@ class EventBasicStepState extends State<EventBasicStep> {
                   InputTextWidget(
                     name: 'title',
                     label: 'Titulo',
-                    textController: controller.titleController,
-                    controller: controller,
-                    onSaved: controller.onSaved,
+                    textController: eventController.titleController,
+                    controller: eventController,
                     type: TextInputType.text,
                   ),
                   InputTextAreaWidget(
                     name: 'bio',
                     label: 'Bio',
                     hint: 'Ex: Melhor Pelada do Brasil',
-                    textController: controller.bioController,
-                    controller: controller,
-                    onSaved: controller.onSaved,
+                    textController: eventController.bioController,
+                    controller: eventController,
+                    validator: (){},
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
@@ -275,16 +253,21 @@ class EventBasicStepState extends State<EventBasicStep> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for(var radio in radios)
-                        InputRadioWidget(
+                      ...radios.map((radio){
+                        return InputRadioWidget(
                           name: radio['name'],
                           value: radio['value'],
                           icon: radio['icon'],
                           placeholder: radio['placeholder'],
                           textController: radio['controller'],
-                          controller: controller,
-                          onChanged: selectedVisibility,
-                        ),
+                          controller: eventController,
+                          onChanged: (value){
+                            setState(() {
+                              eventController.visibilityController.text = value;
+                            });
+                          },
+                        );
+                      })
                     ]
                   ),
                   Padding(
@@ -301,30 +284,40 @@ class EventBasicStepState extends State<EventBasicStep> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
-                      "Defina se sua pelada contará con o auxilio de colaboradores. Colaboradores da pelada serão os participantes que contribuiram na organização da pelada.",
+                      "Defina se sua pelada contará com o auxilio de colaboradores. Os colaboradores da pelada serão os participantes que contribuiram na organização da pelada.",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
                     child: SwitchListTile(
-                      value: controller.activeColaboradors,
-                      onChanged: (value) => selectColaboradors(value),
+                      value: bool.parse(eventController.allowCollaboratorsController.text),
+                      onChanged: (value){
+                        setState(() {
+                          eventController.allowCollaboratorsController.text = value.toString();
+                        });
+                      },
                       activeColor: AppColors.green_300,
                       inactiveTrackColor: AppColors.gray_300,
                       inactiveThumbColor: AppColors.gray_500,
                       title: Text(
-                        'Ativar Colaboradores',
+                        'Colaboradores',
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
                       ),
                       secondary: const Icon(
                         AppIcones.users_solid,
-                        color: AppColors.dark_300,
+                        color: AppColors.gray_500,
+                        size: 25,
                       ),
                     ),
                   ),
-                  if(controller.activeColaboradors)
+                  if(bool.parse(eventController.allowCollaboratorsController.text))...[
                     Column(
                       children: [
                         Padding(
@@ -353,17 +346,19 @@ class EventBasicStepState extends State<EventBasicStep> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for(var permissao in controller.permissions.entries)
-                                InputCheckBoxWidget(
+                              ...eventController.permissions.entries.map((permissao){
+                                return InputCheckBoxWidget(
                                   name: permissao.key,
                                   value: permissao.value,
                                   onChanged: selectedPermissions,
-                                ),
+                                );
+                              })
                             ]
                           ),
                         ),
                       ],
                     ),
+                  ],
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: ButtonTextWidget(
@@ -379,5 +374,5 @@ class EventBasicStepState extends State<EventBasicStep> {
         ),
       ),
     );
-  } */
+  }
 }

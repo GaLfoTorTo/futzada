@@ -22,7 +22,7 @@ class ModesStep extends StatelessWidget {
     final List<Map<String, dynamic>> modos = [
       {
         'modos': 'Jogador',
-        'icone': AppIcones.foot_field_solid,
+        'icone': AppIcones.foot_futebol_solid,
         'iconSize': 40.0,
         'descricao' : 'Este modo e voltado aos usuários que atuaram em campo ou quadras nas partidas.',
         'checked' : controller.model.player?.positions != null ? true : false,

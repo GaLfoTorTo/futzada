@@ -11,7 +11,7 @@ class AppBase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE NAVEGAÇÃO
-    final controller = NavigationController.instace;
+    final controller = NavigationController.instance;
     //INICIALIZAR CONTROLLER HOME PAGE
     Get.put(HomeController());
     

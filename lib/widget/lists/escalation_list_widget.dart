@@ -18,7 +18,7 @@ class EscalationListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instace;
+    var controller = EscalationController.instance;
     var escalationService = EscalationService();
 
     //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO

@@ -1,13 +1,12 @@
+import 'package:futzada/models/address_model.dart';
 import 'package:get/get.dart';
 import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/services/form_service.dart';
 import 'package:futzada/services/event_service.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 //===EVENT BASE===
@@ -80,84 +79,114 @@ mixin EventOverview on GetxController{
 
 //===MIXIN - REGISTRO EVENTO===
 mixin EventRegister on GetxController{
-  //CONTROLLERS DE CADA CAMPO
-  late final TextEditingController titleController = TextEditingController();
-  late final TextEditingController bioController = TextEditingController();
-  late final TextEditingController addressController = TextEditingController();
-  late final TextEditingController numberController = TextEditingController();
-  late final TextEditingController cityController = TextEditingController();
-  late final TextEditingController stateController = TextEditingController();
-  late final TextEditingController complementController = TextEditingController();
-  late final TextEditingController countryController = TextEditingController();
-  late final TextEditingController zipCodeController = TextEditingController();
-  late final TextEditingController daysWeekController = TextEditingController();
-  late final TextEditingController dateController = MaskedTextController(mask: "00/00/0000");
-  late final TextEditingController startTimeController = MaskedTextController(mask: "00:00");
-  late final TextEditingController endTimeController = MaskedTextController(mask: "00:00");
-  late final TextEditingController categoryController = TextEditingController();
-  late final TextEditingController qtdPlayersController = TextEditingController();
-  late final TextEditingController visibilityController = TextEditingController();
-  late final TextEditingController allowCollaboratorsController = TextEditingController();
-  late final TextEditingController photoController = TextEditingController();
-  late final TextEditingController participantsController = TextEditingController();
-  late final TextEditingController permissionsController = TextEditingController();
-  //ESTADO - DIAS DA SEMANA
-  final RxList<dynamic> daysOfWeek = [].obs;
-  //ESTADO - PERMISSÕES
-  final RxMap<String, dynamic> permissions = <String, dynamic>{
+  //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
+  late TextEditingController titleController;
+  late TextEditingController bioController;
+  late TextEditingController photoController;
+  late TextEditingController allowCollaboratorsController;
+  late TextEditingController visibilityController;
+  late TextEditingController permissionsController;
+  //CONTROLLERS DE ENDEREÇO E DATA DO EVENTO
+  AddressModel addressEvent = AddressModel();
+  late TextEditingController daysWeekController;
+  late TextEditingController dateController;
+  late TextEditingController startTimeController;
+  late TextEditingController endTimeController;
+  //CONTROLLADORES DE PARTIDAS DO EVENTO
+  late TextEditingController categoryController;
+  late TextEditingController durationController;
+  late TextEditingController hasTwoHalvesController;
+  late TextEditingController hasExtraTimeController;
+  late TextEditingController hasPenaltyController;
+  late TextEditingController hasGoalLimitController;
+  late TextEditingController hasRefereerController;
+  late TextEditingController playersPerTeamController;
+  late TextEditingController extraTimeController;
+  late TextEditingController goalLimitController;
+  //CONTROLLERS DE PARTICIPANTES DO EVENTO
+  late TextEditingController participantsController;
+
+  //FUNÇÃO PARA INICIALIZAR CONTROLLERS
+  void initTextControllers() {
+    //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
+    titleController = TextEditingController();
+    bioController = TextEditingController();
+    photoController = TextEditingController();
+    allowCollaboratorsController = TextEditingController(text: 'false');
+    visibilityController = TextEditingController();
+    permissionsController = TextEditingController();
+    //CONTROLLERS DE ENDEREÇO E DATA DO EVENTO
+    daysWeekController = TextEditingController();
+    dateController = TextEditingController();
+    startTimeController = TextEditingController();
+    endTimeController = TextEditingController();
+    //CONTROLLADORES DE PARTIDAS DO EVENTO
+    categoryController = TextEditingController();
+    durationController = TextEditingController();
+    hasTwoHalvesController = TextEditingController();
+    hasExtraTimeController = TextEditingController();
+    hasPenaltyController = TextEditingController();
+    hasGoalLimitController = TextEditingController();
+    hasRefereerController = TextEditingController();
+    playersPerTeamController = TextEditingController();
+    extraTimeController = TextEditingController();
+    goalLimitController = TextEditingController();
+    //CONTROLLERS DE PARTICIPANTES DO EVENTO
+    participantsController = TextEditingController();
+  }
+
+  //FUNÇÃO PARA FINALIZAR CONTROLLERS
+  void disposeTextControllers() {
+    titleController.dispose();
+    bioController.dispose();
+    photoController.dispose();
+    allowCollaboratorsController.dispose();
+    visibilityController.dispose();
+    permissionsController.dispose();
+    daysWeekController.dispose();
+    dateController.dispose();
+    startTimeController.dispose();
+    endTimeController.dispose();
+    categoryController.dispose();
+    durationController.dispose();
+    hasTwoHalvesController.dispose();
+    hasExtraTimeController.dispose();
+    hasPenaltyController.dispose();
+    hasGoalLimitController.dispose();
+    hasRefereerController.dispose();
+    playersPerTeamController.dispose();
+    extraTimeController.dispose();
+    goalLimitController.dispose();
+    participantsController.dispose();
+  }
+  //ESTADOS DE PERMISSÃO
+  final RxMap<String, dynamic> permissions = {
     'Adicionar': false,
     'Editar': false,
     'Remover': false,
   }.obs;
-  //ESTADO - COLABORADORES
-  bool activeColaboradors = false;
-  //ESTADO - PESQUISA DE ENDEREÇOS
-  RxBool isSearching = false.obs;
+
+  //LISTA DE DIAS DA SEMANA
+  final Map<String, dynamic> daysOfWeek = {
+    'Dom': false,
+    'Seg': false,
+    'Ter': false,
+    'Qua': false,
+    'Qui': false,
+    'Sex': false,
+    'Sab': false,
+  }.obs;
+
+  //DEFINIR CATEGORIAS
+  final Map<String, dynamic> categories = {
+    "Futebol": false,
+    "Fut7": false,
+    "Futsal": false,
+  }.obs;
   //ESTADO - MENSAGEM DE ENDEREÇO
-  RxString enderecoMessage = ''.obs;
+  RxString addressText = 'Escolher endereço'.obs;
   //ESTADO - ENDEREÇOS
   final RxList<dynamic> enderecos = [].obs;
-  //ESTADO - CONFIGURAÇÕES DE CONVITE
-  final RxList<Map<String, dynamic>> invite = <Map<String, dynamic>>[
-    {
-      'label': 'Participar como Jogador',
-      'name': 'jogador',
-      'icon': AppIcones.foot_field_solid,
-      'checked': true,
-    },
-    {
-      'label': 'Participar como Técnico',
-      'name': 'tecnico',
-      'icon': AppIcones.clipboard_solid,
-      'checked': false,
-    },
-    {
-      'label': 'Participar como Árbitro',
-      'name': 'arbitro',
-      'icon': AppIcones.apito,
-      'checked': false,
-    },
-    {
-      'label': 'Participar como Colaborador',
-      'name': 'colaborador',
-      'icon': AppIcones.user_cog_solid,
-      'checked': false,
-    },
-  ].obs;
-  //ESTADO - PARTICIPANTES CONVIDADOS
-  final RxList<dynamic> participantes = [].obs;
-  //ESTADO - AMIGOS
-  final RxList<Map<String, dynamic>> amigos = [
-    for(var i = 0; i <= 15; i++)
-      {
-        'id': i,
-        'nome': 'Jeferson Vasconcelos',
-        'userName': 'jeff_vasc',
-        'posicao': null,
-        'foto': null,
-        'checked': false,
-      },
-  ].obs;
   
   //FUNÇÃO DE VALIDAÇÃO DE CAMPOS
   String? validateEmpty(String? value, String label) => (value?.isEmpty ?? true) ? "$label deve ser preenchido(a)!" : null;

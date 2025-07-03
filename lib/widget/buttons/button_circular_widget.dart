@@ -36,7 +36,7 @@ class ButtonCircularWidget extends StatelessWidget {
           boxShadow: [
             if (checked != null && checked == true )
               BoxShadow(
-                color: color!.withOpacity(0.2),
+                color: color!.withAlpha(50),
                 spreadRadius: 8,
                 blurRadius: 1,
                 offset: Offset(0,0),
@@ -45,7 +45,7 @@ class ButtonCircularWidget extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: icon == AppIcones.foot_field_solid ?
+          child: icon == AppIcones.foot_futebol_solid ?
             Transform.rotate(
               angle: - 45 * 3.14159 / 200,
               child: Icon(

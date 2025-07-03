@@ -24,6 +24,11 @@ class EventParticipantsStep extends StatefulWidget {
 }
 
 class _EventParticipantsStepState extends State<EventParticipantsStep> {
+  //RESGATAR CONTROLLER DE NAVEGAÇÃO
+  NavigationController navigationController = NavigationController.instance;
+  //RESGATAR CONTROLLER DE EVENTO
+  EventController eventController = EventController.instance;
+  
   @override
   void initState() {
     super.initState();
