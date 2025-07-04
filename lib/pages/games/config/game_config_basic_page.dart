@@ -269,7 +269,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
               ),
               secondary: const Icon(
-                AppIcones.futbol_ball_solid,
+                AppIcones.futebol_ball_solid,
                 color: AppColors.gray_500,
                 size: 25,
               ),

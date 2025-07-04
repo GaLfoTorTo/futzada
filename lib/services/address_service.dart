@@ -1,10 +1,6 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/api/api.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/controllers/address_controller.dart';
@@ -221,94 +217,5 @@ class AddressService {
     //VERIFICAR SE LOCAL CONTEM ACESSO DEFINIDO 
     final accessType = access?.toLowerCase() ?? 'public'; // Valor padrão
     return accessType == 'private' || accessType == 'no' ? 'Privado' : 'Publico';
-  }
-  
-  //FUNÇÃO PARA DEFINBIR ICONE DO MARKER DO MAPA
-  Widget setMarkerIcon(String sport){
-    //RESGATAR CONTROLLER DE ENDEREÇOS
-    AddressController addressController = AddressController.instance;
-    //RESGATAR ZOOM DO MAPA
-    final zoom = addressController.currentZoom.value;
-    //AJUSTAR TAMANHO DE CONTAINER, ICONES E BORDAS
-    final baseSize = calculateBaseSize(zoom);
-    final iconSize = baseSize * 0.5;
-    final borderWidth = zoom > 16 ? 2.0 : 1.0;
-    final borderRadius = baseSize >= 25 ? baseSize * 0.30 : baseSize;
-
-    switch (sport) {
-      case 'Futsal':
-      case 'Fut7':
-      case 'Futebol':
-        return Container(
-          width: baseSize >= 25 ? baseSize * 2 : baseSize,
-          height: baseSize,
-          decoration: BoxDecoration(
-            color: AppColors.green_300,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: AppColors.white, width: borderWidth)
-          ),
-          child: Icon(
-            AppIcones.futbol_ball_solid,
-            size: iconSize,
-            color: AppColors.blue_500,
-          ),
-        );
-      case 'Basquete':
-        return Container(
-          width: baseSize >= 25 ? baseSize * 2 : baseSize,
-          height: baseSize,
-          decoration: BoxDecoration(
-            color: AppColors.orange_300,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: AppColors.white, width: borderWidth)
-          ),
-          child: Icon(
-            AppIcones.basquete_ball_solid,
-            size: iconSize,
-            color: AppColors.blue_500,
-          ),
-        );
-      case 'Volei':
-      case 'Volei de Praia':
-        return Container(
-          width: baseSize >= 25 ? baseSize * 2 : baseSize,
-          height: baseSize,
-          decoration: BoxDecoration(
-            color: sport == "Volei" ? AppColors.blue_500 : AppColors.bege_300,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: AppColors.white, width: borderWidth)
-          ),
-          child: Icon(
-            AppIcones.futbol_ball_solid,
-            size: iconSize,
-            color: AppColors.white,
-          ),
-        );
-      default:
-        return Container(
-          width: baseSize >= 30 ? baseSize * 2 : baseSize,
-          height: baseSize,
-          decoration: BoxDecoration(
-            color: AppColors.gray_300,
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: AppColors.white, width: borderWidth),
-          ),
-          child: Icon(
-            AppIcones.modality_solid,
-            size: iconSize,
-            color: AppColors.blue_500,
-          ),
-        );
-    }
-  }
-
-  //FUNÇÃO PARA CALCULAR TAMANHO DOS MARKERS
-  double calculateBaseSize(double zoom) {
-    //AJUSTAR TAMANHO DO ICONE DE ACORDO COM ZOOM
-    if (zoom > 18) return 40.0;
-    if (zoom > 16) return 30.0;
-    if (zoom > 14) return 25.0;
-    if (zoom > 12) return 20.0;
-    return 15.0;
   }
 }

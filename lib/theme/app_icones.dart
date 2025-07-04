@@ -142,7 +142,7 @@ class AppIcones {
   static const IconData foot_left_solid = IconData(0xe852, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData foot_right_solid = IconData(0xe853, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData futbol_ball_outline = IconData(0xe856, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData futbol_ball_solid = IconData(0xe857, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData futebol_ball_solid = IconData(0xe857, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData globe_outline = IconData(0xe858, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData globe_solid = IconData(0xe859, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData handshake_outline = IconData(0xe85a, fontFamily: _kFontFam, fontPackage: _kFontPkg);

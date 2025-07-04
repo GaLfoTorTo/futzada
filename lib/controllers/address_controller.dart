@@ -20,8 +20,6 @@ class AddressController extends GetxController{
   final Rxn<Position> currentPosition = Rxn<Position>();
   //DEFINIR LAT E LONG OBSERVAVEIS
   final Rxn<LatLng> currentLatLog = Rxn<LatLng>();
-  //CONTROLADOR DE ZOOM DO MAPA
-  RxDouble currentZoom = 17.0.obs;
   //CONTROLLER DO MAPA
   final MapController mapController = MapController();
   //CONTROLADOR DE PESQUISA
@@ -34,8 +32,6 @@ class AddressController extends GetxController{
   RxBool isMapReady = false.obs;
   //CONTROLLADOR DE PESQUISA DE ENDEREÇOS
   RxBool isSearching = false.obs;
-  //CONTROLADOR DE CLUSTER
-  RxBool showClusters = false.obs;
   //DEFINIR TEXTO DE PESQUISA
   RxString searchText = ''.obs;
   //DEFINIR BOUNCE DE CAMPO DE PESQUISA
