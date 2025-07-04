@@ -28,6 +28,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
   //CONTROLADOR DE EXIBIÇÃO DE CAMPOS
   bool hasRefereer = false;
   bool hasGoalLimit = false;
+  bool hasExtraTime = false;
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
     //RESGATAR VALORES DEFINIDOS NAS CONFIGURAÇÕES
     hasRefereer = bool.parse(gameController.hasRefereerController.text);
     hasGoalLimit = bool.parse(gameController.hasGoalLimitController.text);
+    hasExtraTime = bool.parse(gameController.hasExtraTimeController.text);
   }
 
   //FUNÇÃO PARA AJUSTAR DATA DE INICIO, FIM E DURAÇÃO DE PARTIDA
@@ -215,6 +217,17 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               ),
             ),
           ),
+          if(hasExtraTime)...[
+            InputTextWidget(
+              name: 'extra_time',
+              label: 'Tempo Prorrogação',
+              prefixIcon: AppIcones.futbol_ball_outline,
+              textController: gameController.extraTimeController,
+              controller: gameController,
+              type: TextInputType.number,
+              onChanged: (value) => gameController.event.gameConfig!.extraTime = int.parse(value),
+            ),
+          ],
           Container(
             padding: const EdgeInsets.symmetric(vertical: 5),
             margin: const EdgeInsets.symmetric(vertical: 20),

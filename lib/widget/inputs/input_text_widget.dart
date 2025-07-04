@@ -118,62 +118,57 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   @override
   Widget build(BuildContext context) {
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: TextFormField(
-        initialValue: widget.initialValue,
-        controller: widget.textController ?? null,
-        keyboardType: widget.type,
-        textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
-        obscureText: visible,
-        maxLength: widget.maxLength ?? widget.maxLength,
-        style: Theme.of(context).textTheme.labelLarge,
-        decoration: InputDecoration(
-          hintText: widget.hint,
-          labelText: widget.label,
-          prefixIcon: prefixIcon,
-          fillColor: bgColor,
-          enabledBorder: OutlineInputBorder(
-            borderSide: widget.borderColor != null && widget.borderColor == true ? const BorderSide(color: AppColors.gray_300) : BorderSide.none,
+    return GestureDetector(
+      onTap: () {
+        //REMOVER FOCO DO INPUT AO CLICAR FORA OU FECHAR O TECLADO
+        FocusScope.of(context).unfocus();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: TextFormField(
+          initialValue: widget.initialValue,
+          controller: widget.textController ?? null,
+          keyboardType: widget.type,
+          textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
+          obscureText: visible,
+          maxLength: widget.maxLength ?? widget.maxLength,
+          style: Theme.of(context).textTheme.labelLarge,
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            labelText: widget.label,
+            prefixIcon: prefixIcon,
+            fillColor: bgColor,
+            enabledBorder: OutlineInputBorder(
+              borderSide: widget.borderColor != null && widget.borderColor == true ? const BorderSide(color: AppColors.gray_300) : BorderSide.none,
+            ),
+            suffixIcon: setSuffix()
           ),
-          suffixIcon: setSuffix()
-        ),
-        onChanged: (value){
-          if(widget.onChanged != null){
-            widget.onChanged!(value);
-          }
-        },
-        onSaved: (value){
-          if(widget.onSaved != null){
-            widget.onSaved!({widget.name:  value});
-          }
-        },
-        validator: (value) {
-          //DEFINIR VARIAVEL DE RESULTADO DA VALIDAÇÃO
-          String? result;
-          //VERIFICAR SE SERÁ USADA FUNÇÃO PERSOLNIZADA DE VALIDAÇÃO
-          if(widget.validator != null){
-            result = widget.validator!();
-          }else{
-            result = widget.controller.validateEmpty(value, widget.label);
-          }
-          //FOCAR INPUT 
-          FocusScope.of(context).autofocus(FocusNode());
-          //RETURNAR RESULTADO DA VALIDAÇÃO
-          return result;
-        },
-        onTap: () {
-          //VERIFICAR SE INPUT NÃO ESTA DESATIVADO
-          if(widget.disabled != false){
-            if(widget.type == TextInputType.streetAddress){
-              //ABRE BOTTOMSHEET DE PESQUISA DE ENDEREÇO 
-              widget.showModal!();
-              //REMOVER FOCO DO BOTÃO
-              FocusScope.of(context).requestFocus(FocusNode());
+          onChanged: (value){
+            if(widget.onChanged != null){
+              widget.onChanged!(value);
             }
-          }
-        },
-        readOnly: widget.disabled ?? true,
+          },
+          onSaved: (value){
+            if(widget.onSaved != null){
+              widget.onSaved!({widget.name:  value});
+            }
+          },
+          validator: (value) {
+            //DEFINIR VARIAVEL DE RESULTADO DA VALIDAÇÃO
+            String? result;
+            //VERIFICAR SE SERÁ USADA FUNÇÃO PERSOLNIZADA DE VALIDAÇÃO
+            if(widget.validator != null){
+              result = widget.validator!();
+            }else{
+              result = widget.controller.validateEmpty(value, widget.label);
+            }
+            //FOCAR INPUT 
+            FocusScope.of(context).autofocus(FocusNode());
+            //RETURNAR RESULTADO DA VALIDAÇÃO
+            return result;
+          },
+          readOnly: widget.disabled ?? true,
+        ),
       ),
     );
   }

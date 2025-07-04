@@ -134,7 +134,7 @@ class EventBasicStepState extends State<EventBasicStep> {
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (validForm()) {
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/address');
+      Get.toNamed('/event/register/config_games');
     }
   }
 

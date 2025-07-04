@@ -1,35 +1,34 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/dialogs/erro_address_dialog.dart';
 import 'package:futzada/controllers/address_controller.dart';
-import 'package:futzada/controllers/event_controller.dart';
 
 class AddressDialog extends StatelessWidget {
   const AddressDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE EVENTO
-    EventController eventController = EventController.instance;
     //RESGATAR CONTROLLER DE ENDEREÇOS
     AddressController addressController = AddressController.instance;
 
     //FUNÇÃO DE SELEÇÃO DE ENDEREÇO
     void selectAddress(AddressModel suggestion) {
-      //DEFINIR TEXTO DO INPUT DE ENDEREÇO
-      eventController.addressText.value = "${suggestion.street ?? ''} ${suggestion.borough ?? ''}, ${suggestion.number ?? ''} - ${suggestion.borough ?? ''} - ${suggestion.city}/${suggestion.state}";
-      //ATUALIZAR ENDEREÇO DA PELADA
-      eventController.addressEvent = suggestion;
-      //ATUALIZAR E MOVER MAPAR PARA LAT E LONG RECEBIDA
-      addressController.moveMapCurrentUser(LatLng(suggestion.latitude!, suggestion.longitude!));
-      //LIMPAR SUGESTÕES E CAMPO DE PESQUISA
-      addressController.suggestions.clear();
-      addressController.searchController.clear();
-      //FECHAR DIALOG
-      Get.back();
+      //RESGATAR ENDEREÇO NO ARRAY DE MARKER
+      final hasSuggestion = addressController.getMarkerByArray(suggestion);
+      //VERIFICAR SE ENDEREÇO ESTA ARMAZENADO NO ARRAY DE MARKERS
+      if(hasSuggestion){
+        //DEFINIR ENDEREÇO DO EVENTO
+        addressController.setEventAddress(suggestion);
+      }else{
+        //FECHAR DIALOG
+        Get.back();
+        //EXIBIR DIALOG DE ERRO
+        Get.dialog(ErroAddressDialog(suggestion: suggestion));
+      }
     }
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: const BoxDecoration(

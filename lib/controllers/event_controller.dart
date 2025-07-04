@@ -116,18 +116,17 @@ mixin EventRegister on GetxController{
     visibilityController = TextEditingController();
     permissionsController = TextEditingController();
     //CONTROLLERS DE ENDEREÇO E DATA DO EVENTO
-    daysWeekController = TextEditingController();
     dateController = TextEditingController();
     startTimeController = TextEditingController();
     endTimeController = TextEditingController();
     //CONTROLLADORES DE PARTIDAS DO EVENTO
     categoryController = TextEditingController();
     durationController = TextEditingController();
-    hasTwoHalvesController = TextEditingController();
-    hasExtraTimeController = TextEditingController();
-    hasPenaltyController = TextEditingController();
-    hasGoalLimitController = TextEditingController();
-    hasRefereerController = TextEditingController();
+    hasTwoHalvesController = TextEditingController(text: 'false');
+    hasExtraTimeController = TextEditingController(text: 'false');
+    hasPenaltyController = TextEditingController(text: 'false');
+    hasGoalLimitController = TextEditingController(text: 'false');
+    hasRefereerController = TextEditingController(text: 'false');
     playersPerTeamController = TextEditingController();
     extraTimeController = TextEditingController();
     goalLimitController = TextEditingController();
@@ -143,7 +142,6 @@ mixin EventRegister on GetxController{
     allowCollaboratorsController.dispose();
     visibilityController.dispose();
     permissionsController.dispose();
-    daysWeekController.dispose();
     dateController.dispose();
     startTimeController.dispose();
     endTimeController.dispose();
@@ -160,14 +158,14 @@ mixin EventRegister on GetxController{
     participantsController.dispose();
   }
   //ESTADOS DE PERMISSÃO
-  final RxMap<String, dynamic> permissions = {
+  RxMap<String, dynamic> permissions = {
     'Adicionar': false,
     'Editar': false,
     'Remover': false,
   }.obs;
 
   //LISTA DE DIAS DA SEMANA
-  final Map<String, dynamic> daysOfWeek = {
+  RxMap<String, bool> daysOfWeek = {
     'Dom': false,
     'Seg': false,
     'Ter': false,
@@ -176,17 +174,10 @@ mixin EventRegister on GetxController{
     'Sex': false,
     'Sab': false,
   }.obs;
-
-  //DEFINIR CATEGORIAS
-  final Map<String, dynamic> categories = {
-    "Futebol": false,
-    "Fut7": false,
-    "Futsal": false,
-  }.obs;
+  //ESTADO - LABEL DE DATA
+  RxString labelDate = 'Dias da Semana'.obs;
   //ESTADO - MENSAGEM DE ENDEREÇO
   RxString addressText = 'Escolher endereço'.obs;
-  //ESTADO - ENDEREÇOS
-  final RxList<dynamic> enderecos = [].obs;
   
   //FUNÇÃO DE VALIDAÇÃO DE CAMPOS
   String? validateEmpty(String? value, String label) => (value?.isEmpty ?? true) ? "$label deve ser preenchido(a)!" : null;

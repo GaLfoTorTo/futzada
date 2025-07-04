@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/services/address_service.dart';
@@ -11,6 +12,8 @@ import 'package:permission_handler/permission_handler.dart';
 class AddressController extends GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static AddressController get instance => Get.find();
+  //RESGATAR CONTROLLER DE EVENTO
+  EventController eventController = EventController.instance;
   //INSTANCIAR SERVIÇO DE ENDEREÇOS
   AddressService addressService = AddressService();
 
@@ -54,6 +57,41 @@ class AddressController extends GetxController{
     );
   }
 
+  //FUNÇÃO PARA BUSCAR MARKER NO ARRAY
+  bool getMarkerByArray(AddressModel suggestion) {
+    //TENTAR ENCONTRAR MARKER CORRESPONDETE A SUGESTÃO SELECIONADA
+    return sportPlaces.any((item) {
+      //VERIFICAR SE ITEM CONTEM ENDEREÇO DEFINIDO
+      if (item['address'] != null) {
+        final address = item['address'] as AddressModel;
+        //VERIFICAR COMPATIBILIDADE DE ENDEREÇO
+        return suggestion.street!.contains(address.street!) && suggestion.city!.contains(address.city!);
+      }
+      return false;
+    });
+  }
+
+  //FUNÇÃO PARA DEFINIR ENDEREÇO DO EVENTO
+  void setEventAddress(AddressModel? suggestion){
+    print(suggestion);
+    //FECHAR DIALOG
+    Get.back();
+    //VERIFICAR SE SUGESTÃO NÃO ESTA VAZIA
+    if(suggestion != null){
+      //DEFINIR TEXTO DO INPUT DE ENDEREÇO
+      eventController.addressText.value = "${suggestion.street ?? ''} ${suggestion.borough ?? ''}, ${suggestion.number ?? ''} - ${suggestion.borough ?? ''} - ${suggestion.city}/${suggestion.state}";
+      //ATUALIZAR ENDEREÇO DA PELADA
+      eventController.addressEvent = suggestion;
+      //ATUALIZAR E MOVER MAPAR PARA LAT E LONG RECEBIDA
+      moveMapCurrentUser(LatLng(suggestion.latitude!, suggestion.longitude!));
+      //LIMPAR SUGESTÕES E CAMPO DE PESQUISA
+      suggestions.clear();
+      searchController.clear();
+      //NAVEGAR DE VOLTA PARA TELA DE REGISTRO DE ENDEREÇOS
+      Get.offNamed('/event/register/address');
+    }
+  }
+
   //FUNÇÃO PARA BUSCAR LOCALIZAÇÃO DO USUARIO
   Future<void> getCurrentLocation() async {
     //SOLICITAR PERMISSÃO DE ACESSO A LOCALIZAÇÃO
@@ -80,14 +118,16 @@ class AddressController extends GetxController{
 
   //FUNÇÃO PARA BUSCAR DADOS DA LOCALIZAÇÃO ATUAL DO USUARIO
   Future<void> loadUserLocation(Position position) async{
+    //RESGATAR LAT E LON DA POSIÇÃO RECEBIDA
+    final latlon = LatLng(position.latitude, position.longitude);
     //BUSCAR QUADRAS E CAMPOS
-    currentLocation.value = await addressService.getUserLocation(position);
+    currentLocation.value = await addressService.getLatLonLocation(latlon);
   }
 
   //FUNÇÃO PARA BUSCAR LOCAIS DE PRATICA DE ESPORTES (QUADRAS CAMPOS)
   Future<void> loadSportPlaces(Position position) async{
     //BUSCAR QUADRAS E CAMPOS
-    await addressService.fetchSportCourts(2);
+    await addressService.getSportPlaces(2);
     //ALTERAR ESTADO DE CARREGAMENTO
     isLoaded.value = true;
   }

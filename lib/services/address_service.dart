@@ -1,19 +1,19 @@
 import 'package:get/get.dart';
 import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/api/api.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/controllers/address_controller.dart';
 
 class AddressService {
   //BUSCAR DADOS DA LOCALIZAÇÃODO USUARIO LOGADO
-  Future<Map<String, dynamic>> getUserLocation(Position position) async {
+  Future<Map<String, dynamic>> getLatLonLocation(LatLng latLon) async {
     try {
       //INSTANCIAR DIO
       var dio = Dio.Dio();
       //RESGATAR LAT E LONG DO USUÁRIO
-      final lat = position.latitude;
-      final long = position.longitude;
+      final lat = latLon.latitude;
+      final long = latLon.longitude;
       //BUSCAR CIDADE DO USUARIO
       final response = await dio.get(
         AppApi.mapReverse,
@@ -39,68 +39,8 @@ class AddressService {
     }
   }
 
-  //FUNÇÃO DE BUSCA DE ENDEREÇOS
-  Future<void> searchAddress(String address) async {
-    //RESGATAR CONTROLLER DE ENDEREÇOS
-    AddressController addressController = AddressController.instance;
-    //DEFINIR ESTADO DE PSEQUISA COMO TRUE
-    addressController.isSearching.value = true;
-    //LIMPAR SUGESTÕES
-    addressController.suggestions.clear();
-    //RESGATAR CIDADE DO USUÁRIO
-    final state = addressController.currentLocation['state'] ?? '';
-    //TENTAR ENVIAR DADOS
-    try {
-      //INSTANCIAR DIO
-      var dio = Dio.Dio();
-      //INICIALIZAR REQUISIÇÃO
-      var response = await dio.get(
-        AppApi.mapSearch, 
-        queryParameters: {
-          'q': '$address, $state',
-          'format': 'json',
-          'addressdetails': 1,
-          'countrycodes':'br'
-        },
-        options: Dio.Options(
-          headers: {
-            'User-Agent': 'futzada-app/1.0 (futzada@futzada.com)'
-          }
-        ),
-      );
-      //VERIFICAR RESPOSTA DO SERVIDOR
-      if(response.statusCode == 200 && response.data != null) {
-        //MONTAR MAP DE SUGESTÕES
-        final resp = response.data.map<AddressModel>((item){
-          //GERAR ENDEREÇO
-          return AddressModel.fromMap({
-            'street' : "${item['address']['road'] ?? ''} ${item['address']['county'] ?? ''}",
-            'number' : item['address']['house_number'],
-            'suburb' : item['address']['suburb'],
-            'borough' : item['address']['borough'],
-            'city' : item['address']['city'],
-            'state' : item['address']['state'],
-            'country' : item['address']['country_code'],
-            'zipCode' : item['address']['postcode'],
-            'latitude' : double.parse(item['lat']),
-            'longitude' : double.parse(item['lon']),
-          });
-        });
-        //ATUALIZAR A LISTA DE SUGESTÕES
-        addressController.suggestions.assignAll(resp);
-        addressController.update();
-      }
-    } catch (e) {
-      //TRATAR ERROS
-      print(e);
-    }
-    //DEFINIR ESTADO DE PSEQUISA COMO TRUE
-    addressController.isSearching.value = false;
-    return;
-  }
-
   //FUNÇÃO PARA BUSCAR QUADRAS POLIESPORTIVAS 
-  Future<void> fetchSportCourts(double radiusKm) async {
+  Future<void> getSportPlaces(double radiusKm) async {
     //RESGATAR CONTROLLER DE ENDEREÇOS
     AddressController addressController = AddressController.instance;
     try {
@@ -144,7 +84,7 @@ class AddressService {
       print("erro: $e");
     }
   }
-
+  
   //FUNÇÃO PARA CRIAÇÃO DE MARKER DE MAPA
   Map<String, dynamic> setMarker(Map<String, dynamic> place) {
     //VERIFICAR SE LOCAL CONTEM TAGS
@@ -154,10 +94,11 @@ class AddressService {
       "id": place['id']?.toString() ?? '',
       "lat": place['lat'] ?? place['center']?['lat'],
       "lon": place['lon'] ?? place['center']?['lon'],
-      "name": tags['name']?.toString() ?? 'Sem nome',
+      "name": tags['name']?.toString() ?? null,
       "sport": setSportType(tags),
       "surface": setSurface(tags['surface']?.toString()),
       "access": setAccess(tags['access']?.toString()),
+      "address": null
     };
   }
 
@@ -217,5 +158,66 @@ class AddressService {
     //VERIFICAR SE LOCAL CONTEM ACESSO DEFINIDO 
     final accessType = access?.toLowerCase() ?? 'public'; // Valor padrão
     return accessType == 'private' || accessType == 'no' ? 'Privado' : 'Publico';
+  }
+
+  //FUNÇÃO DE BUSCA DE ENDEREÇOS
+  Future<void> searchAddress(String address) async {
+    //RESGATAR CONTROLLER DE ENDEREÇOS
+    AddressController addressController = AddressController.instance;
+    //DEFINIR ESTADO DE PSEQUISA COMO TRUE
+    addressController.isSearching.value = true;
+    //LIMPAR SUGESTÕES
+    addressController.suggestions.clear();
+    //RESGATAR CIDADE DO USUÁRIO
+    final state = addressController.currentLocation['state'] ?? '';
+    //TENTAR ENVIAR DADOS
+    try {
+      //INSTANCIAR DIO
+      var dio = Dio.Dio();
+      //INICIALIZAR REQUISIÇÃO
+      var response = await dio.get(
+        AppApi.mapSearch, 
+        queryParameters: {
+          'q': '$address, $state',
+          'format': 'json',
+          'addressdetails': 1,
+          'countrycodes':'br',
+          'accept-language': 'br'
+        },
+        options: Dio.Options(
+          headers: {
+            'User-Agent': 'futzada-app/1.0 (futzada@futzada.com)'
+          }
+        ),
+      );
+      //VERIFICAR RESPOSTA DO SERVIDOR
+      if(response.statusCode == 200 && response.data != null) {
+        //MONTAR MAP DE SUGESTÕES
+        final resp = response.data.map<AddressModel>((item){
+          //GERAR ENDEREÇO
+          return AddressModel.fromMap({
+            'street' : "${item['address']['road'] ?? ''} ${item['address']['county'] ?? ''}",
+            'number' : item['address']['house_number'],
+            'suburb' : item['address']['suburb'],
+            'borough' : item['address']['borough'],
+            'city' : item['address']['city'],
+            'state' : item['address']['state'],
+            'country' : item['address']['country_code'],
+            'zipCode' : item['address']['postcode'],
+            'latitude' : double.parse(item['lat']),
+            'longitude' : double.parse(item['lon']),
+          });
+        });
+        //ATUALIZAR A LISTA DE SUGESTÕES
+        addressController.suggestions.assignAll(resp);
+        addressController.update();
+      }
+    } catch (e) {
+      //TRATAR ERROS
+      print(e);
+    }
+    //DEFINIR ESTADO DE PSEQUISA COMO TRUE
+    addressController.isSearching.value = false;
+    return;
   }
 }

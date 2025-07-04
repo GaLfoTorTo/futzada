@@ -1,6 +1,7 @@
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/dialogs/place_dialog.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -74,12 +75,12 @@ class _MapPickerPageState extends State<MapPickerPage> {
   }
 
   //FUNÇÃO PARA DEFINBIR ICONE DO MARKER DO MAPA
-  Widget setMarkerIcon(String sport){
+  Widget setMarkerIcon(Map<String, dynamic> marker){
     //DEFINIR ICONE E COR PADRÃO
     var color = AppColors.gray_300;
     var icon = AppIcones.modality_solid;
 
-    switch (sport) {
+    switch (marker['sport']) {
       case 'Futsal':
       case 'Fut7':
       case 'Futebol':
@@ -93,23 +94,22 @@ class _MapPickerPageState extends State<MapPickerPage> {
       case 'Volei':
       case 'Volei de Praia':
         //DEFINIR COR E ICONE PARA TIPO VOLEI
-        color = sport == "Volei" ? AppColors.yellow_300 : AppColors.bege_300;
+        color = marker == "Volei" ? AppColors.yellow_300 : AppColors.bege_300;
         icon = AppIcones.volei_ball_solid;
     }
     //RETORNAR WIDGET
     return InkWell(
       onTap: (){
         //ABRIR BOTTOMSHEET DO LOCAL
-        //BUSCAR INFORMAÇÕES DO LOCAL PELO ID
-        print('testes');
+        Get.bottomSheet(PlaceDialog(marker: marker));
       },
       child: Container(
-        width: currentZoom.value >= 15 ? baseSize.value * 2 : baseSize.value,
+        width: currentZoom.value >= 15.5 ? baseSize.value * 2 : baseSize.value,
         height: baseSize.value,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: AppColors.white, width: borderWidth)
+          border: Border.all(color: AppColors.white, width: borderWidth),
         ),
         child: Icon(
           icon,
@@ -148,7 +148,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
         return AppColors.bege_300;
       default:
         return  AppColors.gray_300;
-    };
+    }
   }
   
   //FUNÇÃO PARA CALCULAR TAMANHO DOS MARKERS
@@ -277,7 +277,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
                           point: LatLng(marker['lat'], marker['lon']),
                           width: baseSize.value,
                           height: baseSize.value,
-                          child: setMarkerIcon(marker['sport']),
+                          child: setMarkerIcon(marker),
                           key: ValueKey("${marker['sport']}_id${marker['id']}")
                         );
                       }).toList(),
@@ -305,7 +305,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
                       //RESGATAR POSIÇÕES DO MARKER
                       final point = LatLng(marker['lat'], marker['lon']);
                       //RESGATAR ICONE DO PONTO
-                      final icon = setMarkerIcon(marker['sport']);
+                      final icon = setMarkerIcon(marker);
                       //VERIFICAR SE LOCAL CONTEM LAT E LONG
                       return Marker(
                         point: point,

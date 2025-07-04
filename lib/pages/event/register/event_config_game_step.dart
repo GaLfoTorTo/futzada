@@ -1,10 +1,13 @@
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/silder_players_widget.dart';
-import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
@@ -24,15 +27,31 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   EventController eventController = EventController.instance;
   //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
+  //DEFINIR CATEGORIAS
+  List<String> categories = [
+    "Futebol",
+    "Fut7",
+    "Futsal",
+  ];
   //DEFINIR VARIAVEIS DE CONTROLLE DE SLIDER
   int qtdPlayers = 11;
   int minPlayers = 9;
   int maxPlayers = 11;
   int divisions = 3;
 
+  //CONTROLADOR DE EXIBIÇÃO DE CAMPOS
+  bool hasRefereer = false;
+  bool hasGoalLimit = false;
+  bool hasExtraTime = false;
+
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+    //RESGATAR VALORES DEFINIDOS NAS CONFIGURAÇÕES
+    hasRefereer = bool.parse(eventController.hasRefereerController.text);
+    hasGoalLimit = bool.parse(eventController.hasGoalLimitController.text);
+    hasExtraTime = bool.parse(eventController.hasExtraTimeController.text);
   }
 
   //FUNÇÃO PARA RESGATAR ICONE DA CATEGORIA
@@ -49,6 +68,12 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     }
   }
 
+  //FUNÇÃO PARA DEFINIR QUANTIDADE DE JOGADOR POR EQUIPE 
+  void setPlayersPerTime(){
+    setState(() {
+      
+    });
+  }
   //FUNÇÃO PARA VALIDAR FORMULÁRIO
   bool validForm(){
     //RESGATAR O FORMULÁRIO
@@ -98,7 +123,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                 children: [
                   const IndicatorFormWidget(
                     length: 3,
-                    etapa: 0
+                    etapa: 1
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
@@ -111,7 +136,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Text(
-                      "Certo, vamos lá! Informe o Nome, a Bio e defina uma Imagem para capa da sua pelada. Você também pode definir as configurações de visibilidade e se sua pelada contará com colaboradores.",
+                      "Agora, Informe suas preferências para as partidas da pelada. Essas informações nos ajudará a melhora a sua experiência no app",
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                       textAlign: TextAlign.center,
                     ),
@@ -120,7 +145,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                     padding: const EdgeInsets.all(10),
                     child:Text(
                       "Categoria",
-                      style: Theme.of(context).textTheme.titleSmall,
+                      style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.start,
                     ),
                   ),
@@ -128,26 +153,23 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                     padding: const EdgeInsets.symmetric(vertical: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ...eventController.categories.entries.map((item){
-                          final key = item.key;
-                          final value = item.value;
-                          //RESGATAR ICONE DA CATEGORIA
-                          IconData icone = getIconCategory(key);
-                          return SelectRoundedWidget(
-                            value: value,
-                            icon: icone,
-                            size: 120,
-                            iconSize: 40,
-                            checked: value == eventController.categoryController.text,
-                            onChanged: (value) {
-                              setState(() {
-                                eventController.categoryController.text = value;
-                              });
-                            },
-                          );
-                        })
-                      ],
+                      children: categories.map((key){
+                        //RESGATAR ICONE DA CATEGORIA
+                        IconData icone = getIconCategory(key);
+                        return SelectRoundedWidget(
+                          value: key,
+                          icon: icone,
+                          size: 110,
+                          iconSize: 40,
+                          checked: eventController.categoryController.text == key,
+                          onChanged: (value) {
+                            //ATUALIZAR CATEGORIA
+                            eventController.categoryController.text = key;
+                            //DEFINIR QUANTIDADE DE EQUIPES POR TIME 
+                            setPlayersPerTime();
+                          }
+                        );
+                      }).toList()
                     ),
                   ),
                   Column(
@@ -156,13 +178,13 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                         padding: const EdgeInsets.all(10),
                         child:Text(
                           "Quantidade de Jogadores",
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Text(
-                          "Defina quantos jogadores atuaram em campo por cada equipe. Essa informação podera ser alterada a qualquer momento após o registro.",
+                          "Defina quantos jogadores atuaram em campo por cada equipe. Essa informação poderá ser alterada a qualquer momento após o registro.",
                           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
                           textAlign: TextAlign.center,
                         ),
@@ -185,12 +207,204 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: ButtonTextWidget(
-                      text: "Próximo",
-                      width: double.infinity,
-                      action: submitForm
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: InputTextWidget(
+                      name: 'duration',
+                      label: bool.parse(eventController.hasTwoHalvesController.text)
+                        ? "Duração (min. por tempo)" 
+                        : "Duração (min.)",
+                      prefixIcon: Icons.timer_outlined,
+                      textController: eventController.durationController,
+                      controller: eventController,
+                      type: TextInputType.number,
+                      onChanged: (value) => eventController.durationController.text = value,
                     ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: SwitchListTile(
+                      value: bool.parse(eventController.hasTwoHalvesController.text),
+                      onChanged: (value){
+                        setState(() {
+                          //ATUALIZAR VALOR DO SWITCH
+                          eventController.hasTwoHalvesController.text = value.toString();
+                        });
+                      },
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Dois Tempos',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: const Icon(
+                        Icons.safety_divider_rounded,
+                        color: AppColors.gray_500,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: SwitchListTile(
+                      value: bool.parse(eventController.hasExtraTimeController.text),
+                      onChanged: (value){
+                        setState(() {
+                          //ATUALIZAR ESTADO DE PRORROGAÇÃO
+                          hasExtraTime = value;
+                          //ATUALIZAR VALOR 
+                          eventController.hasExtraTimeController.text = value.toString();
+                        });
+                      },
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Prorrogação',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: const Icon(
+                        Icons.more_time_rounded,
+                        color: AppColors.gray_500,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                  if(hasExtraTime)...[
+                    InputTextWidget(
+                      name: 'extra_time',
+                      label: 'Tempo Prorrogação',
+                      prefixIcon: Icons.more_time_rounded,
+                      textController: eventController.extraTimeController,
+                      controller: eventController,
+                      type: TextInputType.number,
+                      onChanged: (value) => eventController.extraTimeController = value,
+                    ),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: SwitchListTile(
+                      value: bool.parse(eventController.hasPenaltyController.text),
+                      onChanged: (value){
+                        setState(() {
+                          eventController.hasPenaltyController.text = value.toString();
+                        });
+                      },
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Pênaltis',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: SvgPicture.asset(
+                        AppIcones.chuteiras['campo']!,
+                        width: 25,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.gray_500,
+                          BlendMode.srcIn
+                        ),
+                      )
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: SwitchListTile(
+                      value: bool.parse(eventController.hasGoalLimitController.text),
+                      onChanged: (value){
+                        setState(() {
+                          hasGoalLimit = value;
+                          eventController.hasGoalLimitController.text = value.toString();
+                        });
+                      },
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Limite de Gols',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: const Icon(
+                        AppIcones.futebol_ball_solid,
+                        color: AppColors.gray_500,
+                        size: 25,
+                      ),
+                    ),
+                  ),
+                  if(hasGoalLimit)...[
+                    InputTextWidget(
+                      name: 'limitGols',
+                      label: 'Qtd. Gols',
+                      prefixIcon: AppIcones.futbol_ball_outline,
+                      textController: eventController.goalLimitController,
+                      controller: eventController,
+                      type: TextInputType.number,
+                      onChanged: (value) => eventController.goalLimitController.text = value,
+                    ),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    margin: const EdgeInsets.only(top:20, bottom: 40),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(5)
+                    ),
+                    child: SwitchListTile(
+                      value: bool.parse(eventController.hasRefereerController.text),
+                      onChanged: (value) {
+                        setState(() {
+                          hasRefereer = value;
+                          eventController.hasRefereerController.text = value.toString();
+                        });
+                      },
+                      activeColor: AppColors.green_300,
+                      inactiveTrackColor: AppColors.gray_300,
+                      inactiveThumbColor: AppColors.gray_500,
+                      title: Text(
+                        'Árbitro',
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
+                      ),
+                      secondary: const Icon(
+                        AppIcones.apito,
+                        color: AppColors.gray_500,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      ButtonOutlineWidget(
+                        text: "Voltar",
+                        width: 100,
+                        action: () => Get.back(),
+                      ),
+                      ButtonTextWidget(
+                        text: "Próximo",
+                        width: 100,
+                        action: submitForm,
+                      ),
+                    ],
                   ),
                 ],
               ),

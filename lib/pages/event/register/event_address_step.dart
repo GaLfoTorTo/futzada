@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:futzada/widget/inputs/input_date_widget.dart';
 import 'package:futzada/widget/inputs/select_days_week_widget.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/indicators/indicator_form_widget.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
@@ -28,12 +26,8 @@ class EventAddressStepState extends State<EventAddressStep> {
   EventController eventController = EventController.instance;
   //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
-  //DATA FIXA
-  bool dataFixa = false;
-  //CATEGORIA
-  String? categoria;
-  //TIMER DE CONSULTA ENDEREÇO
-  Timer? debounce;
+  //DEFINIR ESTADO DE EXIBIÇÃO DE DATA
+  bool isWeekDay = true;
 
   @override
   void initState() {
@@ -43,21 +37,6 @@ class EventAddressStepState extends State<EventAddressStep> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  //FUNÇÃO SELECIONAR DIA DA SEMANA
-  void selectDaysWeek(String key, bool value){
-    setState(() {
-      //ATUALIZAR VALOR DO DIA DA SEMANA
-      eventController.daysOfWeek[key] = value;
-    });
-  }
-
-  //FUNÇÃO PARA ALTERAR DATA FIXA
-  void alterDataFixa(bool value){
-    setState(() {
-      dataFixa = ! dataFixa;
-    });
   }
 
   //FUNÇÃO PARA PICKER DE DATA
@@ -71,7 +50,7 @@ class EventAddressStepState extends State<EventAddressStep> {
     );
     if (dateSelected != null) {
       //ATUALIZAR VALOR DO CONTROLER
-      eventController.dateController.text = AppHelper.formatDate(dateSelected);
+      eventController.dateController.text = DateFormat("dd/MM/yyyy").format(dateSelected);
     }
   }
 
@@ -93,14 +72,14 @@ class EventAddressStepState extends State<EventAddressStep> {
       //VERIFICAR HORARAIO
       if(name == 'horaInicio'){
         //ATUALIZAR VALOR DO CONTROLER
-        eventController.startTimeController.text =  timeSelected.toString();
+        eventController.startTimeController.text = timeSelected.format(context);
       }else{
         //ATUALIZAR VALOR DO CONTROLER
-        eventController.endTimeController.text = timeSelected.toString();
+        eventController.endTimeController.text = timeSelected.format(context);
       }
     }
   }
-
+    
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
     //RESGATAR O FORMULÁRIO
@@ -109,7 +88,7 @@ class EventAddressStepState extends State<EventAddressStep> {
     if (formData?.validate() ?? false) {
       formData?.save();
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/event_participants');
+      //Get.toNamed('/event/register/config_games');
     }
   }
 
@@ -131,42 +110,44 @@ class EventAddressStepState extends State<EventAddressStep> {
             key: formKey,
             child: Container(
               width: dimensions.width,
+              height: dimensions.height * 0.90,
               padding: const EdgeInsets.all(15),
               alignment: Alignment.center,
               child: Column(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const IndicatorFormWidget(
-                    length: 3,
-                    etapa: 1
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        "Endereço, Data e Hora",
-                        style: Theme.of(context).textTheme.headlineMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),]
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Onde vamos jogar ? Informe os dados de endereço, categoria, data e horário de sua pelada.",
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  SizedBox(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const IndicatorFormWidget(
+                          length: 3,
+                          etapa: 2
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                "Endereço, Data e Hora",
+                                style: Theme.of(context).textTheme.headlineMedium,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ]
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            "Onde vamos jogar ? Informe os dados de endereço, categoria, data e horário de sua pelada.",
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(10),
                           child:Text(
@@ -189,7 +170,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(right: 15),
+                                  padding: const EdgeInsets.only(right: 15),
                                   child: Icon(
                                     AppIcones.marker_solid,
                                     color: eventController.addressEvent.street != null 
@@ -213,112 +194,86 @@ class EventAddressStepState extends State<EventAddressStep> {
                               ],
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  if(!dataFixa)...[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child:Text(
-                            "Dia da Semana",
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
                         ),
+                        if(isWeekDay)...[
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child:Text(
+                              eventController.labelDate.value,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                          ),
+                          const SelectDaysWeekWidget()
+                        ]else...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0),
+                            child: InputDateWidget(
+                              name: 'data',
+                              prefixIcon: Icons.calendar_month,
+                              label: eventController.labelDate.value,
+                              textController: eventController.dateController,
+                              controller: eventController,
+                              showModal: () => selectDate(context),
+                            ),
+                          ),
+                        ],
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: ButtonTextWidget(
+                            text: "Alterar",
+                            icon: Icons.change_circle,
+                            width: dimensions.width,
+                            height: 30,
+                            action: () => setState((){
+                              //ALTERAR FALG DE DIAS DA SEMANA
+                              isWeekDay = !isWeekDay;
+                              //ALTERAR LABEL
+                              eventController.labelDate.value = isWeekDay ? "Dias da semana" : "Data Fixa";
+                            }),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ...eventController.daysOfWeek.entries.map<Widget>((item) {
-                                final key = item.key;
-                                final value = item.value;
-                                return SelectDaysWeekWidget(
-                                  value: key,
-                                  checked: value,
-                                  action: () => selectDaysWeek(key, value),
-                                );
-                              }),
-                            ]
+                              SizedBox(
+                                width: dimensions.width / 2 - 20,
+                                child: InputDateWidget(
+                                  name: 'horaInicio',
+                                  label: 'Hora de Início',
+                                  textController: eventController.startTimeController,
+                                  controller: eventController,
+                                  showModal: () => selectTime(context, 'horaInicio'),
+                                ),
+                              ),
+                              SizedBox(
+                                width: dimensions.width / 2 - 20,
+                                child: InputDateWidget(
+                                  name: 'horaFim',
+                                  label: 'Hora de Fim',
+                                  textController: eventController.endTimeController,
+                                  controller: eventController,
+                                  showModal: () => selectTime(context, 'horaFim'),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ]else...[
-                    InputDateWidget(
-                      name: 'data',
-                      label: 'Data',
-                      textController: eventController.dateController,
-                      controller: eventController,
-                      showModal: () => selectDate(context),
-                    ),
-                  ],
+                  ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: ButtonTextWidget(
-                          text: !dataFixa ? "Escolher Data" : "Data Fixa",
-                          width: dimensions.width / 2 - 40,
-                          height: 20,
-                          icon: LineAwesomeIcons.exchange_alt_solid,
-                          action: () => alterDataFixa(!dataFixa),
-                        ),
+                      ButtonTextWidget(
+                        text: "Próximo",
+                        width: dimensions.width,
+                        action: submitForm,
                       ),
                     ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: dimensions.width / 2 - 20,
-                          child: InputDateWidget(
-                            name: 'horaInicio',
-                            label: 'Hora de Início',
-                            textController: eventController.startTimeController,
-                            controller: eventController,
-                            showModal: () => selectTime(context, 'horaInicio'),
-                          ),
-                        ),
-                        Container(
-                          width: dimensions.width / 2 - 20,
-                          child: InputDateWidget(
-                            name: 'horaFim',
-                            label: 'Hora de Fim',
-                            textController: eventController.endTimeController,
-                            controller: eventController,
-                            showModal: () => selectTime(context, 'horaFim'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        ButtonOutlineWidget(
-                          text: "Voltar",
-                          width: 100,
-                          action: () => Get.back(),
-                        ),
-                        ButtonTextWidget(
-                          text: "Próximo",
-                          width: 100,
-                          action: submitForm,
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),

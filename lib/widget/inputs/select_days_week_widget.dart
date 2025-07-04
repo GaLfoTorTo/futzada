@@ -1,46 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:get/get.dart';
 
 class SelectDaysWeekWidget extends StatelessWidget {
-  final String value;
-  final bool checked;
-  final Function action;
   const SelectDaysWeekWidget({
     super.key,
-    required this.value,
-    required this.checked,
-    required this.action,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onTap: () => action(value),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: checked ? AppColors.green_300 : AppColors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            if (checked)
-              BoxShadow(
-                color: AppColors.green_300.withOpacity(0.2),
-                spreadRadius: 5,
-                blurRadius: 1,
-                offset: Offset(0,0),
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
+    //RESGATAR CONTROLLER DE EVENTO
+    EventController eventController = EventController.instance;
+    //RESGATAR DIAS DA SEMANA
+    Map<String, bool> daysOfWeek = eventController.daysOfWeek;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: Obx((){
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: daysOfWeek.entries.map((item){
+            final key = item.key;
+            final value = item.value;
+            return InkWell(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              onTap: () => eventController.daysOfWeek[key] = !value,
+              child: Container(
+                alignment: Alignment.center,
+                width: 55,
+                height: 55,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: value ? AppColors.green_300 : AppColors.white,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    if (value)...[
+                      BoxShadow(
+                        color: AppColors.green_300.withAlpha(100),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0,2),
+                      ),
+                    ]
+                  ],
+                ),
+                child: Text(
+                  key,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    color: value ? AppColors.white : AppColors.dark_500,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
               ),
-          ],
-        ),
-        child: Text(
-          value,
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-            color: checked ? AppColors.white : AppColors.dark_500,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-      ),
+            );
+          }).toList()
+        );
+      })
     );
   }
 }

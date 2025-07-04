@@ -1,8 +1,7 @@
-import 'dart:convert';
-import 'package:futzada/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 
