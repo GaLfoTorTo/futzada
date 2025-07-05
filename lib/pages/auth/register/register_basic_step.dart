@@ -241,7 +241,6 @@ class _RegisterBasicStepState extends State<RegisterBasicStep> {
                       sufixIcon: input['sufixIcon'],
                       textController: input['controller'],
                       controller: controller,
-                      onSaved: controller.onSaved,
                       type: input['type'],
                       validator: input['validator'],
                     ),

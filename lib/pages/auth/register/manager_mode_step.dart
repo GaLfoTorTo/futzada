@@ -456,7 +456,6 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
                       label: input['label'],
                       textController: input['controller'],
                       controller: controller,
-                      onSaved: controller.onSaved,
                       type: input['type'],
                       maxLength: input['maxLength']
                     ),

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:futzada/services/game_service.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,8 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   NavigationController navigationController = NavigationController.instance;
   //RESGATAR CONTROLLER DE EVENTO
   EventController eventController = EventController.instance;
+  //INSTANCIAR SERVIÇO DE PARTIDAS
+  GameService gameService = GameService();
   //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
   //DEFINIR CATEGORIAS
@@ -69,11 +73,18 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   }
 
   //FUNÇÃO PARA DEFINIR QUANTIDADE DE JOGADOR POR EQUIPE 
-  void setPlayersPerTime(){
+  void setPlayersPerTime(category){
     setState(() {
-      
+      //RESGATAR VALORES POR CATEGORIA
+      final mapPlayers = gameService.getQtdPlayers(category);
+      //ATUALIZAR ESTADOS
+      qtdPlayers = mapPlayers['qtdPlayers']!;
+      minPlayers = mapPlayers['minPlayers']!;
+      maxPlayers = mapPlayers['maxPlayers']!;
+      divisions = mapPlayers['divisions']!;
     });
   }
+  
   //FUNÇÃO PARA VALIDAR FORMULÁRIO
   bool validForm(){
     //RESGATAR O FORMULÁRIO
@@ -166,7 +177,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                             //ATUALIZAR CATEGORIA
                             eventController.categoryController.text = key;
                             //DEFINIR QUANTIDADE DE EQUIPES POR TIME 
-                            setPlayersPerTime();
+                            setPlayersPerTime(key);
                           }
                         );
                       }).toList()
@@ -196,6 +207,8 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                         divisions: divisions,
                         onChange: (value){
                           setState(() {
+                            //ATUALIZAR QUANTIDADE DE JOGADORES
+                            qtdPlayers = value.clamp(minPlayers, maxPlayers).toInt();
                             eventController.playersPerTeamController.text = qtdPlayers.toString();
                           });
                         },
@@ -288,7 +301,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       textController: eventController.extraTimeController,
                       controller: eventController,
                       type: TextInputType.number,
-                      onChanged: (value) => eventController.extraTimeController = value,
+                      onChanged: (value) => eventController.extraTimeController.text = value,
                     ),
                   ],
                   Container(

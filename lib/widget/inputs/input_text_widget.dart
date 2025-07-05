@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class InputTextWidget extends StatefulWidget {
@@ -12,20 +11,21 @@ class InputTextWidget extends StatefulWidget {
   final Color? bgColor;
   final bool? borderColor;
   final String? placeholder;
-  final Function? onChanged;
-  final Function? onSaved;
   final TextInputType? type;
   final int? maxLength;
-  final Function? validator;
-  final Function? showModal;
-  final Function? suffixFunction;
-  final bool? disabled;
+  final String? Function(String?)? validator;
+  final VoidCallback? showModal;
+  final VoidCallback? suffixFunction;
+  final bool disabled;
   final dynamic controller;
   final TextEditingController? textController;
+  final Function(String)? onSaved;
+  final Function(String)? onChanged;
+  final Function(String)? onValidated;
 
   const InputTextWidget({
     super.key,
-    this.name, 
+    this.name,
     this.label,
     this.hint,
     this.initialValue,
@@ -34,16 +34,17 @@ class InputTextWidget extends StatefulWidget {
     this.bgColor,
     this.borderColor = false,
     this.placeholder,
-    this.onChanged,
-    this.onSaved,
     this.type,
     this.maxLength,
     this.validator,
     this.showModal,
     this.suffixFunction,
-    this.controller, 
-    this.textController, 
+    this.controller,
+    this.textController,
     this.disabled = false,
+    this.onSaved,
+    this.onChanged,
+    this.onValidated,
   });
 
   @override
@@ -51,124 +52,88 @@ class InputTextWidget extends StatefulWidget {
 }
 
 class _InputTextWidgetState extends State<InputTextWidget> {
-  //VARIAVEL DE EXIBIÇÃO DE SENHA
-  bool visible = false;
-  //VARIAVEL DE EXIBIÇÃO DE BOTÃO DE VISIBILIDADE DE SENHA
-  bool obscure = false;
-  //VARIAVEL PARA CONTROLAR EXIBIÇÃO ICONE NO FIM DO INPUT
-  Icon? sufixIcon;
-  //VARIAVEL PARA CONTROLAR EXIBIÇÃO ICONE NO FIM DO INPUT
-  Icon? prefixIcon;
-  //DEFINIR COR DO INPUT
-  Color bgColor = AppColors.white;
+  late bool _visible;
+  late Icon? _sufixIcon;
+  late Icon? _prefixIcon;
+  late Color _bgColor;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
-    //INICIALIZR VISIBILIDADE DE SENHA CASO EXISTA
-    obscure = widget.type != null && widget.type == TextInputType.visiblePassword;
-    visible = widget.type != null && widget.type == TextInputType.visiblePassword;
-    //INICIALIZAR ICONS
-    sufixIcon = widget.sufixIcon != null
-      ? Icon(widget.sufixIcon) 
-      : null;
-    prefixIcon = widget.prefixIcon != null 
-      ? Icon(widget.prefixIcon) 
-      : null;
-    //VERIFICAR SE INPUT ESTA DESABILITADO E AJUSTAR BG
-    if(widget.disabled == true){
-      bgColor = Colors.white60;
-    }
-    //VERIFICAR SE FOI DEFINIDA COR DE BG PARA INPUT
-    if(widget.bgColor != null){
-      bgColor = widget.bgColor!;
-    }
+    //INICIALIZAR PARAMETROS DO INPUT
+    _focusNode = FocusNode();
+    _visible = widget.type == TextInputType.visiblePassword;
+    _sufixIcon = widget.sufixIcon != null ? Icon(widget.sufixIcon) : null;
+    _prefixIcon = widget.prefixIcon != null ? Icon(widget.prefixIcon) : null;
+    _bgColor = widget.disabled ? Colors.white60 : widget.bgColor ?? AppColors.white;
   }
 
-  //FUNÇÃO DE EXIBIÇÃO OU OCULTAÇÃO DE TEXTO NO INPUT
-  void showText(){
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  //FUNÇÃO PARA EXIBIR TEXTO
+  void _showText() {
     setState(() {
-      visible = AppHelper.toggleVisibility(visible);
-      sufixIcon = visible
-       ? Icon(Icons.visibility_off) 
-       : Icon(Icons.visibility);
+      _visible = !_visible;
+      _sufixIcon = _visible 
+        ? const Icon(Icons.visibility_off) 
+        : const Icon(Icons.visibility);
     });
   }
-
-  //FUNÇÃO DE DEFINIDÇÃO DE WIDGET DE SUFIXO DO INPUT
-  Widget? setSuffix(){
-    //VERIFICAR SE FOI DEFINIDO ICONE DE SUFIXO
-    if(sufixIcon != null){
-      //VERIFICAR SE FOI DEFINIDA FUNÇÃO DE SUFIXO
-      if(widget.suffixFunction != null){
-        return IconButton(
-          icon: sufixIcon!,
-          onPressed: (){
-            //VERIFICAR SE FUNÇÃO DE SUFIXO FOI DEFINIDA
-            if(widget.suffixFunction != null){
-              showText();
+  
+  //FUNÇÃO DE CONSTRUÇÃO DE SUFIX ICON
+  Widget? _buildSuffixIcon() {
+    if (_sufixIcon == null) return null;
+    return widget.suffixFunction != null
+      ? IconButton(
+          icon: _sufixIcon!,
+          onPressed: () {
+            if (widget.type == TextInputType.visiblePassword) {
+              _showText();
             }
-          }
-        );
-      }
-      return sufixIcon;
-    }
+            widget.suffixFunction?.call();
+          },
+        )
+      : _sufixIcon;
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return GestureDetector(
-      onTap: () {
-        //REMOVER FOCO DO INPUT AO CLICAR FORA OU FECHAR O TECLADO
-        FocusScope.of(context).unfocus();
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: TextFormField(
-          initialValue: widget.initialValue,
-          controller: widget.textController ?? null,
-          keyboardType: widget.type,
-          textCapitalization: widget.maxLength != null ? TextCapitalization.characters : TextCapitalization.none,
-          obscureText: visible,
-          maxLength: widget.maxLength ?? widget.maxLength,
-          style: Theme.of(context).textTheme.labelLarge,
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            labelText: widget.label,
-            prefixIcon: prefixIcon,
-            fillColor: bgColor,
-            enabledBorder: OutlineInputBorder(
-              borderSide: widget.borderColor != null && widget.borderColor == true ? const BorderSide(color: AppColors.gray_300) : BorderSide.none,
-            ),
-            suffixIcon: setSuffix()
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: TextFormField(
+        style: Theme.of(context).textTheme.labelLarge,
+        focusNode: _focusNode,
+        initialValue: widget.initialValue,
+        controller: widget.textController,
+        keyboardType: widget.type,
+        obscureText: _visible,
+        maxLength: widget.maxLength,
+        textCapitalization: widget.maxLength != null 
+          ? TextCapitalization.characters 
+          : TextCapitalization.none,
+        decoration: InputDecoration(
+          hintText: widget.hint,
+          labelText: widget.label,
+          prefixIcon: _prefixIcon,
+          fillColor: _bgColor,
+          enabledBorder: OutlineInputBorder(
+            borderSide: widget.borderColor == true 
+              ? const BorderSide(color: AppColors.gray_300) 
+              : BorderSide.none,
           ),
-          onChanged: (value){
-            if(widget.onChanged != null){
-              widget.onChanged!(value);
-            }
-          },
-          onSaved: (value){
-            if(widget.onSaved != null){
-              widget.onSaved!({widget.name:  value});
-            }
-          },
-          validator: (value) {
-            //DEFINIR VARIAVEL DE RESULTADO DA VALIDAÇÃO
-            String? result;
-            //VERIFICAR SE SERÁ USADA FUNÇÃO PERSOLNIZADA DE VALIDAÇÃO
-            if(widget.validator != null){
-              result = widget.validator!();
-            }else{
-              result = widget.controller.validateEmpty(value, widget.label);
-            }
-            //FOCAR INPUT 
-            FocusScope.of(context).autofocus(FocusNode());
-            //RETURNAR RESULTADO DA VALIDAÇÃO
-            return result;
-          },
-          readOnly: widget.disabled ?? true,
+          suffixIcon: _buildSuffixIcon(),
         ),
+        onChanged: (value) => widget.onChanged,
+        onSaved: (value) => widget.onSaved,
+        validator: (value) { 
+          widget.onValidated;
+        },
+        readOnly: widget.disabled,
       ),
     );
   }
