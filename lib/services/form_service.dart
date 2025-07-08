@@ -1,8 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/user_model.dart';
 
 class FormService {
+  //FUNÇÃO DE VALIDAÇÃO DE CAMPOS
+  String? validateEmpty(String? value, String label) => (value?.isEmpty ?? true) ? "$label deve ser preenchido(a)!" : null;
+  
   //FUNÇÃO DE ENVIO DE FORMULÁRIO (COM IMAGENS NA REQUISIÇÃO)
   static Future<Map<String, dynamic>> sendForm(model, options, url) async {
     //TENTAR ENVIAR DADOS
@@ -14,7 +18,7 @@ class FormService {
       //CRIAR OBJETO FORMDATA
       var formData = Dio.FormData.fromMap(formDataMap);
       //VERIFICAR SE EXISTE FOTO NA REQUISIÇÃO
-      if (model.photo != null) {
+      if(model.photo != null) {
         //ADICIONAR IMAGEM NO FORMDATA
         formData.files.add(MapEntry(
           'photo',
@@ -84,9 +88,9 @@ class FormService {
   }
 
   //FUNÇÃO DE CONFIGURAÇÕES DE HEADERS 
-  static Future<Map<String, dynamic>>setOption(user) async {
+  static Future<Map<String, dynamic>>setOption(UserModel? user) async {
     //VERIFICAR SE USARIO ESTA LOGADO
-    if(user != null){
+    if(user != null && user.token != null){
       return {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer ${user.token}'

@@ -3,6 +3,8 @@ class AppAnimations {
   //ANIMAÇÕES DE STATUS DE REGISTROS
   static const checkSuccess = 'assets/animations/checkSuccess.json';
   static const checkError = 'assets/animations/checkError.json';
+  static const eventSuccess = 'assets/animations/eventSuccess.json';
+  static const eventError = 'assets/animations/eventError.json';
   //ANIMAÇÕES DE LOADING
   static const loading = 'assets/animations/loading.json';
   //ANIMAÇÕES DE APRESENTAÇÃO (ON BOARDING)

@@ -1,18 +1,22 @@
-import 'package:futzada/models/address_model.dart';
+import 'package:futzada/services/user_service.dart';
 import 'package:get/get.dart';
-import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/services/form_service.dart';
-import 'package:futzada/services/event_service.dart';
+import 'package:futzada/enum/enums.dart';
+import 'package:futzada/models/address_model.dart';
+import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
+import 'package:futzada/services/form_service.dart';
+import 'package:futzada/services/event_service.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 //===EVENT BASE===
 abstract class EventBase {
   //GETTER - SERVIÇO DE EVENTO
   EventService get eventService;
+  //GETTER - SERVIÇO DE FORMULÁRIO
+  FormService get formService;
   //GETTER - USUARIO
   UserModel get user;
   //GETTER - EVENTOS DO USUARIO
@@ -33,6 +37,10 @@ class EventController extends GetxController
   //DEFINIR SERVIÇO DE EVENTO - OBRIGATÓRIO
   @override
   final EventService eventService = EventService();
+  
+  //DEFINIR SERVIÇO DE FORMULÁRIO - OBRIGATÓRIO
+  @override
+  final FormService formService = FormService();
   
   //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
   @override
@@ -85,14 +93,12 @@ mixin EventRegister on GetxController{
   late TextEditingController photoController;
   late TextEditingController allowCollaboratorsController;
   late TextEditingController visibilityController;
-  late TextEditingController permissionsController;
   //CONTROLLERS DE ENDEREÇO E DATA DO EVENTO
   AddressModel addressEvent = AddressModel();
-  late TextEditingController daysWeekController;
   late TextEditingController dateController;
   late TextEditingController startTimeController;
   late TextEditingController endTimeController;
-  //CONTROLLADORES DE PARTIDAS DO EVENTO
+  //CONTROLLERS DE CONFIGURAÇÕES DE PARTIDA DO EVENTO
   late TextEditingController categoryController;
   late TextEditingController durationController;
   late TextEditingController hasTwoHalvesController;
@@ -114,7 +120,6 @@ mixin EventRegister on GetxController{
     photoController = TextEditingController();
     allowCollaboratorsController = TextEditingController(text: 'false');
     visibilityController = TextEditingController();
-    permissionsController = TextEditingController();
     //CONTROLLERS DE ENDEREÇO E DATA DO EVENTO
     dateController = TextEditingController();
     startTimeController = TextEditingController();
@@ -141,7 +146,6 @@ mixin EventRegister on GetxController{
     photoController.dispose();
     allowCollaboratorsController.dispose();
     visibilityController.dispose();
-    permissionsController.dispose();
     dateController.dispose();
     startTimeController.dispose();
     endTimeController.dispose();
@@ -157,6 +161,41 @@ mixin EventRegister on GetxController{
     goalLimitController.dispose();
     participantsController.dispose();
   }
+
+  //FUNÇÃO DE MONTAGEM DE OBJETO DE CONFIGURAÇÕES DA PARTIDA
+  GameConfigModel setGameConfigEvent(){
+    return GameConfigModel(
+      category: category.value,
+      duration: int.parse(durationController.text),
+      hasTwoHalves: bool.parse(hasTwoHalvesController.text),
+      hasExtraTime: bool.parse(hasExtraTimeController.text),
+      hasPenalty: bool.parse(hasPenaltyController.text),
+      hasGoalLimit: bool.parse(hasGoalLimitController.text),
+      hasRefereer: bool.parse(hasRefereerController.text),
+      playersPerTeam: int.parse(playersPerTeamController.text),
+      extraTime: bool.parse(hasExtraTimeController.text) ? int.parse(extraTimeController.text) : null,
+      goalLimit: bool.parse(hasGoalLimitController.text) ? int.parse(goalLimitController.text) : null,
+    );
+  }
+
+  //FUNÇÃO DE MONTAGEM DE OBJETO DE ENVIO PARA O FORMULÁRIO
+  EventModel setEventRegister(){
+    return EventModel(
+      title: titleController.text,
+      bio: bioController.text,
+      daysWeek: daysOfWeek.toString(),
+      date: dateController.text,
+      startTime: startTimeController.text,
+      endTime: endTimeController.text,
+      allowCollaborators: bool.parse(allowCollaboratorsController.text),
+      permissions: bool.parse(allowCollaboratorsController.text) ? permissions.toString() : null,
+      photo: photoController.text,
+      visibility: VisibilityPerfil.values.firstWhere((item ) => item.name == visibilityController.text),
+      address: addressEvent,
+      gameConfig: setGameConfigEvent(),
+    );
+  }
+  
   //ESTADOS DE PERMISSÃO
   RxMap<String, dynamic> permissions = {
     'Adicionar': false,
@@ -174,25 +213,59 @@ mixin EventRegister on GetxController{
     'Sex': false,
     'Sab': false,
   }.obs;
+
+  //MAP DE CONVITE PADRÃO
+  RxMap<String, bool> invite = {
+    'Jogador': false,
+    'Técnico': false,
+    'Arbitro': false,
+    'Colaborador': false,
+  }.obs;
+
+  //LISTA DE AMIGOS
+  RxList<Map<String, dynamic>> friends = List.generate(30, (i){
+    return {
+      "invite": {
+        'Jogador': false,
+        'Técnico': false,
+        'Arbitro': false,
+        'Colaborador': false,
+      }.obs,
+      "checked": false.obs,
+      "user": UserService().userRepository.generateUser(i, true),
+    };
+  }).obs;
+
+  //ESTADO - CATEGORIA
+  RxString category = "".obs;
   //ESTADO - LABEL DE DATA
   RxString labelDate = 'Dias da Semana'.obs;
   //ESTADO - MENSAGEM DE ENDEREÇO
   RxString addressText = 'Escolher endereço'.obs;
-  
-  //FUNÇÃO DE VALIDAÇÃO DE CAMPOS
-  String? validateEmpty(String? value, String label) => (value?.isEmpty ?? true) ? "$label deve ser preenchido(a)!" : null;
+
   //FUNÇÃO DE ENVIO DE FORMULARIO
   Future<Map<String, dynamic>> registerEvent() async {
-    //RESGATAR EVENTO SELECIONADO
-    EventModel event = EventModel();
-    //BUSCAR URL BASICA
-    var url = AppApi.url+AppApi.createEvent;
-    //RESGATAR USUARIO
-    var user = Get.find(tag: 'user');
-    //RESGATAR OPTIONS
-    var options = await FormService.setOption(user);
-    //ENVIAR FORMULÁRIO
-    var response = await FormService.sendForm(event, options, url);
-    return response;
+    //RESGATAR INSTANCIA DO CONTROLLER
+    EventController eventController = EventController.instance;
+    try {  
+      //RESGATAR EVENTO SELECIONADO
+      EventModel event = setEventRegister();
+      print(event);
+      eventController.setSelectedEvent(event);
+      /* //BUSCAR URL BASICA
+      String url = AppApi.url + AppApi.createEvent;
+      //RESGATAR USUARIO LOGADO
+      UserModel user = Get.find(tag: 'user');
+      //RESGATAR OPTIONS
+      var options = await FormService.setOption(user);
+      //ENVIAR FORMULÁRIO
+      var response = await FormService.sendForm(event, options, url);
+      return response; */
+      return {'status': 200};
+    } catch (e) {
+      print(e);
+      //RETORNAR STATUS DE ERRO
+      return {'status': 400};
+    }
   }
 }

@@ -14,12 +14,18 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 class AuthController extends getx.GetxController{
   //DEFINIR CONTROLLER UNICO NO GETX
   static AuthController get instance => getx.Get.find();
+  //GETTER - SERVIÇO DE FORMULÁRIO
+  FormService formService = FormService();
   //INSTANCIA DE MODEL DE USUARIO
   final _user = getx.Rxn<UserModel>();
   //GETTER DE MODEL DE USUARIO
   UserModel? get user => _user.value;
   //INSTANCIAR STORAGE
   final storage = GetStorage();
+  //CONTROLLERS DE CADA CAMPO
+  final TextEditingController userController = TextEditingController(text: '');
+  final TextEditingController passwordController = TextEditingController(text: '');
+
   //ON READY
   @override
   void onReady(){
@@ -113,6 +119,23 @@ class AuthController extends getx.GetxController{
     return null;
   }
 
+  //VALIDAÇÃO DE EMAIL E password
+  String? validateUser(){
+    //VERIFICAR SE EMAIL OU USUÁRIO NÃO ESTÁ VAZIO
+    if(userController.text.isEmpty){
+      return "O e-mail ou nome de usuário deve ser informados!";
+    }
+    return null;
+  }
+
+  String? validatePassword(){
+    //VERIFICAR SE password NÃO ESTÁ VAZIO
+    if(passwordController.text.isEmpty){
+      return "A senha deve ser Informada!";
+    }
+    return null;
+  }
+
   //FUNÇÃO DE LOGIN COM GOOLGE
   Future<Map<String, dynamic>>googleLogin(BuildContext context) async {
     //INICIALIZAR AUTHENTICAÇÃO COM GOOGLE PELO EMAIL
@@ -146,9 +169,12 @@ class AuthController extends getx.GetxController{
   }
 
   //FUNÇÃO DE LOGIN 
-  Future<Map<String, dynamic>>login(String user, String password) async {
-   //BUSCAR URL BASICA
+  Future<Map<String, dynamic>>login() async {
+    //BUSCAR URL BASICA
     var url = '${AppApi.url}login';
+    //RESGATAR LOGIN E SENHA
+    String user = userController.text;
+    String password = passwordController.text;
     // CRIAR OBJETO JSON
     var data = jsonEncode({'user': user, 'password': password});
     //RESGATAR OPTIONS

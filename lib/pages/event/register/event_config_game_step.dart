@@ -1,12 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:futzada/services/game_service.dart';
-import 'package:futzada/widget/buttons/button_outline_widget.dart';
+
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/widget/overlays/form_overlay_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/services/game_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/others/court_widget.dart';
+import 'package:futzada/widget/buttons/button_outline_widget.dart';
+import 'package:futzada/widget/dialogs/category_dialog.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/silder_players_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
@@ -31,6 +35,10 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   GameService gameService = GameService();
   //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
+  //CONTROLADOR DE VALIDAÇÃO
+  bool isValid = true;
+  // VARIÁVEL PARA CONTROLAR O STATUS
+  RxInt overlayStatus = 0.obs;
   //DEFINIR CATEGORIAS
   List<String> categories = [
     "Futebol",
@@ -56,6 +64,15 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     hasRefereer = bool.parse(eventController.hasRefereerController.text);
     hasGoalLimit = bool.parse(eventController.hasGoalLimitController.text);
     hasExtraTime = bool.parse(eventController.hasExtraTimeController.text);
+    //EXIBIR DIALOG DE CATEGORIA CASO TENHA SIDO DEFINIDA
+    if(eventController.category.value.isNotEmpty){
+      //DEFINIR VARIAVEIS DE CONTROLE DE PARTICIPANTES
+      setCategory();
+      //EXIBIR DIALOG INFORMATIVO DE CATEGORIA
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.dialog(const CategoryDialog());
+      });
+    }
   }
 
   //FUNÇÃO PARA RESGATAR ICONE DA CATEGORIA
@@ -73,8 +90,10 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   }
 
   //FUNÇÃO PARA DEFINIR QUANTIDADE DE JOGADOR POR EQUIPE 
-  void setPlayersPerTime(category){
+  void setCategory(){
     setState(() {
+      //RESGATAR CATEGORIA
+      final category = eventController.category.value;
       //RESGATAR VALORES POR CATEGORIA
       final mapPlayers = gameService.getQtdPlayers(category);
       //ATUALIZAR ESTADOS
@@ -82,29 +101,75 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
       minPlayers = mapPlayers['minPlayers']!;
       maxPlayers = mapPlayers['maxPlayers']!;
       divisions = mapPlayers['divisions']!;
+      //ATUALIZAR JOGADORES POR EQUIPE
+      setPlayersPerTeam(qtdPlayers);
     });
+  }
+
+  void setPlayersPerTeam(int qtd){
+    //ATUALIZAR JOGADORES POR EQUIPE
+    qtdPlayers = qtd;
+    eventController.playersPerTeamController.text = qtdPlayers.toString();
   }
   
   //FUNÇÃO PARA VALIDAR FORMULÁRIO
-  bool validForm(){
-    //RESGATAR O FORMULÁRIO
-    var formData = formKey.currentState;
-    //VERIFIAR SE CAMPOS DE TEXTO FORAM PREENCHIDOS
-    if(formData?.validate() ?? false){
-      //VERIFICAR SE VISIBILIDADE FOI SELECIONADA
-      if(eventController.visibilityController.text.isNotEmpty){
-        return true;
+  void validForm(){
+    setState(() {
+      //VERIFICAR SE CATEGORIA FOI SELECIONADA
+      if(eventController.category.value.isEmpty){
+        isValid = false;
       }
-    }
-    return false;
+      //VERIFICAR SE QUANTIDADE DE JOGADORES POR EQUIPE FOI SELECIONADA
+      if(eventController.playersPerTeamController.text.isEmpty){
+        isValid = false;
+      }
+      //RESGATAR O FORMULÁRIO
+      var formData = formKey.currentState;
+      //VERIFIAR SE CAMPOS DE TEXTO FORAM PREENCHIDOS
+      if(formData?.validate() ?? false){
+        isValid = true;
+        return;
+      }
+      isValid = false;
+      return;
+    });
   }
 
   //VALIDAÇÃO DA ETAPA
-  void submitForm(){
+  void submitForm() async{
+    //VALIDAR FORMULÁRIO
+    validForm();
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (validForm()) {
-      //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/address');
+    if (isValid) {
+      //EXIBIR OVERLAY
+      await Get.showOverlay(
+        asyncFunction: () async {
+          //ENVAR FORMULARIO 
+          final response = await eventController.registerEvent();
+          //ATUALIZA STATUS COM BASE NA RESPOSTA
+          overlayStatus.value = response['status']!;
+          //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
+          await Future.delayed(const Duration(seconds: 5));
+        },
+        loadingWidget: Material(
+          color: Colors.transparent,
+          child: Obx(() => FormOverlayWidget(
+            status: overlayStatus.value,
+          )),
+        ),
+        opacity: 0.7,
+        opacityColor: AppColors.dark_700,
+      );
+      //PEQUENO DELAY
+      await Future.delayed(const Duration(milliseconds: 100));
+      //SE SUCESSO, FECHA O OVERLAY APÓS ANIMAÇÃO
+      if (overlayStatus.value == 200) {
+        //NAVEGAR PARA ADICÃO DE PARTICIPANTES
+        Get.toNamed('/event/register/participants');
+      }else{
+        //EXIBIR MENSAGEM DE ERRO
+        AppHelper.feedbackMessage(context, "Houve um erro ao enviar as informações, tente novamente.");
+      }
     }
   }
 
@@ -134,7 +199,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                 children: [
                   const IndicatorFormWidget(
                     length: 3,
-                    etapa: 1
+                    etapa: 2
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 20),
@@ -172,53 +237,81 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                           icon: icone,
                           size: 110,
                           iconSize: 40,
-                          checked: eventController.categoryController.text == key,
+                          checked: eventController.category.value == key,
                           onChanged: (value) {
                             //ATUALIZAR CATEGORIA
+                            eventController.category.value = key;
                             eventController.categoryController.text = key;
                             //DEFINIR QUANTIDADE DE EQUIPES POR TIME 
-                            setPlayersPerTime(key);
+                            setCategory();
                           }
                         );
                       }).toList()
                     ),
                   ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child:Text(
-                          "Quantidade de Jogadores",
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
+                  //VALIDAÇÃO DE CATEGORIA
+                  if(!isValid && eventController.category.value.isEmpty)...[
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10, left: 8.0),
+                      child: Text(
+                        'A categoria deve ser informado!',
+                        style: TextStyle(color: Colors.red, fontSize: 12),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
-                          "Defina quantos jogadores atuaram em campo por cada equipe. Essa informação poderá ser alterada a qualquer momento após o registro.",
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SilderPlayersWidget(
-                        qtdPlayers: qtdPlayers.toDouble(),
-                        minPlayers: minPlayers.toDouble(),
-                        maxPlayers: maxPlayers.toDouble(),
-                        divisions: divisions,
-                        onChange: (value){
-                          setState(() {
-                            //ATUALIZAR QUANTIDADE DE JOGADORES
-                            qtdPlayers = value.clamp(minPlayers, maxPlayers).toInt();
-                            eventController.playersPerTeamController.text = qtdPlayers.toString();
-                          });
-                        },
-                      ),
-                      /* CampoWidget(
-                        categoria: eventController.categoryeventController.text,
-                        qtd: eventController.qtdPlayers,
-                      ), */
-                    ],
-                  ),
+                    ),
+                  ],
+                  Obx((){
+                    if(eventController.category.isNotEmpty){
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child:Text(
+                              "Quantidade de Jogadores",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              "Defina quantos jogadores atuaram em campo por cada equipe. Essa informação poderá ser alterada a qualquer momento após o registro.",
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SilderPlayersWidget(
+                            qtdPlayers: qtdPlayers.toDouble(),
+                            minPlayers: minPlayers.toDouble(),
+                            maxPlayers: maxPlayers.toDouble(),
+                            divisions: divisions,
+                            onChange: (double value){
+                              setState(() {
+                                //ATUALIZAR QUANTIDADE DE JOGADORES
+                                setPlayersPerTeam(value.toInt());
+                              });
+                            },
+                          ),
+                          //VALIDAÇÃO DE CATEGORIA
+                          if(!isValid && eventController.category.value.isEmpty)...[
+                            const Padding(
+                              padding: EdgeInsets.only(top: 10, left: 8.0),
+                              child: Text(
+                                'A quantidade de jogadores deve ser informado!',
+                                style: TextStyle(color: Colors.red, fontSize: 12),
+                              ),
+                            ),
+                          ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10, bottom: 50),
+                            child: CourtWidget(
+                              category: eventController.category.value,
+                              players: qtdPlayers,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return SizedBox.shrink();
+                  }),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: InputTextWidget(
@@ -228,9 +321,14 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                         : "Duração (min.)",
                       prefixIcon: Icons.timer_outlined,
                       textController: eventController.durationController,
-                      controller: eventController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.durationController.text = value,
+                      onValidated: (value) => eventController.formService.validateEmpty(
+                        value, 
+                        bool.parse(eventController.hasTwoHalvesController.text)
+                        ? "Duração (min. por tempo)" 
+                        : "Duração (min.)",
+                      ),
                     ),
                   ),
                   Container(
@@ -299,9 +397,9 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       label: 'Tempo Prorrogação',
                       prefixIcon: Icons.more_time_rounded,
                       textController: eventController.extraTimeController,
-                      controller: eventController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.extraTimeController.text = value,
+                      onValidated: (value) => hasExtraTime ? eventController.formService.validateEmpty(value, 'Tempo Prorrogação') : null,
                     ),
                   ],
                   Container(
@@ -370,9 +468,9 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       label: 'Qtd. Gols',
                       prefixIcon: AppIcones.futbol_ball_outline,
                       textController: eventController.goalLimitController,
-                      controller: eventController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.goalLimitController.text = value,
+                      onValidated: (value) => hasGoalLimit ? eventController.formService.validateEmpty(value, 'Qtd. Gols') : null,
                     ),
                   ],
                   Container(
@@ -413,7 +511,8 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                         action: () => Get.back(),
                       ),
                       ButtonTextWidget(
-                        text: "Próximo",
+                        text: "Salvar",
+                        icon: AppIcones.save_solid,
                         width: 100,
                         action: submitForm,
                       ),

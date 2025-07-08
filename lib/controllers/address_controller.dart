@@ -37,6 +37,8 @@ class AddressController extends GetxController{
   RxBool isSearching = false.obs;
   //DEFINIR TEXTO DE PESQUISA
   RxString searchText = ''.obs;
+  //DEFINIR CATEGORIA
+  RxString category = ''.obs;
   //DEFINIR BOUNCE DE CAMPO DE PESQUISA
   late Worker debounceWorker;
   //LISTA DE SUGESTÕES DE ENDEREÇO
@@ -73,7 +75,6 @@ class AddressController extends GetxController{
 
   //FUNÇÃO PARA DEFINIR ENDEREÇO DO EVENTO
   void setEventAddress(AddressModel? suggestion){
-    print(suggestion);
     //FECHAR DIALOG
     Get.back();
     //VERIFICAR SE SUGESTÃO NÃO ESTA VAZIA
@@ -82,13 +83,34 @@ class AddressController extends GetxController{
       eventController.addressText.value = "${suggestion.street ?? ''} ${suggestion.borough ?? ''}, ${suggestion.number ?? ''} - ${suggestion.borough ?? ''} - ${suggestion.city}/${suggestion.state}";
       //ATUALIZAR ENDEREÇO DA PELADA
       eventController.addressEvent = suggestion;
-      //ATUALIZAR E MOVER MAPAR PARA LAT E LONG RECEBIDA
-      moveMapCurrentUser(LatLng(suggestion.latitude!, suggestion.longitude!));
+      //ATUALIZAR CATEGORIA APARTIR DO ENDEREÇO
+      eventController.category = category;
       //LIMPAR SUGESTÕES E CAMPO DE PESQUISA
       suggestions.clear();
       searchController.clear();
       //NAVEGAR DE VOLTA PARA TELA DE REGISTRO DE ENDEREÇOS
       Get.offNamed('/event/register/address');
+    }
+  }
+
+  //FUNÇÃO PARA DEFINIR A CATEGORIA A PARTIR DA SUPERFICIE
+  void setCategory(marker){
+    //VERIFICAR ESPORTE
+    if(marker['sport'] == "soccer" || marker['sport'] == "football" || marker['sport'] == "futebol"){
+      switch (marker['surface']) {
+        case "grass":
+        case "sand":
+          category.value = "Futebol";
+          break;
+        case "artificial_turf":
+          category.value = "Fut7";
+          break;
+        default:
+          category.value = "Futsal";
+          break;
+      }
+    }else{
+      category.value = "Futsal";
     }
   }
 

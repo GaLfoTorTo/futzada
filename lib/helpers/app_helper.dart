@@ -392,11 +392,6 @@ class AppHelper {
   static void setFullScreen(bool enable){
     SystemChrome.setEnabledSystemUIMode(enable ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge);
   }
-
-  //ALTERAR A EXIBIÇÃO DE SENHA
-  static bool toggleVisibility(bool visible) {
-    return visible = !visible;
-  }
   
   //FUNÇÃO PARA FORMATAR DATAS
   static String formatDate(DateTime date) {

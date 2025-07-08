@@ -136,14 +136,16 @@ class _RegisterBasicStepState extends State<RegisterBasicStep> {
       {
         'name': 'visibility',
         'placeholder' : 'Qualquer usuário pode visualizar suas informações.',
-        'value': 'Publico',
+        'value': 'Public',
+        'label': 'Publico',
         'icon' : AppIcones.door_open_solid,
         'controller': controller.visibilityController,
       },
       {
         'name': 'visibility',
         'placeholder' : 'Apenas você e seus amigos podem visualizar suas informações..',
-        'value': 'Privado',
+        'value': 'Private',
+        'label': 'Privado',
         'icon' : AppIcones.door_close_solid,
         'controller': controller.visibilityController,
       },
@@ -240,9 +242,8 @@ class _RegisterBasicStepState extends State<RegisterBasicStep> {
                       prefixIcon: input['prefixIcon'],
                       sufixIcon: input['sufixIcon'],
                       textController: input['controller'],
-                      controller: controller,
                       type: input['type'],
-                      validator: input['validator'],
+                      onValidated: input['validator'],
                     ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -270,11 +271,11 @@ class _RegisterBasicStepState extends State<RegisterBasicStep> {
                         for(var radio in radios)
                         InputRadioWidget(
                           name: radio['name'],
+                          label: radio['label'],
                           value: radio['value'],
                           icon: radio['icon'],
                           placeholder: radio['placeholder'],
                           textController: radio['controller'],
-                          controller: controller,
                           onChanged: selectedVisibility,
                         ),
                       ]

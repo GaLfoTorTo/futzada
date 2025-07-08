@@ -1,12 +1,13 @@
-<svg width="400" height="800" viewBox="0 0 400 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="1.5" y="1.5" width="397" height="797" stroke="white" stroke-width="3"/>
-<rect x="105.696" y="1.5" width="188.608" height="77.7087" stroke="white" stroke-width="3"/>
-<ellipse cx="201.003" cy="78.6732" rx="3.51115" ry="3.44488" fill="white"/>
-<line x1="149.998" y1="195.022" x2="250.003" y2="195.022" stroke="white" stroke-width="3"/>
-<line y1="398.5" x2="400" y2="398.5" stroke="white" stroke-width="3"/>
-<ellipse cx="199.511" cy="399.445" rx="3.51115" ry="3.44488" fill="white"/>
-<path d="M200.191 341.5C232.632 341.5 258.882 367.295 258.882 399.055C258.882 430.815 232.633 456.61 200.191 456.61C167.75 456.61 141.5 430.815 141.5 399.055C141.5 367.295 167.75 341.5 200.191 341.5Z" stroke="white" stroke-width="3"/>
-<line x1="149.998" y1="600.994" x2="250.003" y2="600.994" stroke="white" stroke-width="3"/>
-<rect x="105.194" y="720.791" width="189.611" height="77.7087" stroke="white" stroke-width="3"/>
-<ellipse cx="200.501" cy="720.343" rx="3.51115" ry="3.44488" fill="white"/>
+<svg width="420" height="820" viewBox="0 0 420 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="420" height="820" rx="10" fill="#04D361"/>
+<rect x="11.5" y="11.5" width="397" height="797" stroke="white" stroke-width="3"/>
+<rect x="115.696" y="11.5" width="188.608" height="77.7087" stroke="white" stroke-width="3"/>
+<ellipse cx="211.003" cy="88.6732" rx="3.51115" ry="3.44488" fill="white"/>
+<line x1="159.998" y1="205.022" x2="260.003" y2="205.022" stroke="white" stroke-width="3"/>
+<path d="M210.191 351.5C242.632 351.5 268.882 377.295 268.882 409.055C268.882 440.815 242.633 466.61 210.191 466.61C177.75 466.61 151.5 440.815 151.5 409.055C151.5 377.295 177.75 351.5 210.191 351.5Z" stroke="white" stroke-width="3"/>
+<line x1="10" y1="408.5" x2="410" y2="408.5" stroke="white" stroke-width="3"/>
+<circle cx="210" cy="409" r="4" fill="white"/>
+<line x1="159.998" y1="610.994" x2="260.003" y2="610.994" stroke="white" stroke-width="3"/>
+<rect x="115.194" y="730.791" width="189.611" height="77.7087" stroke="white" stroke-width="3"/>
+<ellipse cx="210.501" cy="730.343" rx="3.51115" ry="3.44488" fill="white"/>
 </svg>

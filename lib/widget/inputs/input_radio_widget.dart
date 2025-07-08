@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 
 class InputRadioWidget extends StatefulWidget {
   final String name;
+  final String label;
   final String value;
   final IconData icon;
   final String placeholder;
   final TextEditingController textController;
-  final dynamic controller;
   final Function onChanged;
 
-  InputRadioWidget({
+  const InputRadioWidget({
     super.key, 
     required this.name, 
+    required this.label, 
     required this.value, 
     required this.icon, 
     required this.placeholder, 
     required this.textController, 
-    required this.controller, 
     required this.onChanged
   });
 
@@ -66,7 +63,7 @@ class _InputRadioWidgetState extends State<InputRadioWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(
-                  widget.value,
+                  widget.label,
                   style: TextStyle(
                     color: widget.value == widget.textController.text ? AppColors.green_300 : AppColors.gray_500,
                     fontSize: 15,

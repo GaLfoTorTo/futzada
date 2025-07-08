@@ -138,7 +138,6 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                         name: 'teamAName',
                         label: 'Time 1',
                         textController: gameController.teamANameController,
-                        controller: gameController,
                       ),
                     ],
                   )
@@ -151,7 +150,6 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                         name: 'teamBName',
                         label: 'Time 2',
                         textController: gameController.teamBNameController,
-                        controller: gameController,
                       ),
                     ],
                   )

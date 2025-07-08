@@ -90,7 +90,6 @@ class _ChatsPageState extends State<ChatsPage> {
                     bgColor: AppColors.gray_300.withAlpha(50),
                     prefixIcon: AppIcones.search_solid,
                     textController: controller.pesquisaController,
-                    controller: controller,
                     type: TextInputType.text,
                   ),
                 ),

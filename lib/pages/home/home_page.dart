@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                                     ),
                                   ),
                                   Text(
-                                    '${user!.firstName} ${user!.lastName}',
+                                    '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
                                     style: const TextStyle(
                                       color: AppColors.blue_500,
                                       fontSize: 15,

@@ -197,7 +197,7 @@ class GameService {
         return {
           "qtdPlayers" : 5,
           "minPlayers" :  4,
-          "maxPlayers" : 16,
+          "maxPlayers" : 6,
           "divisions" : 2,
         };
       default:

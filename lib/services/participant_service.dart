@@ -4,8 +4,6 @@ import 'package:faker/faker.dart' as fakerData;
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/repository/user_repository.dart';
-import 'package:futzada/services/player_service.dart';
-import 'package:futzada/services/user_service.dart';
 import 'package:intl/intl.dart';
 
 class ParticipantService {

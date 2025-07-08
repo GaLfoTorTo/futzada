@@ -251,7 +251,12 @@ class PlayerDialogState extends State<PlaceDialog> {
                 textColor: AppColors.blue_500,
                 width: dimensions.width,
                 backgroundColor: color,
-                action: () => addressController.setEventAddress(location)
+                action: () {
+                  //DEFINIR CATEGORIA APARTIR DA SUPERFICIE
+                  addressController.setCategory(widget.marker);
+                  //SELECIONAR LOCALIZAÇÃO
+                  addressController.setEventAddress(location);
+                }
               )
             ]else...[
 

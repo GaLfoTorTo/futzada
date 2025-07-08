@@ -1,7 +1,7 @@
 class AppApi {
   //URL BASE DAS REQUISIÇÕES
-  static final uri = 'http://192.168.15.8:8000';
-  static final url = 'http://192.168.15.8:8000/api/';
+  static const uri = 'http://192.168.15.9:8000';
+  static const url = 'http://192.168.15.9:8000/api/';
   //ROTAS DE USUÁRIO
   static const createUser = 'user/create';
   static const editUser = 'user/edit/';

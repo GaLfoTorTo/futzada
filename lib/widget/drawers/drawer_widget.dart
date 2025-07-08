@@ -159,7 +159,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${user!.firstName} ${user!.lastName}',
+                              '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: AppColors.blue_500,
@@ -167,7 +167,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if(user!.userName != null)
+                            if(user!.userName != null)...[
                               Text(
                                 '@${user!.userName}',
                                 style: const TextStyle(
@@ -176,6 +176,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                   fontWeight: FontWeight.normal,
                                 ),
                               )
+                            ]
                           ],
                         ),
                       ),

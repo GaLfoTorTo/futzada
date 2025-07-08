@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:futzada/enum/enums.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/enum/enums.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -31,6 +29,8 @@ class EventBasicStepState extends State<EventBasicStep> {
   EventController eventController = EventController.instance;
   //DEFINIR FORMKEY
   final formKey = GlobalKey<FormState>();
+  //CONTROLADOR DE VALIDAÇÃO
+  bool isValid = true;
   //DEFINIR ARMAZENAMENTO DA IMAGEM
   File? imageFile;
   //INICIALIZAR IMAGE PICKER
@@ -49,8 +49,9 @@ class EventBasicStepState extends State<EventBasicStep> {
     //VERIFICAR SE IMAGEM FOI SELECIONADA
     if (image != null) {
       setState(() {
+        //RESGTAR CAMINHO DA IMAGEM
         imageFile = File(image.path);
-        //eventController.onSaved({'photo': image.path});
+        eventController.photoController.text = image.path;
       });
     }
   }
@@ -106,35 +107,45 @@ class EventBasicStepState extends State<EventBasicStep> {
   //FUNÇÃO PARA SELECIONAR PERMISSÇOES DE COLABORADORES
   void selectedPermissions(String name){
     setState(() {
-      //ENCONTRAR O DIA ESPECIFICO NO ARRAY
+      //ENCONTRAR A PERMISSÃO NO MAP
       eventController.permissions.update(name,(value) => !value);
-      //ADICIONAR A MODEL DE PELADA
-      eventController.permissionsController.text = jsonEncode(eventController.permissions);
-      //eventController.onSaved({"permissions": jsonEncode(eventController.permissions)});
     });
   }
 
   //FUNÇÃO PARA VALIDAR FORMULÁRIO
-  bool validForm(){
-    //RESGATAR O FORMULÁRIO
-    var formData = formKey.currentState;
-    //VERIFIAR SE CAMPOS DE TEXTO FORAM PREENCHIDOS
-    if(formData?.validate() ?? false){
+  void validForm(){
+    setState(() {  
       //VERIFICAR SE VISIBILIDADE FOI SELECIONADA
-      if(eventController.visibilityController.text.isNotEmpty){
-        return true;
+      if(eventController.visibilityController.text.isEmpty){
+        isValid = false;
       }
-      AppHelper.feedbackMessage(context, 'Selecione a visibilidade da pelada.', type: 'error');
-    }
-    return false;
+      //VERIFICAR SE COLABORADORES ESTÃO ATIVADOS
+      if(bool.parse(eventController.allowCollaboratorsController.text)){
+        //VERIFICAR SE PERMISSÕES FORAM DEFINIDAS
+        if(!eventController.permissions.containsValue(true)){
+          isValid = false;
+        }
+      }
+      //RESGATAR O FORMULÁRIO
+      var formData = formKey.currentState;
+      //VERIFIAR SE CAMPOS DE TEXTO FORAM PREENCHIDOS
+      if(formData?.validate() ?? false){
+        isValid = true;
+        return;
+      }
+      isValid = false;
+      return;
+    });
   }
 
   //VALIDAÇÃO DA ETAPA
   void submitForm(){
+    //VALIDAR FORMULÁRIO
+    validForm();
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (validForm()) {
+    if (isValid) {
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/config_games');
+      Get.toNamed('/event/register/address');
     }
   }
 
@@ -148,6 +159,7 @@ class EventBasicStepState extends State<EventBasicStep> {
       {
         'name': 'visibility',
         'placeholder' : 'Qualquer usuário pode visualizar as informações.',
+        'label': 'Publico',
         'value': VisibilityPerfil.Public.name,
         'icon' : AppIcones.door_open_solid,
         'controller': eventController.visibilityController,
@@ -155,6 +167,7 @@ class EventBasicStepState extends State<EventBasicStep> {
       {
         'name': 'visibility',
         'placeholder' : 'Apenas os participantes podem visualizar as informações.',
+        'label': 'Privado',
         'value': VisibilityPerfil.Private.name,
         'icon' : AppIcones.door_close_solid,
         'controller': eventController.visibilityController,
@@ -226,7 +239,7 @@ class EventBasicStepState extends State<EventBasicStep> {
                     name: 'title',
                     label: 'Titulo',
                     textController: eventController.titleController,
-                    controller: eventController,
+                    onValidated: (value) => eventController.formService.validateEmpty(value, 'titulo'),
                     type: TextInputType.text,
                   ),
                   InputTextAreaWidget(
@@ -234,8 +247,6 @@ class EventBasicStepState extends State<EventBasicStep> {
                     label: 'Bio',
                     hint: 'Ex: Melhor Pelada do Brasil',
                     textController: eventController.bioController,
-                    controller: eventController,
-                    validator: (){},
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
@@ -256,18 +267,28 @@ class EventBasicStepState extends State<EventBasicStep> {
                       ...radios.map((radio){
                         return InputRadioWidget(
                           name: radio['name'],
+                          label: radio['label'],
                           value: radio['value'],
                           icon: radio['icon'],
                           placeholder: radio['placeholder'],
                           textController: radio['controller'],
-                          controller: eventController,
                           onChanged: (value){
                             setState(() {
                               eventController.visibilityController.text = value;
                             });
                           },
                         );
-                      })
+                      }),
+                      //VALIDAÇÃO DE VISIBILIDADE
+                      if(!isValid && eventController.visibilityController.text.isEmpty)...[
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            'A visibilidade deve ser informada!',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                        ),
+                      ]
                     ]
                   ),
                   Padding(
@@ -356,6 +377,18 @@ class EventBasicStepState extends State<EventBasicStep> {
                             ]
                           ),
                         ),
+                        //VALIDAÇÃO DE COLABORADORES
+                        if(bool.parse(eventController.allowCollaboratorsController.text))...[
+                          if(!isValid && !eventController.permissions.containsValue(true))...[
+                            const Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                'Ao menos 1 opção de permissão deve ser selecionada!',
+                                style: TextStyle(color: Colors.red, fontSize: 12),
+                              ),
+                            ),
+                          ]
+                        ]
                       ],
                     ),
                   ],

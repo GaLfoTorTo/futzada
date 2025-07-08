@@ -9,9 +9,8 @@ class InputDateWidget extends StatefulWidget {
   final String? placeholder;
   final Function? onSaved;
   final int? maxLength;
-  final Function? validator;
   final Function showModal;
-  final dynamic controller;
+  final String? Function(String?)? onValidated;
   final TextEditingController textController;
 
   const InputDateWidget({
@@ -24,10 +23,9 @@ class InputDateWidget extends StatefulWidget {
     this.placeholder,
     this.onSaved,
     this.maxLength,
-    this.validator,
+    this.onValidated,
     required this.showModal,
     required this.textController, 
-    required this.controller, 
   });
 
   @override
@@ -65,16 +63,7 @@ class _InputTextWidgetState extends State<InputDateWidget> {
             widget.onSaved!({widget.name:  value});
           }
         },
-        validator: (value) {
-          //DEFINIR VARIAVEL DE RESULTADO DA VALIDAÇÃO
-          String? result;
-          //VERIFICAR SE SERÁ USADA FUNÇÃO DE VALIDAÇÃO
-          if(widget.validator != null){
-            result = widget.controller.validateEmpty(value, widget.label);
-          }
-          //RETURNAR RESULTADO DA VALIDAÇÃO
-          return result;
-        },
+        validator: widget.onValidated,
         onTap: () {
           FocusScope.of(context).unfocus();
           //REMOVE FOCU DO INPUT 

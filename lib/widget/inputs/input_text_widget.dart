@@ -13,15 +13,12 @@ class InputTextWidget extends StatefulWidget {
   final String? placeholder;
   final TextInputType? type;
   final int? maxLength;
-  final String? Function(String?)? validator;
-  final VoidCallback? showModal;
   final VoidCallback? suffixFunction;
   final bool disabled;
-  final dynamic controller;
   final TextEditingController? textController;
   final Function(String)? onSaved;
   final Function(String)? onChanged;
-  final Function(String)? onValidated;
+  final String? Function(String?)? onValidated;
 
   const InputTextWidget({
     super.key,
@@ -36,10 +33,7 @@ class InputTextWidget extends StatefulWidget {
     this.placeholder,
     this.type,
     this.maxLength,
-    this.validator,
-    this.showModal,
     this.suffixFunction,
-    this.controller,
     this.textController,
     this.disabled = false,
     this.onSaved,
@@ -87,18 +81,17 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   
   //FUNÇÃO DE CONSTRUÇÃO DE SUFIX ICON
   Widget? _buildSuffixIcon() {
-    if (_sufixIcon == null) return null;
-    return widget.suffixFunction != null
-      ? IconButton(
+    if (_sufixIcon == null){
+      return null;
+    } else{
+      if(widget.suffixFunction != null){
+        return IconButton(
           icon: _sufixIcon!,
-          onPressed: () {
-            if (widget.type == TextInputType.visiblePassword) {
-              _showText();
-            }
-            widget.suffixFunction?.call();
-          },
-        )
-      : _sufixIcon;
+          onPressed: () =>_showText(),
+        );
+      }
+      return _sufixIcon;
+    }
   }
 
   @override
@@ -130,9 +123,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
         ),
         onChanged: (value) => widget.onChanged,
         onSaved: (value) => widget.onSaved,
-        validator: (value) { 
-          widget.onValidated;
-        },
+        validator: widget.onValidated,
         readOnly: widget.disabled,
       ),
     );
