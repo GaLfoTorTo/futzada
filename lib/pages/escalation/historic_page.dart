@@ -1,8 +1,7 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:get/get.dart';
 
 class HistoricPage extends StatefulWidget {
   const HistoricPage({super.key});
@@ -14,8 +13,6 @@ class HistoricPage extends StatefulWidget {
 class _HistoricPageState extends State<HistoricPage> {
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE CHAT
     var controller = EscalationController.instance;
 
@@ -35,7 +32,7 @@ class _HistoricPageState extends State<HistoricPage> {
                   return Column(
                     children: controller.myEscalations.map((entry) {
                       //RESGATAR ITENS 
-                      Map<String, dynamic> item = entry;
+                      //Map<String, dynamic> item = entry;
                       return  Container();
                     }).toList(),
                   );

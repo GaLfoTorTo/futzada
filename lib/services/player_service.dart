@@ -77,7 +77,7 @@ class PlayerService {
   }
   
   //FUNÇÃO PARA DEFINIR POSIÇÃO DINAMICAMENTE (TEMPORARIAMENTE)
-  static String getPositionFromEscalation(i){
+  String getPositionFromEscalation(i){
     if(i == 0){
       return 'gol';
     }else if(i ==  1 || i ==  2 || i == 3 || i == 4){

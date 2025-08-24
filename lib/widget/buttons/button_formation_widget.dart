@@ -15,9 +15,9 @@ class ButtonFormationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instance;
+    EscalationController escalationController = EscalationController.instance;
     //RESGATAR FORMAÇÕES
-    final List<String> itens = controller.formations;
+    final List<String> itens = escalationController.formations;
     
     return DropdownButton<String>(
       value: selectedFormation,

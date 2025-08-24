@@ -45,7 +45,7 @@ class ButtonDropdownMultiWidget extends StatefulWidget {
 
 class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
+  EscalationController escalationController = EscalationController.instance;
   //CONTROLDOR DE MENU
   bool isMenuOpen = false;
 
@@ -73,7 +73,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
       child: DropdownButton2<dynamic>(
         isExpanded: true,
         value: null,
-        onChanged: (optionTitle) => setItems(optionTitle),
+        onChanged: (optionValue) => setItems(optionValue),
         customButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -117,7 +117,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
               builder: (context, menuSetState) {
                 return Obx((){
                   //RESGATAR STATUS SELECIONADA
-                  final isSelected = controller.filtrosMarket['status'].contains(optionValue);
+                  final isSelected = escalationController.filtrosMarket['status'].contains(optionValue);
 
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -125,7 +125,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
                       if(isMenuOpen)...[
                         Checkbox(
                           value: isSelected,
-                          onChanged: (bool? selected) => setItems(optionTitle),
+                          onChanged: (bool? selected) => setItems(optionValue),
                         ),
                       ],
                       Expanded(

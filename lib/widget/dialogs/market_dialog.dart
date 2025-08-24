@@ -21,7 +21,7 @@ class MarketDialog extends StatefulWidget {
 
 class MarketDialogState extends State<MarketDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
+  EscalationController escalationController = EscalationController.instance;
 
   @override
   void initState() {
@@ -31,8 +31,8 @@ class MarketDialogState extends State<MarketDialog> {
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
   void selectFilter(String name, dynamic newValue){
     setState(() {
-      controller.setFilter(name, newValue);
-      controller.update();
+      escalationController.setFilter(name, newValue);
+      escalationController.update();
     });
   }
 
@@ -53,72 +53,72 @@ class MarketDialogState extends State<MarketDialog> {
         'name':'price',
         'label':'Preço',
         'icon': AppIcones.money_check_solid,
-        'selectedItem' : controller.filtrosMarket['price'],
-        'itens': controller.filterOptions['price'],
+        'selectedItem' : escalationController.filtrosMarket['price'],
+        'itens': escalationController.filterOptions['price'],
         'width' : 3
       },
       {
         'name':'media',
         'label':'Média',
         'icon': AppIcones.chart_line_solid,
-        'selectedItem' : controller.filtrosMarket['media'],
-        'itens': controller.filterOptions['media'],
+        'selectedItem' : escalationController.filtrosMarket['media'],
+        'itens': escalationController.filterOptions['media'],
         'width' : 3
       },
       {
         'name':'games',
         'label':'Jogos',
         'icon': AppIcones.clipboard_solid,
-        'selectedItem' : controller.filtrosMarket['game'],
-        'itens': controller.filterOptions['games'],
+        'selectedItem' : escalationController.filtrosMarket['game'],
+        'itens': escalationController.filterOptions['games'],
         'width' : 3
       },
       {
         'name':'lastPontuation',
         'label':'Última Pontuação',
         'icon': AppIcones.calculator_solid,
-        'selectedItem' : controller.filtrosMarket['lastPontuation'],
-        'itens': controller.filterOptions['lastPontuation'],
+        'selectedItem' : escalationController.filtrosMarket['lastPontuation'],
+        'itens': escalationController.filterOptions['lastPontuation'],
         'width' : 2
       },
       {
         'name':'valorization',
         'label':'Valorização',
         'icon': AppIcones.sort_amount_up_solid,
-        'selectedItem' : controller.filtrosMarket['valorization'],
-        'itens': controller.filterOptions['valorization'],
+        'selectedItem' : escalationController.filtrosMarket['valorization'],
+        'itens': escalationController.filterOptions['valorization'],
         'width' : 2
       },
       {
         'name':'nome',
         'label':'Ordenar',
         'icon': AppIcones.money_check_solid,
-        'selectedItem' : controller.filtrosMarket['nome'],
-        'itens': controller.filterPlayerOptions['nome'],
+        'selectedItem' : escalationController.filtrosMarket['nome'],
+        'itens': escalationController.filterPlayerOptions['nome'],
         'width' : 2
       },
       {
         'name':'status',
         'label':'Status',
         'icon': AppIcones.check_circle_solid,
-        'selectedItem' : controller.filtrosMarket['status'],
-        'itens': controller.filterOptions['status'],
+        'selectedItem' : escalationController.filtrosMarket['status'],
+        'itens': escalationController.filterOptions['status'],
         'width' : 2
       },
     ];
     
     //LISTA DE MELHOR PÉ
     List<Map<String, dynamic>> bestSideOptions = [
-      {'value': 'Esquerda', 'icon': AppIcones.foot_left_solid, 'checked': controller.filtrosMarket['bestSide'] == 'Esquerda' ? true : false},
-      {'value': 'Direita', 'icon': AppIcones.foot_right_solid, 'checked': controller.filtrosMarket['bestSide'] == 'Direita' ? true : false},
+      {'value': 'Esquerda', 'icon': AppIcones.foot_left_solid, 'checked': escalationController.filtrosMarket['bestSide'] == 'Esquerda' ? true : false},
+      {'value': 'Direita', 'icon': AppIcones.foot_right_solid, 'checked': escalationController.filtrosMarket['bestSide'] == 'Direita' ? true : false},
     ];
     
     //LISTA DE STATUS DISPONIVEIS
     List<Map<String, dynamic>> positionsOptions = [
-      {'label': 'ATA','value': 'ata', 'icon': AppIcones.posicao['ata'], 'checked': controller.filtrosMarket['positions'].contains('ATA') ? true : false},
-      {'label': 'MEI','value': 'mei', 'icon': AppIcones.posicao['mei'], 'checked': controller.filtrosMarket['positions'].contains('MEI') ? true : false},
-      {'label': 'ZAG','value': 'zag', 'icon': AppIcones.posicao['zag'], 'checked': controller.filtrosMarket['positions'].contains('ZAG') ? true : false},
-      {'label': 'GOL','value': 'gol', 'icon': AppIcones.posicao['gol'], 'checked': controller.filtrosMarket['positions'].contains('GOL') ? true : false},
+      {'label': 'ATA','value': 'ata', 'icon': AppIcones.posicao['ata'], 'checked': escalationController.filtrosMarket['positions'].contains('ATA') ? true : false},
+      {'label': 'MEI','value': 'mei', 'icon': AppIcones.posicao['mei'], 'checked': escalationController.filtrosMarket['positions'].contains('MEI') ? true : false},
+      {'label': 'ZAG','value': 'zag', 'icon': AppIcones.posicao['zag'], 'checked': escalationController.filtrosMarket['positions'].contains('ZAG') ? true : false},
+      {'label': 'GOL','value': 'gol', 'icon': AppIcones.posicao['gol'], 'checked': escalationController.filtrosMarket['positions'].contains('GOL') ? true : false},
     ];
 
     return  SingleChildScrollView(
@@ -169,8 +169,8 @@ class MarketDialogState extends State<MarketDialog> {
                                   ),
                                   if(item['label'] == 'Status')...[
                                     ButtonDropdownMultiWidget(
-                                      selectedItems: controller.filtrosMarket['status'] as List<dynamic>,
-                                      items: controller.filterOptions['status'] as List<dynamic>, 
+                                      selectedItems: escalationController.filtrosMarket['status'] as List<dynamic>,
+                                      items: escalationController.filterOptions['status'] as List<dynamic>, 
                                       onChanged: (newValue) => selectFilter('status', newValue),
                                       textSize: AppSize.fontSm,
                                       borderColor: AppColors.gray_300,

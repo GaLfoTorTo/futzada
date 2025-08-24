@@ -12,65 +12,67 @@ import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/market_service.dart';
 import 'package:futzada/services/participant_service.dart';
 
-class EscalationController extends GetxController{
-  //DEFINIR CONTROLLER UNICO NO GETX
+//===DEPENDENCIAS BASE===
+abstract class EscalationBase {
+  //GETTER - SERVIÇOS
+  EscalationService get escalationService;
+  ParticipantService get participantService;
+  MarketService get marketService;
+  ManagerService get managerService;
+  
+  //GETTER - USUÁRIO E EVENTOS
+  UserModel get user;
+  List<EventModel> get myEvents;
+  
+  //GETTER - ESTADOS
+  bool get canManager;
+  RxString get selectedCategory;
+  RxString get selectedFormation;
+  RxInt get selectedPlayer;
+  RxString get selectedOccupation;
+  RxInt get selectedPlayerCapitan;
+  RxDouble get managerPatrimony;
+  RxDouble get managerTeamPrice;
+  RxDouble get managerValuation;
+  List<String> get formations;
+  
+  //GETTER - FILTROS
+  RxMap<String, dynamic> get filtrosMarket;
+  Map<String, List<Map<String, dynamic>>> get filterOptions;
+  Map<String, List<Map<String, dynamic>>> get filterPlayerOptions;
+  
+  //GETTER - DADOS DO EVENTO
+  EventModel? get selectedEvent;
+  RxList<Map<String, dynamic>> get myEscalations;
+  RxList<ParticipantModel> get playersMarket;
+  RxList<ParticipantModel> get filteredPlayersMarket;
+  RxMap<String, RxMap<int, ParticipantModel?>> get escalation;
+  List<ParticipantModel?> get starters;
+  List<ParticipantModel?> get reserves;
+  
+  //CONTROLADOR DE PESQUISA
+  TextEditingController get pesquisaController;
+}
+
+class EscalationController extends GetxController 
+  with EscalationManagerMixin, EscalationMarketMixin, EscalationTeamMixin {
+  
+  //GETTER DE CONTROLLERS
   static EscalationController get instance => Get.find();
-  //INSTANCIAR SERVIÇO DE ESCALAÇÃO
-  static EscalationService escalationService = EscalationService();
-  //INSTANCIAR SERVIÇO DE PARTICIPANTES
-  static ParticipantService participantService = ParticipantService();
-  //INSTANCIAR SERVIÇO DE MERCADO
-  static MarketService marketService = MarketService();
-  //INSTANCIAR SERVIÇO DE TECNICO
-  static ManagerService managerService = ManagerService();
-
-  //CONTROLADOR DE INPUT DE PESQUISA
+  
+  //GETTER DE SERVIÇOS
+  @override
+  final EscalationService escalationService = EscalationService();
+  @override
+  final ParticipantService participantService = ParticipantService();
+  @override
+  final MarketService marketService = MarketService();
+  @override
+  final ManagerService managerService = ManagerService();
+  
+  //CONTROLADOR DE PESQUISA
+  @override
   final TextEditingController pesquisaController = TextEditingController();
-
-  //RESGATAR USUARIO LOGADO
-  UserModel user = Get.find(tag: 'user');
-  //LISTA DE EVENTOS DO USUARIO
-  List<EventModel> myEvents = Get.find(tag: 'events');
-  //ESTADO CONTROLADOR DE VERIFICAÇÃO SE USUÁRIO ESTA PARTICIPANDO DE UM EVENTO COMO TECNICO
-  bool canManager = false;
-  //ESTADO CONTROLADOR DE CATEGORIA DO EVENTO
-  String selectedCategory = '';
-  //ESTADO CONTROLLADOR DE FORMAÇÃO SELECIONADA
-  String selectedFormation = '';
-  //ESTADO CONTROLADOR DE INDEX DO JOGADOR NA ESCALAÇÃO
-  RxInt selectedPlayer = 0.obs;
-  //ESTADO CONTROLADOR DE SIGLA DE OCUPAÇÃO DO JOGADOR NA ESCALAÇÃO
-  RxString selectedOcupation = ''.obs;
-  //ESTADO CONTROLADOR DE ID DE CAPITÃO NA ESCALAÇÃO
-  RxInt selectedPlayerCapitan = 0.obs;
-  //ESTADO CONTROLADOR DE PATRIMONIO DO USUARIO
-  RxDouble managerPatrimony = 100.0.obs;
-  //ESTADO CONTROLADOR DE PREÇO DA EQUIPE DO USUARIO
-  RxDouble managerTeamPrice = 0.0.obs;
-  //ESTADO CONTROLADOR DE VALORIZAÇÃO DE PATRIMONIO DO USUARIO
-  double managerValuation = 0.0;
-  //ESTADO CONTROLADOR DE FORMAÇÕES DISPONIVIES POR CATEGORIA
-  List<String> formations = [];
-
-  //ESTADO DE FILTROS DO MERCADO
-  RxMap<String, dynamic> filtrosMarket = marketService.filtrosMarket.obs;
-  //LISTA DE OPÇÕES DE FILTROS DE METRICA
-  Map<String, List<Map<String, dynamic>>> filterOptions = marketService.filterOptions;
-  //LISTA DE OPÇÕES DE FILTROS DE USUARIO
-  Map<String, List<Map<String, dynamic>>> filterPlayerOptions = marketService.filterPlayerOptions;
-
-  //ESTADO CONTROLADOR DE ID DO EVENTO SELECIONADO
-  late EventModel? selectedEvent;
-  //LISTA DE ESCALAÇÕES DO USUARIO
-  late RxList<Map<String, dynamic>> myEscalations;
-  //LISTA DE JOGADORES DO MERCADO
-  late RxList<ParticipantModel> playersMarket;
-  //ESTADO DE ESCALAÇÃO DO USUARIO
-  late RxMap<String, RxMap<int, ParticipantModel?>> escalation;
-  //ESTADO DE ESCALAÇÃO DE TITULARES DO USUARIO
-  RxMap<int, ParticipantModel?> starters = <int, ParticipantModel?>{}.obs;
-  //ESTADO DE ESCALAÇÃO DE RESERVAS DO USUARIO
-  RxMap<int, ParticipantModel?> reserves = <int, ParticipantModel?>{}.obs;
 
   @override
   void onInit() {
@@ -83,65 +85,127 @@ class EscalationController extends GetxController{
         canManager = true;
         //DEFINIR DADOS DO EVENTO
         setEvent(myEvents.first.id);
+        //CARREGAR JOGADORES DO MERCADO
+        playersMarket.value = participantService.getParticipants();
+        //APLICAR FILTRO INICIAL NOS JOGADORES DO MERCADO
+        filteredPlayersMarket.value = filterMarketPlayers();
       }
     }
   }
+}
 
+//===MIXIN - GERENCIAMENTO DE ESCALAÇÃO===
+mixin EscalationManagerMixin on GetxController implements EscalationBase {
+  //ESTADOS
+  @override
+  final UserModel user = Get.find(tag: 'user');
+  @override
+  final List<EventModel> myEvents = Get.find(tag: 'events');
+  @override
+  bool canManager = false;
+  @override
+  final RxString selectedCategory = ''.obs;
+  @override
+  final RxString selectedFormation = ''.obs;
+  @override
+  final RxInt selectedPlayer = 0.obs;
+  @override
+  final RxString selectedOccupation = ''.obs;
+  @override
+  final RxInt selectedPlayerCapitan = 0.obs;
+  @override
+  final RxDouble managerPatrimony = 100.0.obs;
+  @override
+  final RxDouble managerTeamPrice = 0.0.obs;
+  @override
+  final RxDouble managerValuation = 0.0.obs;
+  @override
+  List<String> formations = [];
+  
+  //DADOS DO EVENTO
+  @override
+  late EventModel? selectedEvent;
+  @override
+  late RxList<Map<String, dynamic>> myEscalations;
+  //ESTADOS
+  @override
+  late RxMap<String, RxMap<int, ParticipantModel?>> escalation;
+  @override
+  late RxList<ParticipantModel?> starters = <ParticipantModel?>[].obs;
+  @override
+  late RxList<ParticipantModel?> reserves = <ParticipantModel?>[].obs;
+  
   //FUNÇÃO PARA SELECIONAR EVENTO E ATUALIZAR DADOS REFERNTES AO EVENTO
-  void setEvent(id){
+  void setEvent(id) {
     //ATUALIZAR EVENTO SELECIONADO
     selectedEvent = myEvents.firstWhere((event) => event.id == id);
     //ATUALIZAR CATEGORIA DO EVENTO SELECIONADOS
-    selectedCategory =  myEvents.firstWhere((event) => event.id == selectedEvent!.id).gameConfig!.category!;
+    selectedCategory.value = myEvents.firstWhere((event) => event.id == selectedEvent!.id).gameConfig!.category!;
     //ADICIONAR DADOS DE TECNICO CASO EXISTAM
     user.manager = managerService.generateManager(1);
-    //DEFINIR JOGADORES DO MERCADO DO EVENTO SELECIONADO
-    playersMarket = filterMarketPlayers();
     //DEFINIR FORMAÇÕES APARTIR DE CATEGORIA SELECIONADA
-    formations = escalationService.getFormations(selectedCategory);
+    formations = escalationService.getFormations(selectedCategory.value);
     //DEFINIR INFORMAÇÕES REFERENTES AO USUARIO NO EVENTO SELECIONADO
     setUserInfo();
   }
 
   //FUNÇÃO QUE RESGATAR DADOS DE ESCALAÇÃO DO USUARIO NO EVENTO SELECIONADO
-  void setUserInfo(){
+  void setUserInfo() {
     //RESGATAR ESCALAÇÃO DO USUARIO PARA EVENTO SELECIONADO
-    EscalationModel userEscalation = escalationService.generateEscalation(selectedCategory, selectedEvent!.participants!);
+    EscalationModel userEscalation = escalationService.generateEscalation(selectedCategory.value, selectedEvent!.participants!);
     //RESGATAR FORMAÇÃO DA ESCALAÇAÕ DO USUARIO NO EVENTO SELECIONADO
-    selectedFormation = userEscalation.formation!;
+    selectedFormation.value = userEscalation.formation!;
     //RESGATAR ESCALAÇÃO DE TITULARES E RESERVAS DO USUARIO NO EVENTO SELECIONADO
-    starters.value = userEscalation.starters ?? <int, ParticipantModel?>{}.obs;
-    reserves.value = userEscalation.reserves ?? <int, ParticipantModel?>{}.obs;
+    starters.value = userEscalation.starters ?? escalationService.setEscalation(selectedCategory.value, 'starters');
+    reserves.value = userEscalation.reserves ?? escalationService.setEscalation(selectedCategory.value, 'reserves');
     //DEFINIR VALOR DE PATRIMÔNIO DO USUARIO NO EVENTO SELECIONADO
     managerPatrimony.value = user.manager!.economy!.patrimony!;
     //DEFINIR VALOR DA EQUIPE DO USUARIO NO EVENTO SELECIONADO
     managerTeamPrice.value = user.manager!.economy!.price!;
     //DEFINIR VALOR DA EQUIPE DO USUARIO NO EVENTO SELECIONADO
-    managerValuation = user.manager!.economy!.valuation!;
+    managerValuation.value = user.manager!.economy!.valuation!;
   }
+}
 
+//===MIXIN - MERCADO DE JOGADORES===
+mixin EscalationMarketMixin on GetxController implements EscalationBase {
+  //ESTADOS
+  @override
+  final RxMap<String, dynamic> filtrosMarket = MarketService().filtrosMarket.obs;
+  @override
+  final Map<String, List<Map<String, dynamic>>> filterOptions = MarketService().filterOptions;
+  @override
+  final Map<String, List<Map<String, dynamic>>> filterPlayerOptions = MarketService().filterPlayerOptions;
+  @override
+  RxList<ParticipantModel> playersMarket = <ParticipantModel>[].obs;
+  @override
+  RxList<ParticipantModel> filteredPlayersMarket = <ParticipantModel>[].obs;
+  
   //FUNÇÃO PARA RESETAR FILTRO
-  void resetFilter(){
+  void resetFilter() {
     //RESETAR FILTRO
     filtrosMarket.value = marketService.filtrosMarket;
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE FILTRO DO MERCADO
-  void setFilter(String name, dynamic newValue){
-    //VERIFICAR SE NAME E VALOR RECEBIDOS NÃO SETA VAZIOS
-    if(name != 'positions' && name != 'status'){
+  void setFilter(String name, dynamic newValue) {
+    //VERIFICAR SE NAME E VALOR RECEBIDOS NÃO ESTÂO VAZIOS
+    if(name != 'positions' && name != 'status' && name != 'bestSide') {
       //ATUALIZAR CHAVE DO FILTRO
       filtrosMarket[name] = newValue;
     }
     //VERIFICAÇÃO PARA POSIÇÕES
-    if(name == 'positions' || name == 'status'){
+    if(name == 'positions' || name == 'status' || name == 'bestSide') {
       //VERIFICAR SE RECEBIDO FOI POSIÇÃO E SE ESTA NO FORMATO DE ARRAY
-      if(name == 'positions' && newValue is List<String>){
+      if(name == 'positions' && newValue is List<String>) {
         //ATUALIZAR CHAVE DO FILTRO
         filtrosMarket[name] = newValue;
-      }else{
+      }else if(name == 'bestSide'){
+        //ATUALIZAR CHAVE DO FILTRO
+        filtrosMarket[name] = newValue != filtrosMarket[name] ? newValue : '';
+      } else {
         //RESGATAR POSIÇÕES SALVAS NO FILTRO
-        final arr = filtrosMarket[name];
+        final arr = filtrosMarket[name] as List<String>;
         //VERIFICAR SE POSIÇÃO RESCEBIDA ESTA NO FILTRO
         if (arr.contains(newValue)) {
           //REMOVER POSIÇÃO
@@ -155,15 +219,15 @@ class EscalationController extends GetxController{
       }
     }
     //APLICAR FILTRO NOS JOGADORES DO MERCADO
-    playersMarket.value = filterMarketPlayers();
+    filteredPlayersMarket.value = filterMarketPlayers();
   }
 
   //FUNÇÃO DE APLICAÇÃO DE FILTROS
   RxList<ParticipantModel> filterMarketPlayers() {
     //RESGATAR FILTROS
     final filters = filtrosMarket;
-    //RESGATAR JOGADORES DO MERCADO
-    final participants = participantService.getParticipants();
+    //RESGATAR JOGADORES DO MERCADO JOGADORES ORIGINAIS
+    final participants = List<ParticipantModel>.from(playersMarket);
     //VERIFICAR SE EVENTO TEM PARTICIPANTES VALIDOS
     if (participants.isEmpty) {
       //RETORNAR PARTICIPANTES VAZIOS
@@ -172,7 +236,7 @@ class EscalationController extends GetxController{
     //APLICAR FILTROS NÃO NÚMERICOS
     List<ParticipantModel> filteredPlayers = participants.where((participant) {
       //VERIFICAR SE PARTICIPANT É UM JOGADOR
-      if(participant.user.player != null){
+      if(participant.user.player != null) {
         //RESGATAR JOGADOR
         PlayerModel player = participant.user.player!;
         //FILTRO NOS STATUS
@@ -299,23 +363,42 @@ class EscalationController extends GetxController{
     //RETORNAR PARTICIPANTS
     return participants;
   }
+}
 
+//===MIXIN - GERENCIAMENTO DE EQUIPE===
+mixin EscalationTeamMixin on GetxController implements EscalationBase {  
+  
   //FUNÇÃO PARA ALTERAR JOGADOR NA ESCALAÇÃO (TITULARES)
-  void setStarter(int index, ParticipantModel? player) {
-    starters[index] = player;
-    starters.refresh();
+  void setPlayerPosition(ParticipantModel? player) {
+    //VERIFICAR SE JOGADOR E TITULAR OU RESERVA
+    if(selectedOccupation.value == 'starters'){
+      starters[selectedPlayer.value] = starters[selectedPlayer.value] == null ? player : null;
+    }else{
+      reserves[selectedPlayer.value] = starters[selectedPlayer.value] == null ? player : null;
+    }
   }
 
-  //FUNÇÃO PARA ALTER JOGADOR NA ESCALAÇÃO (RESERVAS)
-  void setReserve(int index, ParticipantModel? player) {
-    reserves[index] = player;
-    reserves.refresh();
+  //FUNÇÃO DE DEFINIÇÃO JOGADOR COMO CAPITÃO
+  void setPlayerCapitan(dynamic id) {
+    try {
+      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
+      bool isEscaled = findPlayerEscalation(id);
+      //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
+      if(isEscaled) {
+        //ADICIONAR ID DO JOGADOR CAPITÃO
+        selectedPlayerCapitan.value = selectedPlayerCapitan.value == id ? 0 : id;
+      }
+    } catch (e) {
+      print(e);
+      //EXIBIR MENSAGEM DE ERRO
+      AppHelper.feedbackMessage(Get.context, 'Houve um erro, Tente novamente!');
+    }
   }
 
   //FUNÇÃO DE ALTERAÇÃO JOGADOR NA ESCALAÇÃO
-  void setPlayerEscalation(dynamic id){
+  void setPlayerEscalation(dynamic id) {
     //RESGATR JOGADOR DO MERCADO
-    final player = participantService.findPlayer(playersMarket, id);
+    final player = playersMarket.firstWhereOrNull((player) => player.id == id);
     //VERIFICAR SE JOGADOR FOI ENCONTRADO
     if (player == null) {
       //EXIBIR MENSAGEM DE ERRO
@@ -325,30 +408,12 @@ class EscalationController extends GetxController{
     try {
       //VERIFICAR SE JOGADOR ESTA ESCALADO
       bool isEscaled = findPlayerEscalation(id);
-      //VERIFICAR SE JOGADOR JÁ ESTA ESCALADO
-      if(!isEscaled){
-        //VERIFICAR OCUPAÇÃO NA ESCALAÇÃO
-        if (selectedOcupation.value == 'starters') {
-          //ADICIONAR JOGADOR A POSIÇÃO
-          setStarter(selectedPlayer.value, player);
-        } else if (selectedOcupation.value == 'reserves') {
-          //ADICIONAR JOGADOR A POSIÇÃO
-          setReserve(selectedPlayer.value, player);
-        }
-        //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
-        calcTeamPrice(player.user.player!.rating!.price!, 'add');
-      }else{
-        //VERIFICAR OCUPAÇÃO NA ESCALAÇÃO
-        if (selectedOcupation.value == 'starters') {
-          //REMOVER JOGADOR DA POSIÇÃO
-          setStarter(selectedPlayer.value, player);
-        } else if (selectedOcupation.value == 'reserves') {
-          //REMOVER JOGADOR DA POSIÇÃO
-          setReserve(selectedPlayer.value, player);
-        }
-        //CALCULAR PATRIMONIO DISPONIVEL E PREÇO DA EQUIPE
-        calcTeamPrice(player.user.player!.rating!.price!, 'remove');
-      }
+      //ADICIONAR JOGADOR A POSIÇÃO
+      setPlayerPosition(player);
+      //RESGATAR AÇÃO DE PATRIMONIO E PREÇO DA EQUIPE
+      String action = isEscaled ? 'remove' : 'add';
+      //CALCULAR PATRIMONIO E PREÇO DA EQUIPE
+      calcTeamPrice(player.user.player!.rating!.price!, action);
     } catch (e) {
       print(e);
       //EXIBIR MENSAGEM DE ERRO
@@ -356,77 +421,31 @@ class EscalationController extends GetxController{
     }
     //RESETAR POSIÇÃO E OCUPAÇÃO DO JOGADOR SELECIONADO
     selectedPlayer.value = 0;
-    selectedOcupation.value = '';
+    selectedOccupation.value = '';
   }
   
   //FUNÇÃO DE BUSCA DE JOGADOR NA ESCALAÇÃO
   bool findPlayerEscalation(int id) {
-    //DEFINIR VALOR PADRÃO
-    bool player = false;
+    bool found = false;
     //PERCORRER MAPA DE TITULARES
-    starters.forEach((i, participant) {
+    starters.asMap().forEach((i, participant) {
       //VERIFICAR SE JOGADOR FOI ESCALADO
       if (participant != null && participant.id == id) {
-        //ATUALIZAR INDEX E OCUPAÇÃOS DO JOGADOR QUE ESTA SENDO BUSCADO
-        selectedPlayer.value = i;
-        selectedOcupation.value = 'starters';
-        //ATUALIZAR RETORNO DA FUNÇÃO
-        player = true;
+        found = true;
       }
     });
     //PERCORRER MAPA DE RESERVAS
-    reserves.forEach((i, participant) {
+    reserves.asMap().forEach((i, participant) {
       //VERIFICAR SE JOGADOR FOI ESCALADO
       if (participant != null && participant.id == id) {
-        //ATUALIZAR INDEX E OCUPAÇÃOS DO JOGADOR QUE ESTA SENDO BUSCADO
-        selectedPlayer.value = i;
-        selectedOcupation.value = 'reserves';
-        //ATUALIZAR RETORNO DA FUNÇÃO
-        player = true;
+        found = true;
       }
     });
-    //RETORNAR SE JOGADOR FOI ENCONTRADO NA ESCALAÇÃO
-    return player;
-  }
-
-  //FUNÇÃO PARA DEFINIR POSIÇÃO DINAMICAMENTE (TEMPORARIAMENTE)
-  String getPositionFromEscalation(i){
-    if(i == 0){
-      return 'gol';
-    }else if(i ==  1 || i ==  2 || i == 3 || i == 4){
-      return 'zag';
-    }else if(i ==  5 || i == 6 || i == 7){
-      return 'mei';
-    }else{
-      return 'ata';
-    }
-  }
-
-  //FUNÇÃO DE DEFINIÇÃO JOGADOR COMO CAPITÃO
-  void setPlayerCapitan(dynamic id){
-    try {
-      //VERIFICAR EM QUE OCUPAÇÃO O JOGADOR ESTA NA ESCALAÇÃO
-      bool isEscaled = findPlayerEscalation(id);
-      //VERIFICAR SE JOGADOR FOI ENCONTRADO NA ESCALÇÃO
-      if(isEscaled){
-        //VERIFICAR SE JOGADOR JA ESTA DEFINIDO COMO CAPITÃO
-        if(selectedPlayerCapitan.value == id){
-          //REMOVER CAPITÃO
-          selectedPlayerCapitan.value = 0;
-        }else{
-          //ADICIONAR ID DO JOGADOR CAPITÃO
-          selectedPlayerCapitan.value = id;
-        }
-      }
-    } catch (e) {
-      print(e);
-      //EXIBIR MENSAGEM DE ERRO
-      AppHelper.feedbackMessage(Get.context, 'Houve um erro, Tente novamente!');
-    }
+    return found;
   }
 
   //FUNÇÃO PARA CONTABILIZAÇÃO DE PREÇO DA EQUIPE E PATRIMONIO
-  void calcTeamPrice(double playerPrice, String action){
+  void calcTeamPrice(double playerPrice, String action) {
     //ARREDONDAR VALOR DO JOGADOR RECEBIDO
     final roundedPrice = double.parse(playerPrice.toStringAsFixed(2));
     //VERIFICAR FLAG DE AÇÃO

@@ -21,13 +21,13 @@ class MarketPage extends StatefulWidget {
 
 class MarketPageState extends State<MarketPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
+  EscalationController escalationController = EscalationController.instance;
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
   void selectFilter(String name, dynamic newValue){
     setState(() {
-      controller.setFilter(name, newValue);
-      controller.update();
+      escalationController.setFilter(name, newValue);
+      escalationController.update();
     });
   }
   
@@ -67,7 +67,7 @@ class MarketPageState extends State<MarketPage> {
                       hint: 'Pesquisa',
                       bgColor: AppColors.gray_300.withAlpha(50),
                       prefixIcon: AppIcones.search_solid,
-                      textController: controller.pesquisaController,
+                      textController: escalationController.pesquisaController,
                       type: TextInputType.text,
                     ),
                     Obx(() {
@@ -76,10 +76,10 @@ class MarketPageState extends State<MarketPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ButtonDropdownWidget(
-                            selectedItem: controller.filtrosMarket['price'],
-                            items: controller.filterOptions['price'] as List<dynamic>, 
+                            selectedItem: escalationController.filtrosMarket['price'],
+                            items: escalationController.filterOptions['price'] as List<dynamic>, 
                             onChange: (newValue) => selectFilter('price', newValue),
-                            textSize: AppSize.fontSm,
+                            textSize: AppSize.fontMd,
                             width: ( dimensions.width / 3 ) - 10,
                           ),
                           const SizedBox(
@@ -91,8 +91,8 @@ class MarketPageState extends State<MarketPage> {
                             ),
                           ),
                           ButtonDropdownMultiWidget(
-                            selectedItems: controller.filtrosMarket['status'] as List<dynamic>,
-                            items: controller.filterOptions['status'] as List<dynamic>, 
+                            selectedItems: escalationController.filtrosMarket['status'] as List<dynamic>,
+                            items: escalationController.filterOptions['status'] as List<dynamic>, 
                             onChanged: (newValue) => selectFilter('status', newValue),
                             textSize: AppSize.fontSm,
                             width: ( dimensions.width / 3 ) - 10,
@@ -125,13 +125,13 @@ class MarketPageState extends State<MarketPage> {
                 padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    if(controller.playersMarket.isNotEmpty)...[
-                      ...controller.playersMarket.map((entry) {
+                    if(escalationController.filteredPlayersMarket.isNotEmpty)...[
+                      ...escalationController.filteredPlayersMarket.map((entry) {
                         //RESGATAR ITENS 
                         final item = entry;
                         return  CardPlayerMarketWidget(
                           participant: item,
-                          escalation: controller.starters
+                          escalation: escalationController.starters
                         );
                       }).toList(),
                     ]else...[

@@ -26,14 +26,18 @@ class HomeController extends GetxController{
   ManagerService managerService = ManagerService();
   //INSTANCIAR SERVIÇO DE HOME
   HomeService homeService = HomeService();
+  //LISTA DE EVENTOS DO USUARIO
+  List<EventModel> userEvents = [];
 
-  //LISTA DE OPTIONS PARA O CARD PERTO DE VOCE
+  //LISTA DE ADS
+  List<Map<String, dynamic>> ads = [];
+  //LISTA DE EVENTOS - PERTO DE VOCE
   List<Map<String, dynamic>> events = [];
-  //LISTA DE OPTIONS PARA O CARD TOP RANKING
+  //LISTA DE RANKINGS - TOP RANKING
   List<Map<String, dynamic>> ranking = [];
-  //LISTA DE OPTIONS PARA O CARD POPULAR
+  //LISTA DE EVENTOS - POPULARES
   List<Map<String, dynamic>> popular = [];
-  //LISTA DE OPTIONS PARA O CARD POPULAR
+  //LISTA DE PARTIDAS
   List<Map<String, dynamic>> partidas = [];
 
   @override
@@ -66,6 +70,7 @@ class HomeController extends GetxController{
   void _loadUserEvents() async{
     //BUSCAR EVENTOS QUE O USUARIO ESTA PARTICIPANDO
     List<EventModel> events = await userService.fetchEventsUser();
+    userEvents.addAll(events);
     //VERIFICAR SE ALGUM EVENTO FOI ENCONTRADO
     if(events.isNotEmpty){
       //ADICIONAR GLOBALMENT AO GET EVENTOS DO USUARIO

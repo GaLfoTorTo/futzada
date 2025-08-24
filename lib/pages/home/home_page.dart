@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/cards/card_ads.dart';
+import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:get/get.dart';
-import '/theme/app_colors.dart';
-import '/theme/app_icones.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/controllers/home_controller.dart';
+import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/user_model.dart';
-import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
+import 'package:futzada/widget/cards/card_day_event_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
+import 'package:futzada/controllers/home_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,113 +17,101 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
-  //CONTROLLER DE BARRA NAVEGAÇÃO
-  final navigationController = NavigationController.instance;
-  final controller = HomeController.instance;
+class _HomePageState extends State<HomePage> {
+  //CONTROLLER DO HOME PAGE
+  HomeController homeController = HomeController.instance;
+  //DEFINIR USUARIO LOGADO
   late UserModel? user;
+
   @override
   void initState() {
     super.initState();
     //RESGATAR USUARIO
     user = Get.find<UserModel>(tag: 'user');
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSOES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: AppColors.light,
-      appBar: HeaderWidget(
-        leftAction: () {
-          final scaffoldKey = Get.find<GlobalKey<ScaffoldState>>(tag: 'appBaseScaffold');
-          scaffoldKey.currentState?.openDrawer();
-        },
-        leftIcon: AppIcones.bars_solid,
-        rightAction: () => Get.toNamed('/chats'),
-        rightIcon: AppIcones.paper_plane_solid,
-        shadow: false,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            child: FutureBuilder<dynamic>(
-              future: controller.fetchHome(),
-              builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  //EXIBIÇÃO DE CARREGAMENTO DE HOME PAGE
-                  return const SkeletonHomeWidget();
-                } else if (snapshot.hasError) {
-                  //EXIBIR TELA DE ERRO
-                  return Center(child: Text('Ocorreu um erro: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
+    return Column(
+      children: [
+        //CARD USUARIO
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            color: AppColors.green_300,
+            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.dark_500.withAlpha(50),
+                spreadRadius: 0.5,
+                blurRadius: 5,
+                offset: const Offset(2, 5),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                margin: EdgeInsets.only(bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: ImgCircularWidget(
+                            width: 60, 
+                            height: 60,
+                            image: user?.photo,
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Stack(
-                              children: [
-                                ImgCircularWidget(
-                                  width: 80, 
-                                  height: 80, 
-                                  image: user!.photo
-                                ),
-                                Positioned(
-                                  top: 60,
-                                  left: 60,
-                                  child: Container(
-                                    width: 15,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.green_300,
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              AppHelper.saudacaoPeriodo(),
+                              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                color: AppColors.blue_500
+                              )
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(15),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    AppHelper.saudacaoPeriodo(),
-                                    style: const TextStyle(
-                                      color: AppColors.blue_500,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
-                                    style: const TextStyle(
-                                      color: AppColors.blue_500,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  )
-                                ],
-                              ),
+                            Text(
+                              '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
+                              style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                color: AppColors.blue_500
+                              )
                             )
                           ],
                         ),
-                      ),
-                    ]
-                  );
-                } else {
-                  return const SkeletonHomeWidget();
-                }
-              },
-            ),
-          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              //ADS - PROPAGANDAS
+              if(homeController.ads.isNotEmpty)...[
+                CardAds()
+              ]
+            ]
+          )
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              CardDayEventWidget(
+                event: homeController.userEvents[0],
+              ),
+            ],
+          ),
+        )
+      ]
     );
   }
 }

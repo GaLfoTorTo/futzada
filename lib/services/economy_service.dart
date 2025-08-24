@@ -10,17 +10,17 @@ class EconomyService {
 
   //FUNÇÃO DE GERAÇÃO DE ECONOMIA DO TECNICO
   EconomyModel generateEconomy(i){
-    double price = double.parse(setValues(0.0, 120.0).toStringAsFixed(2));
+    /* double price = double.parse(setValues(0.0, 120.0).toStringAsFixed(2));
     double patrimony = 120.0 - price;
-    patrimony = double.parse(patrimony.toStringAsFixed(2));
+    patrimony = double.parse(patrimony.toStringAsFixed(2)); */
     //DEFINIR ECONOMIA
     return EconomyModel.fromMap({
       "id" : i,
-      "patrimony" : patrimony,
-      "price" : price,
-      "valuation" : double.parse(setValues(0.0, 5.0).toStringAsFixed(2)),
-      "points" : double.parse(setValues(0.0, 100.0).toStringAsFixed(2)),
-      "totalPoints" : double.parse(setValues(0.0, 500.0).toStringAsFixed(2)),
+      "patrimony" : 100.0,
+      "price" : 0.0,
+      "valuation" : 0.0,
+      "points" : 0.0,
+      "totalPoints" : 0.0,
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });

@@ -82,8 +82,8 @@ class ButtonDropdownIconWidget extends StatelessWidget {
                   if(item is Map<String, dynamic> && !iconAfter)...[
                     if(item.containsKey('photo'))...[
                       ImgCircularWidget(
-                        width: iconSize!, 
-                        height: iconSize!,
+                        width: iconSize! * 3, 
+                        height: iconSize! * 3,
                         image: item['photo'],
                       ),
                     ]else...[

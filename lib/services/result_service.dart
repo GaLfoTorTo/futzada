@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
-import 'package:futzada/models/team_model.dart';
 import 'package:futzada/models/result_model.dart';
 
 class ResultService {

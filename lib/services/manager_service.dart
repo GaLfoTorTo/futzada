@@ -1,11 +1,10 @@
 import 'dart:math';
-import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/services/economy_service.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/models/manager_model.dart';
-import 'package:intl/intl.dart';
 
 class ManagerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

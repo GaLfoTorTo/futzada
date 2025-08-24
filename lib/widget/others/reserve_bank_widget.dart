@@ -22,17 +22,17 @@ class ReserveBankWidget extends StatelessWidget {
     String getReservePosition(index){
       switch (index) {
         case 0:
-          return 'GOL';
+          return 'gol';
         case 1:
-          return 'ZAG';
+          return 'zag';
         case 2:
-          return 'LAT';
+          return 'lat';
         case 3:
-          return 'MEI';
+          return 'mei';
         case 4:
-          return 'ATA';
+          return 'ata';
         default:
-          return 'ATA';
+          return 'ata';
       }
     }
     
@@ -52,7 +52,7 @@ class ReserveBankWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ...reserves.entries.map((item) {
+            ...reserves.asMap().entries.map((item) {
               //RESGATAR JOGADOR NA ESCALAÇÃO
               final index = item.key;
               final player = item.value;
@@ -63,10 +63,10 @@ class ReserveBankWidget extends StatelessWidget {
                 children: [
                   ButtonPlayerWidget(
                     participant: player,
+                    position: position,
                     index: index,
-                    ocupation: 'reserves',
+                    occupation: 'reserves',
                     size: 60,
-                    borderColor: AppColors.gray_300,
                   ),
                   if(player == null)...[
                     Padding(

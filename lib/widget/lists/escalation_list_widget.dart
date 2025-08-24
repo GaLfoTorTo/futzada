@@ -1,5 +1,3 @@
-import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/services/escalation_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
@@ -18,18 +16,7 @@ class EscalationListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DE ESCALAÇÃO
-    var controller = EscalationController.instance;
-    var escalationService = EscalationService();
-
-    //FUNÇÃO PARA TRATAMENTO DA FORMAÇÃO
-    List<int> setPositions(){
-      //VARIAVEIS PARA CONTROLE DE NUMERO DE JOGADORES NOS SETORES DO CAMPO
-      var listFormation = controller.selectedFormation.split('-').map((e) => int.parse(e)).toList();
-      //ADICIONAR O GOLEIRO NO INICIO DO ARRAY
-      listFormation.insert(0, 1);
-      //INVERTER ORDEM DO ARRAY DE POSIÇÕES
-      return listFormation.reversed.toList();
-    }
+    EscalationController escalationController = EscalationController.instance;
 
     return Column(
       children: [
@@ -43,27 +30,31 @@ class EscalationListWidget extends StatelessWidget {
         Obx(() {
           //OBSERVAR MUDANÇA NA ESCALAÇÃO
           final escalation = occupation == "starters" 
-            ? controller.starters
-            : controller.reserves;
+            ? escalationController.starters
+            : escalationController.reserves;
           
           return Column(
             children: [
-              ...escalation.entries.map((entry) {
+              ...escalation.asMap().entries.map((entry) {
                 //RESGATAR ÍNDEX
                 final index = entry.key;
                 //RESGATAR JOGADOR
                 final player = entry.value;
-                //RESGATAR POSIÇÕES
-                final positions = setPositions();
-                //RESGATAR NOME DA POSIÇÃO
-                final namePosition = escalationService.getPositionName(index, controller.selectedCategory, positions);
+                //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
+                String position = escalationController.escalationService.getPositionName(
+                  index, 
+                  escalationController.selectedCategory.value, 
+                  escalationController.selectedFormation.value
+                );
+                //RESGATAR ABREVIAÇÃO DA POSIÇÃO
+                String positionAlias = position.characters.getRange(0,3).toLowerCase().toString();
                 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: CardEscalationListWidget(
                     participant: player,
                     index: index,
-                    namePosition: namePosition,
+                    position: positionAlias,
                     ocupation: occupation,
                   ),
                 );

@@ -1,20 +1,18 @@
 import 'dart:convert';
-
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/models/player_model.dart';
-import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/badges/position_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 
-class CardPlayerMarketWidget extends StatefulWidget {
+class CardPlayerMarketWidget extends StatelessWidget {
   final ParticipantModel participant;
-  final Map<int, dynamic> escalation;
+  final List<ParticipantModel?> escalation;
   
   const CardPlayerMarketWidget({
     super.key,
@@ -23,88 +21,58 @@ class CardPlayerMarketWidget extends StatefulWidget {
   });
 
   @override
-  State<CardPlayerMarketWidget> createState() => CardPlayerMarketWidgetState();
-}
-
-class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
-  //CONTROLADOR DE POSICAO PRINCIPAL
-  String? position;
-
-  @override
-  void initState() {
-    super.initState();
-    //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
-    loadPosition();
-  }
-
-  //FUNÇÃO PARA CARREGAR ICONE DE POSIÇÃO DO JOGADOR
-  Future<void> loadPosition() async {
-    //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
-    try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.participant.user.player!.mainPosition]);
-      position = string_position;
-    } catch (e) {
-      position = null;
-    }
-    //ATUALIZAR STATE
-    setState(() {});
-  }
-
-  //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
-  Map<String, dynamic> setButtonBuy(PlayerModel player){
-    //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-    if(player.rating!.price! > controller.managerPatrimony.value){
-      return{
-        'text':'Comprar',
-        'color' : AppColors.gray_300,
-        'disabled': true
-      };
-    }
-    //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
-    final isEscaled = controller.findPlayerEscalation(player.id!, );
-    //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
-    if(isEscaled){
-      return{
-        'text':'Vender',
-        'color' : AppColors.red_300,
-        'disabled': false
-      };
-    }
-    return{
-      'text':'Comprar',
-      'color' : AppColors.green_300,
-      'disabled': false
-    };
-  }
-
-  //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
-  void setPlayerPosition(uuid){
-    //SELECIONAR JOGADOR
-    controller.setPlayerEscalation(uuid);
-    //NAVEGAR DE VOLTA PARA ESCALAÇÃO
-    Get.back();
-  }
-  
-  @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    
-    //RESGATAR PARTICIPANT
-    ParticipantModel participant = widget.participant;
+    //RESGATAR CONTROLLER DE ESCALAÇÃO
+    EscalationController escalationController = EscalationController.instance;
     //RESGATAR JOGADOR
     PlayerModel player = participant.user.player!;
     //RESGTAR JOGADOR COMO MAP
     Map<String, dynamic> playerMap = player.toMap();
-    
     //RESGATAR POSIÇÕES DO JOGADOR
     List<dynamic> playerPositions = jsonDecode(player.positions);
-    
     //REMOVER POSIÇÃO PRINCIPAL DO ARRAY
     playerPositions.remove(player.mainPosition);
-    //MAP DE STATUS
+
+    //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
+    Map<String, dynamic> setButtonBuy(PlayerModel player){
+      //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
+      if(player.rating!.price! > escalationController.managerPatrimony.value){
+        return{
+          'text':'Comprar',
+          'color' : AppColors.gray_300,
+          'disabled': true
+        };
+      }
+      //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO
+      final isEscaled = escalationController.findPlayerEscalation(player.id!);
+      //VERIFICAR SE JOGADOR ESTA NA ESCALAÇÃO DO USUARIO
+      if(isEscaled){
+        return{
+          'text':'Vender',
+          'color' : AppColors.red_300,
+          'disabled': false
+        };
+      }
+      return{
+        'text':'Comprar',
+        'color' : AppColors.green_300,
+        'disabled': false
+      };
+    }
+
+    //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
+    void setPlayerPosition(uuid){
+      //SELECIONAR JOGADOR
+      escalationController.setPlayerEscalation(uuid);
+      escalationController.update();
+      var items = escalationController.starters.asMap().entries.map((e) => e.value?.id).toList();
+      print(items);
+      //NAVEGAR DE VOLTA PARA ESCALAÇÃO
+      Get.back();
+    }
+
     //LISTA DE METRICAS DO CARD
     Map<String, dynamic> metrics = {
       'points':'Última pontuação', 
@@ -182,42 +150,23 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      if(position != null)...[
-                                        SvgPicture.string(
-                                          position!,
-                                          width: 25,
-                                          height: 25,
-                                        ),
-                                      ]else...[
-                                        Container(
-                                          width: 35,
-                                          height: 25,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.gray_300,
-                                            borderRadius: BorderRadius.all(Radius.circular(5))
-                                          ),
-                                        )
-                                      ],
+                                      PositionWidget(
+                                        position: participant.user.player!.mainPosition,
+                                        mainPosition: true,
+                                      ),
                                       ...playerPositions.asMap().entries.map((entry){
                                         return Padding(
                                           padding: const EdgeInsets.symmetric(horizontal: 2),
-                                          child: SvgPicture.asset(
-                                            AppIcones.posicao[entry.value]!,
-                                            width: 15,
-                                            height: 15,
+                                          child: PositionWidget(
+                                            position: entry.value,
+                                            mainPosition: false,
+                                            size: 15
                                           ),
                                         );
                                       }),
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  child:Icon(
-                                    AppHelper.setStatusPlayer(participant.status)['icon'],
-                                    color: AppHelper.setStatusPlayer(participant.status)['color'],
-                                    size: 20,
-                                  ),
-                                )
                               ],
                             ),
                           )
@@ -271,8 +220,18 @@ class CardPlayerMarketWidgetState extends State<CardPlayerMarketWidget> {
             width: (dimensions.width * 0.3) - 10,
             height: 210,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 25.0),
+                  child: SizedBox(
+                    child:Icon(
+                      AppHelper.setStatusPlayer(participant.status)['icon'],
+                      color: AppHelper.setStatusPlayer(participant.status)['color'],
+                      size: 20,
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: Column(
                     children: [

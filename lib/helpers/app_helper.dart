@@ -64,24 +64,20 @@ class AppHelper {
   
   //FUNÇÃO PARA AJUSTAR A COR DA BORDAS DAS POSIÇÕES
   static Color setColorPosition(dynamic position){
-    //VERIFICAR SE PLAYER NÃO ESTA VAZIO
-    if(position != null){
-      //VERIFICAR AREA DO CAMPO
-      switch (position) {
-        case 'ata':
-          return AppColors.blue_300;
-        case 'mei':
-          return AppColors.green_300;
-        case 'zag':
-        case 'lat':
-          return AppColors.red_300;
-        case 'gol':
-          return AppColors.yellow_300;
-        default:
-          return AppColors.white;
-      }
-    }else{
-      return AppColors.white;
+    //VERIFICAR AREA DO CAMPO
+    switch (position) {
+      case 'ata':
+        return AppColors.blue_300;
+      case 'mei':
+        return AppColors.green_300;
+      case 'zag':
+        return AppColors.red_300;
+      case 'lat':
+        return AppColors.orange_300;
+      case 'gol':
+        return AppColors.yellow_300;
+      default:
+        return AppColors.white;
     }
   }
 

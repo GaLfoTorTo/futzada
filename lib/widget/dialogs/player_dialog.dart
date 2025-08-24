@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:futzada/models/player_model.dart';
+import 'package:futzada/widget/badges/position_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -25,31 +26,14 @@ class PlayerDialog extends StatefulWidget {
 
 class PlayerDialogState extends State<PlayerDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
-  //CONTROLADOR DE POSICAO PRINCIPAL
-  String? position;
+  EscalationController escalationController = EscalationController.instance;
   bool isCapitan = false;
 
   @override
   void initState() {
     super.initState();
     //RESGATAR CAPITÃO
-    isCapitan = controller.selectedPlayerCapitan.value == widget.participant.id;
-    //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
-    loadPosition();
-  }
-
-  //FUNÇÃO PARA CARREGAR ICONE DE POSIÇÃO DO JOGADOR
-  Future<void> loadPosition() async {
-    //TENTAR CARREGAR SVG DE POSIÇÃO COMO STRING
-    try {
-      var string_position = await AppHelper.mainPosition(AppIcones.posicao[widget.participant.user.player!.mainPosition]);
-      position = string_position;
-    } catch (e) {
-      position = null;
-    }
-    //ATUALIZAR STATE
-    setState(() {});
+    isCapitan = escalationController.selectedPlayerCapitan.value == widget.participant.id;
   }
   
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
@@ -57,10 +41,10 @@ class PlayerDialogState extends State<PlayerDialog> {
     //VEERIFICAR TIPO DE AÇÃO
     if(action == 'setPosition'){
       //SELECIONAR JOGADOR
-      controller.setPlayerEscalation(id);
+      escalationController.setPlayerEscalation(id);
     }else{
       //ATUALIZAR INDEX DE JOGADOR CAPITÃO
-      controller.setPlayerCapitan(id);
+      escalationController.setPlayerCapitan(id);
     }
     //FECHAR BOTTOM SHEET
     Get.back();
@@ -95,13 +79,13 @@ class PlayerDialogState extends State<PlayerDialog> {
         'price':true
       },
       {
-        'name':'valorization',
+        'name':'valuation',
         'label':'Valorização',
         'icon': AppIcones.sort_amount_up_solid,
         'price':false
       },
       {
-        'name':'lastPontuation',
+        'name':'points',
         'label':'Última Pontuação',
         'icon': AppIcones.calculator_solid,
         'price':false
@@ -127,7 +111,7 @@ class PlayerDialogState extends State<PlayerDialog> {
     ];
 
     return  Container(
-      height: ( dimensions.height / 2 ) + 50,
+      height: ( dimensions.height / 2 ) + 60,
       padding: const EdgeInsets.all(15),
       decoration: const BoxDecoration(
         color: AppColors.white,
@@ -137,147 +121,137 @@ class PlayerDialogState extends State<PlayerDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if(position == null)...[
-            const CircularProgressIndicator(
-              color: AppColors.green_300,
-              strokeWidth: 2,
-            ),
-          ]else...[
-            Stack(
-              children:[ 
-                SizedBox(
-                  child: Column(
-                    children: [
-                      ImgCircularWidget(
-                        height: 100,
-                        width: 100,
-                        image: participant.user.photo,
-                        borderColor: AppHelper.setColorPosition(player.mainPosition),
+          Stack(
+            children:[ 
+              SizedBox(
+                child: Column(
+                  children: [
+                    ImgCircularWidget(
+                      height: 100,
+                      width: 100,
+                      image: participant.user.photo,
+                      borderColor: AppHelper.setColorPosition(player.mainPosition),
+                    ),
+                    Text(
+                      "${participant.user.firstName} ${participant.user.lastName}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.dark_500,
                       ),
-                      Text(
-                        "${participant.user.firstName} ${participant.user.lastName}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.dark_500,
-                        ),
-                        textAlign: TextAlign.center,
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      "@${participant.user.userName}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.gray_300,
                       ),
-                      Text(
-                        "@${participant.user.userName}",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.gray_300,
-                        ),
+                    ),
+                    PositionWidget(
+                      position: player.mainPosition,
+                      mainPosition: true,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ...playerPositions.asMap().entries.map((entry){
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              child: PositionWidget(
+                                position: entry.value,
+                                mainPosition: false,
+                              ),
+                            );
+                          }),
+                        ],
                       ),
-                      SvgPicture.string(
-                        position!,
-                        width: 30,
-                        height: 30,
-                      ),
-                      Container(
-                        width: 100,
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ...playerPositions.asMap().entries.map((entry){
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2),
-                                child: SvgPicture.asset(
-                                  AppIcones.posicao[entry.value]!,
-                                  width: 15,
-                                  height: 15,
-                                ),
-                              );
-                            }),
-                          ],
-                        ),
-                      )
-                    ],
+                    )
+                  ],
+                ),
+              ),
+              if(isCapitan)...[
+                Positioned(
+                  top: 70,
+                  left: 80,
+                  child: SvgPicture.asset(
+                    AppIcones.posicao['cap']!,
+                    width: 25,
+                    height: 25,
                   ),
                 ),
-                if(participant.id == controller.selectedPlayerCapitan.value)...[
-                  Positioned(
-                    top: 70,
-                    left: 80,
-                    child: SvgPicture.asset(
-                      AppIcones.posicao['cap']!,
-                      width: 25,
-                      height: 25,
-                    ),
-                  ),
-                ]
               ]
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Wrap(
-                spacing: 10,
-                children: [
-                  ...metrics.asMap().entries.map((entry){
-                    //RESGATAR OBJETO DE METRICA
-                    final item = entry.value;
-                    //RESGATAR CHAVE IDENTIFICADORA DDO ITEM
-                    final name = item['name'];
-                    
-                    return Container(
-                      width: ( dimensions.width / 2 ) - 25,
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        color: AppColors.gray_300.withAlpha(40),
-                        borderRadius: const BorderRadius.all(Radius.circular(5))
-                      ),
-                      child: Column(
-                        children: [
-                          if(name == 'status')...[
-                            Icon(
-                              AppHelper.setStatusPlayer(playerMap[name])['icon'],
-                              size: 30,
-                              color: AppHelper.setStatusPlayer(playerMap[name])['color'],
-                            )
-                          ]else...[
-                            Text(
-                              "${playerMap[name]}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap[name])['color']),
-                            ),
-                          ],
+            ]
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Wrap(
+              spacing: 10,
+              children: [
+                ...metrics.asMap().entries.map((entry){
+                  //RESGATAR OBJETO DE METRICA
+                  final item = entry.value;
+                  //RESGATAR CHAVE IDENTIFICADORA DDO ITEM
+                  final name = item['name'];
+                  
+                  return Container(
+                    width: ( dimensions.width / 2 ) - 25,
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.gray_300.withAlpha(40),
+                      borderRadius: const BorderRadius.all(Radius.circular(5))
+                    ),
+                    child: Column(
+                      children: [
+                        if(name == 'status')...[
+                          Icon(
+                            AppHelper.setStatusPlayer(participant.status)['icon'],
+                            size: 30,
+                            color: AppHelper.setStatusPlayer(participant.status)['color'],
+                          )
+                        ]else...[
                           Text(
-                            "${item['label']}",
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
+                            "${playerMap['rating'][name]}",
+                            style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap['rating'][name])['color']),
                           ),
                         ],
-                      )
-                    );
-                  }),
-                ]
+                        Text(
+                          "${item['label']}",
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    )
+                  );
+                }),
+              ]
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ButtonTextWidget(
+                text: !isCapitan ? "Tornar Capitão" : "Remover Capitão",
+                icon: Icons.copyright,
+                width: (dimensions.width / 2) - 40,
+                height: 30,
+                backgroundColor: AppColors.yellow_300,
+                textColor: AppColors.dark_500,
+                action: () => setPlayerPosition(player.id, 'setCapitan'),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ButtonTextWidget(
-                  text: !isCapitan ? "Tornar Capitão" : "Remover Capitão",
-                  icon: Icons.copyright,
-                  width: (dimensions.width / 2) - 40,
-                  height: 30,
-                  backgroundColor: AppColors.yellow_300,
-                  textColor: AppColors.dark_500,
-                  action: () => setPlayerPosition(participant.id, 'setCapitan'),
-                ),
-                ButtonTextWidget(
-                  text: "Remover",
-                  icon: AppIcones.trash_solid,
-                  width: (dimensions.width / 2) - 40,
-                  height: 30,
-                  backgroundColor: AppColors.red_300,
-                  textColor: AppColors.white,
-                  action: () => setPlayerPosition(participant.id, 'setPosition'),
-                ),
-              ],
-            ),
-          ]
+              ButtonTextWidget(
+                text: "Remover",
+                icon: AppIcones.trash_solid,
+                width: (dimensions.width / 2) - 40,
+                height: 30,
+                backgroundColor: AppColors.red_300,
+                textColor: AppColors.white,
+                action: () => setPlayerPosition(player.id, 'setPosition'),
+              ),
+            ],
+          ),
         ],
       ),
     );

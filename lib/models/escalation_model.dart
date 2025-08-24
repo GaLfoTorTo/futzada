@@ -6,8 +6,8 @@ import 'package:futzada/models/participant_model.dart';
 class EscalationModel {
   final int? id;
   final String? formation;
-  final Map<int, ParticipantModel?>? starters;
-  final Map<int, ParticipantModel?>? reserves;
+  final List<ParticipantModel?>? starters;
+  final List<ParticipantModel?>? reserves;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -23,8 +23,8 @@ class EscalationModel {
   EscalationModel copyWith({
     int? id,
     String? formation,
-    Map<int, ParticipantModel?>? starters,
-    Map<int, ParticipantModel?>? reserves,
+    List<ParticipantModel?>? starters,
+    List<ParticipantModel?>? reserves,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -42,8 +42,8 @@ class EscalationModel {
     return <String, dynamic>{
       'id': id,
       'formation': formation,
-      'starters': starters,
-      'reserves': reserves,
+      'starters': starters!.map((x) => x).toList(),
+      'reserves': reserves!.map((x) => x).toList(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -53,8 +53,20 @@ class EscalationModel {
     return EscalationModel(
       id: map['id'] != null ? map['id'] as int : null,
       formation: map['formation'] != null ? map['formation'] as String : null,
-      starters: map['starters'] != null ? Map<int, ParticipantModel?>.from((map['starters'] as Map<int, ParticipantModel?>)) : null,
-      reserves: map['reserves'] != null ? Map<int, ParticipantModel?>.from((map['reserves'] as Map<int, ParticipantModel?>)) : null,
+      starters: map['starters'] != null
+        ? List<ParticipantModel?>.from(
+            (map['starters'] as List<dynamic>).map<ParticipantModel?>(
+              (x) => x != null ? ParticipantModel.fromMap(x as Map<String,dynamic>) : null,
+            ),
+          ) 
+        : List.filled(11, null),
+      reserves: map['reserves'] != null 
+        ? List<ParticipantModel?>.from(
+            (map['reserves'] as List<dynamic>).map<ParticipantModel?>(
+              (x) => x != null ? ParticipantModel.fromMap(x as Map<String,dynamic>) : null,
+            ),
+          ) 
+        : List.filled(11, null),
       createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
       updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
     );
@@ -76,8 +88,8 @@ class EscalationModel {
     return 
       other.id == id &&
       other.formation == formation &&
-      mapEquals(other.starters, starters) &&
-      mapEquals(other.reserves, reserves) &&
+      listEquals(other.starters, starters) &&
+      listEquals(other.reserves, reserves) &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt;
   }

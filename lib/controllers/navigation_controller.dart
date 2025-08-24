@@ -5,7 +5,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/pages/presentation_page.dart';
-import 'package:futzada/pages/home/home_page.dart';
+import 'package:futzada/pages/home/home_base.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 
 class NavigationController extends GetxController {
@@ -96,7 +96,7 @@ class NavigationController extends GetxController {
   //TELAS DE ESCALAÇÃO
   final screens = [
     //HOME PAGE
-    const HomePage(),
+    const HomeBase(),
     //APRENSENTAÇÃO PAGE ESCALAÇÕES
     PresentationPageWidget(
       image: AppImages.capaEscalacao,

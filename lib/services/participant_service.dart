@@ -50,11 +50,6 @@ class ParticipantService {
     });
     return arr.obs;
   }
-
-  //FUNÇÃO DE BUSCA DE JOGADOR NO ARRAY
-  ParticipantModel? findPlayer(List<ParticipantModel> playersMarket, dynamic id) {
-    return playersMarket.firstWhereOrNull((player) => player.id == id);
-  }
   
   //FUNÇÃO PARA GERAR STATUS DE PARTICIPANTE DA PELADA
   static PlayerStatus setStatus(i){

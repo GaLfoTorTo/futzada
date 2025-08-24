@@ -1,9 +1,10 @@
 import 'dart:math';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/models/escalation_model.dart';
 import 'package:futzada/models/participant_model.dart';
-import 'package:intl/intl.dart';
 
 class EscalationService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -32,6 +33,7 @@ class EscalationService {
     return escalation.obs;
   }
   
+  //FUNÇÃO PARA CONVERTER ESCALÇAI EM MAP
   Map<int, ParticipantModel?> convertToMap(
     RxMap<int, ParticipantModel?> escalation,
   ) {
@@ -39,43 +41,167 @@ class EscalationService {
   }
 
   //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
-  RxMap<int, ParticipantModel?> setEscalation(String category, String occupation) {
-    //CRIAR MAPS DE TITULARES E RESERVAS OBSERVAVEIS
-    final starters = <int, ParticipantModel?>{}.obs;
-    final reserves = <int, ParticipantModel?>{}.obs;
+  List<ParticipantModel?> setEscalation(String category, String occupation) {
     //VARIAVEL DE CONTROLE DE QUANTIDADE DE JOGADORES POR CATEGORIA
-    int num;
+    int numSta;
     int numRes;
     switch (category) {
       case 'Futebol':
-        num = 11;
+        numSta = 11;
         numRes = 5;
         break;
       case 'Fut7':
-        num = 9;
+        numSta = 9;
         numRes = 3;
       case 'Futsal':
-        num = 6;
+        numSta = 6;
         numRes = 2;
         break;
       default:
-        num = 11;
+        numSta = 11;
         numRes = 5;
         break;
     }
-    //INICIALIZAR COM VALORES NULOS
-    for (var i = 0; i < num; i++) {
-      starters[i] = null;
-    }
-    for (var i = 0; i < numRes; i++) {
-      reserves[i] = null;
-    }
     //RETORNAR ESCALAÇÃO
     if(occupation == 'starters'){
-      return starters;
-    }else{
-      return reserves;
+      //INICIALIZAR TITULARES COM VALORES NULOS
+      return RxList<ParticipantModel?>.filled(numSta, null);
+    } else {
+      //INICIALIZAR RESERVAS COM VALORES NULOS
+      return RxList<ParticipantModel?>.filled(numRes, null);
     }
+  }
+
+  //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
+  String getPositionName(int sectorIndex, String category, String formationString) {
+    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+    final formation = getFormationList(formationString);
+    final totalGroups = formation.length;
+    final playersInGroup = formation.toList()[sectorIndex];
+    
+    switch (category) {
+      case 'Futebol':
+        return getFootballPosition(sectorIndex, totalGroups, playersInGroup);
+      case 'Fut7':
+        return getFut7Position(sectorIndex, totalGroups, playersInGroup);
+      case 'Futsal':
+        return getFutsalPosition(sectorIndex, playersInGroup);
+      default:
+        return 'Jogador';
+    }
+  }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTEBOL
+  String getFootballPosition(int index, int linhas, int playersInGroup) {
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    if(linhas == 4){
+      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+          return 'Meio-Campo';
+        case 2:
+          return 'Zagueiro';
+        case 3:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    }else if(linhas == 5){
+      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+        case 2:
+          return 'Meio-Campo';
+        case 3:
+          return 'Zagueiro';
+        case 4:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }
+    return 'Jogador';
+  }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUT7
+  String getFut7Position(int index, int linhas, int playersInGroup){
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    if(linhas == 5){
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+        case 2:
+          return 'Meio-Campo';
+        case 3:
+          return 'Zagueiros';
+        case 4:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }else{
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+          return 'Meio-Campo';
+        case 2:
+          return 'Zagueiros';
+        case 3:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }
+  }
+  
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTSAL
+  String getFutsalPosition(int index, int playersInGroup){
+    switch (index) {
+      case 0:
+        if (playersInGroup == 2) return 'Ala';
+        if (playersInGroup == 1) return 'Pivô';
+        return 'Ala';
+      case 1:
+        return 'Meio-campo';
+      case 2:
+        return 'Fixo';
+      case 3:
+        return 'Goleiro';
+      default:
+        return 'Jogador';
+    }
+  }
+  
+  //FUNÇÃO DE ESTAMPA DO CAMPO
+  String fieldType(String? category){
+    switch (category) {
+      case 'Futebol':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futebol_sm;
+      case 'Fut7':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.fut7_sm;
+      case 'Futsal':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futsal_sm;
+      default:
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futebol_sm;
+    }
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+  List<int> getFormationList(String formation) {
+    List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
+    splitedFormation.insert(0, 1);
+    return splitedFormation.reversed.toList();
   }
 
   //FUNÇÃO PARA DEFINIR OS TIPOS DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
@@ -128,119 +254,6 @@ class EscalationService {
           '5-3-2',
           '5-4-1'
         ];
-    }
-  }
-
-  //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
-  String getPositionName(int index, String category, List<int> positions) {
-    //DEFINIR NOME DA POSIÇÃO PADRÃO
-    String description = 'Jogador';
-    //PERCORRER POSIÇÕES DA FORMAÇÃO
-    positions.asMap().entries.map((entry) {
-      //RESGATAR SETOR DA FORMAÇÃO
-      final groupPosition = entry.key;
-      //BUSCAR QUANTIDADE DE JOGADORES NO SETOR
-      final qtd = entry.value;
-      //INVERTER SETORES
-      final invertedGroupPos = positions.length - 1 - groupPosition;
-      //BUSCAR INDEX DA POSIÇÃO NO SETOR
-      final groupStartIndex = positions
-          .reversed
-          .toList()
-          .sublist(0, invertedGroupPos)
-          .fold(0, (sum, item) => sum + item);
-      //RESGATAR QUANTIDADE DE LINHAS NA FORMAÇÃO 
-      final linhas = positions.length;
-      //VERIFICAR CATEGORIA E DEFINIR NOME DA POSIÇÃO
-      switch (category) {
-        case 'Futebol':
-          //SE FOR FUTEBOL, CHAMAR FUNÇÃO DE POSIÇÃO DE FUTEBOL
-          description = getFootballPosition(invertedGroupPos, linhas);
-          break;
-        case 'Fut7':
-          //SE FOR FUT7, CHAMAR FUNÇÃO DE POSIÇÃO DE FUT7
-          description = getFut7Position(invertedGroupPos, linhas);
-          break;
-        case 'Futsal':
-          //SE FOR FUTSAL, CHAMAR FUNÇÃO DE POSIÇÃO DE FUTSAL
-          description = getFutsalPosition(invertedGroupPos, linhas);
-          break;
-        default:
-          description = getFootballPosition(invertedGroupPos, linhas);
-      }
-    });
-    //RETORNAR NOME DA POSIÇÃO
-    return description;
-  }
-
-  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTEBOL
-  String getFootballPosition(int index, int linhas) {
-    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
-    if(linhas == 4){
-      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
-      switch (index) {
-        case 0:
-          return 'Goleiro';
-        case 1:
-          return 'Zagueiro';
-        case 2:
-          return 'Meio-Campo';
-        case 3:
-          return 'Atacante';
-        default:
-          return 'Jogador';
-      }
-    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
-    }else if(linhas == 5){
-      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
-      switch (index) {
-        case 0:
-          return 'Goleiro';
-        case 1:
-          return 'Zagueiro';
-        case 2:
-        case 3:
-          return 'Meio-Campo';
-        case 4:
-          return 'Atacante';
-        default:
-          return 'Jogador';
-      }
-    }
-    return 'Jogador';
-  }
-  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUT7
-  String getFut7Position(int index, int players) {
-    switch (index) {
-      case 0:
-        return 'Goleiro';
-      case 1:
-        return 'Zagueiros';
-      case 2:
-        return 'Meio-Campo';
-      case 3:
-        return 'Atacante';
-      case 4:
-        return 'Atacante';
-      default:
-        return 'Jogador';
-    }
-  }
-  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTSAL
-  String getFutsalPosition(int index, int players) {
-    switch (index) {
-      case 0:
-        return 'Goleiro';
-      case 1:
-        return 'Fixo';
-      case 2:
-        return 'Meio-campo';
-      case 3:
-        if (players == 2) return 'Ala';
-        if (players == 1) return 'Pivô';
-        return 'Ala';
-      default:
-        return 'Jogador';
     }
   }
 

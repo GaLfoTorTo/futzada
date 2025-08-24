@@ -139,7 +139,7 @@ class MarketService {
         'color': AppColors.yellow_500, 
       },
       {
-        'id' : PlayerStatus.Doubt.name,
+        'id' : PlayerStatus.None.name,
         'title': 'Neutro',
         'icon': Icons.minimize_rounded,
         'color': AppColors.gray_500, 

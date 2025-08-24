@@ -1,19 +1,17 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
-import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
-import 'package:futzada/widget/lists/escalation_list_widget.dart';
-import 'package:get/get.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
-import 'package:futzada/widget/buttons/button_formation_widget.dart';
-import 'package:futzada/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/widget/others/campo_widget.dart';
-import 'package:futzada/widget/others/reserve_bank_widget.dart';
 import 'package:futzada/widget/text/price_indicator_widget.dart';
+import 'package:futzada/widget/lists/escalation_list_widget.dart';
+import 'package:futzada/widget/others/escalation_widget.dart';
+import 'package:futzada/widget/others/reserve_bank_widget.dart';
+import 'package:futzada/widget/buttons/button_icon_widget.dart';
+import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
+import 'package:futzada/widget/buttons/button_formation_widget.dart';
 
 class EscalationPage extends StatefulWidget {  
   const EscalationPage({
@@ -29,15 +27,15 @@ class EscalationPageState extends State<EscalationPage> {
   bool listButton = false;
   String viewType = 'escalation';
   //RESGATAR CONTROLLER DE ESCALAÇÃO
-  var controller = EscalationController.instance;
+  EscalationController escalationController = EscalationController.instance;
 
   //FUNÇÃO PARA SELECIONAR EVENTO
-  void selectEvent(newValue){
+  void selectEvent(id){
     setState(() {
       //SELECIONAR EVENTO
-      controller.setEvent(newValue);
+      escalationController.setEvent(id);
       //ATUALIZAR CONTROLLER
-      controller.update();
+      escalationController.update();
     });
   }
   
@@ -52,16 +50,16 @@ class EscalationPageState extends State<EscalationPage> {
   //FUNÇÃO PARA SELECIONAR FORMAÇÃO
   void selectFormation(newValue){
     setState(() {
-      controller.selectedFormation = newValue;
-      controller.update();
+      escalationController.selectedFormation.value = newValue;
+      escalationController.update();
     });
   }
   
   //FUNÇÃO PARA DEFINIR FILTROS QUANDO NEVEGAÇÃO FOR DIRETO PARA MERCADO
   void goToMarket(){
     //RESETAR FILTRO
-    controller.resetFilter();
-    controller.update();
+    escalationController.resetFilter();
+    escalationController.update();
     Get.toNamed('/escalation/market');
   }
 
@@ -70,7 +68,7 @@ class EscalationPageState extends State<EscalationPage> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR EVENTOS DO USUARIO COMO MAP
-    List<Map<String, dynamic>> userEvents = controller.myEvents.map((event){
+    List<Map<String, dynamic>> userEvents = escalationController.myEvents.map((event){
       return {'id': event.id, 'title' : event.title, 'photo': event.photo};
     }).toList();
 
@@ -105,11 +103,11 @@ class EscalationPageState extends State<EscalationPage> {
                 ),
                 child: Obx((){
                   //RESGATAR VALOR DE PATRIMONIO DO TECNICO
-                  var managerPatrimony = controller.managerPatrimony.value;
+                  var managerPatrimony = escalationController.managerPatrimony.value;
                   //RESGATAR PREÇO DA EQUIPE DO TECNICO
-                  var managerTeamPrice = controller.managerTeamPrice.value;
+                  var managerTeamPrice = escalationController.managerTeamPrice.value;
                   //RESGATAR VALORIZAÇÃO DO PATRIMONIO DO TECNICO
-                  var managerValuation = controller.managerValuation;
+                  var managerValuation = escalationController.managerValuation.value;
 
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +115,7 @@ class EscalationPageState extends State<EscalationPage> {
                       SizedBox(
                         width: dimensions.width * 0.25,
                         child: ButtonDropdownIconWidget(
-                          selectedItem: controller.selectedEvent!.id,
+                          selectedItem: escalationController.selectedEvent!.id,
                           items: userEvents,
                           onChange: selectEvent,
                           iconAfter: false,
@@ -159,7 +157,7 @@ class EscalationPageState extends State<EscalationPage> {
                     SizedBox(
                       width: ( dimensions.width / 2 ) -10,
                       child: ButtonFormationWidget(
-                        selectedFormation: controller.selectedFormation, 
+                        selectedFormation: escalationController.selectedFormation.value, 
                         onChange: selectFormation
                       ),
                     ),
@@ -198,9 +196,11 @@ class EscalationPageState extends State<EscalationPage> {
               ),
               //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
               if (viewType == 'escalation') ...[
-                CampoWidget(
+                EscalationWidget(
                   width: dimensions.width - 80,
                   height: (dimensions.height / 2) + 50,
+                  category: escalationController.selectedCategory.value,
+                  formation: escalationController.selectedFormation.value
                 ),
                 const SizedBox(height: 50),
                 const Text(
@@ -208,7 +208,7 @@ class EscalationPageState extends State<EscalationPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 ReserveBankWidget(
-                  category: controller.selectedCategory,
+                  category: escalationController.selectedCategory.value,
                 ),
               ] else ...[
                 const EscalationListWidget(

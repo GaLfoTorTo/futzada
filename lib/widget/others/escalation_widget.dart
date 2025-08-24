@@ -1,35 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/services/escalation_service.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/others/players_court_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/widget/others/players_escalation_widget.dart';
 
-class CourtWidget extends StatefulWidget {
+class EscalationWidget extends StatefulWidget {
   final double? width;
   final double? height;
   final String category;
-  final int? players;
+  final String formation;
 
-  const CourtWidget({
+  const EscalationWidget({
     super.key,
     this.width = 342,
     this.height = 518,
     this.category = "Futebol",
-    this.players = 11
+    this.formation = '4-3-3'
   });
 
   @override
-  State<CourtWidget> createState() => _CourtWidgetState();
+  State<EscalationWidget> createState() => _EscalationWidgetState();
 }
 
-class _CourtWidgetState extends State<CourtWidget> {
+class _EscalationWidgetState extends State<EscalationWidget> {
   //INICIARLIZAR SERVIÇO DE CAMPO/QUADRA
-  EscalationService escalationService = EscalationService();
+  EscalationController escalationController = EscalationController.instance;
 
   //FUNÇÃO PARA RENDERIZAR CAMPO
   Widget renderField(){
     return Container(
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
+        color: AppColors.green_300,
         border: Border.all(color: AppColors.white, width: 5),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
@@ -42,7 +44,7 @@ class _CourtWidgetState extends State<CourtWidget> {
         ],
       ),
       child: SvgPicture.asset(
-        escalationService.fieldType(widget.category),
+        escalationController.escalationService.fieldType(widget.category),
       )
     );
   }
@@ -60,10 +62,7 @@ class _CourtWidgetState extends State<CourtWidget> {
           child: renderField()
         ),
         //COMPONENTE AQUI
-        PlayersCourtWidget(
-          playerCount: widget.players!,
-          category: widget.category,
-        )
+        PlayersEscalationWidget()
       ]
     );
   }

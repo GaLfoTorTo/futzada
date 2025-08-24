@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_size.dart';
-import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class ButtonDropdownWidget extends StatelessWidget {
   final dynamic selectedItem;
@@ -33,7 +32,6 @@ class ButtonDropdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: width,
       padding: const EdgeInsets.all(5),
@@ -46,7 +44,7 @@ class ButtonDropdownWidget extends StatelessWidget {
         ),
       ),
       child: DropdownButton<dynamic>(
-        value: selectedItem,
+        value: items.contains(selectedItem) ? selectedItem : null,
         onChanged: (dynamic newValue) => onChange(newValue),
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
           color: textColor,
@@ -65,14 +63,30 @@ class ButtonDropdownWidget extends StatelessWidget {
         ),
         items: items.map<DropdownMenuItem<dynamic>>((item) {
           //RESGATAR O VALUE E O TITULO DEPENDENDO DO TIPO DE DADO NA LISTA
-          final option = item;
+          final option = item is Map<String, dynamic> 
+            ? item['id']
+            : item;
           return DropdownMenuItem<dynamic>(
             value: option,
-            child:Text(
-              option.toString(),
-              style: Theme.of(context).textTheme.displayMedium,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  option.toString(),
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                    fontSize: textSize
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+                if (item is Map<String, dynamic> && item.containsKey('icon'))...[
+                  Icon(
+                    item['icon'],
+                    color: item['color'],
+                    size: AppSize.fontLg,
+                  )
+                ]
+              ],
             ),
           );
         }).toList(),

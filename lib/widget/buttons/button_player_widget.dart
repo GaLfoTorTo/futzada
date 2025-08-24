@@ -1,59 +1,62 @@
-import 'package:futzada/models/player_model.dart';
-import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/player_model.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/widget/dialogs/player_dialog.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
+import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
 
 class ButtonPlayerWidget extends StatelessWidget {
+  final int index;
+  final String occupation;
+  final String position;
   final ParticipantModel? participant;
-  final String ocupation;
   final bool? capitan;
-  final int? index;
+  final int? grupoPosition;
+  final Color borderColor;
   final double? size;
-  final Color? borderColor;
   final bool? userDefault;
   final bool? showName;
 
   const ButtonPlayerWidget({
     super.key,
+    required this.index,
+    required this.occupation,
+    required this.position,
     this.participant,
-    required this.ocupation,
     this.capitan = false,
-    this.index,
-    this.size = 55,
+    this.grupoPosition,
     this.borderColor = AppColors.white,
+    this.size = 55,
     this.userDefault = false,
     this.showName = false
   });
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR CONTROLLER DE ESCALAÇÃO
+    EscalationController escalationController = EscalationController.instance;
+    
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
-    void showDialogPlayer(ParticipantModel? participant) {
-      //RESGATAR CONTROLLER DE ESCALAÇÃO
-      var controller = EscalationController.instance;
+    void selectPlayer(ParticipantModel? participant) {
       //ATUALIZAR INDEX DE JOGADOR SELECIONADO
-      controller.selectedPlayer.value = index ?? 0;
-      controller.selectedOcupation.value = ocupation;
+      escalationController.selectedPlayer.value = index;
+      escalationController.selectedOccupation.value = occupation;
       //VERIFICAR SE JOGADOR NÃO É NULO
       if(participant != null){
         //CHAMAR DIALOG DO JOGADOR
         Get.bottomSheet(PlayerDialog(participant: participant), isScrollControlled: true);
       }else{
-        //RESGATAR POSIÇÃO SELECIONADA
-        var position = controller.getPositionFromEscalation(index);
         //AJUSTAR FILTRO PARA POSIÇÃO SELECIONADA
-        controller.setFilter('positions', [position]);
-        controller.update();
+        escalationController.setFilter('positions', [position]);
+        escalationController.update();
         //NAVEGAR PARA PAGINA DE MERCADO
         Get.toNamed('/escalation/market');
       }
+      escalationController.update();
     }
 
     //FUNÇÃO PARA DEFINIR BOTÃO DE JOGADOR
@@ -85,7 +88,7 @@ class ButtonPlayerWidget extends StatelessWidget {
             ),
           ],
           InkWell(
-            onTap: () => showDialogPlayer(participant),
+            onTap: () => selectPlayer(participant),
             child:
               ImgCircularWidget(
                 height: size!,
@@ -99,7 +102,7 @@ class ButtonPlayerWidget extends StatelessWidget {
               width: 80,
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
-                color: AppColors.dark_500.withAlpha(70),
+                color: AppColors.dark_500.withAlpha(90),
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
@@ -116,7 +119,7 @@ class ButtonPlayerWidget extends StatelessWidget {
       }else{
         return [
           InkWell(
-            onTap: () => showDialogPlayer(participant),
+            onTap: () => selectPlayer(participant),
             child: 
             Container(
               width: size,
