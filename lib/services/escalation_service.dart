@@ -77,22 +77,41 @@ class EscalationService {
     //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
     final formation = getFormationList(formationString);
     final totalGroups = formation.length;
-    final playersInGroup = formation.toList()[sectorIndex];
     
     switch (category) {
       case 'Futebol':
-        return getFootballPosition(sectorIndex, totalGroups, playersInGroup);
+        return getFootballPosition(sectorIndex, totalGroups);
       case 'Fut7':
-        return getFut7Position(sectorIndex, totalGroups, playersInGroup);
+        return getFut7Position(sectorIndex, totalGroups);
       case 'Futsal':
-        return getFutsalPosition(sectorIndex, playersInGroup);
+        return getFutsalPosition(sectorIndex);
       default:
         return 'Jogador';
     }
   }
 
+  //FUNÇÃO PARA RESGATAR POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+  String getPositionEscalation(int index, String category, String formationString) {
+    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+    final formation = getFormationList(formationString);
+    int sectorIndex = 0;
+    //LOOP NO ARRAY DE FORMAÇÃOS
+    for(int i = 0; i < formation.length; i++){
+      //RESGTAR LINHAS DE CADA SETOR
+      int lines = formation[i];
+      //VERIFICAR SE O ÍNDICE É MENOR QUE A QUANTIDADE DE LINHAS DO SETOR
+      if(index < lines){
+        //RESGATAR NOME DA POSIÇÃO
+        return getPositionName(i, category, formationString);
+      }else{
+        index -= lines;
+      }
+    }
+    return getPositionName(sectorIndex, category, formationString);
+  }
+
   //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTEBOL
-  String getFootballPosition(int index, int linhas, int playersInGroup) {
+  String getFootballPosition(int index, int linhas) {
     //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
     if(linhas == 4){
       //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
@@ -129,7 +148,7 @@ class EscalationService {
   }
 
   //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUT7
-  String getFut7Position(int index, int linhas, int playersInGroup){
+  String getFut7Position(int index, int linhas){
     //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
     if(linhas == 5){
       switch (index) {
@@ -162,14 +181,12 @@ class EscalationService {
   }
   
   //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTSAL
-  String getFutsalPosition(int index, int playersInGroup){
+  String getFutsalPosition(int index){
     switch (index) {
       case 0:
-        if (playersInGroup == 2) return 'Ala';
-        if (playersInGroup == 1) return 'Pivô';
-        return 'Ala';
+        return 'Pivô';
       case 1:
-        return 'Meio-campo';
+        return 'Ala';
       case 2:
         return 'Fixo';
       case 3:

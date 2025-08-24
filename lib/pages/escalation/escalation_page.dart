@@ -1,3 +1,4 @@
+import 'package:futzada/widget/buttons/float_button_escalation_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -225,6 +226,14 @@ class EscalationPageState extends State<EscalationPage> {
           ),
         ),
       ),
+      floatingActionButton: Obx(() {
+        //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
+        if(!escalationController.starters.contains(null)) {
+          bool hasCapitan = escalationController.selectedPlayerCapitan.value != 0;
+          return FloatButtonEscalationWidget(hasCapitan: hasCapitan);
+        }
+        return const SizedBox.shrink();
+      })
     );
   }
 }

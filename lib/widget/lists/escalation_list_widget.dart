@@ -41,7 +41,7 @@ class EscalationListWidget extends StatelessWidget {
                 //RESGATAR JOGADOR
                 final player = entry.value;
                 //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
-                String position = escalationController.escalationService.getPositionName(
+                String position = escalationController.escalationService.getPositionEscalation(
                   index, 
                   escalationController.selectedCategory.value, 
                   escalationController.selectedFormation.value

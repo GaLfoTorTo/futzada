@@ -1,11 +1,10 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/widget/buttons/button_player_widget.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 
 class PlayersEscalationWidget extends StatelessWidget {
   final double? width;

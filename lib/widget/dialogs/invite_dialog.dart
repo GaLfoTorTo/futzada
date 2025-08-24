@@ -48,7 +48,7 @@ class IniviteDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 'invite',
-                style: Get.textTheme.headlineMedium,
+                style: Theme.of(context).textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -56,7 +56,7 @@ class IniviteDialog extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 'Determine o formato de ingresso dos participantes a pelada, as pré-definições aplicadas poderão ser alteradas posteriormente.',
-                style: Get.textTheme.bodySmall!.copyWith(color: AppColors.gray_500),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.gray_500),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -74,7 +74,7 @@ class IniviteDialog extends StatelessWidget {
                       inactiveThumbColor: AppColors.gray_500,
                       title: Text(
                         item.key,
-                        style: Get.textTheme.bodyMedium!.copyWith(
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                           color: item.value ? AppColors.green_300 : AppColors.gray_500,
                         ),
                       ),

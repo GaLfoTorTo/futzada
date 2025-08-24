@@ -67,8 +67,6 @@ class CardPlayerMarketWidget extends StatelessWidget {
       //SELECIONAR JOGADOR
       escalationController.setPlayerEscalation(uuid);
       escalationController.update();
-      var items = escalationController.starters.asMap().entries.map((e) => e.value?.id).toList();
-      print(items);
       //NAVEGAR DE VOLTA PARA ESCALAÇÃO
       Get.back();
     }

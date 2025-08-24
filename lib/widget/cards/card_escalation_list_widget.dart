@@ -116,7 +116,7 @@ class CardEscalationListWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                position,
+                                position.toUpperCase(),
                                 style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.gray_500),
                               ),
                             ],

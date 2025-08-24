@@ -62,7 +62,7 @@ class _EscalationWidgetState extends State<EscalationWidget> {
           child: renderField()
         ),
         //COMPONENTE AQUI
-        PlayersEscalationWidget()
+        const PlayersEscalationWidget()
       ]
     );
   }
