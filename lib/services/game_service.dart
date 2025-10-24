@@ -29,7 +29,7 @@ class GameService {
     return GameModel.fromMap({
       "id": i,
       "number": i,
-      "referee": participantService.generateParticipant(1, hasRole: false).toMap(),
+      "referee": participantService.generateParticipant(1).toMap(),
       "duration": random.nextInt(10),
       "startTime": DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
       "endTime": DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
@@ -88,7 +88,7 @@ class GameService {
       return GameModel.fromMap({
         "id": i + 1,
         "number": i + 1,
-        "referee": participantService.generateParticipant(1, hasRole: false).toMap(),
+        "referee": participantService.generateParticipant(1).toMap(),
         "duration": duration,
         "startTime": startGame,
         "endTime": endGame,
@@ -130,7 +130,7 @@ class GameService {
       return GameModel.fromMap({
         'id': i + 1,
         'number': i + 1,
-        'referee': participantService.generateParticipant(1, hasRole: false).toMap(),
+        'referee': participantService.generateParticipant(1).toMap(),
         'duration': duration,
         'startTime': startGame,
         'endTime': endGame,

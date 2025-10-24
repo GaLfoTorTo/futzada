@@ -6,13 +6,17 @@ import 'package:futzada/theme/app_size.dart';
 class PositionWidget extends StatelessWidget {
   final String position;
   final bool mainPosition;
-  final double size;
+  final double width;
+  final double height;
+  final double textSide;
 
   const PositionWidget({
     super.key,
     required this.position,
     this.mainPosition = false,
-    this.size = 30
+    this.width = 30,
+    this.height = 30,
+    this.textSide = AppSize.fontSm,
   });
 
   @override
@@ -20,8 +24,8 @@ class PositionWidget extends StatelessWidget {
     return Stack(
       children: [ 
         Container(
-          width: mainPosition ? 50 : 30,
-          height: mainPosition ? 30 : 20,
+          width: width,
+          height: height,
           decoration: BoxDecoration(
             color: AppHelper.setColorPosition(position),
             borderRadius: BorderRadius.circular(5),
@@ -40,7 +44,7 @@ class PositionWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.labelMedium!.copyWith(
               color: position != 'gol' ? AppColors.white : AppColors.dark_700,
               fontWeight: FontWeight.bold,
-              fontSize: mainPosition ? AppSize.fontSm : AppSize.fontXxs
+              fontSize: textSide
             ),
           ),
         ),

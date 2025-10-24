@@ -67,8 +67,6 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
       ),
       body: SafeArea(
         child: Obx(() {
-          print(gameController.finishedGames);
-          print(tabs);
           //EXIBIR SKELETON DE CARREGAMENTO
           if (!gameController.loadHistoricGames.value) {
             return const SkeletonGamesWidget();

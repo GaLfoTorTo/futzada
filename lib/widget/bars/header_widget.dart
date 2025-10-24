@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/theme/app_images.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final String? title;
@@ -10,6 +12,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final VoidCallback? extraAction;
   final IconData? extraIcon;
   final bool shadow;
+  final bool? home;
+  final String? photo;
   final PreferredSizeWidget? bottom;
 
   const HeaderWidget({
@@ -22,13 +26,13 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
     this.extraAction, 
     this.extraIcon = Icons.history,
     this.shadow = true,
+    this.home = false,
+    this.photo,
     this.bottom
   });
 
   @override
   Widget build(BuildContext context) {
-    //DEFINIR SOMBRA DO HEADER
-    var shadowHeader = shadow ? AppColors.dark_500.withAlpha(100) : null;
 
     return AppBar(
       backgroundColor: AppColors.green_300,
@@ -55,13 +59,19 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           ],
           if(rightAction != null)...[
             IconButton(
-              icon: Icon(rightIcon),
+              icon: home != null 
+              ? CircleAvatar(
+                backgroundImage: photo != null
+                  ? CachedNetworkImageProvider(photo!) 
+                  : const AssetImage(AppImages.userDefault) as ImageProvider,
+              )
+              : Icon(rightIcon),
               onPressed: rightAction!,
             )
           ]
         ], 
       elevation: 8,
-      shadowColor: shadowHeader,
+      shadowColor: shadow ? AppColors.dark_500.withAlpha(100) : null,
       bottom: bottom,
     );
   }

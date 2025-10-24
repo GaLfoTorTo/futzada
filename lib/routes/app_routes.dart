@@ -1,3 +1,4 @@
+import 'package:futzada/pages/profile/profile_page.dart';
 import 'package:get/get.dart';
 import 'package:futzada/pages/app_base.dart';
 import 'package:futzada/pages/splash_page.dart';
@@ -42,6 +43,8 @@ class AppRoutes {
       //HOME
       GetPage(name: "/home", page: () => const AppBase()),
       //CHAT
+      GetPage(name: "/profile", page: () => const ProfilePage(), transition: Transition.rightToLeft),
+      //CHAT
       GetPage(name: "/chats", page: () => const ChatsPage(), transition: Transition.rightToLeft),
       GetPage(name: "/chat_private", page: () => const ChatPrivatePage(), transition: Transition.rightToLeft),
       //ESCALAÇÃO
@@ -60,7 +63,6 @@ class AppRoutes {
       //EVENTS - VIEW GERAL
       GetPage(name: "/event/geral", page: () => const EventPage(), transition: Transition.rightToLeft),
       GetPage(name: "/event/historic", page: () => const EventHistoricPage(), transition: Transition.rightToLeft),
-      //EVENTS - LISTA
       GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
       //EXPLORE MAPA
       GetPage(name: "/explore/map", page: () => const MapaPage(), transition: Transition.rightToLeft),

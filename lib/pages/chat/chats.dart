@@ -18,7 +18,7 @@ class ChatsPage extends StatefulWidget {
 
 class _ChatsPageState extends State<ChatsPage> {
   //CONTROLLER DE BARRA NAVEGAÇÃO
-  final controller = ChatController.instace;
+  ChatController chatController = ChatController.instace;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _ChatsPageState extends State<ChatsPage> {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR USUARIO LOGADO
-    UserModel user = controller.user;
+    UserModel user = chatController.user;
 
     //FUNÇÃO PARA DEFINIR PREVIEW DE MENSAGENS NO CHAT
     Widget previewMessages(List<dynamic> messages){
@@ -89,7 +89,7 @@ class _ChatsPageState extends State<ChatsPage> {
                     hint: 'Pesquisa',
                     bgColor: AppColors.gray_300.withAlpha(50),
                     prefixIcon: AppIcones.search_solid,
-                    textController: controller.pesquisaController,
+                    textController: chatController.pesquisaController,
                     type: TextInputType.text,
                   ),
                 ),
@@ -118,7 +118,7 @@ class _ChatsPageState extends State<ChatsPage> {
                 ),
                 Obx(() {
                   //RESGTATAR CHATS
-                  var chats = controller.chats;
+                  var chats = chatController.chats;
                   //VERIFICAR SE CHATS NÃO ESTÃO VAZIOS
                   if (chats.isEmpty) {
                     return const Center(

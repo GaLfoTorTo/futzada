@@ -14,10 +14,8 @@ import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class EventGamesPage extends StatefulWidget {
-  final TabController tabController;
   const EventGamesPage({
     super.key,
-    required this.tabController
   });
 
   @override

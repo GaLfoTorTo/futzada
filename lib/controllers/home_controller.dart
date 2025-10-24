@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/controllers/rank_controller.dart';
 import 'package:futzada/services/timer_service.dart';
 import 'package:get/get.dart';
 import 'package:futzada/models/user_model.dart';
@@ -85,6 +86,8 @@ class HomeController extends GetxController{
       Get.put(EscalationController());
       //INICIALIZAR CONTROLLER DE PARTIDAS
       Get.put(GameController());
+      //INICIALIZAR CONTROLLER DE RANKINGS
+      Get.put(RankController());
       //INICIALIZAR CONTROLLER DE EXPLORER
       Get.put(ExplorerController());
       //INICIALIZAR CONTROLLER CHAT PAGE

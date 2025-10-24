@@ -92,37 +92,44 @@ class AppHelper {
 
   //FUNÇÃO PARA RETORNAR COR DE PONTUAÇÃO
   static Map<String, dynamic> setColorPontuation(dynamic value) {
-    //VERIFICAR SE VALOR RECEBIDO NÃO ESTA NULO
-    if(value != null){
-      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES POSITIVOS)
-      if(value > 0 ){
+    //VERIFICAR PONTUAÇÃO
+    switch (value) {
+      case > 0:
         return {
           'color': AppColors.green_300,
           'icon': Icons.arrow_upward_outlined 
         };
-      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEGATIVOS)
-      }else if(value < 0){
+      case < 0:
         return {
-          'color': AppColors.red_300, 
+          'color': AppColors.red_300,
           'icon': Icons.arrow_downward_outlined 
         };
-      //VERIFICAR PONTUAÇÃO DO JOGADOR (VALORES NEUTROS)
-      }else if(value == 0){
+      default:
         return {
-          'color': AppColors.gray_300, 
-          'icon': Icons.minimize_rounded 
+          'color': AppColors.gray_300,
+          'icon': Icons.rectangle_rounded
         };
-      }else{
+    }
+  }
+  
+  //FUNÇÃO PARA RETORNAR COR DE PONTUAÇÃO
+  static Map<String, dynamic> setRankColocation(String? value) {
+    switch (value) {
+      case 'up':
         return {
-          'color': AppColors.gray_300, 
-          'icon': Icons.minimize_rounded 
+          'color': AppColors.green_300,
+          'icon': Icons.arrow_upward_outlined 
         };
-      }
-    }else{
-      return {
-        'color': AppColors.gray_300, 
-        'icon': Icons.minimize_rounded 
-      };
+      case 'down':
+        return {
+          'color': AppColors.red_300,
+          'icon': Icons.arrow_downward_outlined 
+        };
+      default:
+        return {
+          'color': AppColors.gray_300,
+          'icon': Icons.rectangle_rounded
+        };
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/user_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ abstract class EventBase {
   UserModel get user;
   //GETTER - EVENTOS DO USUARIO
   List<EventModel> get myEvents;
+  //GETTER - PARTICIPANTS
+  Map<String, List<ParticipantModel>?> get participants;
   //GETTER - EVENTO
   EventModel get event;
   //SETTER - EVENTO
@@ -29,7 +32,7 @@ abstract class EventBase {
 
 //===CONTROLLER PRINCIPALS===
 class EventController extends GetxController 
-  with EventOverview, EventRegister implements EventBase {
+  with EventOverview, EventRegister, EventParticipants implements EventBase {
   
   //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS
   static EventController get instance => Get.find();
@@ -53,6 +56,9 @@ class EventController extends GetxController
   //DEFINIR EVENTO ATUAL SENDO MANIPULADO - OBRIGATÓRIO
   @override
   late EventModel event;
+  
+  @override
+  late Map<String, List<ParticipantModel>?> participants;
 
   void setSelectedEvent(EventModel event) {
     //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
@@ -61,6 +67,8 @@ class EventController extends GetxController
     GameController.instance.event = event;
     //ATUALIZAR CONFIGURAÇÕES DE PARTIDA NO CONTROLLER DE PARTIDAS
     GameController.instance.currentGameConfig = event.gameConfig;
+    //DEFINIR PARTICIPANTS
+    this.participants = setParticipants(event.participants);
   }
 }
 
@@ -268,4 +276,41 @@ mixin EventRegister on GetxController{
       return {'status': 400};
     }
   }
+}
+
+//===MIXIN - RANKING===
+mixin EventRanking on GetxController{
+
+}
+
+//===MIXIN - PARTICIPANTS===
+mixin EventParticipants on GetxController{
+  //FUNÇÃO DE CATEGORIZAÇÃO DE PARTICIPANTS
+  Map<String, List<ParticipantModel>?> setParticipants(List<ParticipantModel>? participants){
+    Map<String, List<ParticipantModel>?> map = {
+      'Organizador': [],
+      'Colaboradores': [],
+      'Participantes' : []
+    };
+    if(participants != null && participants.isNotEmpty){
+      participants.forEach((item){
+        if(item.role != null){
+          //VERIFICAR SE PARTICIPANTE E O ORGANIZADOR
+          if(item.role!.contains(Roles.Organizator.name)){
+            map['Organizador']?.add(item); 
+          //VERIFICAR SE PARTICIPANTE E COLABORADOR
+          }else if(item.role!.contains(Roles.Colaborator.name)){
+            map['Colaboradores']?.add(item);
+          //VERIFICAR SE PARTICIPANTE E JOGADOR
+          }else {
+            map['Participantes']?.add(item);
+          }
+        }
+      });
+    }
+    return map;
+  }
+
+  //CONTROLADOR DE INPUT DE PESQUISA
+  final TextEditingController pesquisaController = TextEditingController();
 }

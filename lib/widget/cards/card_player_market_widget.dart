@@ -151,6 +151,8 @@ class CardPlayerMarketWidget extends StatelessWidget {
                                       PositionWidget(
                                         position: participant.user.player!.mainPosition,
                                         mainPosition: true,
+                                        width: 50,
+                                        height: 30,
                                       ),
                                       ...playerPositions.asMap().entries.map((entry){
                                         return Padding(
@@ -158,7 +160,8 @@ class CardPlayerMarketWidget extends StatelessWidget {
                                           child: PositionWidget(
                                             position: entry.value,
                                             mainPosition: false,
-                                            size: 15
+                                            width: 30,
+                                            height: 20,
                                           ),
                                         );
                                       }),

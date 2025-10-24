@@ -10,6 +10,7 @@ class ButtonTextWidget extends StatelessWidget {
   final Color? backgroundColor;
   final double? width;
   final double? height;
+  final double? borderRadius;
   final bool? disabled;
   final VoidCallback action;
   
@@ -24,6 +25,7 @@ class ButtonTextWidget extends StatelessWidget {
     this.backgroundColor,
     this.width = 40,
     this.height = 40,
+    this.borderRadius = 10,
     this.disabled = false,
     required this.action,
   });
@@ -44,6 +46,7 @@ class ButtonTextWidget extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: backgroundColor ?? backgroundColor,
         foregroundColor: textColor ?? textColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(borderRadius ?? 10)),
         textStyle: TextStyle(
           fontSize: textSize ?? textSize,
         ),

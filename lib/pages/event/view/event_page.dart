@@ -1,14 +1,16 @@
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/pages/event/view/event_games_page.dart';
-import 'package:futzada/pages/event/view/event_home_page.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/controllers/event_controller.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/float_button_event_widget.dart';
+import 'package:futzada/pages/event/view/event_participants_page.dart';
+import 'package:futzada/pages/event/view/event_rank_page.dart';
+import 'package:futzada/pages/event/view/event_games_page.dart';
+import 'package:futzada/pages/event/view/event_home_page.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -139,11 +141,9 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 controller: tabController,
                 children: [
                   const EventHomePage(),
-                  EventGamesPage(
-                    tabController: tabController
-                  ),
-                  Container(),
-                  Container(),
+                  const EventGamesPage(),
+                  const EventRankPage(),
+                  const EventParticipantsPage(),
                   Container(),
                   Container(),
                 ],

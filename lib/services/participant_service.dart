@@ -15,11 +15,9 @@ class ParticipantService {
   UserRepository userRepository = UserRepository();
 
   //FUNÇÃO DE GERAÇÃO DE TECNICO
-  ParticipantModel generateParticipant(i, {bool hasRole = true}) {
-    //DEFINIR STATUS DE PERMISSÃO
-    bool roleState = random.nextBool();
-    //DEFINIR PERMISSÕES DO EVENTO
-    List<String>? roles = roleState == true ? setRoles(i) : null;
+  ParticipantModel generateParticipant(i) {
+    //DEFINIR TIPO DE PARTICIPAÇÃO NO EVENTO
+    List<String>? roles = setRoles(i);
     //DEFINIR STATUS DE PERMISSÃO
     bool permissionState = random.nextBool();
     //DEFINIR PERMISSÕES DO EVENTO
@@ -31,7 +29,7 @@ class ParticipantService {
       "role" : roles,
       "permissions" : permissions,
       "status" : setStatus(random.nextInt(3)),
-      "user" : userRepository.generateUser(i, hasRole).toMap(), //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
+      "user" : userRepository.generateUser(i, roles != null).toMap(), //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
     });
@@ -94,6 +92,8 @@ class ParticipantService {
       case 4:
       case 7:
         return [Roles.Colaborator.name, Roles.Refereer.name, Roles.Player.name, Roles.Manager.name];
+      case 12:
+        return null;
       default:
         return [Roles.Player.name, Roles.Manager.name];
     }

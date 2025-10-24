@@ -47,8 +47,11 @@ class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin
           scaffoldKey.currentState?.openDrawer();
         },
         leftIcon: AppIcones.bars_solid,
-        rightAction: () => Get.toNamed('/chats'),
-        rightIcon: AppIcones.paper_plane_solid,
+        rightAction: () => print('user'),
+        extraAction: () => Get.toNamed('/chats'),
+        extraIcon: AppIcones.paper_plane_solid,
+        home: true,
+        photo: user!.photo,
         shadow: false,
       ),
       body: SafeArea(

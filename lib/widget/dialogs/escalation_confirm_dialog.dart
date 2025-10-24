@@ -1,13 +1,12 @@
-import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/images/img_group_circle_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/widget/badges/position_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/images/img_group_circle_widget.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 
 class EscalationConfirmDialog extends StatelessWidget {
@@ -153,6 +152,11 @@ class EscalationConfirmDialog extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                            ),
+                            SvgPicture.asset(
+                              AppIcones.posicao['cap']!,
+                              width: 20,
+                              height: 20,
                             ),
                           ],
                         )
