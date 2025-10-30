@@ -32,12 +32,12 @@ class HomeController extends GetxController{
 
   //LISTA DE ADS
   List<Map<String, dynamic>> ads = [];
-  //LISTA DE EVENTOS - PERTO DE VOCE
-  List<Map<String, dynamic>> events = [];
+  //LISTA DE RANKINGS - PERTO DE VOCE
+  List<Map<String, dynamic>> eventsToYou = [];
+  //LISTA DE EVENTOS - POPULARES
+  List<Map<String, dynamic>> eventsPopular = [];
   //LISTA DE RANKINGS - TOP RANKING
   List<Map<String, dynamic>> ranking = [];
-  //LISTA DE EVENTOS - POPULARES
-  List<Map<String, dynamic>> popular = [];
   //LISTA DE PARTIDAS
   List<Map<String, dynamic>> partidas = [];
 
@@ -50,22 +50,40 @@ class HomeController extends GetxController{
     Get.put(TimerService());
   }
 
-  //FUNÇÃO PARA SIMULAR BUSCA DE TODAS AS INFORMAÇÕES EXIBIDAS NA HOME PAGE
+  //FUNÇÃO PARA BUSCA INFORMAÇÕES DA HOME PAGE
   Future<dynamic>fetchHome() async{
     //EXECUTAR BUSCA DE DADOS PARA HOME PAGE
-    await Future.wait([
+    try {
+    //EXECUTAR AS BUSCAS DE DADOS SIMULTANEAMENTE
+    final results = await Future.wait([
       homeService.fetchCloseEvents(),
       //userService.fecthTopRanking(),
       //userService.fecthPopular(),
-      //userService.fecthUltimosJogos()
+      //userService.fecthUltimosJogos(),
     ]);
-    //RETORNAR DADOS BUSCADOS
-    return [
-      events,
-      ranking,
-      popular,
-      partidas
-    ];
+
+    //PREENCHER LISTAS COM OS DADOS RESGATADOS
+    eventsToYou = results[0] ?? [];
+    ranking     = results[1] ?? [];
+    eventsPopular = results[2] ?? [];
+    partidas    = results[3] ?? [];
+
+    //RETORNAR DADOS RESGATADOS
+    return {
+      'eventsToYou': eventsToYou,
+      'ranking': ranking,
+      'eventsPopular': eventsPopular,
+      'partidas': partidas,
+    };
+    } catch (e) {
+      print('Erro ao buscar dados da home: $e');
+      return {
+        'eventsToYou': [],
+        'ranking': [],
+        'eventsPopular': [],
+        'partidas': [],
+      };
+    }
   }
 
   void _loadUserEvents() async{

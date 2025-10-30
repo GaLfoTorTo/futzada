@@ -29,7 +29,7 @@ class HomeService {
   //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
   Future<List<Map<String, dynamic>>> fetchCloseEvents() async {
     //DELAY DE 2 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     //ARRAY DE EVENTOS
     List<Map<String, dynamic>> arr = [];
     //GERAR EVENTOS (TEMPORAREAMENTE)
@@ -51,7 +51,7 @@ class HomeService {
   //FUNÇÃO PARA SIMULAR BUSCA DE PELADAS MAIS POPULARES
   Future<void>fecthPopular() async {
     //DELAY DE 2 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     //ARRAY DE EVENTOS
     List<Map<String, dynamic>> arr = [];
     //GERAR EVENTOS (TEMPORAREAMENTE)
@@ -71,14 +71,14 @@ class HomeService {
   //FUNÇÃO PARA SIMULAR BUSCA DE TOP PELADAS
   Future<void>fecthTopRanking() async {
     //DELAY DE 2 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     //INICIALIZAR TOP RANKING
   }
   
   //FUNÇÃO PARA SIMULAR BUSCA DE ULTIMOS JOGOS DO USUARIO
   Future<void>fecthUltimosJogos() async {
     //DELAY DE 2 SEGUNDOS
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     
   }
 }

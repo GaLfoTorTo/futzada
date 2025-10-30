@@ -1,47 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/models/event_model.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:futzada/theme/app_images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class CardParaVoceWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> peladas;
-  final PageController controller;
+class CardToYouWidget extends StatelessWidget {
+  final List<Map<String, dynamic>> events;
+  final PageController pageController;
   
-  const CardParaVoceWidget({
+  const CardToYouWidget({
     super.key, 
-    required this.peladas,
-    required this.controller
+    required this.events,
+    required this.pageController
   });
 
   @override
   Widget build(BuildContext context) {
+    
     return Center(
-      child: Container(
+      child: SizedBox(
         height: 450,
         child: PageView(
-          controller: controller,
-          children: peladas.map((item) {
+          controller: pageController,
+          children: events.map((item) {
+            //RESGATAR EVENTO
+            EventModel event = item['event'];
+            //RESGATAR GRADIENTE
+            LinearGradient gradient = item['gradient'];
+            //RESGATAR DISTANCIA
+            String distancia = item['distancia'];
+            //RESGATAR COR DE TEXTO
+            Color textColor = item['textColor'];
             return Container(
-              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              margin: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.dark_500.withOpacity(0.5),
+                    color: AppColors.dark_500.withAlpha(50),
                     spreadRadius: 0.5,
                     blurRadius: 5,
-                    offset: Offset(2, 5),
+                    offset: const Offset(2, 5),
                   ),
                 ],
                 image: DecorationImage(
-                  image: NetworkImage(item['image']),
+                  image: event.photo != null 
+                    ? CachedNetworkImageProvider(event.photo!) 
+                    : const AssetImage(AppImages.gramado) as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  gradient: item['gradient']
+                  gradient: gradient
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 40),
                 child: Column(
@@ -52,9 +65,9 @@ class CardParaVoceWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Text(
-                        item['titulo'],
+                        event.title!,
                         style: TextStyle(
-                          color: item['textColor'],
+                          color: textColor,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -63,15 +76,15 @@ class CardParaVoceWidget extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          LineAwesomeIcons.location_arrow_solid,
-                          color: item['textColor'],
+                          Icons.location_on,
+                          color: textColor,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
-                            item['distancia'],
+                            distancia,
                             style: TextStyle(
-                              color: item['textColor'],
+                              color: textColor,
                               fontSize: 15,
                               fontWeight: FontWeight.normal,
                             ),

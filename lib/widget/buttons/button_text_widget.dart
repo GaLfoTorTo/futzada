@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class ButtonTextWidget extends StatelessWidget {
   final String? text;
@@ -11,6 +12,7 @@ class ButtonTextWidget extends StatelessWidget {
   final double? width;
   final double? height;
   final double? borderRadius;
+  final bool? shadow;
   final bool? disabled;
   final VoidCallback action;
   
@@ -26,6 +28,7 @@ class ButtonTextWidget extends StatelessWidget {
     this.width = 40,
     this.height = 40,
     this.borderRadius = 10,
+    this.shadow = false,
     this.disabled = false,
     required this.action,
   });
@@ -50,6 +53,8 @@ class ButtonTextWidget extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: textSize ?? textSize,
         ),
+        elevation: shadow == true ? 5 : 0,
+        shadowColor: shadow == true ?AppColors.dark_300.withAlpha(50) : null,
       ),
       child: SizedBox(
         width: width,

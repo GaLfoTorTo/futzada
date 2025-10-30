@@ -1,18 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/pages/home/home_page.dart';
-import 'package:futzada/pages/home/home_error_page.dart';
-import 'package:futzada/widget/cards/card_day_event_widget.dart';
 import 'package:get/get.dart';
 import '/theme/app_colors.dart';
 import '/theme/app_icones.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/controllers/home_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/models/user_model.dart';
+import 'package:futzada/pages/home/home_page.dart';
+import 'package:futzada/pages/home/home_error_page.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
+import 'package:futzada/controllers/home_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
-import 'package:futzada/widget/images/img_circle_widget.dart';
 
 class HomeBase extends StatefulWidget {
   const HomeBase({super.key});
@@ -56,16 +52,16 @@ class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             child: FutureBuilder<dynamic>(
               future: homeController.fetchHome(),
               builder: (context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasError) {
                   //EXIBIR TELA DE ERRO
-                  return HomeErrorPage();
+                  return const HomeErrorPage();
                 } else if (snapshot.hasData) {
                   //EXIBIR HOME PAGE
-                  return HomePage();
+                  return const HomePage();
                 } else {
                   //EXIBIR TELA DE CARREGAMENTO
                   return const SkeletonHomeWidget();

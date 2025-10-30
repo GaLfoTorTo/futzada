@@ -59,7 +59,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           ],
           if(rightAction != null)...[
             IconButton(
-              icon: home != null 
+              icon: home != null && home == true
               ? CircleAvatar(
                 backgroundImage: photo != null
                   ? CachedNetworkImageProvider(photo!) 
