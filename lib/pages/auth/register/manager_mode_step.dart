@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/controllers/register_controller.dart';
 import 'package:futzada/helpers/app_helper.dart';
@@ -15,7 +16,6 @@ import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/pickers/picker_color_widget.dart';
 import 'package:futzada/widget/pickers/picker_emblema_widget.dart';
 import 'package:futzada/widget/pickers/picker_uniforme_widget.dart';
-import 'package:get/get.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ManagerModeStep extends StatefulWidget {  

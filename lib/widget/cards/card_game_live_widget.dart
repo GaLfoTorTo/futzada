@@ -96,7 +96,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  "${gameController.event.title}",
+                  "${widget.event.title}",
                   style: Theme.of(context).textTheme.displayLarge!.copyWith(
                     color: AppColors.white,
                   ),

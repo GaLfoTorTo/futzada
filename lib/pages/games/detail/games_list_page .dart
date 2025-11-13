@@ -1,4 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/game_model.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/models/player_model.dart';
+import 'package:futzada/services/game_service.dart';
+import 'package:futzada/theme/app_images.dart';
+import 'package:futzada/widget/badges/position_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/cards/card_game_live_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:get/get.dart';
@@ -7,7 +18,9 @@ import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class GamesListPage extends StatelessWidget {
   const GamesListPage({super.key});
@@ -16,12 +29,24 @@ class GamesListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE CHAT
-    //var controller = GameController.instace;
-
+    //RESGATAR EVENTO
+    EventModel event = Get.arguments['event'];
+    //RESGATAR CONTROLLER DE PARTIDAS
+    GameController gameController = GameController.instance;
+    //CONTROLLADOR DE BARRA DE ROLAGEM
+    PageController nextGamesController = PageController();
+    //JOGADORES DESTAQUE
+    final highlightsPlayers = event.participants!.take(3);
+    //PARTIDAS
+    final games = List.generate(3, (i) => GameService().generateGame(i, event));
+    //DADOS FAKES DE PARTIDA
+    var game = GameService().generateGame(0, event);
+    final teamAScore = 0;
+    final teamBScore = 0;
+    
     return Scaffold(
       appBar: HeaderWidget(
-        title: 'Partidas',
+        title: 'Dia de Jogo',
         leftAction: () => Get.back(),
         rightIcon: Icons.history,
         rightAction: () => Get.toNamed('/games/historic'),
@@ -40,55 +65,173 @@ class GamesListPage extends StatelessWidget {
                       ImgCircularWidget(
                         width: 30, 
                         height: 30,
-                        image: null,
+                        image: event.photo,
+                        element: "event",
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          'Futzada',
+                          "${event.title}",
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
-                      IndicatorLiveWidget(
-                        size: 15,
-                        color: AppColors.red_300,
-                      ),
                     ],
                   ),
                 ),
-                Container(
-                  width: dimensions.width - 10,
-                  height: 300,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.dark_500.withAlpha(30),
-                        spreadRadius: 0.5,
-                        blurRadius: 5,
-                        offset: Offset(2, 5),
+                /* if(gameController.inProgressGames.isNotEmpty)...[
+                  Obx((){
+                    var game = gameController.inProgressGames.firstWhereOrNull((g) => g!.event!.id == event.id);
+                    return CardGameLiveWidget(
+                      event: event,
+                      game: game!,
+                    );
+                  }),
+                ], */
+                /* CardGameLiveWidget(
+                  event: event,
+                  game: game,
+                ), */
+                InkWell(
+                  onTap: (){
+                    //DEFINIR PARTIDA ATUAL
+                    gameController.setCurrentGame(game);
+                    //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+                    Get.toNamed('/games/overview');
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: dimensions.width - 10,
+                    height: 300,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: AppColors.green_300,
+                      image: DecorationImage(
+                        image: const AssetImage(AppImages.gramado) as ImageProvider,
+                        fit: BoxFit.cover,
+                        colorFilter: ColorFilter.mode(
+                          AppColors.green_300.withAlpha(220), 
+                          BlendMode.srcATop,
+                        )
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-
-                    ],
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.dark_500.withAlpha(50),
+                          spreadRadius: 0.5,
+                          blurRadius: 5,
+                          offset: const Offset(2, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 150,
+                          decoration: const BoxDecoration(
+                            color: AppColors.red_300,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(70),
+                              bottomRight: Radius.circular(70),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: IndicatorLiveWidget(
+                              size: 15,
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "#${game.number}",
+                          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                            color: AppColors.blue_500,
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset(
+                                    AppIcones.emblemas["emblema_1"]!,
+                                    width: 60,
+                                    colorFilter: const ColorFilter.mode(
+                                      AppColors.blue_500,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Text(
+                                      "Team A",
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                        color: AppColors.blue_500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                "$teamAScore",
+                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                  fontSize: 40,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              ":",
+                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                fontSize: 35,
+                                color: AppColors.white,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                "$teamBScore",
+                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                  fontSize: 40,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                children: [
+                                  SvgPicture.asset(
+                                    AppIcones.emblemas['emblema_2']!,
+                                    width: 60,
+                                    colorFilter: const ColorFilter.mode(
+                                      AppColors.blue_500, 
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    child: Text(
+                                      "Team B",
+                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                        color: AppColors.blue_500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                /* Obx(() {
-                  return Column(
-                    children: controller.events.map((entry) {
-                      //RESGATAR ITENS 
-                      Map<String, dynamic> item = entry;
-                      return  CardEventListWidget(
-                        event: item,
-                      );
-                    }).toList(),
-                  );
-                }), */
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Row(
@@ -96,41 +239,367 @@ class GamesListPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Próxima partida',
+                        'Próximas partidas',
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                       ButtonTextWidget(
                         text: "Ver Mais",
-                        width: 80,
+                        icon: LineAwesomeIcons.plus_solid,
+                        width: 100,
                         height: 20,
                         textColor: AppColors.green_300,
                         backgroundColor: Colors.transparent,
                         action: () {},
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  width: dimensions.width,
+                  height: 150,
+                  child: PageView(
+                    controller: nextGamesController,
+                    children: games.map((item){//event.games!.map((item){
+                      GameModel nextGame = item;
+                      final startTime = DateFormat("HH:mm").format(nextGame.startTime!);
+                      final endTime = DateFormat("HH:mm").format(nextGame.endTime!);
+
+                      return Container(
+                        margin: const EdgeInsets.only(right: 10, bottom: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: AppColors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.dark_500.withAlpha(30),
+                              spreadRadius: 0.5,
+                              blurRadius: 5,
+                              offset: Offset(2, 5),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(
+                                        AppIcones.emblemas["emblema_1"]!,
+                                        width: 40,
+                                        colorFilter: const ColorFilter.mode(
+                                          AppColors.gray_300,
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 5),
+                                        child: Text(
+                                          "Team A",
+                                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                            color: AppColors.gray_300,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "#${nextGame.number}",
+                                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.gray_300,
+                                      ),
+                                    ),
+                                    Text(
+                                      "x",
+                                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                        fontSize: 35,
+                                        color: AppColors.gray_300,
+                                      ),
+                                    ),
+                                    Text(
+                                      "${startTime} - ${endTime}",
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                        color: AppColors.gray_300,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    children: [
+                                      SvgPicture.asset(
+                                        AppIcones.emblemas['emblema_2']!,
+                                        width: 40,
+                                        colorFilter: const ColorFilter.mode(
+                                          AppColors.gray_300, 
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 5),
+                                        child: Text(
+                                          "Team B",
+                                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                            color: AppColors.gray_300,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList()
+                  )
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SmoothPageIndicator(
+                    controller: nextGamesController,
+                    count: games.length,
+                    effect: const ExpandingDotsEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: AppColors.blue_500,
+                      dotColor: AppColors.gray_300,
+                      expansionFactor: 2,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Jogadores Presentes',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                      ButtonTextWidget(
+                        text: "Ver Mais",
+                        icon: LineAwesomeIcons.plus_solid,
+                        width: 100,
+                        height: 20,
+                        textColor: AppColors.green_300,
+                        backgroundColor: Colors.transparent,
+                        action: () {},
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 210,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      spacing: 15,
+                      children: event.participants!.take(5).map((item){
+                        //RESGATAR PARTICIPANT
+                        ParticipantModel participant = item;
+                        
+                        return Container(
+                          width: 120,
+                          height: 200,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.dark_500.withAlpha(30),
+                                spreadRadius: 0.5,
+                                blurRadius: 5,
+                                offset: const Offset(2, 5),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Stack(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: CircleAvatar(
+                                      backgroundImage: participant.user.photo != null
+                                        ? CachedNetworkImageProvider(participant.user.photo!) 
+                                        : const AssetImage(AppImages.userDefault) as ImageProvider,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    right: 5,
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.green_300,
+                                        borderRadius: BorderRadius.circular(20)
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    "${participant.user.firstName} ${participant.user.lastName}",
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  Text(
+                                    "@${participant.user.userName}",
+                                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                      color: AppColors.gray_300,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  PositionWidget(
+                                    position: participant.user.player!.mainPosition,
+                                    mainPosition: true,
+                                    width: 35,
+                                    height: 25,
+                                    textSide: 10,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  )
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Destaques',
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  width: dimensions.width - 10,
-                  height: 150,
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.dark_500.withAlpha(30),
-                        spreadRadius: 0.5,
-                        blurRadius: 5,
-                        offset: Offset(2, 5),
+                Column(
+                  children: highlightsPlayers.map((player){
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: AppColors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.dark_500.withAlpha(30),
+                            spreadRadius: 0.5,
+                            blurRadius: 5,
+                            offset: Offset(2, 5),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-
-                    ],
-                  ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    height: 80,
+                                    child: CircleAvatar(
+                                      backgroundImage: player.user.photo != null
+                                        ? CachedNetworkImageProvider(player.user.photo!) 
+                                        : const AssetImage(AppImages.userDefault) as ImageProvider,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${player.user.firstName} ${player.user.lastName}",
+                                          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                        Text(
+                                          "@${player.user.userName}",
+                                          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                            color: AppColors.gray_300,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                        PositionWidget(
+                                          position: player.user.player!.mainPosition,
+                                          mainPosition: true,
+                                          width: 35,
+                                          height: 25,
+                                          textSide: 10,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.green_300.withAlpha(50),
+                                  borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      "3 Gols",
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                        color: AppColors.green_300,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Icon(
+                                      Icons.sports_soccer,
+                                      size: 30,
+                                      color: AppColors.green_300,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          )
+                        ]
+                      ),
+                    );
+                  }).toList(),
                 ),
               ]
             ),

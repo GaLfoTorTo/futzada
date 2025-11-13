@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -207,7 +208,7 @@ class CardDayEventWidget extends StatelessWidget {
                         ),
                       ),
                       ButtonTextWidget(
-                        action: () => print('participar'),
+                        action: () => Get.toNamed('/games/list', arguments: {'event': event}),
                         width: 80,
                         height: 30,
                         text: "Juntar-se",
