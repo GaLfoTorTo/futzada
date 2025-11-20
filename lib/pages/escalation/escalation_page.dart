@@ -171,10 +171,10 @@ class EscalationPageState extends State<EscalationPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
                               icon: AppIcones.escalacao_outline, 
+                              iconSize: 20,
                               iconColor: viewType == 'escalation' ? AppColors.blue_500 : AppColors.gray_500,
-                              color: viewType == 'escalation' ? AppColors.green_300 : AppColors.white,
-                              width: 60,
-                              height: 60,
+                              padding: 20,
+                              backgroundColor: viewType == 'escalation' ? AppColors.green_300 : AppColors.white,
                               action: () => selectView('escalation')
                             ),
                           ),
@@ -182,10 +182,10 @@ class EscalationPageState extends State<EscalationPage> {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
                               icon: AppIcones.clipboard_outline, 
+                              iconSize: 20,
                               iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.gray_500,
-                              color: viewType == 'list' ? AppColors.green_300 : AppColors.white,
-                              width: 60,
-                              height: 60,
+                              padding: 20,
+                              backgroundColor: viewType == 'list' ? AppColors.green_300 : AppColors.white,
                               action: () => selectView('list')
                             ),
                           )

@@ -5,7 +5,7 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/widget/buttons/button_icon_widget.dart';
+import 'package:futzada/widget/buttons/button_svg_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/controllers/auth_controller.dart';
@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            ButtonIconWidget(
+                            ButtonSvgWidget(
                               icon: AppIcones.google,
                               width: 60,
                               height: 60,
@@ -234,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                                 authController.googleLogin(context);
                               }
                             ),
-                            ButtonIconWidget(
+                            ButtonSvgWidget(
                               icon: AppIcones.facebook,
                               width: 60,
                               height: 60,

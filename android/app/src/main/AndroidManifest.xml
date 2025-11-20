@@ -2,6 +2,12 @@
     package="com.example.futzada">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+        <package android:name="com.ubercab" />
+        <package android:name="com.taxis99" />
+        <package android:name="com.waze" />
+    </queries>
     <application
         android:label="Futzada"
         android:name="${applicationName}"

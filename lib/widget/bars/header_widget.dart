@@ -51,25 +51,25 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
         onPressed: leftAction
       ),
       actions: [
-          if(extraAction != null)...[
-            IconButton(
-              icon: Icon(extraIcon),
-              onPressed: extraAction!,
+        if(extraAction != null)...[
+          IconButton(
+            icon: Icon(extraIcon),
+            onPressed: extraAction!,
+          )
+        ],
+        if(rightAction != null)...[
+          IconButton(
+            icon: home != null && home == true
+            ? CircleAvatar(
+              backgroundImage: photo != null
+                ? CachedNetworkImageProvider(photo!) 
+                : const AssetImage(AppImages.userDefault) as ImageProvider,
             )
-          ],
-          if(rightAction != null)...[
-            IconButton(
-              icon: home != null && home == true
-              ? CircleAvatar(
-                backgroundImage: photo != null
-                  ? CachedNetworkImageProvider(photo!) 
-                  : const AssetImage(AppImages.userDefault) as ImageProvider,
-              )
-              : Icon(rightIcon),
-              onPressed: rightAction!,
-            )
-          ]
-        ], 
+            : Icon(rightIcon),
+            onPressed: rightAction!,
+          )
+        ]
+      ], 
       elevation: 8,
       shadowColor: shadow ? AppColors.dark_500.withAlpha(100) : null,
       bottom: bottom,

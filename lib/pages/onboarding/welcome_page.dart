@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
@@ -15,7 +14,8 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = AppHelper.screenWidth(context);
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
 
     return Padding(
       padding: const EdgeInsets.only(top: 50),
@@ -42,7 +42,7 @@ class WelcomePage extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(
-            width: width - 100,
+            width: dimensions.width - 100,
             child: const Text(
               "Pontue, Escale, Prove que você é o MELHOR",
               style: TextStyle(
@@ -70,7 +70,7 @@ class WelcomePage extends StatelessWidget {
             children: [
               Image.asset(
                 AppImages.linhas,
-                width: width,
+                width: dimensions.width,
               ),
               Positioned(
                 top: -5,

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_day_event_widget.dart';
 import 'package:futzada/widget/cards/card_to_you_widget.dart';
 import 'package:futzada/widget/cards/card_popular_widget.dart';
 import 'package:futzada/widget/cards/card_top_ranking_widget.dart';
 import 'package:futzada/widget/cards/card_ultimos_jogos_widget.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SectionHomeWidget extends StatelessWidget {
@@ -71,15 +73,44 @@ class SectionHomeWidget extends StatelessWidget {
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
-              ),  
-              Text(
-                titulo == 'Dia de Jogo' ? "Brasília/DF" : othertext,
-                style: const TextStyle(
-                  color: AppColors.red_500,
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                ),
-              ) 
+              ),
+              if(titulo == 'Dia de Jogo' )...[
+                Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: AppColors.green_300.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: const Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 20,
+                        color: AppColors.green_300,
+                      ),
+                      Text(
+                        "Brasília/DF",
+                        style: const TextStyle(
+                          color: AppColors.green_300,
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ) 
+              ]else...[
+                ButtonTextWidget(
+                  text: "Ver Mais",
+                  icon: LineAwesomeIcons.plus_solid,
+                  width: 100,
+                  height: 20,
+                  textColor: AppColors.green_300,
+                  backgroundColor: Colors.transparent,
+                  action: () {},
+                ) 
+              ]
             ]
           ),
         ),

@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:lottie/lottie.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class IntroductionPage extends StatefulWidget {
   final Map<String, dynamic> item;
@@ -115,6 +114,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
@@ -169,7 +171,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                 child: Lottie.asset(
                   widget.item['animation'],
                   fit: BoxFit.fill,
-                  height: AppHelper.screenWidth(context),
+                  height: dimensions.height,
                 ),
               ),
             ),

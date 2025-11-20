@@ -1,16 +1,21 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/widget/bars/header_glass_widget.dart';
+import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/float_button_event_widget.dart';
 import 'package:futzada/pages/event/view/event_participants_page.dart';
 import 'package:futzada/pages/event/view/event_rank_page.dart';
 import 'package:futzada/pages/event/view/event_games_page.dart';
 import 'package:futzada/pages/event/view/event_home_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -30,12 +35,31 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   late final TabController tabController;
   //CONTROLADOR DE INDEX DAS TABS
   int tabIndex = Get.arguments['index'] ?? 0;
+  //CONTROLADOR DE BRILHO DA IMAGEM
+  bool brightness = false;
+  //ESTADOS - ITEMS DO EVENTO
+  late ImageProvider imgProvider;
+  late double avaliation;
+  Color textColor = AppColors.white;
 
   @override
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
+    //RESGATAR IMAGEM DA PELADA
+    imgProvider = event.photo != null
+      ? CachedNetworkImageProvider(event.photo!)
+      : const AssetImage(AppImages.gramado) as ImageProvider;
+    //ANALISE BRILHO DA IMAGEM DO EVENTO
+    AppHelper.isImageDark(imgProvider).then((isDark) {
+      setState(() {
+        brightness = isDark;
+        textColor = isDark ? AppColors.blue_500 : AppColors.white;
+      });
+    });
+    //RESGATAR AVALIAÇÕES DO EVENTO
+    avaliation = eventController.getAvaliations(event.avaliations);
     //DEFINIR EVENTO ATUAL NO CONTROLLER
     eventController.setSelectedEvent(event);
     //BINDING DE CARREGAMENTO DA PAGINA
@@ -49,6 +73,28 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
         gameController.loadHistoricGames.value = await gameController.getHistoricGames();
       } 
     });
+  }
+
+  PreferredSizeWidget setHeaderBar(index){
+    if(index == 0){
+      return HeaderGlassWidget(
+        title: "Pelada",
+        leftAction: () => Get.back(),
+        rightIcon: AppIcones.cog_solid,
+        rightAction: () => print('Favoritar'),
+        brightness: brightness,
+      ); 
+    }
+
+    return HeaderWidget(
+      title: "Pelada",
+      leftAction: () => Get.back(),
+      rightIcon: AppIcones.cog_solid,
+      rightAction: () => print('event settings'),//Get.toNamed('/event/settings'),
+      extraIcon: tabController.index == 1 ? Icons.history : null,
+      extraAction: () => tabController.index == 1 ? Get.toNamed('/event/historic') : null,
+      shadow: false,
+    );
   }
   
   @override
@@ -66,18 +112,96 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     ];
 
     return Scaffold(
-      appBar: HeaderWidget(
-        title: "Pelada",
-        leftAction: () => Get.back(),
-        rightIcon: AppIcones.cog_solid,
-        rightAction: () => print('event settings'),//Get.toNamed('/event/settings'),
-        extraIcon: tabController.index == 1 ? Icons.history : null,
-        extraAction: () => tabController.index == 1 ? Get.toNamed('/event/historic') : null,
-        shadow: false,
-      ),
-      body: SafeArea(
-        child: Column(
+      appBar: setHeaderBar(tabController.index),
+      extendBodyBehindAppBar: tabController.index == 0,
+      body: 
+        Column(
           children:[ 
+            if(tabController.index == 0)...[
+              Container(
+                width: dimensions.width,
+                height: dimensions.height * 0.4,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: imgProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Stack(
+                  children:[
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [AppColors.dark_700.withAlpha(20), AppColors.dark_700.withAlpha(150)]
+                        )
+                      ),
+                    ),
+                    Container(
+                      width: dimensions.width * 0.6,
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                AppIcones.star_solid,
+                                color: AppColors.yellow_500,
+                                size: 25,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: Text(
+                                  avaliation.toStringAsFixed(1),
+                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                    color: textColor
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "${event.title}",
+                            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                              color: textColor
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              ButtonIconWidget(
+                                icon: Icons.bookmark,
+                                iconSize: 20,
+                                iconColor: brightness ? AppColors.dark_500 : AppColors.white,
+                                backgroundColor: AppColors.white.withAlpha(15),
+                                action: () {},
+                              ),
+                              ButtonIconWidget(
+                                icon: Icons.star,
+                                iconSize: 20,
+                                iconColor: brightness ? AppColors.dark_500 : AppColors.white,
+                                backgroundColor: AppColors.white.withAlpha(15),
+                                action: () {},
+                              ),
+                              ButtonIconWidget(
+                                icon: Icons.share,
+                                iconSize: 20,
+                                iconColor: brightness ? AppColors.dark_500 : AppColors.white,
+                                backgroundColor: AppColors.white.withAlpha(15),
+                                action: () {},
+                              ),
+                            ]
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]
+                ),
+              ),
+            ],
             Container(
               color: AppColors.white,
               child: TabBar(
@@ -138,6 +262,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ),
             Expanded(
               child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
                 controller: tabController,
                 children: [
                   const EventHomePage(),
@@ -150,7 +275,6 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
               ),
             ), 
           ]
-        )
       ),
       floatingActionButton: Obx(() {
         //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS

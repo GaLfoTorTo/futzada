@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui' as ui;
+import 'dart:io' as io;
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +82,36 @@ class AppHelper {
       default:
         return AppColors.white;
     }
+  }
+
+  //FUNÇÃO PARA AJUSTAR COR DE ITEMS DE ACORDO COM BRILHO DA IMAGEM
+  static Future<bool> isImageDark(ImageProvider imageProvider) async {
+    final ImageStream imageStream = imageProvider.resolve(const ImageConfiguration());
+    final Completer<ui.Image> completer = Completer<ui.Image>();
+
+    void listener(ImageInfo info, bool _) {
+      completer.complete(info.image);
+      imageStream.removeListener(ImageStreamListener(listener));
+    }
+
+    imageStream.addListener(ImageStreamListener(listener));
+
+    final ui.Image image = await completer.future;
+    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    if (byteData == null) return false;
+
+    int darkPixels = 0;
+    int totalPixels = image.width * image.height;
+
+    for (int i = 0; i < byteData.lengthInBytes; i += 4 * 50) {
+      final int r = byteData.getUint8(i);
+      final int g = byteData.getUint8(i + 1);
+      final int b = byteData.getUint8(i + 2);
+      final double brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+      if (brightness < 128) darkPixels++;
+    }
+
+    return darkPixels > totalPixels / 2;
   }
 
   //VERIFICAR SE EVENTO ESTA ACONTECENDO NO MOMENTO
@@ -350,25 +383,6 @@ class AppHelper {
     }
   }
   
-  //FUNÇÃO PARA RESGATAR ALTURA DO DISPOSITIVO
-  static Map<String, double> getDimensions(BuildContext context){
-    var dimensions = MediaQuery.of(context).size;
-    return{
-      'width': dimensions.width,
-      'height': dimensions.height,
-    };
-  }
-
-  //FUNÇÃO PARA RESGATAR A ALTURA DA TELA
-  static double screenHeight(BuildContext context){
-    return MediaQuery.of(context).size.height;
-  }
-  
-  //FUNÇÃO PARA RESGATAR A LARGURA DA TELA
-  static double screenWidth(BuildContext context){
-    return MediaQuery.of(context).size.width;
-  }
-
   //FUNÇÃO PARA ESCONDER O TECLADO
   static void hideKeyboard(BuildContext context){
     FocusScope.of(context).requestFocus(FocusNode());
@@ -464,5 +478,10 @@ class AppHelper {
       }
     }
     return {};
+  }
+
+  /// Inicializa a detecção de plataforma
+  static Future<String> getDevicePlatform() async {    
+    return io.Platform.isIOS ? 'IOS' : 'Android';
   }
 }

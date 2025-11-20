@@ -199,7 +199,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
               minZoom: 12.0,
               onMapReady: () async{
                 //ABRIR DIALOG
-                Get.bottomSheet(AddressDialog(), isScrollControlled: true);
+                Get.bottomSheet(const AddressDialog(), isScrollControlled: true);
                 //ESPERAR 2 SEGUNDOS
                 await Future.delayed(const Duration(seconds: 2));
                 setState(() {

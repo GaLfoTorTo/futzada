@@ -48,32 +48,6 @@ class CardPresentationWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(
-                  width: 100,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: AppColors.yellow_200,
-                      width: 2,
-                    ),
-                    color: AppColors.yellow_100.withAlpha(100),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(width: 5),
-                      Text(
-                        'Gold',
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: AppColors.yellow_200,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                    ],  
-                  ),
-                )
               ],
             ),
             SizedBox(

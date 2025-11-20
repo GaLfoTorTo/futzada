@@ -59,6 +59,7 @@ class PlayerDialogState extends State<PlaceDialog> {
         latitude: widget.marker['lat'] ?? '',
         longitude: widget.marker['lon'] ?? '',
       );
+      print(location);
       //ADICIONAR ENDEREÇO AO MARKER
       addressController.sportPlaces.firstWhere((item) => item['id'] == widget.marker['id'])['address'] = location;
     }else{

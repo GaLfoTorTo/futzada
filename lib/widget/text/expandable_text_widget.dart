@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
 
 class ExpandableTextWidget extends StatefulWidget {
   final String text;
@@ -23,29 +22,35 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {    
-    return Column( 
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          widget.text,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
-          maxLines: expanded ? null : 3,
-          overflow: expanded ? TextOverflow.visible : TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-        ),
-        TextButton(
-          onPressed: () => setState(() => expanded = !expanded),
-          style: const ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(AppColors.white),
-            padding: WidgetStatePropertyAll(EdgeInsets.all(5)),
+  Widget build(BuildContext context) {
+    final textWidget = Text(
+      widget.text,
+      style: Theme.of(context).textTheme.bodySmall,
+      maxLines: expanded ? null : 3,
+      overflow: expanded ? TextOverflow.visible : TextOverflow.clip,
+      textAlign: TextAlign.center,
+    );
+
+    return InkWell(
+      onTap: () => setState(() => expanded = !expanded),
+      child: expanded
+        ? textWidget
+        : ShaderMask(
+            shaderCallback: (bounds) {
+              return const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ).createShader(Rect.fromLTRB(0, 0, bounds.width, bounds.height));
+            },
+            blendMode: BlendMode.dstIn,
+            child: textWidget,
           ),
-          child: Text(
-            expanded ? 'Ver menos' : 'Ver mais',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
-          ),
-        ),
-      ],
     );
   }
 }
