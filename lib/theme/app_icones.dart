@@ -46,6 +46,13 @@ class AppIcones {
   //REDES SOCIAIS
   static const String facebook = "assets/icones/facebook.svg";
   static const String google = "assets/icones/google.svg";
+  //APPS MAPAS/TRANSPORTE
+  static const String google_map = "assets/icones/google_map.svg";
+  static const String apple_map = "assets/icones/apple_map.svg";
+  static const String uber = "assets/icones/uber.svg";
+  static const String ninetyNine= "assets/icones/99.svg";
+  static const String waze = "assets/icones/waze.svg";
+  static const String moovit = "assets/icones/moovit.svg";
   //LINHAS CAMPO
   static const String futebol_sm = "assets/icones/linhas/futebol_sm.svg";
   static const String fut7_sm = "assets/icones/linhas/fut7_sm.svg";

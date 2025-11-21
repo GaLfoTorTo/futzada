@@ -1,15 +1,19 @@
-import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/widget/dialogs/map_apps_dialog.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/address_model.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
-//import 'package:map_launcher/map_launcher.dart';
+import 'package:map_launcher/map_launcher.dart';
 
 enum IntegrationApps {
-  googleMaps,
+  google,
   uber,
   ninetyNine,
   waze,
-  appleMaps
+  apple,
+  moovit
 }
 
 class RideRequestParams {
@@ -32,44 +36,28 @@ class RideRequestParams {
   });
 }
 
+class AppMap {
+  final String name;
+  final String icon;
+  final IntegrationApps type;
+  final MapType? mapType;
+  final bool method;
+
+  const AppMap({
+    required this.name,
+    required this.icon,
+    required this.type,
+    this.mapType,
+    required this.method,
+  });
+}
+
 class IntegrationRouteService {
 
-  Future<void> abrirMapa() async {
-    
-  }
-
   //FUNÇÃO PARA ABRIR APPS DE MAPA/ROTAS
-  static Future<void> openRouteApps(AddressModel address, {String? travelModel}) async {
-    /* final availableMaps = await MapLauncher.installedMaps;
-
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          child: Wrap(
-            children: [
-              for (final map in availableMaps)
-                ListTile(
-                  leading: Image(
-                    image: map.icon,
-                    width: 30,
-                    height: 30,
-                  ),
-                  title: Text(map.mapName),
-                  onTap: () {
-                    map.showDirections(
-                      destination: Coords(-23.563210, -46.654250),
-                      destinationTitle: "Meu destino",
-                    );
-                  },
-                ),
-            ],
-          ),
-        );
-      },
-    ); */
+  static Future<void> openDialogApps(AddressModel address, {String? travelModel}) async {
     //BUSCAR POSIÇÃO ATUAL DO USUARIO
-    /* final currentPosition = await Geolocator.getCurrentPosition();
+    final currentPosition = await Geolocator.getCurrentPosition();
     //GERAR PARAMETROS DE ROTA
     final params = RideRequestParams(
       startLat: currentPosition.latitude,
@@ -79,8 +67,84 @@ class IntegrationRouteService {
       endName: address.street,
       travelMode: travelModel
     );
+    //RESGATAR APPS DE MAPA/VIAGEM
+    final apps = await _getMapApps(params);
+    if(apps.isNotEmpty){
+      //EXIBIR DIALOG DE APPS
+      Get.bottomSheet(MapAppsDialog(
+        params: params,
+        apps: apps
+      ));
+    }else{
+      //REDIRECIONAR PARA LOJA
+      _handleFallback();
+    }
+  }
+
+  //FUNÇÃO PARA BUSCAR OS APPS DE MAPA DISPONIVEIS
+  static Future<List<AppMap>> _getMapApps(RideRequestParams params)async{
+    final devicePlatform = AppHelper.getDevicePlatform();
+    // 1. Primeiro pegar apps de mapa com MapLauncher
+    final installedMaps = await MapLauncher.installedMaps;
+    //LISTA DE APPS
+    final List<AppMap> listApps = [];
+    //ICONES DOS APPS
+    final appsMapIcons = {
+      'google': AppIcones.google_map,
+      'uber': AppIcones.uber,
+      'ninetyNine': AppIcones.ninetyNine,
+      'moovit': AppIcones.moovit,
+      'waze': AppIcones.waze,
+      'apple': AppIcones.apple_map,
+    };
+    
+    //LOOP APPS DE MAP
+    for (final app in appsMapIcons.entries) {
+      //RESGATAR CHAVE, ICONE, TIPO E NOME DO APP NO ARRAY
+      final appKey = app.key;
+      final appMapType = MapType.values.firstWhereOrNull((a) => a.toString() == 'MapType.$appKey');
+      //VERIFICAÇÃO DE PLATAFORMA (IOS/ANDROID)
+      if(appKey == 'apple' && devicePlatform != 'Ios'){
+        continue;
+      }
+      final appName = _getAppDisplayName(appKey);
+      final appIcon = app.value;
+      final appType = IntegrationApps.values.firstWhere((a) => a.toString() == 'IntegrationApps.$appKey');
+      final appMapLauncer = installedMaps.firstWhereOrNull((e) => e.mapType.toString() == "MapType.$appKey");
+      //VERIFICAR SE APP DE MAP ESTA NA LISTA DE APPS DO USUARIO
+      if(appMapType != null && appMapLauncer == null){
+        continue;
+      }
+      //ADICIONAR APP A LISTA
+      listApps.add(AppMap(
+          name: appName,
+          icon: appIcon,
+          type: appType,
+          mapType: appMapType,
+          method: appMapLauncer != null
+        )
+      );
+    }
+    return listApps;
+  }
+
+  // Função auxiliar para converter chaves em nomes exibíveis
+  static String _getAppDisplayName(String appKey) {
+    switch (appKey) {
+      case 'google': return 'Google Maps';
+      case 'uber': return 'Uber';
+      case 'ninetyNine': return '99';
+      case 'waze': return 'Waze';
+      case 'apple': return 'Apple Maps';
+      case 'moovit': return 'Moovit';
+      default: return appKey;
+    }
+  }
+
+  //FUNÇÃO PARA ABRIR APP DE INTEGRAÇÃO
+  static Future<void> openRouteApps(RideRequestParams params, IntegrationApps app) async{
     //GERAR URL
-    final url = _buildGoogleMapsUrl(params);
+    final url = _buildUrl(params, app: app);
     try {
       if (await canLaunchUrl(Uri.parse(url))) {
         await launchUrl(
@@ -95,34 +159,32 @@ class IntegrationRouteService {
           Uri.parse(defaultUrl),
           mode: LaunchMode.externalApplication,
         );
-    } */
+    }
   }
 
   //FUNÇÃO DE CONSTRUÇÃO DE URL PARA APP DE INTEGRAÇÃO
   static String _buildUrl(RideRequestParams params, {IntegrationApps? app}) {
     switch (app) {
-      case IntegrationApps.googleMaps:
-        return _buildGoogleMapsUrl(params);
       case IntegrationApps.uber:
         return _buildUberUrl(params);
       case IntegrationApps.ninetyNine:
         return _buildNinetyNineUrl(params);
       case IntegrationApps.waze:
         return _buildWazeUrl(params);
-      case IntegrationApps.appleMaps:
-        return _buildAppleMapsUrl(params);
+      case IntegrationApps.moovit:
+        return _buildMoovitUrl(params);
       default:
         //VERIFICAR DISPOSITIVO DO USUARIO
         final devicePlatform = AppHelper.getDevicePlatform();
         //GERAR URL PARA APP PADRÃO APARTIR DO DISPOSITIVO DO USUARIO
         return devicePlatform == 'Ios'
-          ? _buildAppleMapsUrl(params)
-          : _buildGoogleMapsUrl(params);
+          ? _buildAppleUrl(params)
+          : _buildGoogleUrl(params);
     }
   }
 
   //GOOGLE MAPS
-  static String _buildGoogleMapsUrl(RideRequestParams params) {
+  static String _buildGoogleUrl(RideRequestParams params) {
     final baseUrl = 'https://www.google.com/maps/dir/?api=1';
     final origin = '${params.startLat},${params.startLng}';
     final destination = '${params.endLat},${params.endLng}';
@@ -152,11 +214,12 @@ class IntegrationRouteService {
 
   //99
   static String _buildNinetyNineUrl(RideRequestParams params) {
-    return 'https://99app.com/t?'
-        'slat=${params.startLat}'
-        '&slng=${params.startLng}'
-        '&elat=${params.endLat}'
-        '&elng=${params.endLng}';
+    return 'taxis99onetravel://one?'
+        'pickup_latitude=${params.startLat}'
+        '&pickup_longitude=${params.startLng}'
+        '&dropoff_latitude=${params.endLat}'
+        '&dropoff_longitude=${params.endLng}'
+        '&source=futzada';
   }
 
   //WAZE
@@ -165,9 +228,21 @@ class IntegrationRouteService {
         'll=${params.endLat},${params.endLng}'
         '&navigate=yes';
   }
+  
+  //MOOVIT
+  static String _buildMoovitUrl(RideRequestParams params) {
+    return 'https://moovit.com/directions/?'
+        'dest_lat=${params.endLat}'
+        '&dest_lon=${params.endLng}'
+        '&dest_name=${Uri.encodeComponent(params.endName ?? "Destino")}'
+        '&orig_lat=${params.startLat}'
+        '&orig_lon=${params.startLng}'
+        '&orig_name=${Uri.encodeComponent(params.startName ?? "Minha Localização")}'
+        '&trav_mode=public_transit';
+  }
 
   //APPLE MAPS
-  static String _buildAppleMapsUrl(RideRequestParams params) {
+  static String _buildAppleUrl(RideRequestParams params) {
     return 'https://maps.apple.com/?'
         'saddr=${params.startLat},${params.startLng}'
         '&daddr=${params.endLat},${params.endLng}'
@@ -189,11 +264,13 @@ class IntegrationRouteService {
   }
 
   //FUNÇÃO DE FALLBACK PARA ABERTURA DE LOJA DE APPS
-  static Future<void> _handleFallback(
-    IntegrationApps app, 
-    String? customFallbackUrl,
-  ) async {
-    final fallbackUrl = customFallbackUrl ?? _getStoreFallbackUrl(app);
+  static Future<void> _handleFallback() async {
+    //VERIFICAR DISPOSITIVO DO USUARIO
+    final devicePlatform = AppHelper.getDevicePlatform();
+    //GERAR URL PARA APP PADRÃO APARTIR DO DISPOSITIVO DO USUARIO
+    final fallbackUrl = devicePlatform == 'Ios'
+      ? _getStoreFallbackUrl(IntegrationApps.apple)
+      : _getStoreFallbackUrl(IntegrationApps.google);
     
     if (await canLaunchUrl(Uri.parse(fallbackUrl))) {
       await launchUrl(Uri.parse(fallbackUrl));
@@ -206,7 +283,7 @@ class IntegrationRouteService {
   static String _getStoreFallbackUrl(IntegrationApps app) {
     final devicePlatform = AppHelper.getDevicePlatform();
     switch (app) {
-      case IntegrationApps.googleMaps:
+      case IntegrationApps.google:
         return devicePlatform == 'Ios' 
           ? 'https://apps.apple.com/br/app/google-maps/id585027354'
           : 'https://play.google.com/store/apps/details?id=com.google.android.apps.maps';
@@ -222,15 +299,14 @@ class IntegrationRouteService {
         return devicePlatform == 'Ios' 
           ? 'https://apps.apple.com/br/app/waze-navigation-&-live-traffic/id323229106'
           : 'https://play.google.com/store/apps/details?id=com.waze';
-      case IntegrationApps.appleMaps:
+      case IntegrationApps.moovit:
+        return devicePlatform == 'Ios' 
+          ? 'https://apps.apple.com/br/app/moovit-transit-app/id498477945'
+          : 'https://play.google.com/store/apps/details?id=com.tranzmate';
+      case IntegrationApps.apple:
         return devicePlatform == 'Ios' 
           ? 'https://apps.apple.com/br/app/apple-maps/id915056765'
           : '';
     }
-  }
-
-  //FUNÇÃO PARA EXIBIR POPUP DE NENHUM APP DISPONIVEL
-  static Future<void> _showFallbackDialog() async {
-    print('Nenhum app de rotas encontrado no dispositivo');
   }
 }

@@ -47,5 +47,15 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Precisamos da sua localização para mostrar rotas</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+		<string>comgooglemaps</string>
+		<string>uber</string>
+		<string>taxis99</string>
+		<string>waze</string>
+		<string>moovit</string>
+		</array>
 	</dict>
 </plist>

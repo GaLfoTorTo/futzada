@@ -7,6 +7,7 @@
         <package android:name="com.ubercab" />
         <package android:name="com.taxis99" />
         <package android:name="com.waze" />
+        <package android:name="com.moovit" />
     </queries>
     <application
         android:label="Futzada"

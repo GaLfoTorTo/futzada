@@ -625,12 +625,12 @@ class AppStyle {
   );
   
   //TAB BAR LIGHT THEME
-  static TabBarTheme lightTabBarTheme = const TabBarTheme(
+  static TabBarThemeData lightTabBarTheme = const TabBarThemeData(
     indicator: BoxDecoration(),
   );
   
   //TAB BAR DARK THEME
-  static TabBarTheme darkTabBarTheme = const TabBarTheme(
+  static TabBarThemeData darkTabBarTheme = const TabBarThemeData(
     indicator: BoxDecoration(),
   );
 

@@ -680,7 +680,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       padding: 15,
                       iconColor: AppColors.green_300,
                       backgroundColor: AppColors.green_300.withAlpha(50),
-                      action: () => IntegrationRouteService.openRouteApps(event.address!.copyWith(latitude: -15.8059539, longitude: -47.9104129)),
+                      action: () => IntegrationRouteService.openDialogApps(event.address!.copyWith(latitude: -15.8059539, longitude: -47.9104129)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),

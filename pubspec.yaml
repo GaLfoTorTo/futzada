@@ -64,6 +64,7 @@ dependencies:
   intl: ^0.20.2
   timeago: ^3.7.1
   flutter_map_marker_cluster: ^1.4.0
+  map_launcher: ^4.4.2
   url_launcher: ^6.3.2
 
 dev_dependencies:

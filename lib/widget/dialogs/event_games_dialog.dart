@@ -12,8 +12,6 @@ class EventGamesDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //DEFINIR CONTROLLER DE EVENTO 
     EventController eventController = EventController.instance;
     //DEFINIR CONTROLLER DE PARTIDA
@@ -57,7 +55,7 @@ class EventGamesDialog extends StatelessWidget {
               child: ListView(
                 children: gameController.nextGames.map((game) {
                   //RESGATAR HORARIO DE INICIO E FIM DA PARTIDA
-                  var gameTime = "${DateFormat.Hm().format(game!.startTime!)} - ${DateFormat.Hm().format(game!.endTime!)}";
+                  var gameTime = "${DateFormat.Hm().format(game!.startTime!)} - ${DateFormat.Hm().format(game.endTime!)}";
                   
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 5),
@@ -106,7 +104,7 @@ class EventGamesDialog extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Partida #${game!.number}",
+                                    "Partida #${game.number}",
                                     style: Theme.of(Get.context!).textTheme.titleSmall!.copyWith(
                                       overflow: TextOverflow.ellipsis
                                     ),
