@@ -9,6 +9,7 @@ import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/integration_map_service.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
+import 'package:futzada/widget/dialogs/map_travel_dialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -647,31 +648,33 @@ class _EventHomePageState extends State<EventHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               spacing: 20,
               children: [
-                Column(
-                  children: [
-                    ButtonIconWidget(
-                      icon: AppIcones.walk_solid,
-                      iconSize: 30,
-                      padding: 15,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
-                      action: () {},
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "25 min",
-                            style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ],
+                Obx((){
+                return Column(
+                    children: [
+                      ButtonIconWidget(
+                        icon: eventController.travelMode['icon'],
+                        iconSize: 30,
+                        padding: 15,
+                        iconColor: AppColors.green_300,
+                        backgroundColor: AppColors.green_300.withAlpha(50),
+                        action: () => Get.bottomSheet(const MapTravelDialog())
                       ),
-                    ),
-                  ],
-                ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              eventController.travelMode['distance'],
+                              style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
                 Column(
                   children: [
                     ButtonIconWidget(
@@ -680,7 +683,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       padding: 15,
                       iconColor: AppColors.green_300,
                       backgroundColor: AppColors.green_300.withAlpha(50),
-                      action: () => IntegrationRouteService.openDialogApps(event.address!.copyWith(latitude: -15.8059539, longitude: -47.9104129)),
+                      action: () => IntegrationRouteService.openDialogApps(event.address!.copyWith(latitude: -15.8059539, longitude: -47.9104129), travelModel: eventController.travelMode['type']),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),

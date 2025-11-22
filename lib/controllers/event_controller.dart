@@ -1,5 +1,6 @@
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/user_service.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/enum/enums.dart';
@@ -22,12 +23,14 @@ abstract class EventBase {
   UserModel get user;
   //GETTER - EVENTOS DO USUARIO
   List<EventModel> get myEvents;
-  //GETTER - PARTICIPANTS
-  Map<String, List<ParticipantModel>?> get participants;
   //GETTER - EVENTO
   EventModel get event;
   //SETTER - EVENTO
   set event(EventModel event);
+  //GETTER - PARTICIPANTS
+  Map<String, List<ParticipantModel>?> get participants;
+  //DEFINIR TRAVEL MODEL ATUAL SENDO MANIPULADO
+  RxMap<String, dynamic> get travelMode;
 }
 
 //===CONTROLLER PRINCIPALS===
@@ -57,8 +60,18 @@ class EventController extends GetxController
   @override
   late EventModel event;
   
+  //DEFINIR DE PARTICIPANTES
   @override
   late Map<String, List<ParticipantModel>?> participants;
+  
+  //DEFINIR DE PARTICIPANTES
+  @override
+  late RxMap<String, dynamic> travelMode =  <String, dynamic>{
+      'type': 'walking',
+      'icon' : AppIcones.walk_solid,
+      'label': 'A pé',
+      'distance': '2 min'
+    }.obs;
 
   void setSelectedEvent(EventModel event) {
     //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
@@ -69,6 +82,13 @@ class EventController extends GetxController
     GameController.instance.currentGameConfig = event.gameConfig;
     //DEFINIR PARTICIPANTS
     this.participants = setParticipants(event.participants);
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE TRAVEL MODEL
+  void setTravelMode(Map<String, dynamic> newTravelMode){
+    travelMode.value = newTravelMode;
+    Get.back();
+    print(travelMode);
   }
 }
 
@@ -280,7 +300,6 @@ mixin EventRegister on GetxController{
 
 //===MIXIN - RANKING===
 mixin EventRanking on GetxController{
-
 }
 
 //===MIXIN - PARTICIPANTS===
