@@ -9,7 +9,9 @@ import 'package:futzada/services/game_service.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/badges/position_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:futzada/widget/cards/card_day_game_widget.dart';
 import 'package:futzada/widget/cards/card_game_live_widget.dart';
+import 'package:futzada/widget/cards/card_mvp_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:get/get.dart';
@@ -22,8 +24,8 @@ import 'package:intl/intl.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class GamesListPage extends StatelessWidget {
-  const GamesListPage({super.key});
+class GamesDayPage extends StatelessWidget {
+  const GamesDayPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -78,160 +80,17 @@ class GamesListPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                /* if(gameController.inProgressGames.isNotEmpty)...[
+                if(gameController.inProgressGames.isNotEmpty)...[
                   Obx((){
-                    var game = gameController.inProgressGames.firstWhereOrNull((g) => g!.event!.id == event.id);
+                    var game = gameController.inProgressGames.first;
                     return CardGameLiveWidget(
                       event: event,
                       game: game!,
                     );
                   }),
-                ], */
-                /* CardGameLiveWidget(
-                  event: event,
-                  game: game,
-                ), */
-                InkWell(
-                  onTap: (){
-                    //DEFINIR PARTIDA ATUAL
-                    gameController.setCurrentGame(game);
-                    //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                    Get.toNamed('/games/overview');
-                  },
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: dimensions.width - 10,
-                    height: 300,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColors.green_300,
-                      image: DecorationImage(
-                        image: const AssetImage(AppImages.gramado) as ImageProvider,
-                        fit: BoxFit.cover,
-                        colorFilter: ColorFilter.mode(
-                          AppColors.green_300.withAlpha(220), 
-                          BlendMode.srcATop,
-                        )
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.dark_500.withAlpha(50),
-                          spreadRadius: 0.5,
-                          blurRadius: 5,
-                          offset: const Offset(2, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 150,
-                          decoration: const BoxDecoration(
-                            color: AppColors.red_300,
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(70),
-                              bottomRight: Radius.circular(70),
-                            ),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10),
-                            child: IndicatorLiveWidget(
-                              size: 15,
-                              color: AppColors.white,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "#${game.number}",
-                          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                            color: AppColors.blue_500,
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                children: [
-                                  SvgPicture.asset(
-                                    AppIcones.emblemas["emblema_1"]!,
-                                    width: 60,
-                                    colorFilter: const ColorFilter.mode(
-                                      AppColors.blue_500,
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "Team A",
-                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        color: AppColors.blue_500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                "$teamAScore",
-                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  fontSize: 40,
-                                  color: AppColors.white,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              ":",
-                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                fontSize: 35,
-                                color: AppColors.white,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                "$teamBScore",
-                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  fontSize: 40,
-                                  color: AppColors.white,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Column(
-                                children: [
-                                  SvgPicture.asset(
-                                    AppIcones.emblemas['emblema_2']!,
-                                    width: 60,
-                                    colorFilter: const ColorFilter.mode(
-                                      AppColors.blue_500, 
-                                      BlendMode.srcIn,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                    child: Text(
-                                      "Team B",
-                                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                        color: AppColors.blue_500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                ]else...[
+                  CardDayGameWidget(event: event),
+                ],
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Row(
@@ -490,6 +349,20 @@ class GamesListPage extends StatelessWidget {
                     )
                   )
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'MVP',
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ],
+                  ),
+                ),
+                const CardMvpWidget(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: Row(

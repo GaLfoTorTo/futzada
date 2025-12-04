@@ -111,15 +111,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     return Scaffold(
       appBar: HeaderWidget(
         title: "Partida #${gameController.currentGame.number}",
-        leftAction: () {
-          Get.toNamed(
-            "/event/geral",
-            arguments: {
-              'event': event,
-              'index': 1
-            }
-          );
-        },
+        leftAction: () => Get.back(),
         rightIcon: AppIcones.cog_solid,
         rightAction: () {
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
@@ -132,70 +124,72 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
         shadow: false,
       ),
       body: SafeArea(
-        child: CustomScrollView(
+        child: NestedScrollView(
           controller: _scrollController,
-          slivers: [
-            //CARD DE MONITORAMENTO DA PARTIDA
-            SliverList(
-              delegate: SliverChildListDelegate([
-                CardGameDetailWidget(
-                  event: event,
-                  game: gameController.currentGame
-                )
-              ]),
-            ),
-            //TABS DE INFORMAÇÕES DA PARTIDA
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverAppBarDelegate(
-                child: Container(
-                  color: AppColors.white,
-                  margin: EdgeInsets.symmetric(horizontal: tabMargin),
-                  child: TabBar(
-                    controller: tabController,
-                    onTap: (i) => setState(() => tabIndex = i),
-                    indicator: UnderlineTabIndicator(
-                      borderSide: const BorderSide(
-                        width: 5,
-                        color: AppColors.green_300,
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              //CARD DE MONITORAMENTO DA PARTIDA
+              SliverList(
+                delegate: SliverChildListDelegate([
+                  CardGameDetailWidget(
+                    event: event,
+                    game: gameController.currentGame
+                  )
+                ]),
+              ),
+              //TABS DE INFORMAÇÕES DA PARTIDA
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverAppBarDelegate(
+                  child: Container(
+                    color: AppColors.white,
+                    margin: EdgeInsets.symmetric(horizontal: tabMargin),
+                    child: TabBar(
+                      controller: tabController,
+                      onTap: (i) => setState(() => tabIndex = i),
+                      indicator: UnderlineTabIndicator(
+                        borderSide: const BorderSide(
+                          width: 5,
+                          color: AppColors.green_300,
+                        ),
+                        insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
                       ),
-                      insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
+                      labelColor: AppColors.green_300,
+                      labelStyle: const TextStyle(
+                        color: AppColors.gray_500,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      unselectedLabelColor: AppColors.gray_500,
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      tabs: tabs.map((tab){
+                        return SizedBox(
+                          width: 100,
+                          height: 50,
+                          child: Tab(text: tab)
+                        );
+                      }).toList()
                     ),
-                    labelColor: AppColors.green_300,
-                    labelStyle: const TextStyle(
-                      color: AppColors.gray_500,
-                      fontWeight: FontWeight.normal,
-                    ),
-                    unselectedLabelColor: AppColors.gray_500,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    tabs: tabs.map((tab){
-                      return SizedBox(
-                        width: 100,
-                        height: 50,
-                        child: Tab(text: tab)
-                      );
-                    }).toList()
                   ),
                 ),
               ),
-            ),
-            //CONTEUDO DAS TABS DE INFORMAÇÕES DA PARTIDA
-            SliverFillRemaining(
-              child: TabBarView(
-                controller: tabController,
-                children: const [
-                  GameOverviewPage(),
-                  GameEscalationPage(),
-                  GameStatisticsPage(),
-                  GameTimelinePage(),
-                ],
-              ),
-            ),
-          ],
+            ];
+          },
+          body: TabBarView(
+            controller: tabController,
+            children: const [
+              GameOverviewPage(),
+              GameEscalationPage(),
+              GameStatisticsPage(),
+              GameTimelinePage(),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Obx((){
+        if(tabIndex != 0){
+          return SizedBox.shrink();
+        }
         return FloatButtonTimerWidget(
           actionButton: () => Get.dialog(StopWatchDialog(),
             barrierColor: Colors.transparent,

@@ -19,7 +19,7 @@ import 'package:futzada/pages/event/view/event_historic_page.dart';
 import 'package:futzada/pages/event/view/event_page.dart';
 import 'package:futzada/pages/games/config/game_config_page.dart';
 import 'package:futzada/pages/games/detail/game_detail_page.dart';
-import 'package:futzada/pages/games/detail/games_list_page%20.dart';
+import 'package:futzada/pages/games/detail/games_day_page%20.dart';
 import 'package:futzada/pages/chat/chats.dart';
 import 'package:futzada/pages/chat/chat_private.dart';
 import 'package:futzada/pages/event/register/event_basic_step.dart';
@@ -52,7 +52,7 @@ class AppRoutes {
       GetPage(name: "/escalation/market", page: () => const MarketPage()),
       GetPage(name: "/escalation/historic", page: () => const HistoricPage()),
       //PARTIDAS
-      GetPage(name: "/games/list", page: () => const GamesListPage()),
+      GetPage(name: "/games/day", page: () => const GamesDayPage()),
       GetPage(name: "/games/config", page: () => const GameConfigPage()),
       GetPage(name: "/games/overview", page: () => const GameDetailPage()),
       //EVENTS - CADASTRO 

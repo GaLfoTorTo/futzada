@@ -183,11 +183,14 @@ class _EventHomePageState extends State<EventHomePage> {
                         color: AppColors.green_300,
                         size: 20
                       ),
-                      Padding(
+                      Container(
+                        width: dimensions.width - 50,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "${event.address!.street} ${event.address!.suburb} ${event.address!.city}, ${event.address!.state}",
                           style: Theme.of(context).textTheme.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       )
                     ]
@@ -199,11 +202,14 @@ class _EventHomePageState extends State<EventHomePage> {
                         color: AppColors.green_300,
                         size: 20
                       ),
-                      Padding(
+                      Container(
+                        width: dimensions.width - 50,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "${getEventDate(event)} - ${event.startTime} as ${event.endTime}",
                           style: Theme.of(context).textTheme.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       )
                     ]
@@ -215,11 +221,14 @@ class _EventHomePageState extends State<EventHomePage> {
                         color: AppColors.green_300,
                         size: 20
                       ),
-                      Padding(
+                      Container(
+                        width: dimensions.width - 50,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "Iniciada em: ${DateFormat("dd/MM/y").format(event.createdAt!)}",
                           style: Theme.of(context).textTheme.bodySmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       )
                     ]

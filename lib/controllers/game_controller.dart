@@ -28,6 +28,8 @@ abstract class GameBase {
   //ESTADO PARTIDA
   GameModel get currentGame;
 
+  //===DIA DE PARTIDA===
+  
   //===PARTIDA===
   //ESTADO - EQUIPES DA PARTIDA
   TeamModel get teamA;
@@ -83,7 +85,7 @@ class GameController extends GetxController
     //RESGATAR DATA DO EVENTO
     //eventDate = eventService.getNextEventDate(event);
     //VARAIVEIS PRA TESTE
-    eventDate = DateFormat("dd/MM/yyyy").parse("23/06/2025");
+    eventDate = DateFormat("dd/MM/yyyy").parse("${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}");
   }
 
   @override

@@ -80,7 +80,6 @@ class SectionCategoriesWidget extends StatelessWidget {
                 //RESGATAR CATEGORIA
                 String category = item['category'];
                 bool active = item['active'];
-                Color color = item['color'];
 
                 return Column(
                   children: [
@@ -91,7 +90,7 @@ class SectionCategoriesWidget extends StatelessWidget {
                       icon: item['icon'],
                       iconSize: 30,
                       backgroundColor: active ? AppColors.green_300 : AppColors.white,
-                      textColor: active ? AppColors.blue_500 : color,
+                      textColor: AppColors.blue_500,
                       borderRadius: 15,
                       shadow: true,
                     ),

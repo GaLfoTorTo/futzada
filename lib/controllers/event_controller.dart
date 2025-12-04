@@ -67,12 +67,13 @@ class EventController extends GetxController
   //DEFINIR DE PARTICIPANTES
   @override
   late RxMap<String, dynamic> travelMode =  <String, dynamic>{
-      'type': 'walking',
-      'icon' : AppIcones.walk_solid,
-      'label': 'A pé',
-      'distance': '2 min'
-    }.obs;
+    'type': 'walking',
+    'icon' : AppIcones.walk_solid,
+    'label': 'A pé',
+    'distance': '2 min'
+  }.obs;
 
+  //FUNÇÃO DE SELEÇÃO DE EVENTO
   void setSelectedEvent(EventModel event) {
     //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
     this.event = event;
@@ -88,7 +89,6 @@ class EventController extends GetxController
   void setTravelMode(Map<String, dynamic> newTravelMode){
     travelMode.value = newTravelMode;
     Get.back();
-    print(travelMode);
   }
 }
 

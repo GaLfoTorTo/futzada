@@ -14,42 +14,24 @@ class LineupWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Size dimensions = MediaQuery.of(context).size;
-    final double fieldHeight = dimensions.height * 0.90;
 
     //FUNÇÃO PARA DEFINIR TIPO DE MARCAÇÕES DE CAMPO/QUADRA APARTIR DA CATEGORIA
     String fieldType() {
       switch (category) {
         case 'Fut7':
-          return AppIcones.fut7_sm;
+          return AppIcones.fut7_xl;
         case 'Futsal':
-          return AppIcones.futsal_sm;
+          return AppIcones.futsal_xl;
         case 'Futebol':
         default:
-          return AppIcones.futebol_sm;
+          return AppIcones.futebol_xl;
       }
-    }
-
-    //FUNÇÃO PARA CRIAR LISTRAS DE GRAMADO PARA CATEGORIA FUTEBOL
-    Widget buildGrassField(Size dimensions) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: List.generate(6, (i) {
-          return Container(
-            width: dimensions.width,
-            height: fieldHeight / 11,
-            decoration: BoxDecoration(
-              color: AppColors.green_500.withAlpha(70),
-            ),
-          );
-        }),
-      );
     }
 
     //FUNÇÃO PARA CONSTRUÇÃO DE CAMPO COM LINHAS
     Widget buildField() {
       return Container(
         width: dimensions.width,
-        height: fieldHeight,
         decoration: BoxDecoration(
           color: AppColors.green_300,
           border: Border.all(color: AppColors.white, width: 5),
@@ -57,11 +39,8 @@ class LineupWidget extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            if (category == 'Futebol') buildGrassField(dimensions),
             SvgPicture.asset(
               fieldType(),
-              width: dimensions.width,
-              height: dimensions.height * 0.4,
               fit: BoxFit.fill,
             ),
           ],

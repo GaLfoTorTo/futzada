@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_size.dart';
-import 'package:futzada/widget/images/img_circle_widget.dart';
+import 'package:futzada/theme/app_images.dart';
 
 class ButtonDropdownIconWidget extends StatelessWidget {
   final dynamic selectedItem;
@@ -81,10 +82,14 @@ class ButtonDropdownIconWidget extends StatelessWidget {
                 children: [
                   if(item is Map<String, dynamic> && !iconAfter)...[
                     if(item.containsKey('photo'))...[
-                      ImgCircularWidget(
+                      SizedBox(
                         width: iconSize! * 3, 
                         height: iconSize! * 3,
-                        image: item['photo'],
+                        child: CircleAvatar(
+                          backgroundImage: item['photo'] != null
+                            ? CachedNetworkImageProvider(item['photo']!) 
+                            : const AssetImage(AppImages.userDefault) as ImageProvider,
+                        ),
                       ),
                     ]else...[
                       Icon(
@@ -111,10 +116,14 @@ class ButtonDropdownIconWidget extends StatelessWidget {
                   ),
                   if(item is Map<String, dynamic> && iconAfter)...[
                     if(item.containsKey('photo'))...[
-                      ImgCircularWidget(
-                        width: iconSize!, 
-                        height: iconSize!,
-                        image: item['photo'],
+                      SizedBox(
+                        width: iconSize! * 3, 
+                        height: iconSize! * 3,
+                        child: CircleAvatar(
+                          backgroundImage: item['photo'] != null
+                            ? CachedNetworkImageProvider(item['photo']!) 
+                            : const AssetImage(AppImages.userDefault) as ImageProvider,
+                        ),
                       ),
                     ]else...[
                       Icon(

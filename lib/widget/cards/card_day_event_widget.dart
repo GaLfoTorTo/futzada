@@ -33,7 +33,7 @@ class CardDayEventWidget extends StatelessWidget {
 
     return Center(
       child: SizedBox(
-        height: 250,
+        height: 300,
         child: PageView(
           controller: pageController,
           children: events.map((event) {
@@ -72,34 +72,37 @@ class CardDayEventWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if(hasGame)...[
-                    Container(
-                      width: 100,
-                      padding: const EdgeInsets.all(5),
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        color: AppColors.red_300,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const IndicatorLiveWidget(
-                        size: 15,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ],
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: dimensions.width * 0.7,
-                        child: Text(
-                          "${event.title}",
-                          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: AppColors.white,
+                      Column(
+                        children: [
+                          SizedBox(
+                            width: dimensions.width * 0.7,
+                            child: Text(
+                              "${event.title}",
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                color: AppColors.white,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
+                          if(hasGame)...[
+                            Container(
+                              width: 100,
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: AppColors.red_300,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const IndicatorLiveWidget(
+                                size: 15,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -208,7 +211,7 @@ class CardDayEventWidget extends StatelessWidget {
                         ),
                       ),
                       ButtonTextWidget(
-                        action: () => Get.toNamed('/games/list', arguments: {'event': event}),
+                        action: () => Get.toNamed('/games/day', arguments: {'event': event}),
                         width: 80,
                         height: 30,
                         text: "Juntar-se",

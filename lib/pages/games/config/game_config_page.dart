@@ -150,7 +150,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                         action: () => currentPage == 0 ? Get.back() : stepForm('voltar')
                       ),
                       ButtonTextWidget(
-                        text: currentPage == 0 ? "Continuar" : "Iniciar",
+                        text: "Continuar",
                         icon: currentPage == 1 ? AppIcones.apito : null,
                         width: 100,
                         action: () => stepForm('continue')

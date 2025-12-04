@@ -19,7 +19,7 @@ class ChatService {
     List.generate(50, (i){
       //ADICIONAR CHAT A LISTA
       arr.add({
-        'user': userRepository.generateUser(i, false).toMap(),
+        'user': userRepository.generateUser(i, false),
         'messages': List.generate(random.nextInt(20), (index) => {
           'text': faker.lorem.sentence().toString(),
           'autor': random.nextBool(),

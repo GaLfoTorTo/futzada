@@ -1,3 +1,4 @@
+import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +10,6 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/animated/animated_ellipsis.dart';
 import 'package:futzada/widget/others/timer_counter_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 class CardGameLiveWidget extends StatefulWidget {
@@ -26,30 +26,21 @@ class CardGameLiveWidget extends StatefulWidget {
 }
 
 class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
-  //DEFINIR COR DO CARD
-  late Color cardColor = AppColors.green_300;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    //RESGATAR COR PREDOMINANTE DA FOTO DO EVENTO
-    loadColorEvent();
-  }
-  //LOAD PREDOMINANTE COR DE IMAGEM DO EVENTO
-  void loadColorEvent() async {
-    //RESGATAR COR DOMINANT NO CACHE
-    final dominantColor = await AppColors.getCachedDominantColor(widget.event.photo);
-    setState(() {
-      cardColor = dominantColor;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
     //RESGATAR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
-
+    //RESGATAR PARTIDA 
+    GameModel game = widget.game;
     //RESGATAR EQUIPES DA PARTIDA
     TeamModel teamA = widget.game.teams!.first;
     TeamModel teamB = widget.game.teams!.last;
@@ -63,49 +54,56 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        margin: const EdgeInsets.only(right: 10),
+        width: dimensions.width - 10,
+        margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
+          color: AppColors.green_300,
+          image: DecorationImage(
+            image: const AssetImage(AppImages.gramado) as ImageProvider,
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              AppColors.green_300.withAlpha(220), 
+              BlendMode.srcATop,
+            )
+          ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.dark_500.withAlpha(30),
+              color: AppColors.dark_500.withAlpha(50),
               spreadRadius: 0.5,
               blurRadius: 5,
               offset: const Offset(2, 5),
             ),
           ],
-          image: DecorationImage(
-            image: widget.event.photo != null 
-              ? CachedNetworkImageProvider(widget.event.photo!) 
-              : const AssetImage(AppImages.gramado) as ImageProvider,
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              cardColor.withAlpha(150), 
-              BlendMode.srcATop,
-            )
-          ),
         ),
-        child: 
-        Obx(() {
+        child: Obx(() {
           //RESGATAR PLACAR DA PARTIDA
           final teamAScore = gameController.teamAScore.value;
           final teamBScore = gameController.teamBScore.value;
 
           return Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "${widget.event.title}",
-                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+              Container(
+                width: 150,
+                decoration: const BoxDecoration(
+                  color: AppColors.red_300,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(70),
+                    bottomRight: Radius.circular(70),
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: IndicatorLiveWidget(
+                    size: 15,
                     color: AppColors.white,
                   ),
                 ),
               ),
               Text(
-                "#${widget.game.number}",
+                "#${game.number}",
                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: AppColors.white,
+                  color: AppColors.blue_500,
                 ),
               ),
               Row(
@@ -116,10 +114,10 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                     child: Column(
                       children: [
                         SvgPicture.asset(
-                          AppIcones.emblemas[teamA.emblema]!,
+                          AppIcones.emblemas["emblema_1"]!,
                           width: 60,
                           colorFilter: const ColorFilter.mode(
-                            AppColors.white, 
+                            AppColors.blue_500,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -128,7 +126,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamA.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: AppColors.white,
+                              color: AppColors.blue_500,
                             ),
                           ),
                         ),
@@ -167,10 +165,10 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                     child: Column(
                       children: [
                         SvgPicture.asset(
-                          AppIcones.emblemas[teamB.emblema]!,
+                          AppIcones.emblemas['emblema_2']!,
                           width: 60,
                           colorFilter: const ColorFilter.mode(
-                            AppColors.white, 
+                            AppColors.blue_500, 
                             BlendMode.srcIn,
                           ),
                         ),
@@ -179,7 +177,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamB.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: AppColors.white,
+                              color: AppColors.blue_500,
                             ),
                           ),
                         ),
