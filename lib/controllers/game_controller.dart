@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:futzada/models/game_event_model.dart';
+import 'package:futzada/services/game_event_service.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
@@ -19,6 +21,8 @@ import 'package:futzada/controllers/event_controller.dart';
 abstract class GameBase {
   //GETTER - SERVIÇO DE PARTIDAS
   GameService get gameService;
+  //GETTER - SERVIÇO DE EVENTOS DA PARTIDA
+  GameEventService get gameEventService;
   //GETTER - SERVIÇO DE CRONOMETRO
   TimerService get timerService;
   //GETTER - EVENTO
@@ -40,6 +44,30 @@ abstract class GameBase {
   //ESTADO - PLACAR EQUIPES NA PARTIDA
   RxInt get teamAScore;
   RxInt get teamBScore;
+  //ESTADO - ESTATISTICAS
+  RxInt get teamACorners;
+  RxInt get teamBCorners;
+  RxInt get teamAFouls;
+  RxInt get teamBFouls;
+  RxInt get teamADefense;
+  RxInt get teamBDefense;
+  RxInt get teamAOffside;
+  RxInt get teamBOffside;
+  RxInt get teamAPasses;
+  RxInt get teamBPasses;
+  RxInt get teamAPossesion;
+  RxInt get teamBPossesion;
+  RxInt get teamAShots;
+  RxInt get teamBShots;
+  RxInt get teamAShotsGoal;
+  RxInt get teamBShotsGoal;
+  RxInt get teamAYellowCard;
+  RxInt get teamBYellowCard;
+  RxInt get teamARedCard;
+  RxInt get teamBRedCard;
+  //ESTADO LISTA DE EVENTOS DA PARTIDA
+  RxList<GameEventModel> get gameEvents;
+
 
   //===PARTIDA AO VIVO===
   //ESTADO - HORARIO DA PARTIDA
@@ -66,6 +94,8 @@ class GameController extends GetxController
   //GETTER DE SERVIÇOS
   @override
   GameService gameService = GameService();
+  @override
+  GameEventService gameEventService = GameEventService();
   @override
   TimerService timerService = TimerService();
   
@@ -116,6 +146,8 @@ mixin GameMatchMixin on GetxController implements GameBase{
   @override
   TeamModel teamB = TeamModel(players: []);
   @override
+  RxList<GameEventModel> gameEvents = <GameEventModel>[].obs;
+  @override
   RxInt teamAlength = 0.obs;
   @override
   RxInt teamBlength = 0.obs;
@@ -123,6 +155,46 @@ mixin GameMatchMixin on GetxController implements GameBase{
   RxInt teamAScore = 0.obs;
   @override
   RxInt teamBScore = 0.obs;
+  @override
+  RxInt teamACorners = 0.obs;
+  @override
+  RxInt teamBCorners = 0.obs;
+  @override
+  RxInt teamAFouls = 0.obs;
+  @override
+  RxInt teamBFouls = 0.obs;
+  @override
+  RxInt teamADefense = 0.obs;
+  @override
+  RxInt teamBDefense = 0.obs;
+  @override
+  RxInt teamAOffside = 0.obs;
+  @override
+  RxInt teamBOffside = 0.obs;
+  @override
+  RxInt teamAPasses = 0.obs;
+  @override
+  RxInt teamBPasses = 0.obs;
+  @override
+  RxInt teamAPossesion = 50.obs;
+  @override
+  RxInt teamBPossesion = 50.obs;
+  @override
+  RxInt teamAShots = 0.obs;
+  @override
+  RxInt teamBShots = 0.obs;
+  @override
+  RxInt teamAShotsGoal = 0.obs;
+  @override
+  RxInt teamBShotsGoal = 0.obs;
+  @override
+  RxInt teamAYellowCard = 0.obs;
+  @override
+  RxInt teamBYellowCard = 0.obs;
+  @override
+  RxInt teamARedCard = 0.obs;
+  @override
+  RxInt teamBRedCard = 0.obs;
 
   //FUNÇÃO PARA DEFINIR TIME ESPECIFICO DA PARTIDA
   void setTeam(TeamModel team, bool flag) {

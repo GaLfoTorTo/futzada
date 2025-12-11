@@ -114,32 +114,20 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                           color: AppColors.blue_500
                         )
                       ),
-                      Container(
+                      SvgPicture.asset(
+                        AppIcones.emblemas[gameController.currentGame.teams!.first.emblema!]!,
                         width: 100,
                         height: 100,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: AppColors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.dark_500.withAlpha(30),
-                              spreadRadius: 0.7,
-                              blurRadius: 5,
-                              offset: const Offset(-2, 5),
-                            ),
-                          ],
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.white, 
+                          BlendMode.srcIn,
                         ),
-                        child: SvgPicture.asset(
-                          AppIcones.emblemas[gameController.currentGame.teams!.first.emblema!]!,
-                          width: 50,
-                          height: 50,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.gray_300, 
-                            BlendMode.srcIn,
-                          ),
-                        ),
+                      ),
+                      Text(
+                        'Home',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: AppColors.blue_500
+                        )
                       ),
                     ],
                   ),
@@ -171,42 +159,28 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Row(
                           children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
+                            Text(
+                              "$teamAScore",
+                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                                 color: AppColors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "$teamAScore",
-                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: AppColors.gray_500
-                                )
-                              ),
+                                fontSize: 60
+                              )
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Text(
                                 'X', 
-                                style: Theme.of(context).textTheme.titleLarge
-                              ),
-                            ),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                "$teamBScore",
-                                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: AppColors.gray_500
+                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                                  color: AppColors.blue_500
                                 )
                               ),
+                            ),
+                            Text(
+                              "$teamBScore",
+                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                                color: AppColors.white,
+                                fontSize: 60
+                              )
                             ),
                           ],
                         ),
@@ -240,32 +214,20 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                           color: AppColors.blue_500
                         )
                       ),
-                      Container(
+                      SvgPicture.asset(
+                        AppIcones.emblemas[gameController.currentGame.teams!.last.emblema!]!,
                         width: 100,
                         height: 100,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: AppColors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.dark_500.withAlpha(30),
-                              spreadRadius: 0.7,
-                              blurRadius: 5,
-                              offset: const Offset(-2, 5),
-                            ),
-                          ],
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.white, 
+                          BlendMode.srcIn,
                         ),
-                        child: SvgPicture.asset(
-                          AppIcones.emblemas[gameController.currentGame.teams!.last.emblema!]!,
-                          width: 50,
-                          height: 50,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.gray_300, 
-                            BlendMode.srcIn,
-                          ),
-                        ),
+                      ),
+                      Text(
+                        'Away',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: AppColors.blue_500
+                        )
                       ),
                     ],
                   ),
