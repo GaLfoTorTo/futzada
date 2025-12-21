@@ -26,28 +26,10 @@ class IndicatorLiveWidget extends StatelessWidget {
         ),
         SizedBox(
           width: size! + 5,
-          child: Stack(
-            children: [
-              Transform.rotate(
-                angle: - math.pi / 2,
-                child: Icon(
-                  Icons.wifi,
-                  color: color,
-                  size: size,
-                ),
-              ),
-              Positioned(
-                left: 7,
-                child: Transform.rotate(
-                  angle: math.pi / 2,
-                  child: Icon(
-                    Icons.wifi,
-                    color: color,
-                    size: size,
-                  ),
-                ),
-              ),
-            ]
+          child: Icon(
+            Icons.sensors,
+            color: color,
+            size: size,
           ),
         ),
       ],

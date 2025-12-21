@@ -33,6 +33,10 @@ abstract class GameBase {
   GameModel get currentGame;
 
   //===DIA DE PARTIDA===
+  RxMap<String, double> get votesGame;
+  RxMap<String, int>? get votesMVP;
+  RxInt get votesGameCount;
+  RxInt get votesMVPCount;
   
   //===PARTIDA===
   //ESTADO - EQUIPES DA PARTIDA
@@ -83,7 +87,7 @@ abstract class GameBase {
 }
 
 class GameController extends GetxController
-  with GameMatchMixin, GameConfigMixin, GameStopwatchMixin, GamesEventMixin{
+  with GameMatchMixin, GameVotesMixin, GameConfigMixin, GameStopwatchMixin, GamesEventMixin{
   //GETTER DE CONTROLLERS
   static GameController get instance => Get.find();
   final EventController eventController = EventController.instance;
@@ -135,6 +139,44 @@ class GameController extends GetxController
     timerService.stopStopwatch(currentGame.id);
     //ENCERRAR CONTROLLER
     super.onClose();
+  }
+}
+
+//===MIXIN - VOTES PARTIDA===
+mixin GameVotesMixin on GetxController implements GameBase{
+  //ESTADOS - VOTOS
+  @override
+  RxInt votesGameCount = 25.obs;
+  @override
+  RxInt votesMVPCount = 25.obs;
+  @override
+  RxMap<String, double> votesGame = <String, double>{}.obs;
+  @override
+  RxMap<String, int> votesMVP = <String, int>{}.obs;
+
+  //FUNÇÃO DE DEFINIÇÃO DE OPÇÕES DE VOTO
+  void setVotesGame() {
+    //LIMPAR LISTA
+    votesGame.clear();
+    //ADICIONAR JOGADORES DA EQUIPE A
+    votesGame.value = {
+      "team1": 70,
+      "draw": 20,
+      "team2": 10,
+    };
+  }
+  //FUNÇÃO DE DEFINIÇÃO DE OPÇÕES DE VOTO
+  void setVotesMVP() {
+    //LIMPAR LISTA
+    votesMVP.clear();
+    //ADICIONAR JOGADORES DA EQUIPE A
+    votesMVP.addAll({
+      for (final p in teamA.players) p.user.uuid!: 0,
+    });
+    //ADICIONAR JOGADORES DA EQUIPE B
+    votesMVP.addAll({
+      for (final p in teamB.players) p.user.uuid!: 0,
+    });
   }
 }
 
@@ -277,6 +319,15 @@ mixin GameMatchMixin on GetxController implements GameBase{
       createdAt : DateTime.now(),
       updatedAt : DateTime.now(),
     );
+    //DEFINIR VOTAÇÃO PARA EQUIPE VENCEDORA
+    gameController.setVotesGame();
+    //DEFINIR VOTAÇÃO PARA JOGADORES DA EQUIPE
+    gameController.setVotesMVP();
+    //GERAR EVENTOS FAKE DA PARTIDA/* Remover */
+    List.generate(10, (i) => gameController.gameEvents.addIf(gameController.gameEvents.length < 11, gameEventService.generateGameEvent(
+      i % 2 == 0 ? teamA : teamB,
+      i % 2 == 0 ? teamA.players[0] : teamB.players[0],
+    )));
     // ENCONTRAR ÍNDICE DO ITEM NA LISTA
     final index = gameController.nextGames.indexWhere((item) => item!.id == gameController.currentGame.id);
     //VERIFICAR SE FOI ENCONTRADO O INDEX DA PARTIDA

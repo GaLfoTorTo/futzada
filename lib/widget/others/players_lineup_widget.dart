@@ -47,10 +47,10 @@ class PlayersLineupWidget extends StatelessWidget {
   double calcSizeAvatar(int qtd) {
     // Mapeia a quantidade para um tamanho fixo baseado em faixas
     if (qtd <= 4) return 60.0;
-    if (qtd <= 6) return 50.0;
-    if (qtd <= 8) return 40.0;
-    if (qtd <= 10) return 35.0;
-    return 30.0;
+    if (qtd <= 6) return 55.0;
+    if (qtd <= 8) return 52.0;
+    if (qtd <= 10) return 50.0;
+    return 45.0;
   }
 
   //FUNÇÃO PARA CALCULAR A POSIÇÃO DOS JOGADORES

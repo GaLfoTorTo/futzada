@@ -1,12 +1,10 @@
-import 'package:futzada/widget/others/players_court_widget.dart';
-import 'package:futzada/widget/others/players_lineup_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/others/lineup_widget.dart';
 import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/widget/others/players_lineup_widget.dart';
 
 class GameEscalationPage extends StatefulWidget {
   const GameEscalationPage({super.key});
@@ -81,7 +79,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                   ),
                   child: Center(
                     child: Text(
-                      teamA?.name ?? 'Time A',
+                      teamA.name ?? 'Time A',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: AppColors.blue_300
                       ),
@@ -98,7 +96,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                   ),
                   child: Center(
                     child: Text(
-                      teamB?.name ?? 'Time B',
+                      teamB.name ?? 'Time B',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: AppColors.red_300
                       ),

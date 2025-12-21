@@ -63,6 +63,8 @@ class _GameConfigPageState extends State<GameConfigPage> {
               game: game,
             ));
           }else{
+            //DEFINIR PARTIDA ATUAL
+            gameController.setGame();
             //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
             Get.offNamed('/games/overview', arguments: {
               'game': game,

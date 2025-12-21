@@ -19,18 +19,11 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
   
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //RESGATAR SERVIÇO DE VENTOS DA PARTIDA
     GameEventService gameEventService = GameEventService();
     //RESGATAR EQUIPES
     final teamA = gameController.currentGame.teams!.first;
     final teamB = gameController.currentGame.teams!.last;
-
-    List.generate(10, (i) => gameController.gameEvents.addIf(gameController.gameEvents.length < 11, gameEventService.generateGameEvent(
-      i % 2 == 0 ? teamA : teamB,
-      i % 2 == 0 ? teamA.players[0] : teamB.players[0],
-    )));
 
     //FUNÇÃO DE CONSTRUÇÃO DE EVENTO DA TIMELINE
     Widget buildTimelineTile(GameEventModel event) {
@@ -143,9 +136,9 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
           spacing: 5,
           children: [
             const Icon(
-              Icons.sports,
+              Icons.timer_outlined,
               size: 25,
-              color: AppColors.gray_500,
+              color: AppColors.gray_300,
             ),
             Text(
               gameEventService.getActionGameEvent(event.type)['title'],
@@ -174,9 +167,28 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
             ),
           ],
         ),
-        child: /* Obx((){
-          return  */
-          ListView.builder(
+        child: Obx((){
+          if(gameController.gameEvents.isEmpty){
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                Text(
+                  "A partida será iniciada em instantes, aguarde!",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: AppColors.gray_300,
+                  ),
+                ),
+                const Icon(
+                  Icons.sports,
+                  size: 50,
+                  color: AppColors.gray_300,
+                )
+              ],
+            );
+          }
+          //TIMELINE DE EVENTOS
+          return ListView.builder(
             itemCount: gameController.gameEvents.length,
             itemBuilder: (context, index) {
               final event = gameController.gameEvents[index];
@@ -193,8 +205,8 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
               }
               return buildTimelineTile(event);
             },
-          ),
-        /* }) */
+          );
+        })
     );
   }
 }

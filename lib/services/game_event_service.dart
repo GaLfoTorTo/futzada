@@ -34,6 +34,7 @@ class GameEventService {
   }
 
   Map<String, dynamic> getActionGameEvent(event){
+    print(event);
     switch (event) {
       case GameEventType.StartGame:
         return {
@@ -67,22 +68,22 @@ class GameEventService {
         };
       case GameEventType.Penalties:
         return {
-          'icon' : AppIcones.foot_futebol_solid,
+          'icon' : Icons.sports,
           'title' : 'Penalties'
         };
       case GameEventType.Goal:
         return {
-          'icon' : Icons.sports_soccer,
+          'icon' : Icons.sports_soccer_rounded,
           'title' : 'GOOOOOL'
         };
       case GameEventType.Defense:
         return {
-          'icon' : Icons.back_hand,
+          'icon' : Icons.security_rounded,
           'title' : 'Defesa'
         };
       case GameEventType.Penalty:
         return {
-          'icon' : AppIcones.foot_futebol_solid,
+          'icon' : Icons.sports,
           'title' : 'Penalti'
         };
       case GameEventType.Corner:
@@ -92,7 +93,7 @@ class GameEventService {
         };
       case GameEventType.FreeKick:
         return {
-          'icon' : Icons.crisis_alert_rounded,
+          'icon' : Icons.settings_input_component_rounded,
           'title' : 'Cobrança de Falta'
         };
       case GameEventType.GoalKick:
@@ -102,12 +103,13 @@ class GameEventService {
         };
       case GameEventType.Offside:
         return {
-          'icon' : Icons.sports,
+          'icon' : Icons.shuffle_rounded,
           'title' : 'Impedimento'
         };
       case GameEventType.Foul:
+      case GameEventType.FoulTaken:
         return {
-          'icon' : Icons.medical_services,
+          'icon' : Icons.sports_kabaddi_outlined,
           'title' : 'Falta'
         };
       case GameEventType.YellowCard:
@@ -118,11 +120,11 @@ class GameEventService {
       case GameEventType.RedCard:
         return {
           'icon' : Icons.square,
-          'title' : 'Expulso'
+          'title' : 'Expulsão'
         };
       case GameEventType.Substitution:
         return {
-          'icon' : Icons.compare_arrows_rounded,
+          'icon' : Icons.social_distance_rounded,
           'title' : 'Substituição'
         };
       case GameEventType.Assist:
@@ -147,12 +149,12 @@ class GameEventService {
         };
       case GameEventType.VARCheck:
         return {
-          'icon' : Icons.tv,
+          'icon' : Icons.desktop_windows,
           'title' : 'VAR'
         };
       default:
         return {
-          'icon' : Icons.sports_soccer,
+          'icon' : Icons.sports_soccer_rounded,
           'title' : 'Gol'
         };
     }

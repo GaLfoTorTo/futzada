@@ -1,11 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/services/timer_service.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/game_model.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/pages/games/detail/game_escalation_page.dart';
 import 'package:futzada/pages/games/detail/game_overview_page.dart';
@@ -121,7 +118,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
             'index': 1,
           });
         },
-        shadow: false,
+        shadow: !_showFixedTabs,
       ),
       body: SafeArea(
         child: NestedScrollView(

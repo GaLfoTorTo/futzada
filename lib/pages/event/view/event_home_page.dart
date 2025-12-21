@@ -1,33 +1,23 @@
 import 'dart:math';
-
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/api/api.dart';
-import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/models/address_model.dart';
-import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/services/escalation_service.dart';
-import 'package:futzada/services/integration_map_service.dart';
-import 'package:futzada/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/widget/dialogs/map_travel_dialog.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/user_model.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/api/api.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:futzada/widget/images/img_group_circle_widget.dart';
-import 'package:futzada/widget/indicators/indicator_avaliacao_widget.dart';
-import 'package:futzada/widget/indicators/indicator_live_widget.dart';
-import 'package:futzada/widget/text/expandable_text_widget.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/services/escalation_service.dart';
+import 'package:futzada/services/integration_map_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:futzada/widget/buttons/button_icon_widget.dart';
+import 'package:futzada/widget/dialogs/map_travel_dialog.dart';
+import 'package:futzada/widget/text/expandable_text_widget.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/controllers/event_controller.dart';
 
 class EventHomePage extends StatefulWidget {
@@ -92,33 +82,7 @@ class _EventHomePageState extends State<EventHomePage> {
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    
-    //LISTA DE INFORMAÇÕES SOBRE O EVENT
-    List<Map<String, dynamic>> infoEvent = [
-      {
-        'item': "Organizador:",
-        'icon': AppIcones.user_cog_solid,
-        'value' : "Zé Lasquinha",
-        'foto' : null,
-      },
-      {
-        'item': "Iniciada em",
-        'icon': AppIcones.calendar_solid,
-        'value' : DateFormat("dd/MM/yyyy").format(event.createdAt!),
-      },
-      {
-        'item': "Participantes:",
-        'icon': AppIcones.users_solid,
-        'value' : event.participants!.length,
-      },
-      {
-        'item': "Partidas Disputadas:",
-        'icon': AppIcones.apito,
-        'value' : "160",
-      },
-    ];
-    
+    var dimensions = MediaQuery.of(context).size;    
     //LISTA DE INFORMAÇÕES SOBRE AS PARTIDAS
     List<Map<String, dynamic>> infoGame = [
       {

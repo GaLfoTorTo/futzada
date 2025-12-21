@@ -1,3 +1,4 @@
+import 'package:futzada/models/game_event_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/enum/enums.dart';
@@ -47,6 +48,22 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
     }).toList();
   }
 
+  //FUNÇÃO DE AGRUPAMENTO DE EVENTOS DE GOL DO JOGADOR
+  Map<int, List<int>> groupGoalsByPlayer(List<GameEventModel> events) {
+    //
+    final Map<int, List<int>> grouped = {};
+
+    for (final event in events) {
+      final user = event.participant?.user;
+      if (user == null) continue;
+      //ADICIONAR JOGADOR
+      grouped.putIfAbsent(user.id!, () => []);
+      grouped[user.id]?.add(event.minute ?? 0);
+    }
+
+    return grouped;
+  }
+
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
@@ -55,6 +72,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
     return Container(
       width: dimensions.width,
       margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -71,25 +89,17 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
         ],
       ),
       child: Column(
+        spacing: 10,
         children: [
           //NOME EVENTO
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "${widget.event.title}",
-                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                    color: AppColors.gray_500,
-                  ),
-                ),
-              ],
+          Text(
+            "${widget.event.title}",
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+              color: AppColors.gray_500,
             ),
           ),
           //PLACAR
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10),
             padding: const EdgeInsets.symmetric(vertical: 15),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -132,10 +142,17 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                     ],
                   ),
                 ),
+                //CRONOMETRO E PLACAR
                 Obx(() {
-                  final isRunning = gameController.isGameRunning.value;
                   final teamAScore = gameController.teamAScore.value;
                   final teamBScore = gameController.teamBScore.value;
+
+                  //RESGATAR TEMPO DA PARTIDA
+                  final currentTime = gameController.currentTime.value;
+                  final parts = currentTime.split(':');
+                  final minutes = int.tryParse(parts[0]) ?? 0;
+                  //VERIFICAR SE TEMPO ULTRAPAÇOU LIMITE DA PARTIDA
+                  final isExtraTime = minutes > (widget.game.duration ?? 0);
                   //PLACAR
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -185,22 +202,39 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                           ],
                         ),
                       ),
-                      //INDICADOR DE AO VIVO (DOTS)
-                      if (isRunning)...[
-                        Container(
-                          height: 20,
-                          width: 30,
-                          alignment: Alignment.bottomCenter,
-                          decoration: BoxDecoration(
-                            color: AppColors.white.withAlpha(100),
-                            borderRadius: const  BorderRadius.all(Radius.circular(5))
+                      //TEMPORIZADOR
+                      Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                            decoration: const BoxDecoration(
+                              color: AppColors.dark_300,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Text(
+                              currentTime,
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'DS-DIGITAL',
+                                color: isExtraTime ? AppColors.red_300 : AppColors.green_300,
+                              ),
+                            ),
                           ),
-                          child: const AnimatedEllipsis(
-                            dotSize: 5,
-                            dotColor: AppColors.white,
-                          ),
-                        ),
-                      ]
+                          
+                          if(isExtraTime) ...[
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text(
+                                "Tempo Extra",
+                                style: TextStyle(
+                                  color: AppColors.red_300,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ],
                   );
                 }),
@@ -235,68 +269,91 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
               ],
             ),
           ),
-          //CRONOMETRO
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
+          //REGISTRADOR DE EVENTOS DA PARTIDA
+          Obx((){
+            final game = gameController.currentGame;
+            final temAGameEvents = gameController.gameEvents.where((t) => t.team.id == game.teams!.first.id).toList();
+            final temBGameEvents = gameController.gameEvents.where((t) => t.team.id == game.teams!.last.id).toList();
+            return  Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ImgGroupCircularWidget(
-                  width: 30,
-                  height: 30,
-                  side: "right",
-                  images: teamAplayersImg
-                ),
-                Obx(() {
-                  //RESGATAR TEMPO DA PARTIDA
-                  final currentTime = gameController.currentTime.value;
-                  final parts = currentTime.split(':');
-                  final minutes = int.tryParse(parts[0]) ?? 0;
-                  //VERIFICAR SE TEMPO ULTRAPAÇOU LIMITE DA PARTIDA
-                  final isExtraTime = minutes > (widget.game.duration ?? 0);
+              children: List.generate(2, (i){
+                //RESGATAR EVENTOS PRA CADA TIME
+                final teamGameEvents = i == 0 ? temAGameEvents : temBGameEvents;
+                if(teamGameEvents.isEmpty) return Container();
+                //AGRUPAR GOLS POR JOGADOR
+                final groupedGoals = groupGoalsByPlayer(teamGameEvents.where((e) => e.type?.name == 'Goal').toList());
 
-                  return Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        decoration: const BoxDecoration(
-                          color: AppColors.dark_300,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Text(
-                          currentTime,
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'DS-DIGITAL',
-                            color: isExtraTime ? AppColors.red_300 : AppColors.green_300,
-                          ),
-                        ),
-                      ),
-                      
-                      if(isExtraTime) ...[
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            "Tempo Extra",
-                            style: TextStyle(
-                              color: AppColors.red_300,
+                return SizedBox(
+                  width: dimensions.width * 0.37,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 5,
+                    children: groupedGoals.entries.map((entry) {
+                      final playerId = entry.key;
+                      final minutes = entry.value..sort();
+                  
+                      final event = teamGameEvents.firstWhere(
+                        (e) => e.participant?.user.id == playerId,
+                      );
+                  
+                      final user = event.participant!.user;
+                      return Row(
+                        spacing: 5,
+                        children: [
+                          if(i == 0)...[
+                            const Icon(
+                              AppIcones.futebol_ball_solid,
+                              size: 12,
+                              color: AppColors.gray_500,
                             ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  );
-                }),
-                ImgGroupCircularWidget(
-                  width: 30,
-                  height: 30,
-                  side: "right",
-                  images: teamBplayersImg
-                ),
-              ],
-            ),
-          )
+                            Text(
+                              "${user.firstName} ${user.lastName}",
+                              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                                color: AppColors.gray_500
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                "${minutes.map((m) => "$m'").join(', ')}",
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                                  color: AppColors.gray_500
+                                ),
+                                softWrap: true,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ],
+                          if(i == 1)...[
+                            Flexible(
+                              child: Text(
+                                "${minutes.map((m) => "$m'").join(', ')}",
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                                  color: AppColors.gray_500
+                                ),
+                                softWrap: true,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                            Text(
+                              "${user.firstName} ${user.lastName}",
+                              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                                color: AppColors.gray_500
+                              ),
+                            ),
+                            const Icon(
+                              AppIcones.futebol_ball_solid,
+                              size: 12,
+                              color: AppColors.gray_500,
+                            )
+                          ]
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                );
+              })
+            );
+          }),
         ],
       ),
     );
