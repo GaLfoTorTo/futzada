@@ -282,16 +282,15 @@ class AppHelper {
     //RESGATAR DIFERENÇA ENTRE AS DATA
     final difference = today.difference(targetDate).inDays;
     //VERIFICAR DIFERENÇA ENTRE DATA
-    if (difference == 0) {
-      return 'Hoje';
-    } else if (difference == 1) {
-      return 'Ontem';
-    } else if (difference <= 7) {
-      return 'Essa semana';
-    } else if (difference <= 14) {
-      return 'Semana passada';
-    } else {
-      return DateFormat('yyyy-MM-dd').format(date);
+    switch (difference) {
+      case 0:
+        return "Hoje";
+      case 1:
+        return "Ontem";
+      case -1:
+        return "Amanhã";
+      default:
+        return DateFormat('dd/MM/yyyy').format(date);
     }
   }  
 

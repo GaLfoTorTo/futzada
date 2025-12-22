@@ -1,15 +1,15 @@
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/models/event_model.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/pages/erros/erro_historic_game_page.dart';
+import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:futzada/widget/skeletons/skeleton_games_widget.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/cards/card_game_widget.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/pages/erros/erro_historic_game_page.dart';
 
 class EventHistoricPage extends StatefulWidget {
   const EventHistoricPage({super.key});
@@ -117,16 +117,19 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
                       final List<GameModel>? listGames = entry.value;
 
                       return ListView(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                         children: listGames!.map((game) {
-                          return CardGameWidget(
-                            width: dimensions.width - 20,
-                            event: event,
-                            game: game,
-                            gameDate: DateFormat("EEE - dd/MM/y").format(game.createdAt!),
-                            navigate: true,
-                            active: false,
-                            historic: true,
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: CardGameWidget(
+                              width: dimensions.width - 20,
+                              event: event,
+                              game: game,
+                              gameDate: AppHelper.getDateLabel(game.createdAt!),
+                              navigate: true,
+                              active: false,
+                              historic: true,
+                            ),
                           );
                         }).toList(),
                       );

@@ -98,7 +98,7 @@ class EventParticipantsPage extends StatelessWidget {
                                 height: 60,
                                 width: 60,
                                 image: participant.user.photo,
-                                borderColor: AppColors.green_500
+                                borderColor: AppColors.gray_500
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10),
