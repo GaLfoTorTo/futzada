@@ -17,7 +17,7 @@ class UserService {
   //FUNÇÃO PARA BUSCAR EVENTOS DO USUARIO LOGADO
   Future<List<EventModel>> fetchEventsUser() async {
     //BUSCAR EVENTOS DO USUARIO
-    var events = await eventService.getEvents();
+    var events = await eventService.getUserEvents();
     return events;
   }
 

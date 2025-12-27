@@ -107,7 +107,7 @@ class HomeController extends GetxController{
       //INICIALIZAR CONTROLLER DE RANKINGS
       Get.put(RankController());
       //INICIALIZAR CONTROLLER DE EXPLORER
-      Get.put(ExplorerController());
+      /* Get.put(ExplorerController()); */
       //INICIALIZAR CONTROLLER CHAT PAGE
       Get.put(ChatController());
       //INICIALIZAR CONTROLLER DE NOTIFICAÇÕES

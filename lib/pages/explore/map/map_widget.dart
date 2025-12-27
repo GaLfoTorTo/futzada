@@ -1,129 +1,77 @@
-import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_animations.dart';
 import 'package:get/get.dart';
+import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:lottie/lottie.dart' as lottie;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:futzada/controllers/map_controller.dart';
+import 'package:futzada/pages/erros/erro_permission_page.dart';
+import 'package:futzada/widget/markers/user_marker_widget.dart';
+import 'package:futzada/widget/markers/sport_cluster_widget.dart';
+import 'package:futzada/widget/markers/event_cluster_widget.dart';
 
-class MapaPage extends StatefulWidget {
-  const MapaPage({
-    super.key,
-  });
+class MapWidget extends StatefulWidget {
+  const MapWidget({super.key});
 
   @override
-  State<MapaPage> createState() => _MapaPageState();
+  State<MapWidget> createState() => _MapWidgetState();
 }
 
-class _MapaPageState extends State<MapaPage> {
-  //POSIÇÃO DO USUARIO
-  Position? currentPosition;
-  //CONTROLLER DO MAPA
-  final MapController mapController = MapController();
-  //CONTROLLADOR DE CARREGAMENTO DO MAPA
-  bool isMapReady = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  //FUNÇÃO PARA BUSCAR POSIÇÃO DO USUARIO
-  Future<void> getCurrentLocation() async {
-    //SOLICITAR PERMISSÃO DE ACESSO A LOCALIZAÇÃO
-    PermissionStatus permission = await Permission.location.request();
-    //VERIFICAR SE USUARIO CONCEDEU PERMISSÃO
-    if (permission.isGranted) {
-      //BUSCAR LOCALIZAÇÃO ATUAL DO USUARIO
-      Position position = await Geolocator.getCurrentPosition();
-      setState(() {
-        //ATUALIZAR STATE
-        currentPosition = position;
-        //VERIFICAR SE MAPA FOI CARREGADO
-        if(isMapReady){
-          moveMapCurrentUser();
-        }
-      });
-    } else {
-      //CASO PERMISSÃO SEJA NEGADA EXIBIR MENSAGEM DE NECESSIDADE DE PERMISSÃO
-      AppHelper.feedbackMessage(context, 'Permissão Negada');
-    }
-  }
-
-  //FUNÇÃO PARA MOVER MAPA PARA POSIÇÃO DO USUARIO
-  void moveMapCurrentUser(){
-    //VERIFICAR SE POSIÇÃO ATUAL DO USUÁRIO NÃO ESTA VAZIA
-    if(currentPosition != null){
-      //MOVER MAPA PARA POSIÇÃO ATUAL DO USUÁRIO
-      mapController.move(
-        LatLng(currentPosition!.latitude, currentPosition!.longitude),
-        15.0,
-      );
-    }
-  }
+class _MapWidgetState extends State<MapWidget> {
+  //CONTROLLER DO MAPA (CUSTOM)
+  final MapWidgetController mapWidgetController = MapWidgetController.instance;
+  //RESGATAR ROTA ATUAL
+  String route = Get.currentRoute;
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.light,
-      appBar: HeaderWidget(
-        title: "Mapa", 
-        leftAction: () => Get.back(),
+    return FlutterMap(
+      mapController: mapWidgetController.mapController,
+      options: MapOptions(
+        initialCenter: mapWidgetController.currentLatLog.value!,
+        initialZoom: mapWidgetController.currentZoom.value,
+        maxZoom: 18.0,
+        minZoom: 12.0,
+        onMapEvent: (mapEvent) async{
+          //ATUALIZAR ZOOM DE CAMERA E TAMANHO DOS ITENS NO MAPA
+          mapWidgetController.currentZoom.value = mapEvent.camera.zoom;
+          mapWidgetController.baseSize.value = mapWidgetController.calculateBaseSize();
+          setState(() {});
+        },
+        onMapReady: () async{
+          //ESPERAR 2 SEGUNDOS
+          await Future.delayed(const Duration(seconds: 2));
+          //ATUALIZAR ESTADO DE MAPA PRONTO
+          mapWidgetController.isMapReady.value = true;
+          //MOVER MAPA PARA POSIÇÃO ATUAL DO USUÁRIO
+          mapWidgetController.moveMapCurrentUser(LatLng(
+            mapWidgetController.currentPosition.value!.latitude, 
+            mapWidgetController.currentPosition.value!.longitude)
+          );
+        }
       ),
-      body: Stack(
-        children: [
-          if (!isMapReady)
-            Center(
-              child: lottie.Lottie.asset(
-                AppAnimations.loading,
-                fit: BoxFit.contain,
-              ),
-            ),
-          FlutterMap(
-            mapController: mapController,
-            options: MapOptions(
-              initialCenter: currentPosition != null 
-                  ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
-                  : LatLng(0, 0),
-              initialZoom: 13.0,
-              onMapReady: () {
-                setState(() {
-                  isMapReady = true;
-                  //BUSCAR LOCALIZAÇÃO ATUAL DO USUARIO E AJUSTAR MAPA
-                  getCurrentLocation();
-                });
-              }
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: const ['a', 'b', 'c'],
-                userAgentPackageName: 'com.futzada.app',
-              ),
-              MarkerLayer(
-                markers: [
-                  Marker(
-                    point: currentPosition != null 
-                    ? LatLng(currentPosition!.latitude, currentPosition!.longitude)
-                    : LatLng(0, 0),
-                    width: 80,
-                    height: 80,
-                    child: const Icon(
-                      Icons.location_pin,
-                      color: Colors.red,
-                      size: 40,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+      children: [
+        //EXIBIR MENSAGEM E BOTÃO DE SOLICITAÇÃO DE PERMISSÃO PARA GEOLOCALIZAÇÃO
+        if(!mapWidgetController.hasPermission.value)...[
+          ErroPermissionPage(
+            function: () async => await mapWidgetController.getCurrentLocation(),
+          )
+        ]else...[
+          TileLayer(
+            urlTemplate: AppApi.map,
+            subdomains: const ['a', 'b', 'c', 'd'],
           ),
-        ]
-      ),
+          //POSIÇÃO ATUAL DO USUARIO
+          const UserMarkerWidget(),
+          //MARKERS (EVENTOS, SPORT PLACE)
+          if(route.contains('explore'))...[
+            //CLUSTERIZAÇÃO DE MARKERS (EVENTOS)
+            EventClusterWidget( events: mapWidgetController.events)
+          ]else...[
+            //CLUSTERIZAÇÃO DE MARKERS (SPORT)
+            SportClusterWidget(sportPlaces: mapWidgetController.sportPlaces)
+          ]
+        ],
+      ],
     );
   }
 }

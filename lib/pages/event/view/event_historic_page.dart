@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/helpers/date_helper.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
 import 'package:futzada/widget/skeletons/skeleton_games_widget.dart';
@@ -125,7 +125,7 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
                               width: dimensions.width - 20,
                               event: event,
                               game: game,
-                              gameDate: AppHelper.getDateLabel(game.createdAt!),
+                              gameDate: DateHelper.getDateLabel(game.createdAt!),
                               navigate: true,
                               active: false,
                               historic: true,

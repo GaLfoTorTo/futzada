@@ -1,23 +1,22 @@
-import 'package:futzada/controllers/map_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/buttons/float_button_map_widget.dart';
-import 'package:futzada/widget/dialogs/address_dialog.dart';
-import 'package:futzada/controllers/address_controller.dart';
 import 'package:futzada/pages/explore/map/map_widget.dart';
+import 'package:futzada/widget/buttons/float_button_map_widget.dart';
+import 'package:futzada/controllers/explorer_controller.dart';
+import 'package:futzada/controllers/map_controller.dart';
 
-class MapPickerPage extends StatefulWidget {
-  const MapPickerPage({super.key});
+class MapExplorer extends StatefulWidget {
+  const MapExplorer({super.key});
 
   @override
-  State<MapPickerPage> createState() => _MapPickerPageState();
+  State<MapExplorer> createState() => _MapExplorerState();
 }
 
-class _MapPickerPageState extends State<MapPickerPage> {
-  //RESGATAR CONTROLLER DE ENDEREÇOS
-  late AddressController addressController;
+class _MapExplorerState extends State<MapExplorer> {
+  //CONTROLLER DO MAPA (CUSTOM)
+  late ExplorerController explorerController;
   //RESGATAR CONTROLLER DE MAPA (CUSTOM)
   late MapWidgetController mapWidgetController;
 
@@ -25,7 +24,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE EXPLORER
-    addressController = Get.put(AddressController());
+    explorerController = Get.put(ExplorerController());
     //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
     mapWidgetController = Get.put(MapWidgetController());
   }
@@ -33,7 +32,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
   @override
   void dispose() {
     //FINALIZAR CONTROLLER DE ENDEREÇOS
-    addressController.dispose();
+    explorerController.dispose();
     //REMOVER CONTROLLER DE MAP (CUSTOM)
     mapWidgetController.dispose();
     super.dispose();
@@ -75,14 +74,17 @@ class _MapPickerPageState extends State<MapPickerPage> {
         spacing: 20,
         children: [
           FloatButtonMapWidget(
-            floatKey: "search_map",
-            icon: Icons.search_rounded,
-            onPressed: () => Get.bottomSheet(AddressDialog(), isScrollControlled: true),
+            floatKey: "filter_map",
+            icon: Icons.filter_alt,
+            onPressed: () => {},
           ),
           FloatButtonMapWidget(
             floatKey: "position_map",
             icon: Icons.my_location_rounded,
-            onPressed: () => mapWidgetController.moveMapCurrentUser(LatLng(mapWidgetController.currentPosition.value!.latitude, mapWidgetController.currentPosition.value!.longitude),),
+            onPressed: () => mapWidgetController.moveMapCurrentUser(LatLng(
+              mapWidgetController.currentPosition.value!.latitude, 
+              mapWidgetController.currentPosition.value!.longitude),
+            ),
           ),
         ],
       ),

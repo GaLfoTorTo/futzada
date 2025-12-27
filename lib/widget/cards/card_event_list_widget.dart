@@ -28,9 +28,7 @@ class CardEventListWidget extends StatelessWidget {
     //RESGATAR AVALIAÇÃO DO EVENTO
     double avaliation = eventController.getAvaliations(event.avaliations);
     //RESGATAR DATA DO EVENTO
-    String eventDate = event.date != null 
-      ? event.date! 
-      : event.daysWeek!.replaceAll('[', '').replaceAll(']', '').toString();
+    String eventDate = event.daysWeek!.replaceAll('[', '').replaceAll(']', '').toString();
 
     return InkWell(
       onTap: () => {

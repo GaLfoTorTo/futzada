@@ -149,6 +149,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 10,
                       children: [
                         const IndicatorFormWidget(
                           length: 3,
@@ -232,83 +233,50 @@ class EventAddressStepState extends State<EventAddressStep> {
                             ),
                           ),
                         ],
-                        if(isWeekDay)...[
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child:Text(
-                              eventController.labelDate.value,
-                              style: Theme.of(context).textTheme.titleSmall,
-                            ),
-                          ),
-                          const SelectDaysWeekWidget(),
-                          //VALIDAÇÃO DE DIAS DA SEMANA
-                          if(!isValid && isWeekDay)...[
-                            if(!eventController.daysOfWeek.containsValue(true))...[
-                              const Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: Text(
-                                  'Selecione os dias da semana ou defina uma data fixa!',
-                                  style: TextStyle(color: Colors.red, fontSize: 12),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ]else...[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 20.0),
-                            child: InputDateWidget(
-                              name: 'data',
-                              prefixIcon: Icons.calendar_month,
-                              label: eventController.labelDate.value,
-                              textController: eventController.dateController,
-                              onValidated: (value) => eventController.formService.validateEmpty(value, 'Data Fixa'),
-                              showModal: () => selectDate(context),
+                        Text(
+                          eventController.labelDate.value,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        const SelectDaysWeekWidget(),
+                        //VALIDAÇÃO DE DIAS DA SEMANA
+                        if(!isValid && !eventController.daysOfWeek.containsValue(true))...[
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              'Selecione os dias da semana ou defina uma data fixa!',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
                             ),
                           ),
                         ],
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: ButtonTextWidget(
-                            text: "Alterar",
-                            icon: Icons.change_circle,
-                            width: dimensions.width,
-                            height: 30,
-                            action: () => setState((){
-                              //ALTERAR FALG DE DIAS DA SEMANA
-                              isWeekDay = !isWeekDay;
-                              //ALTERAR LABEL
-                              eventController.labelDate.value = isWeekDay ? "Dias da semana" : "Data Fixa";
-                            }),
-                          ),
+                        Text(
+                          'Horários',
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: dimensions.width / 2 - 20,
-                                child: InputDateWidget(
-                                  name: 'horaInicio',
-                                  label: 'Hora de Início',
-                                  textController: eventController.startTimeController,
-                                  onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Início'),
-                                  showModal: () => selectTime(context, 'horaInicio'),
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: dimensions.width / 2 - 20,
+                              child: InputDateWidget(
+                                name: 'horaInicio',
+                                label: 'Hora de Início',
+                                textController: eventController.startTimeController,
+                                onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Início'),
+                                showModal: () => selectTime(context, 'horaInicio'),
                               ),
-                              SizedBox(
-                                width: dimensions.width / 2 - 20,
-                                child: InputDateWidget(
-                                  name: 'horaFim',
-                                  label: 'Hora de Fim',
-                                  textController: eventController.endTimeController,
-                                  onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Fim'),
-                                  showModal: () => selectTime(context, 'horaFim'),
-                                ),
+                            ),
+                            SizedBox(
+                              width: dimensions.width / 2 - 20,
+                              child: InputDateWidget(
+                                name: 'horaFim',
+                                label: 'Hora de Fim',
+                                textController: eventController.endTimeController,
+                                onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Fim'),
+                                showModal: () => selectTime(context, 'horaFim'),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

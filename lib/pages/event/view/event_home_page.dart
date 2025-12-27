@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'package:futzada/helpers/date_helper.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -65,24 +65,11 @@ class _EventHomePageState extends State<EventHomePage> {
     //VERIFICAR SE MAPA ESTA PRONTO PARA INICIAR
     isMapLoaded.value = true;
   }
-
-  //FUNÇÃO PARA RESGATAR DATA DA PELADA
-  String getEventDate(EventModel event){
-    //VARIAVEL PARA RESGATAR DATA DO EVENTO
-    String date = "";
-    //VERIFICAR SE FORAM DEFINIDOS DIAS DA SEMANA
-    if(event.daysWeek != null){
-      date = event.daysWeek!.replaceAll("[", '').replaceAll("]", '');
-    }else{
-      date = event.date.toString();
-    }
-    return date;
-  }
     
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;    
+    var dimensions = MediaQuery.of(context).size; 
     //LISTA DE INFORMAÇÕES SOBRE AS PARTIDAS
     List<Map<String, dynamic>> infoGame = [
       {
@@ -125,8 +112,6 @@ class _EventHomePageState extends State<EventHomePage> {
     }
     //RESGATAR ORGANIZADOR
     ParticipantModel? organizador = event.participants!.firstWhere((participante) => participante.role!.contains("Organizator"));
-    //RESGATAR DATA DE REGISTRO DO EVENTO
-    String eventDate = DateFormat("dd/MM/y").format(gameController.eventDate!);
 
     return SingleChildScrollView(
       child: Container(
@@ -170,7 +155,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         width: dimensions.width - 50,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "${getEventDate(event)} - ${event.startTime} as ${event.endTime}",
+                          "${DateHelper.getEventDate(event)} - ${event.startTime} as ${event.endTime}",
                           style: Theme.of(context).textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

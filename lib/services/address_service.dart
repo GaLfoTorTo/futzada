@@ -1,3 +1,4 @@
+import 'package:futzada/controllers/map_controller.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart'as Dio;
 import 'package:futzada/api/api.dart';
@@ -40,14 +41,14 @@ class AddressService {
   }
 
   //FUNÇÃO PARA BUSCAR QUADRAS POLIESPORTIVAS 
-  Future<void> getSportPlaces(double radiusKm) async {
-    //RESGATAR CONTROLLER DE ENDEREÇOS
-    AddressController addressController = AddressController.instance;
+  Future<List<Map<String, dynamic>>> getSportPlaces(double radiusKm) async {
+    //RESGATAR CONTROLLER DE MAP
+    MapWidgetController mapWidgetController = MapWidgetController.instance;
     try {
       //INSTANCIAR DIO
       var dio = Dio.Dio();
       //RESGATAR DADOS DE LOCALIZAÇÃO DO USUÁRIO
-      final state = addressController.currentLocation['state'] ?? '';
+      final state = mapWidgetController.currentLocation['state'] ?? '';
       //CONSULTA POR ESTADO
       final query = """
         [out:json];
@@ -78,11 +79,13 @@ class AddressService {
           .whereType<Map<String, dynamic>>()
           .toList();
         //ATUALIZAR LISTA DE LOCAIS
-        addressController.sportPlaces.assignAll(list);
+        return list;
       }
     } catch (e) {
       print("erro: $e");
+      return [];
     }
+    return [];
   }
   
   //FUNÇÃO PARA CRIAÇÃO DE MARKER DE MAPA
@@ -164,12 +167,14 @@ class AddressService {
   Future<void> searchAddress(String address) async {
     //RESGATAR CONTROLLER DE ENDEREÇOS
     AddressController addressController = AddressController.instance;
+    //RESGATAR CONTROLLER DE MAP
+    MapWidgetController mapWidgetController = MapWidgetController.instance;
     //DEFINIR ESTADO DE PSEQUISA COMO TRUE
     addressController.isSearching.value = true;
     //LIMPAR SUGESTÕES
     addressController.suggestions.clear();
     //RESGATAR CIDADE DO USUÁRIO
-    final state = addressController.currentLocation['state'] ?? '';
+    final state = mapWidgetController.currentLocation['state'] ?? '';
     //TENTAR ENVIAR DADOS
     try {
       //INSTANCIAR DIO

@@ -14,7 +14,6 @@ class EventModel {
   String? title;
   String? bio;
   String? daysWeek;
-  String? date;
   String? startTime;
   String? endTime;
   bool? allowCollaborators;
@@ -36,7 +35,6 @@ class EventModel {
     this.title,
     this.bio,
     this.daysWeek,
-    this.date,
     this.startTime,
     this.endTime,
     this.allowCollaborators,
@@ -59,7 +57,6 @@ class EventModel {
     String? title,
     String? bio,
     String? daysWeek,
-    String? date,
     String? startTime,
     String? endTime,
     bool? allowCollaborators,
@@ -81,7 +78,6 @@ class EventModel {
       title: title ?? this.title,
       bio: bio ?? this.bio,
       daysWeek: daysWeek ?? this.daysWeek,
-      date: date ?? this.date,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       allowCollaborators: allowCollaborators ?? this.allowCollaborators,
@@ -106,7 +102,6 @@ class EventModel {
       'title': title,
       'bio': bio,
       'daysWeek': daysWeek,
-      'date': date,
       'startTime': startTime,
       'endTime': endTime,
       'photo': photo,
@@ -131,7 +126,6 @@ class EventModel {
       title: map['title'] != null ? map['title'] as String : null,
       bio: map['bio'] != null ? map['bio'] as String : null,
       daysWeek: map['daysWeek'] != null ? map['daysWeek'] as String : null,
-      date: map['date'] != null ? map['date'] as String : null,
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,
       allowCollaborators: map['allowCollaborators'] != null ? map['allowCollaborators'] as bool : null,
@@ -167,7 +161,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, date: $date, startTime: $startTime, endTime: $endTime, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, startTime: $startTime, endTime: $endTime, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -180,7 +174,6 @@ class EventModel {
       other.title == title &&
       other.bio == bio &&
       other.daysWeek == daysWeek &&
-      other.date == date &&
       other.startTime == startTime &&
       other.endTime == endTime &&
       other.allowCollaborators == allowCollaborators &&
@@ -204,7 +197,6 @@ class EventModel {
       title.hashCode ^
       bio.hashCode ^
       daysWeek.hashCode ^
-      date.hashCode ^
       startTime.hashCode ^
       endTime.hashCode ^
       visibility.hashCode ^

@@ -8,7 +8,6 @@ import 'package:futzada/models/event_model.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/images/img_group_circle_widget.dart';
-import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 
 class CardDayEventWidget extends StatelessWidget {
   final List<EventModel> events;
@@ -78,7 +77,7 @@ class CardDayEventWidget extends StatelessWidget {
                       Column(
                         children: [
                           SizedBox(
-                            width: dimensions.width * 0.7,
+                            width: dimensions.width * 0.6,
                             child: Text(
                               "${event.title}",
                               style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -88,22 +87,23 @@ class CardDayEventWidget extends StatelessWidget {
                               maxLines: 1,
                             ),
                           ),
-                          if(hasGame)...[
-                            Container(
-                              width: 100,
-                              padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: AppColors.red_300,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const IndicatorLiveWidget(
-                                size: 15,
-                                color: AppColors.white,
-                              ),
-                            ),
-                          ],
                         ],
                       ),
+                      if(hasGame)...[
+                        Container(
+                          width: 30,
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.red_300,
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                          child: const Icon(
+                            Icons.sensors,
+                            color: AppColors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(

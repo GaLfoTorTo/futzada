@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/helpers/app_helper.dart';
+import 'package:futzada/helpers/date_helper.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/controllers/event_controller.dart';
@@ -42,7 +42,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
     //INICIALIZAR CONTROLLER DE PARTIDAS AO VIVO
     inProgressController = PageController();
     //RESGATAR DATA DO PROXIMO DIA DO EVENTO
-    eventDate = AppHelper.getDateLabel(gameController.eventDate!);
+    eventDate = DateHelper.getDateLabel(gameController.eventDate!);
   }
 
 
@@ -203,7 +203,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                   return const SizedBox.shrink();
                 }
                 //RESGATAR DATA DO PROXIMO DIA DO EVENTO
-                eventDate = AppHelper.getDateLabel(gameController.scheduledGames.first!.startTime!);
+                eventDate = DateHelper.getDateLabel(gameController.scheduledGames.first!.startTime!);
                 listGames.addAll([
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),

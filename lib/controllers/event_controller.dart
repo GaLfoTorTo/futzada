@@ -98,7 +98,7 @@ mixin EventOverview on GetxController{
   List<EventModel> getSuggestions() {
     //REGATAR SERVIÇO DE VENTO
     EventService eventService = EventController.instance.eventService;
-    return eventService.getEvents();
+    return eventService.getSuggestionEvents();
   }
   //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
   List<Map<String, dynamic>> getHighlights(EventModel event) {
@@ -212,7 +212,6 @@ mixin EventRegister on GetxController{
       title: titleController.text,
       bio: bioController.text,
       daysWeek: daysOfWeek.toString(),
-      date: dateController.text,
       startTime: startTimeController.text,
       endTime: endTimeController.text,
       allowCollaborators: bool.parse(allowCollaboratorsController.text),

@@ -45,7 +45,6 @@ class ButtonIconWidget extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: iconSize,
         ),
-
         elevation: shadow == true ? 5 : 0,
         shadowColor: shadow == true ?AppColors.dark_300.withAlpha(50) : null,
       ),

@@ -1,4 +1,3 @@
-import 'package:futzada/pages/profile/profile_page.dart';
 import 'package:get/get.dart';
 import 'package:futzada/pages/app_base.dart';
 import 'package:futzada/pages/splash_page.dart';
@@ -10,23 +9,24 @@ import 'package:futzada/pages/auth/register/modes_step.dart';
 import 'package:futzada/pages/auth/register/player_mode_step.dart';
 import 'package:futzada/pages/auth/register/manager_mode_step.dart';
 import 'package:futzada/pages/auth/register/conclusion_step.dart';
+import 'package:futzada/pages/profile/profile_page.dart';
+import 'package:futzada/pages/chat/chats.dart';
+import 'package:futzada/pages/chat/chat_private.dart';
 import 'package:futzada/pages/escalation/escalation_page.dart';
 import 'package:futzada/pages/escalation/historic_page.dart';
 import 'package:futzada/pages/escalation/market_page.dart';
-import 'package:futzada/pages/event/list/event_list.dart';
-import 'package:futzada/pages/event/register/event_config_game_step.dart';
-import 'package:futzada/pages/event/view/event_historic_page.dart';
-import 'package:futzada/pages/event/view/event_page.dart';
 import 'package:futzada/pages/games/config/game_config_page.dart';
 import 'package:futzada/pages/games/detail/game_detail_page.dart';
 import 'package:futzada/pages/games/detail/games_day_page%20.dart';
-import 'package:futzada/pages/chat/chats.dart';
-import 'package:futzada/pages/chat/chat_private.dart';
+import 'package:futzada/pages/event/list/event_list.dart';
+import 'package:futzada/pages/event/view/event_page.dart';
+import 'package:futzada/pages/event/register/event_config_game_step.dart';
+import 'package:futzada/pages/event/view/event_historic_page.dart';
 import 'package:futzada/pages/event/register/event_basic_step.dart';
 import 'package:futzada/pages/event/register/event_address_step.dart';
 import 'package:futzada/pages/event/register/event_participants_step.dart';
-import 'package:futzada/pages/explore/map/map_widget.dart';
 import 'package:futzada/pages/explore/map/map_picker.dart';
+import 'package:futzada/pages/explore/map/map_explorer.dart';
 
 class AppRoutes {
   static final routes = [
@@ -65,7 +65,7 @@ class AppRoutes {
       GetPage(name: "/event/historic", page: () => const EventHistoricPage(), transition: Transition.rightToLeft),
       GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
       //EXPLORE MAPA
-      GetPage(name: "/explore/map", page: () => const MapaPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/explore/map", page: () => const MapExplorer(), transition: Transition.rightToLeft),
       GetPage(name: "/explore/map/picker", page: () => const MapPickerPage(), transition: Transition.rightToLeft),
   ];
 }
