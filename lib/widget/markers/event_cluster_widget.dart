@@ -18,12 +18,32 @@ class EventClusterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR CONTADOR DE PELADAS NO MESMO LOCAL
-    RxInt count = 0.obs;
+    //FUNÇÃO DE AGRUPAMENTO DE EVENTOS NA MESMA LOCALIZAÇÃO
+    Map<String, List<EventModel>> groupEventsByLocation(List<EventModel> events) {
+      final Map<String, List<EventModel>> grouped = {};
 
-    Widget setEventWidget(EventModel marker, {bool isCluster = false, List<ImageProvider> imgs = const []}) {
+      for (final event in events) {
+        //RESGATAR LATITUDE E LONGITUDE
+        final lat = event.address!.latitude!;
+        final lng = event.address!.longitude!;
+
+        //GERAR CHAVE BASEADA NA LATITUDE E LONGITUDE
+        final key = '$lat,$lng';
+        //ADICIONAR EVENTOS NO OBJETO
+        grouped.putIfAbsent(key, () => []);
+        grouped[key]!.add(event);
+      }
+      //RETORNAR GRUPO DE EVENTOS
+      return grouped;
+    }
+    //RESGATAR EVENTOS AGRUPADOS
+    final groupedEvents = groupEventsByLocation(events);
+    //FUNÇÃO PARA GERAÇÃO DE WIDGET DE MARKER DE EVENTO
+    Widget setEventWidget(EventModel marker, {bool isCluster = false, List<ImageProvider> imgs = const [], int totalEvents = 1}) {
       //RESGATAR ESTILOS DO MARKER
       final style = MarkersUtils.getMarkerStyle(marker.gameConfig!.category!);
+      //ATUALIZAR BADGE DE QUANTIDADE DE EVENTOS
+      int count = totalEvents;
 
       return Stack(
         children: [
@@ -64,7 +84,7 @@ class EventClusterWidget extends StatelessWidget {
               ],
             ),
           ),
-          if(count.value > 0)...[
+          if(count > 3)...[
             Positioned(
               right: 5,
               top: 0,
@@ -112,10 +132,21 @@ class EventClusterWidget extends StatelessWidget {
       options: MarkerClusterLayerOptions(
         maxClusterRadius: 100,
         size: const Size(100, 100),
-        markers: events.map((marker) {
-          //RESGATAR POSIÇÕES DO MARKER
-          final point = LatLng(marker.address!.latitude!, marker.address!.longitude!);
-          final imgProvider = ImgUtils.getEventImg(marker);
+        markers: groupedEvents.entries.map((entry) {
+          //RESGATAR EVENTOS DO GRUPO
+          final eventsAtSamePlace = entry.value;
+          //RESGATAR PRIMEIRO EVENTO DO GRUPO
+          final marker = eventsAtSamePlace.first;
+          //RESGATAR POSIÇÃO DO MARKER
+          final point = LatLng(
+            marker.address!.latitude!,
+            marker.address!.longitude!,
+          );
+
+          final imgs = eventsAtSamePlace
+              .take(3)
+              .map((e) => ImgUtils.getEventImg(e))
+              .toList();
 
           return Marker(
             point: point,
@@ -124,23 +155,22 @@ class EventClusterWidget extends StatelessWidget {
             key: ValueKey("${marker.id}"),
             rotate: true,
             child: InkWell(
-              onTap: () => Get.bottomSheet(EventExploreDialog(events: [marker])),
-              child: setEventWidget(marker, imgs: [imgProvider]),
+              onTap: () => Get.bottomSheet(EventExploreDialog(events: eventsAtSamePlace), isScrollControlled: true),
+              child: setEventWidget(marker, imgs: imgs, totalEvents: eventsAtSamePlace.length),
             )
           );
         }).toList(),
         builder: (context, markers) {
-          count.value = markers.length;
           final widgetKey = markers.first.key.toString().numericOnly();
           final marker = events.firstWhere((e) => e.id.toString() == widgetKey);
-          final imgs = markers.map((m){
+          final imgs = markers.take(3).map((m){
             //EVENTO DO MARKER
             final markerImg = events.firstWhere((e) => e.id.toString() == m.key.toString().numericOnly());
             //RESGATAR IMAGEM DO EVENTO E ADICIONAR A LISTA
             return ImgUtils.getEventImg(markerImg);
           }).toList();
 
-          return setEventWidget(marker, imgs: imgs, isCluster: true);
+          return setEventWidget(marker, imgs: imgs, isCluster: true, totalEvents: markers.length);
         },
         disableClusteringAtZoom: 14,
       ),

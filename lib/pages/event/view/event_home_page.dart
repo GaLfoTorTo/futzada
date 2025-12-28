@@ -69,7 +69,7 @@ class _EventHomePageState extends State<EventHomePage> {
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size; 
+    var dimensions = MediaQuery.of(context).size;
     //LISTA DE INFORMAÇÕES SOBRE AS PARTIDAS
     List<Map<String, dynamic>> infoGame = [
       {

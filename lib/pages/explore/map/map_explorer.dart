@@ -74,6 +74,11 @@ class _MapExplorerState extends State<MapExplorer> {
         spacing: 20,
         children: [
           FloatButtonMapWidget(
+            floatKey: "list_map",
+            icon: Icons.list_rounded,
+            onPressed: () => {},
+          ),
+          FloatButtonMapWidget(
             floatKey: "filter_map",
             icon: Icons.filter_alt,
             onPressed: () => {},
