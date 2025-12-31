@@ -1,0 +1,45 @@
+import 'package:flutter/material.dart';
+import 'package:futzada/models/rule_model.dart';
+import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/widget/dialogs/rule_dialog.dart';
+import 'package:get/get.dart';
+
+class CardRule extends StatelessWidget {
+  final RuleModel rule;
+  const CardRule({
+    super.key,
+    required this.rule,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
+
+    return TextButton(
+      onPressed: () => Get.bottomSheet(RuleDialog(rule: rule), isScrollControlled: true),
+      child: Container(
+        width: dimensions.width,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColors.green_300,
+          borderRadius: BorderRadius.circular(10)
+        ),
+        child: Row(
+          spacing: 10,
+          children: [
+            const Icon(
+              Icons.sports,
+              color: AppColors.white,
+              size: 30,
+            ),
+            Text(
+              rule.title,
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.white),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -6,7 +6,9 @@ import 'package:futzada/models/address_model.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/models/game_model.dart';
+import 'package:futzada/models/news_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/models/rule_model.dart';
 
 class EventModel {
   int? id;
@@ -24,6 +26,8 @@ class EventModel {
   GameConfigModel? gameConfig;
   List<ParticipantModel>? participants;
   List<AvaliationModel>? avaliations;
+  List<RuleModel>? rules;
+  List<NewsModel>? news;
   List<GameModel>? games;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -44,6 +48,8 @@ class EventModel {
     this.gameConfig,
     this.avaliations,
     this.participants,
+    this.rules,
+    this.news,
     this.games,
     this.visibility,
     this.createdAt,
@@ -66,6 +72,8 @@ class EventModel {
     GameConfigModel? gameConfig,
     List<AvaliationModel>? avaliations,
     List<ParticipantModel>? participants,
+    List<RuleModel>? rules,
+    List<NewsModel>? news,
     List<GameModel>? games,
     VisibilityPerfil? visibility,
     DateTime? createdAt,
@@ -87,6 +95,8 @@ class EventModel {
       gameConfig: gameConfig ?? this.gameConfig,
       avaliations: avaliations ?? this.avaliations,
       participants: participants ?? this.participants,
+      rules: rules ?? this.rules,
+      news: news ?? this.news,
       games: games ?? this.games,
       visibility: visibility ?? this.visibility,
       createdAt: createdAt ?? this.createdAt,
@@ -111,6 +121,8 @@ class EventModel {
       'permissions': permissions,
       'avaliations': avaliations,
       'participants': participants!.map((x) => x.toMap()).toList(),
+      'rules': rules!.map((x) => x.toMap()).toList(),
+      'news': news!.map((x) => x.toMap()).toList(),
       'games': games!.map((x) => x.toMap()).toList(),
       'visibility': visibility,
       'createdAt': createdAt,
@@ -143,6 +155,12 @@ class EventModel {
       participants: map['participants'] != null 
         ? List<ParticipantModel>.from((map['participants'] as List<Map<String, dynamic>>).map<ParticipantModel?>((x) => ParticipantModel.fromMap(x),),) 
         : null,
+      rules: map['rules'] != null 
+        ? List<RuleModel>.from((map['rules'] as List<Map<String, dynamic>>).map<RuleModel?>((x) => RuleModel.fromMap(x),),) 
+        : null,
+      news: map['news'] != null 
+        ? List<NewsModel>.from((map['news'] as List<Map<String, dynamic>>).map<NewsModel?>((x) => NewsModel.fromMap(x),),) 
+        : null,
       games: map['games'] != null 
         ? List<GameModel>.from((map['games'] as List<Map<String, dynamic>>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
         : null,
@@ -161,7 +179,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, startTime: $startTime, endTime: $endTime, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, daysWeek: $daysWeek, startTime: $startTime, endTime: $endTime, allowCollaborators: $allowCollaborators, permissions: $permissions, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, rules: $rules, news: $news, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -183,6 +201,8 @@ class EventModel {
       other.gameConfig == gameConfig &&
       other.avaliations == avaliations &&
       listEquals(other.participants, participants) &&
+      listEquals(other.rules, rules) &&
+      listEquals(other.news, news) &&
       listEquals(other.games, games) &&
       other.visibility == visibility &&
       other.createdAt == createdAt &&
@@ -207,6 +227,8 @@ class EventModel {
       gameConfig.hashCode ^
       avaliations.hashCode ^
       participants.hashCode ^
+      rules.hashCode ^
+      news.hashCode ^
       games.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^

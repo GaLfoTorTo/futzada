@@ -1,11 +1,12 @@
-import 'package:futzada/controllers/map_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/buttons/float_button_map_widget.dart';
+import 'package:futzada/widget/buttons/float_button_widget.dart';
+import 'package:futzada/widget/indicators/indicator_loading_widget.dart';
 import 'package:futzada/widget/dialogs/address_dialog.dart';
 import 'package:futzada/controllers/address_controller.dart';
+import 'package:futzada/controllers/map_controller.dart';
 import 'package:futzada/pages/explore/map/map_widget.dart';
 
 class MapPickerPage extends StatefulWidget {
@@ -60,11 +61,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
       body: Obx(() {
         //EXIBIR LOADING DE CARREGAMENTO DO MAPA
         if (!mapWidgetController.isLoaded.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.green_300,
-            )
-          );
+          return const Center(child: IndicatorLoadingWidget());
         }else{
           return const MapWidget();
         }
@@ -74,16 +71,23 @@ class _MapPickerPageState extends State<MapPickerPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         spacing: 20,
         children: [
-          FloatButtonMapWidget(
-            floatKey: "search_map",
-            icon: Icons.search_rounded,
-            onPressed: () => Get.bottomSheet(AddressDialog(), isScrollControlled: true),
-          ),
-          FloatButtonMapWidget(
-            floatKey: "position_map",
-            icon: Icons.my_location_rounded,
-            onPressed: () => mapWidgetController.moveMapCurrentUser(LatLng(mapWidgetController.currentPosition.value!.latitude, mapWidgetController.currentPosition.value!.longitude),),
-          ),
+          if (!mapWidgetController.isMapReady.value)...[
+            FloatButtonWidget(
+              floatKey: "search_map",
+              icon: Icons.search_rounded,
+              onPressed: () => Get.bottomSheet(AddressDialog(), isScrollControlled: true),
+            ),
+            FloatButtonWidget(
+              floatKey: "position_map",
+              icon: Icons.my_location_rounded,
+              onPressed: () => mapWidgetController.moveMapCurrentUser(
+                LatLng(
+                  mapWidgetController.currentPosition.value!.latitude, 
+                  mapWidgetController.currentPosition.value!.longitude
+                ),
+              ),
+            ),
+          ]
         ],
       ),
     );

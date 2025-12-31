@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
 class MapUtils {
@@ -94,5 +95,20 @@ class MapUtils {
     }
 
     return '${minutes} min';
+  }
+
+  //FUNÇÃO PARA RESGATAR ENDEREÇO DO USUARIO
+  static String getLocationUser() {
+    //RESGATAR LOCALIZACAO DO USUARUI
+    final RxMap<String, dynamic> currentLocation = Get.find(tag: 'userLocation');
+    //VERIFICAR SE LOCALIZACAO DO USUARIO CONTEM CHAVE ESPECIFICA
+    if (currentLocation.containsKey('ISO3166-2-lvl4')) {
+      final iso = currentLocation['ISO3166-2-lvl4'] as String?;
+      if (iso != null && iso.contains('-')) {
+        return "${currentLocation['city']}/${iso.split('-').last}";
+      }
+    }
+    //RETORNAR STRING VAZIA
+    return 'Não encontrado';
   }
 }

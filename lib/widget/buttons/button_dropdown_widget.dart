@@ -13,6 +13,7 @@ class ButtonDropdownWidget extends StatelessWidget {
   final Color? textColor;
   final Color? color;
   final Color? borderColor;
+  final String? hint;
   final String aligment;
 
   const ButtonDropdownWidget({
@@ -27,6 +28,7 @@ class ButtonDropdownWidget extends StatelessWidget {
     this.textColor = AppColors.dark_500,
     this.color = AppColors.white,
     this.borderColor,
+    this.hint = 'Selecione', 
     this.aligment = 'center' 
   });
 
@@ -58,7 +60,7 @@ class ButtonDropdownWidget extends StatelessWidget {
         menuWidth: menuWidth ?? width,
         menuMaxHeight: menuHeight ?? null,
         hint: Text(
-          'Selecione',
+          hint ?? 'Selecione',
           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300, fontSize: textSize),
         ),
         items: items.map<DropdownMenuItem<dynamic>>((item) {

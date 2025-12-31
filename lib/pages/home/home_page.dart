@@ -1,4 +1,5 @@
 
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +19,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //CONTROLLER DO HOME PAGE
+  //CONTROLLERS -HOME, EVENTS, GAME
   HomeController homeController = HomeController.instance;
-  //CONTROLLER DE PARTIDAS
+  EventController eventController = EventController.instance;
   GameController gameController = GameController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
@@ -63,18 +64,18 @@ class _HomePageState extends State<HomePage> {
         if(gameController.isToday())...[
           SectionHomeWidget(
             titulo: "Dia de Jogo",
-            options: homeController.userEvents,
+            options: eventController.myEvents,
           )
         ],
         //SEÇÃO - ADS/PROPAGANDAS
         if(homeController.ads.isNotEmpty)...[
-          CardAds()
+          const CardAds()
         ],
         //SEÇÃO - PERTO DE VOCE
-        if(homeController.eventsToYou.isNotEmpty)...[
+        if(homeController.toYou.isNotEmpty)...[
           SectionHomeWidget(
             titulo: "Perto de Você",
-            options: homeController.eventsToYou, 
+            options: homeController.toYou, 
           )
         ],
       ]

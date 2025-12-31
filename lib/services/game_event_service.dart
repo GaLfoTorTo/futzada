@@ -29,125 +29,124 @@ class GameEventService {
   }
 
   //FUNÇÃO PARA DEFINIR PERFIS DE PARTICIPANTES DO EVENTO
-  GameEventType setGameEvent(i){
-    return GameEventType.values[i];
+  GameEvent setGameEvent(i){
+    return GameEvent.values[i];
   }
 
   Map<String, dynamic> getActionGameEvent(event){
-    print(event);
     switch (event) {
-      case GameEventType.StartGame:
+      case GameEvent.StartGame:
         return {
           'icon' : Icons.timer_rounded,
           'title' : 'Ínicio da Partida'
         };
-      case GameEventType.EndGame:
+      case GameEvent.EndGame:
         return {
           'icon' : Icons.timer_off_rounded,
           'title' : 'Fim da Partida'
         };
-      case GameEventType.HalfTimeEnd:
+      case GameEvent.HalfTimeEnd:
         return {
           'icon' : Icons.timer_off_rounded,
           'title' : 'Intervalo'
         };
-      case GameEventType.ExtraTime:
+      case GameEvent.ExtraTime:
         return {
           'icon' : Icons.timer_rounded,
           'title' : 'Acréssimos'
         };
-      case GameEventType.ExtraTimeStart:
+      case GameEvent.ExtraTimeStart:
         return {
           'icon' : Icons.timer_rounded,
           'title' : 'Ínicio da prorrogação'
         };
-      case GameEventType.ExtraTimeEnd:
+      case GameEvent.ExtraTimeEnd:
         return {
           'icon' : Icons.timer_off_rounded,
           'title' : 'Fim da Prorrogação'
         };
-      case GameEventType.Penalties:
+      case GameEvent.Penalties:
         return {
           'icon' : Icons.sports,
           'title' : 'Penalties'
         };
-      case GameEventType.Goal:
+      case GameEvent.Goal:
         return {
           'icon' : Icons.sports_soccer_rounded,
           'title' : 'GOOOOOL'
         };
-      case GameEventType.Defense:
+      case GameEvent.Defense:
         return {
           'icon' : Icons.security_rounded,
           'title' : 'Defesa'
         };
-      case GameEventType.Penalty:
+      case GameEvent.Penalty:
         return {
           'icon' : Icons.sports,
           'title' : 'Penalti'
         };
-      case GameEventType.Corner:
+      case GameEvent.Corner:
         return {
           'icon' : Icons.flag,
           'title' : 'Escanteio'
         };
-      case GameEventType.FreeKick:
+      case GameEvent.FreeKick:
         return {
           'icon' : Icons.settings_input_component_rounded,
           'title' : 'Cobrança de Falta'
         };
-      case GameEventType.GoalKick:
+      case GameEvent.GoalKick:
         return {
           'icon' : Icons.sports_kabaddi_rounded,
           'title' : 'Tiro de Meta'
         };
-      case GameEventType.Offside:
+      case GameEvent.Offside:
         return {
           'icon' : Icons.shuffle_rounded,
           'title' : 'Impedimento'
         };
-      case GameEventType.Foul:
-      case GameEventType.FoulTaken:
+      case GameEvent.Foul:
+      case GameEvent.FoulTaken:
         return {
           'icon' : Icons.sports_kabaddi_outlined,
           'title' : 'Falta'
         };
-      case GameEventType.YellowCard:
+      case GameEvent.YellowCard:
         return {
           'icon' : Icons.square,
           'title' : 'Cartão Amarelo'
         };
-      case GameEventType.RedCard:
+      case GameEvent.RedCard:
         return {
           'icon' : Icons.square,
           'title' : 'Expulsão'
         };
-      case GameEventType.Substitution:
+      case GameEvent.Substitution:
         return {
           'icon' : Icons.social_distance_rounded,
           'title' : 'Substituição'
         };
-      case GameEventType.Assist:
+      case GameEvent.Assist:
         return {
           'icon' : Icons.handshake,
           'title' : 'Assistência'
         };
-      case GameEventType.Interception:
+      case GameEvent.Interception:
         return {
           'icon' : Icons.sports_kabaddi_rounded,
           'title' : 'Interceptação'
         };
-      case GameEventType.GoalkeeperSave:
+      case GameEvent.GoalkeeperSave:
         return {
           'icon' : Icons.sports_handball,
           'title' : 'Defesa do Goleiro'
         };
-      case GameEventType.Injury:
+      case GameEvent.Injury:
         return {
           'icon' : Icons.personal_injury_rounded,
           'title' : 'Lesão'
         };
-      case GameEventType.VARCheck:
+      case GameEvent.VARCheck:
         return {
           'icon' : Icons.desktop_windows,
           'title' : 'VAR'

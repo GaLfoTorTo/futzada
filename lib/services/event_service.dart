@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/models/participant_model.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
@@ -6,6 +7,8 @@ import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/user_model.dart';
+import 'package:futzada/services/news_service.dart';
+import 'package:futzada/services/rules_service.dart';
 import 'package:futzada/services/avaliation_service.dart';
 import 'package:futzada/services/game_service.dart';
 import 'package:futzada/services/participant_service.dart';
@@ -21,17 +24,24 @@ class EventService {
   ParticipantService participantService = ParticipantService();
   //INSTANCIAR SERVIÇO DE AVALIAÇÃO
   AvaliationService avaliationService = AvaliationService();
+  //INSTANCIAR SERVIÇO DE RULES
+  RuleService ruleService = RuleService();
+  //INSTANCIAR SERVIÇO DE RULES
+  NewsService newsService = NewsService();
 
   //FUNÇÃO PARA GERAR EVENTO
   EventModel generateEvent(i){
-    //DEFINIR QUANTIDADE DE PARTICIPANTES
+    //CONTADORES DE ITENS FAKE
     int qtdParticipants = random.nextInt(50);
-    //DEFINIR QUANTIDADE DE AVALIAÇÕES
     int qtdAvaliations = random.nextInt(25);
+    int qtdRules = random.nextInt(10);
+    int qtdNews = random.nextInt(25);
     //DEFINIR STATUS DE PERMISSÃO
     bool permissionState = random.nextBool();
     //DEFINIR PERMISSÕES DO EVENTO
     String? permissions = permissionState == true ? [Permissions.Add.name, Permissions.Edit.name, Permissions.Remove.name].toString() : null;
+    //GERAR LISTA DE PARTICIPANTS
+    final participants = List.generate(qtdParticipants, (u) => participantService.generateParticipant(u + 1).toMap());
     //GERAR EVENTO (PELADA)
     return EventModel.fromMap({
       "id" : i,
@@ -52,7 +62,11 @@ class EventService {
       //GERAR AVALIAÇÕES DO EVENTO (PELADA)
       "avaliations" : List.generate(qtdAvaliations, (u) => avaliationService.generateAvaliation(u + 1).toMap()),
       //GERAR PARTICIPANTES DO EVENTO (PELADA)
-      "participants" : List.generate(qtdParticipants, (u) => participantService.generateParticipant(u + 1).toMap()),
+      "participants" : participants,
+      //GERAR REGRAS DO EVENTO (PELADA)
+      "rules" : List.generate(qtdRules, (u) => ruleService.generateRule(ParticipantModel.fromMap(participants[0]), u).toMap()),
+      //GERAR NOTICIAS DO EVENTO (PELADA)
+      "news" : List.generate(qtdNews, (u) => newsService.generateNews().toMap()),
       "visibility" : random.nextBool() == true ? VisibilityPerfil.Public.name : VisibilityPerfil.Private.name,
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),

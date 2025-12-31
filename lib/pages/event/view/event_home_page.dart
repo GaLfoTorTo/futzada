@@ -1,19 +1,19 @@
-import 'package:futzada/helpers/date_helper.dart';
+import 'package:futzada/utils/map_utils.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:futzada/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/api/api.dart';
+import 'package:futzada/helpers/date_helper.dart';
+import 'package:futzada/utils/img_utils.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/theme/app_images.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/integration_map_service.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/dialogs/map_travel_dialog.dart';
 import 'package:futzada/widget/text/expandable_text_widget.dart';
@@ -42,13 +42,17 @@ class _EventHomePageState extends State<EventHomePage> {
   late EventModel event = eventController.event;
   //ESTADO - DESTAQUES
   late List<Map<String, dynamic>> highlights;
-  //ESTADO - AVALIAÇÕES
-  late double avaliation;
-  //ESTADO - MAP
-  late LatLng eventLatLog;
-  //CONTROLLADOR DE CARREGAMENTO DE INFORMAÇÕES
+  //ESTADO - ITEMS DO EVENTO
+  late double eventAvaliation;
+  late LatLng eventLatLon;
+  //ESTADOS - MAPA/VIAGEM
+  Rxn<LatLng> userLatLon = Get.find(tag: 'userLatLog');
   RxBool isMapLoaded = false.obs;
-  
+  late Map<String, dynamic> travelMode;
+  late double distance;
+  late Duration timeTravelMode;
+  late String timeTravel;
+
   @override
   void initState() {
     super.initState();
@@ -57,13 +61,29 @@ class _EventHomePageState extends State<EventHomePage> {
     //RESGATAR DESTAQUES DO EVENTO
     highlights = eventController.getHighlights(event);
     //RESGATAR AVALIAÇÕES DO EVENTO
-    avaliation = eventController.getAvaliations(event.avaliations);
+    eventAvaliation = eventController.getAvaliations(event.avaliations);
     //RESGATAR LAT E LONG DO ENDEREÇO DO EVENTO
-    eventLatLog = LatLng(-15.8059539, -47.9104129);//LatLng(event.address!.latitude!, event.address!.longitude!);
+    eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     // Aguardar controllers estarem prontos se necessário
     Future.delayed(const Duration(milliseconds: 100));
     //VERIFICAR SE MAPA ESTA PRONTO PARA INICIAR
     isMapLoaded.value = true;
+    //DEFINIR TEMPO E METODO DE VIAGEM
+    setTravelModel();
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE TEMPO DE VIAGEM
+  void setTravelModel(){
+    //RESGATAR DISTANCIA
+    distance = MapUtils.getDistance(userLatLon.value!, eventLatLon);
+    //RESGATAR MODO DE VIAGEM
+    travelMode = MapUtils.getTravelMode(distance);
+    //RESGATAR TEMPO
+    timeTravelMode = MapUtils.getTravelTime(distance, travelMode['speed']);
+    timeTravel = MapUtils.setTimeTravel(timeTravelMode);
+    print(travelMode);
+    //ATUALIZAR METODO DE VIAGEM DO CONTROLLER
+    eventController.travelMode.value = travelMode['type'];
   }
     
   @override
@@ -115,7 +135,7 @@ class _EventHomePageState extends State<EventHomePage> {
 
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         color: AppColors.white,
         width: dimensions.width,
         child: Column(
@@ -147,7 +167,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   Row(
                     children: [
                       const Icon(
-                        AppIcones.calendar_solid,
+                        Icons.calendar_month_rounded,
                         color: AppColors.green_300,
                         size: 20
                       ),
@@ -166,7 +186,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   Row(
                     children: [
                       const Icon(
-                        AppIcones.pen_solid,
+                        Icons.new_label_rounded,
                         color: AppColors.green_300,
                         size: 20
                       ),
@@ -174,7 +194,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         width: dimensions.width - 50,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
-                          "Iniciada em: ${DateFormat("dd/MM/y").format(event.createdAt!)}",
+                          "Iniciada em: ${DateFormat("dd MMM y").format(event.createdAt!)}",
                           style: Theme.of(context).textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -208,9 +228,7 @@ class _EventHomePageState extends State<EventHomePage> {
                             width: 35,
                             height: 35,
                             child: CircleAvatar(
-                              backgroundImage: organizador.user.photo != null
-                                ? CachedNetworkImageProvider(organizador.user.photo!) 
-                                : const AssetImage(AppImages.userDefault) as ImageProvider,
+                              backgroundImage: ImgUtils.getUserImg(organizador.user.photo)
                             ),
                           ),
                           Column(
@@ -522,7 +540,7 @@ class _EventHomePageState extends State<EventHomePage> {
                 return FlutterMap(
                   mapController: mapController,
                   options: MapOptions(
-                    initialCenter: eventLatLog,
+                    initialCenter: eventLatLon,
                     initialZoom: 12,
                     interactionOptions: const InteractionOptions(
                       flags: InteractiveFlag.none,
@@ -532,12 +550,12 @@ class _EventHomePageState extends State<EventHomePage> {
                     TileLayer(
                       urlTemplate: AppApi.map,
                       userAgentPackageName: 'com.example.futzada',
-                      subdomains: ['a', 'b', 'c', 'd'],
+                      subdomains: const ['a', 'b', 'c', 'd'],
                     ),
                     MarkerLayer(
                       markers: [
                         Marker(
-                          point: eventLatLog,
+                          point: eventLatLon,
                           width: 50,
                           height: 50,
                           child: const Icon(
@@ -610,7 +628,7 @@ class _EventHomePageState extends State<EventHomePage> {
                 return Column(
                     children: [
                       ButtonIconWidget(
-                        icon: eventController.travelMode['icon'],
+                        icon: MapUtils.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['icon'],
                         iconSize: 30,
                         padding: 15,
                         iconColor: AppColors.green_300,
@@ -622,7 +640,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         child: Row(
                           children: [
                             Text(
-                              eventController.travelMode['distance'],
+                              "${distance.toStringAsFixed(1)} Km ($timeTravel)",
                               style: Theme.of(context).textTheme.displayLarge!.copyWith(
                                 fontWeight: FontWeight.bold
                               ),
@@ -641,7 +659,10 @@ class _EventHomePageState extends State<EventHomePage> {
                       padding: 15,
                       iconColor: AppColors.green_300,
                       backgroundColor: AppColors.green_300.withAlpha(50),
-                      action: () => IntegrationRouteService.openDialogApps(event.address!.copyWith(latitude: -15.8059539, longitude: -47.9104129), travelModel: eventController.travelMode['type']),
+                      action: () => IntegrationRouteService.openDialogApps(
+                        event.address!,
+                        travelModel: MapUtils.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['type']
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),

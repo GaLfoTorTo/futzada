@@ -14,7 +14,7 @@ class GameEventModel {
   final int? minute;
   final String? title;
   final String? description;
-  final GameEventType? type;
+  final GameEvent? type;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
@@ -39,7 +39,7 @@ class GameEventModel {
     int? minute,
     String? title,
     String? description,
-    GameEventType? type,
+    GameEvent? type,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -81,7 +81,7 @@ class GameEventModel {
       minute: map['minute'] as int,
       title: map['title'] as String,
       description: map['description'] as String,
-      type: map['type'] as GameEventType,
+      type: map['type'] as GameEvent,
       createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
       updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
       deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,

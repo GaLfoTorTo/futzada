@@ -110,7 +110,7 @@ class EventExploreDialog extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                    image: ImgUtils.getEventImg(event),
+                                    image: ImgUtils.getEventImg(event.photo),
                                     fit: BoxFit.cover
                                   )
                                 ),
@@ -294,7 +294,7 @@ class EventExploreDialog extends StatelessWidget {
                               width: 35,
                               height: 35,
                               child: CircleAvatar(
-                                backgroundImage: ImgUtils.getUserImg(organizador.user),
+                                backgroundImage: ImgUtils.getUserImg(organizador.user.photo),
                               ),
                             ),
                             Column(
@@ -426,7 +426,7 @@ class EventExploreDialog extends StatelessWidget {
                       ButtonTextWidget(
                         width: dimensions.width,
                         height: 30,
-                        text: "Ver Mais",
+                        text: "Ver Pelada",
                         action: () => {
                           //DEFINIR EVENTO ATUAL NO CONTROLLER
                           eventController.setSelectedEvent(event),

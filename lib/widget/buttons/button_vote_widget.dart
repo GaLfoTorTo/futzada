@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 enum Vote {

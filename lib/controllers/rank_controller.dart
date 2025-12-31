@@ -22,10 +22,11 @@ class RankController extends GetxController implements RankBase{
   //GETTER DE SERVIÇOS
   @override
   RankService rankService = RankService();
+  //GETTER DE TYPE
   @override
   RxString type = 'Artilheiros'.obs;
   @override
-  late RxList<ParticipantModel?> topRanking = <ParticipantModel?>[].obs;
+  late RxList<ParticipantModel> topRanking = <ParticipantModel>[].obs;
 
   @override
   void onInit() {

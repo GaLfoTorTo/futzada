@@ -1,8 +1,7 @@
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/utils/map_utils.dart';
+import 'package:futzada/controllers/event_controller.dart';
 
 class MapTravelDialog extends StatelessWidget {
   const MapTravelDialog({
@@ -13,34 +12,6 @@ class MapTravelDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR CONTROLLER DO EVENTO
     EventController eventController = EventController.instance;
-
-    //LISTA DE OPÇÕES
-    List<Map<String, dynamic>> options = [
-      {
-        'type':'walking',
-        'icon' : Icons.directions_walk_rounded,
-        'label': 'A pé',
-        'distance': '30 min'
-      },
-      {
-        'type':'bicycling',
-        'icon' : Icons.directions_bike_rounded,
-        'label': 'Bicicleta',
-        'distance': '25 min'
-      },
-      {
-        'type':'driving',
-        'icon' : Icons.directions_car_rounded,
-        'label': 'Carro',
-        'distance': '15 min'
-      },
-      {
-        'type':'transit',
-        'icon' : Icons.directions_bus_rounded,
-        'label': 'Onibus',
-        'distance': '20 min'
-      },
-    ];
 
     return Container(
       padding: const EdgeInsets.all(15),
@@ -58,7 +29,7 @@ class MapTravelDialog extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const Divider(color: AppColors.gray_300),
-            ...options.map((item) {
+            ...MapUtils.transports.map((item) {
               return ListTile(
                 leading: Container(
                   width: 50,
@@ -79,7 +50,7 @@ class MapTravelDialog extends StatelessWidget {
                   item['label'],
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                onTap: () => eventController.setTravelMode(item)
+                onTap: () => eventController.travelMode.value = item['type']
               );
             })
           ],

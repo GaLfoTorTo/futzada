@@ -1,44 +1,42 @@
-import 'package:flutter/material.dart';
-import 'package:futzada/controllers/event_controller.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
 
 class SelectDaysWeekWidget extends StatelessWidget {
+  final List<String> values;
+  final Function onChanged;
+
   const SelectDaysWeekWidget({
     super.key,
+    required this.values,
+    required this.onChanged
   });
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE EVENTO
-    EventController eventController = EventController.instance;
     //RESGATAR DIAS DA SEMANA
-    Map<String, bool> daysOfWeek = eventController.daysOfWeek;
+    List<String> daysOfWeek = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Obx((){
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: daysOfWeek.entries.map((item){
-            final key = item.key;
-            final value = item.value;
+          children: daysOfWeek.map((value){
             return InkWell(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              onTap: () => eventController.daysOfWeek[key] = !value,
+              onTap: () => onChanged(value),
               child: Container(
                 alignment: Alignment.center,
                 width: 55,
                 height: 55,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: value ? AppColors.green_300 : AppColors.white,
+                  color: values.contains(value) ? AppColors.green_300 : AppColors.white,
                   borderRadius: BorderRadius.circular(50),
                   boxShadow: [
-                    if (value)...[
+                    if (values.contains(value))...[
                       BoxShadow(
                         color: AppColors.green_300.withAlpha(100),
                         spreadRadius: 1,
@@ -49,9 +47,9 @@ class SelectDaysWeekWidget extends StatelessWidget {
                   ],
                 ),
                 child: Text(
-                  key,
+                  value,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: value ? AppColors.white : AppColors.dark_500,
+                    color: values.contains(value) ? AppColors.white : AppColors.dark_500,
                     fontWeight: FontWeight.bold
                   ),
                 ),

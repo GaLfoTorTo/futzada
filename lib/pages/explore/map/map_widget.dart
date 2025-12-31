@@ -40,7 +40,7 @@ class _MapWidgetState extends State<MapWidget> {
         onMapReady: () async{
           //ESPERAR 2 SEGUNDOS
           await Future.delayed(const Duration(seconds: 2));
-          //ATUALIZAR ESTADO DE MAPA PRONTO
+          //ESTADOS - MAPA E CARREGAMENTO
           mapWidgetController.isMapReady.value = true;
           //MOVER MAPA PARA POSIÇÃO ATUAL DO USUÁRIO
           mapWidgetController.moveMapCurrentUser(LatLng(
@@ -51,10 +51,8 @@ class _MapWidgetState extends State<MapWidget> {
       ),
       children: [
         //EXIBIR MENSAGEM E BOTÃO DE SOLICITAÇÃO DE PERMISSÃO PARA GEOLOCALIZAÇÃO
-        if(!mapWidgetController.hasPermission.value)...[
-          ErroPermissionPage(
-            function: () async => await mapWidgetController.getCurrentLocation(),
-          )
+        if(!mapWidgetController.isLoaded.value && mapWidgetController.isMapReady.value)...[
+          const ErroPermissionPage()
         ]else...[
           TileLayer(
             urlTemplate: AppApi.map,

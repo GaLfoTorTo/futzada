@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/pages/home/home_page.dart';
 import 'package:futzada/pages/home/home_error_page.dart';
+import 'package:futzada/controllers/app_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
-import 'package:futzada/controllers/home_controller.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/skeletons/skeleton_home_widget.dart';
 
@@ -18,16 +18,17 @@ class HomeBase extends StatefulWidget {
 }
 
 class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin {
-  //CONTROLLER DE NAVEGAÇÃO
-  NavigationController navigationController = NavigationController.instance;
-  //CONTROLLER DO HOME PAGE
-  HomeController homeController = HomeController.instance;
+  //CONTROLLERS - NAVEGAÇÃO E INICIALIZAÇÃO
+  final AppController appController = Get.put(AppController());
+  final NavigationController navigationController = NavigationController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
 
   @override
   void initState() {
     super.initState();
+    //INICIALIZAR APP (CONTROLLER, SERVICES, ETC...)
+    appController.initApp();
     //RESGATAR USUARIO
     user = Get.find<UserModel>(tag: 'user');
   }
@@ -53,21 +54,20 @@ class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
-            child: FutureBuilder<dynamic>(
-              future: homeController.fetchHome(),
-              builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                if (snapshot.hasError) {
-                  //EXIBIR TELA DE ERRO
+            child: Obx(() {
+              if (appController.isReady.value) {
+                if (appController.hasError.value) {
+                  //TELA DE ERRO
                   return const HomeErrorPage();
-                } else if (snapshot.hasData) {
-                  //EXIBIR HOME PAGE
-                  return const HomePage();
-                } else {
-                  //EXIBIR TELA DE CARREGAMENTO
-                  return const SkeletonHomeWidget();
                 }
-              },
-            ),
+                if(!appController.isLoading.value){
+                  //HOME PAGE
+                  return const HomePage();
+                }
+              }
+              //TELA DE CARREGAMENTO
+              return const SkeletonHomeWidget();
+            })
           ),
         ),
       ),

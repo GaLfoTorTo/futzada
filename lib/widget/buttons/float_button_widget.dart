@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 
-class FloatButtonMapWidget extends StatelessWidget {
+class FloatButtonWidget extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData icon;
   final Color color;
   final String floatKey;
 
-  const FloatButtonMapWidget({
+  const FloatButtonWidget({
     super.key,
     required this.onPressed,
     required this.icon,
@@ -17,7 +17,7 @@ class FloatButtonMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 60,
       height: 60,
       child: FloatingActionButton(

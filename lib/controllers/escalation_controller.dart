@@ -77,6 +77,18 @@ class EscalationController extends GetxController
   @override
   void onInit() {
     super.onInit();
+    //CARREGAR DADOS DE TECNICO
+    loadUserManager();
+  }
+
+  //FUNÇÃO DE INICIALIZAÇÃO DE DADOS DE TECNICO
+  void loadUserManager(){
+    //VERIFICAR SE EVENTOS FORAM ADICIONADOS AO GET
+    if(Get.isRegistered<List<EventModel>>(tag: 'events')){
+      //RESGATAR EVENTOS
+      myEvents = Get.find<List<EventModel>>(tag: 'events');
+      print(myEvents);
+    }
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DE ALGUM EVENTO
     if(myEvents.isNotEmpty){
       //VERIFICAR SE USUARIO ESTA HABILITADO COMO TECNICO NO EVENTO 
@@ -98,9 +110,9 @@ class EscalationController extends GetxController
 mixin EscalationManagerMixin on GetxController implements EscalationBase {
   //ESTADOS
   @override
-  final UserModel user = Get.find(tag: 'user');
+  UserModel user = Get.find(tag: 'user');
   @override
-  final List<EventModel> myEvents = Get.find(tag: 'events');
+  List<EventModel> myEvents = [];
   @override
   bool canManager = false;
   @override

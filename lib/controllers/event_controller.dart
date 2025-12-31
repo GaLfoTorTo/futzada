@@ -1,6 +1,4 @@
-import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/services/user_service.dart';
-import 'package:futzada/theme/app_icones.dart';
+import 'package:futzada/services/news_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/enum/enums.dart';
@@ -9,16 +7,19 @@ import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/services/user_service.dart';
 import 'package:futzada/services/form_service.dart';
 import 'package:futzada/services/event_service.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 //===EVENT BASE===
 abstract class EventBase {
-  //GETTER - SERVIÇO DE EVENTO
+  //GETTER - SERVIÇOs
   EventService get eventService;
-  //GETTER - SERVIÇO DE FORMULÁRIO
+  UserService get userService;
   FormService get formService;
+  NewsService get newsService;
   //GETTER - USUARIO
   UserModel get user;
   //GETTER - EVENTOS DO USUARIO
@@ -30,12 +31,12 @@ abstract class EventBase {
   //GETTER - PARTICIPANTS
   Map<String, List<ParticipantModel>?> get participants;
   //DEFINIR TRAVEL MODEL ATUAL SENDO MANIPULADO
-  RxMap<String, dynamic> get travelMode;
+  RxString get travelMode;
 }
 
 //===CONTROLLER PRINCIPALS===
 class EventController extends GetxController 
-  with EventOverview, EventRegister, EventParticipants implements EventBase {
+  with EventOverview, EventRegister, EventParticipants, EventRules implements EventBase {
   
   //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS
   static EventController get instance => Get.find();
@@ -43,10 +44,18 @@ class EventController extends GetxController
   //DEFINIR SERVIÇO DE EVENTO - OBRIGATÓRIO
   @override
   final EventService eventService = EventService();
+
+  //DEFINIR SERVIÇO DE USUARIO - OBRIGATÓRIO
+  @override
+  final UserService userService = UserService();
   
   //DEFINIR SERVIÇO DE FORMULÁRIO - OBRIGATÓRIO
   @override
   final FormService formService = FormService();
+
+  //DEFINIR SERVIÇO DE FORMULÁRIO - OBRIGATÓRIO
+  @override
+  final NewsService newsService = NewsService();
   
   //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
   @override
@@ -54,7 +63,7 @@ class EventController extends GetxController
   
   //DEFINIR EVENTOS DO USUARIO LOGADO - OBRIGATÓRIO
   @override
-  final List<EventModel> myEvents = Get.find(tag: 'events');
+  final List<EventModel> myEvents = [];
   
   //DEFINIR EVENTO ATUAL SENDO MANIPULADO - OBRIGATÓRIO
   @override
@@ -66,12 +75,14 @@ class EventController extends GetxController
   
   //DEFINIR DE PARTICIPANTES
   @override
-  late RxMap<String, dynamic> travelMode =  <String, dynamic>{
-    'type': 'walking',
-    'icon' : AppIcones.walk_solid,
-    'label': 'A pé',
-    'distance': '2 min'
-  }.obs;
+  late RxString travelMode = 'walking'.obs;
+
+  @override
+  void onInit() async{
+    super.onInit();
+    //RESGATAR EVENTOS DO USUARIO LOGADO
+    await loadUserEvents();
+  }
 
   //FUNÇÃO DE SELEÇÃO DE EVENTO
   void setSelectedEvent(EventModel event) {
@@ -84,28 +95,40 @@ class EventController extends GetxController
     //DEFINIR PARTICIPANTS
     this.participants = setParticipants(event.participants);
   }
-
-  //FUNÇÃO DE DEFINIÇÃO DE TRAVEL MODEL
-  void setTravelMode(Map<String, dynamic> newTravelMode){
-    travelMode.value = newTravelMode;
-    Get.back();
-  }
 }
 
 //===MIXIN - VISÃO GERAL===
 mixin EventOverview on GetxController{
+  //FUNÇÃO DE CARREGAMENTO DE EVENTOS DO USUARIO
+  Future<void>loadUserEvents() async {
+    //RESGATR INSTANCIA DE CONTROLLER
+    final eventController = this as EventController;
+    //BUSCAR EVENTOS DO USUARIO
+    eventController.myEvents.assignAll(await eventController.userService.fetchEventsUser());
+    //ADICIONAR GLOBALMENT AO GET EVENTOS DO USUARIO
+    if (!Get.isRegistered<List<EventModel>>(tag: 'events')) {
+      Get.put<List<EventModel>>(
+        eventController.myEvents,
+        tag: 'events',
+        permanent: true,
+      );
+    }
+  }
+
   //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
   List<EventModel> getSuggestions() {
     //REGATAR SERVIÇO DE VENTO
     EventService eventService = EventController.instance.eventService;
     return eventService.getSuggestionEvents();
   }
+  
   //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
   List<Map<String, dynamic>> getHighlights(EventModel event) {
     //REGATAR SERVIÇO DE VENTO
     EventService eventService = EventController.instance.eventService;
     return eventService.getHighlightsEvent();
   }
+  
   //FUNÇÃO PARA BUSCAR AVALIAÇÕES DO EVNTO
   double getAvaliations(List<AvaliationModel>? avaliations) {
     if(avaliations == null || avaliations.isEmpty) return 0.0;
@@ -240,7 +263,8 @@ mixin EventRegister on GetxController{
     'Sex': false,
     'Sab': false,
   }.obs;
-
+  //ESTADO - DIAS DA SEMANA SELECIOANADS
+  RxList<String> daysWeek = <String>[].obs;
   //MAP DE CONVITE PADRÃO
   RxMap<String, bool> invite = {
     'Jogador': false,
@@ -331,4 +355,23 @@ mixin EventParticipants on GetxController{
 
   //CONTROLADOR DE INPUT DE PESQUISA
   final TextEditingController pesquisaController = TextEditingController();
+}
+
+mixin EventRules on GetxController{
+  //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
+  late TextEditingController ruleTitleController;
+  late TextEditingController ruleDescriptionController;
+
+  //FUNÇÃO PARA INICIALIZAR CONTROLLERS
+  void initRuleTextControllers(Map<String, String?> values) {
+    //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
+    ruleTitleController = TextEditingController(text: values['title']);
+    ruleDescriptionController = TextEditingController(text: values['description']);
+  }
+  
+  void disposeRuleTextControllers() {
+    //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
+    ruleTitleController = TextEditingController();
+    ruleDescriptionController = TextEditingController();
+  }
 }

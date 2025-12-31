@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:futzada/utils/form_utils.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -54,32 +55,6 @@ class EventAddressStepState extends State<EventAddressStep> {
     if (dateSelected != null) {
       //ATUALIZAR VALOR DO CONTROLER
       eventController.dateController.text = DateFormat("dd/MM/yyyy").format(dateSelected);
-    }
-  }
-
-  //FUNÇÃO PARA PICKER DE HORAS
-  Future<void> selectTime(BuildContext context, name) async {
-    final TimeOfDay? timeSelected = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-      builder: (BuildContext context, Widget? child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            alwaysUse24HourFormat: false,
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (timeSelected != null) {
-      //VERIFICAR HORARAIO
-      if(name == 'horaInicio'){
-        //ATUALIZAR VALOR DO CONTROLER
-        eventController.startTimeController.text = timeSelected.format(context);
-      }else{
-        //ATUALIZAR VALOR DO CONTROLER
-        eventController.endTimeController.text = timeSelected.format(context);
-      }
     }
   }
   
@@ -237,7 +212,16 @@ class EventAddressStepState extends State<EventAddressStep> {
                           eventController.labelDate.value,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-                        const SelectDaysWeekWidget(),
+                        SelectDaysWeekWidget(
+                          values: eventController.daysWeek,
+                          onChanged: (value){
+                            if (eventController.daysWeek.contains(value)) {
+                              eventController.daysWeek.remove(value);
+                            } else {
+                              eventController.daysWeek.add(value);
+                            }
+                          },
+                        ),
                         //VALIDAÇÃO DE DIAS DA SEMANA
                         if(!isValid && !eventController.daysOfWeek.containsValue(true))...[
                           const Padding(
@@ -263,7 +247,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 label: 'Hora de Início',
                                 textController: eventController.startTimeController,
                                 onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Início'),
-                                showModal: () => selectTime(context, 'horaInicio'),
+                                showModal: () => FormUtils.selectTime(context, 'horaInicio'),
                               ),
                             ),
                             SizedBox(
@@ -273,7 +257,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 label: 'Hora de Fim',
                                 textController: eventController.endTimeController,
                                 onValidated: (value) => eventController.formService.validateEmpty(value, 'Hora de Fim'),
-                                showModal: () => selectTime(context, 'horaFim'),
+                                showModal: () => FormUtils.selectTime(context, 'horaFim'),
                               ),
                             ),
                           ],

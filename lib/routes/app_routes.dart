@@ -20,13 +20,16 @@ import 'package:futzada/pages/games/detail/game_detail_page.dart';
 import 'package:futzada/pages/games/detail/games_day_page%20.dart';
 import 'package:futzada/pages/event/list/event_list.dart';
 import 'package:futzada/pages/event/view/event_page.dart';
-import 'package:futzada/pages/event/register/event_config_game_step.dart';
+import 'package:futzada/pages/event/view/event_settings_page.dart.dart';
 import 'package:futzada/pages/event/view/event_historic_page.dart';
+import 'package:futzada/pages/event/register/event_config_game_step.dart';
 import 'package:futzada/pages/event/register/event_basic_step.dart';
 import 'package:futzada/pages/event/register/event_address_step.dart';
 import 'package:futzada/pages/event/register/event_participants_step.dart';
 import 'package:futzada/pages/explore/map/map_picker.dart';
 import 'package:futzada/pages/explore/map/map_explorer.dart';
+import 'package:futzada/pages/explore/explore_filter_page.dart';
+import 'package:futzada/pages/explore/explore_search_page.dart';
 
 class AppRoutes {
   static final routes = [
@@ -62,10 +65,13 @@ class AppRoutes {
       GetPage(name: "/event/register/participants", page: () => const EventParticipantsStep(), transition: Transition.rightToLeft),
       //EVENTS - VIEW GERAL
       GetPage(name: "/event/geral", page: () => const EventPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/event/settings", page: () => const EventSettingsPage(), transition: Transition.rightToLeft),
       GetPage(name: "/event/historic", page: () => const EventHistoricPage(), transition: Transition.rightToLeft),
       GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
       //EXPLORE MAPA
-      GetPage(name: "/explore/map", page: () => const MapExplorer(), transition: Transition.rightToLeft),
+      GetPage(name: "/explore/map", page: () => const MapExplorePage(), transition: Transition.rightToLeft),
       GetPage(name: "/explore/map/picker", page: () => const MapPickerPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/explore/search", page: () => const ExploreSearchPage(), transition: Transition.rightToLeft),
+      GetPage(name: "/explore/filter", page: () => const ExploreFilterPage(), transition: Transition.rightToLeft),
   ];
 }

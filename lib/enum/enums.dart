@@ -9,7 +9,7 @@ enum GameStatus { Scheduled, In_progress, Completed, Cancelled }
 //STATUS DE PARTICIPANTES DO EVENTO
 enum PlayerStatus { Avaliable, Out, Doubt, None }
 //TIPO DE EVENTO NA PARTIDA
-enum GameEventType { 
+enum GameEvent { 
   //TIME
   StartGame,
   EndGame,
@@ -53,4 +53,20 @@ enum GameEventType {
   //OUTROS
   Injury,
   VARCheck,
+}
+//TIPO DE NOTICIAS DO EVENTO
+enum NewsType { 
+  EventRegister,
+  EventUpdate,
+  EventLocation,
+  EventConfig,
+  EventGameDay,
+  EventGame,
+  EventNewRule,
+  EventAlterRule,
+  EventRemoveRule,
+  ParticipantAdd,
+  ParticipantRemove,
+  ParticipantLeft,
+  ParticipantChange,
 }

@@ -16,10 +16,10 @@ class MarketDialog extends StatefulWidget {
   const MarketDialog({super.key});
 
   @override
-  State<MarketDialog> createState() => MarketDialogState();
+  State<MarketDialog> createState() => _MarketDialogState();
 }
 
-class MarketDialogState extends State<MarketDialog> {
+class _MarketDialogState extends State<MarketDialog> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   EscalationController escalationController = EscalationController.instance;
 

@@ -118,8 +118,8 @@ class NavigationController extends GetxController {
       subTitulo: 'Sua pelada agora está na palma da suas mãos! Organize e gerencie suas peladas entre os amigos de forma simples e colaborativa.',
       buttonFirstText: 'Criar nova pelada',
       buttonFirstIcon: Icons.add_circle_rounded,
-      buttonSecoundText: 'Ver minhas peladas',
-      buttonSecoundIcon: null,
+      buttonSecoundText: 'Minhas peladas',
+      buttonSecoundIcon: Icons.list_rounded,
       buttonFirstAction: () => Get.toNamed('/event/register/basic'),
       buttonSecoundAction: () => Get.toNamed('/event/list')
     ),
@@ -129,12 +129,12 @@ class NavigationController extends GetxController {
       route: 'Explore',
       titulo: 'Encontre o Fut certo para você',
       subTitulo: 'Buscando por um futebol ? Encontrar jogos que estão rolando em tempo real ou que acontecem regularmente no local indicado.',
-      buttonFirstIcon: AppIcones.compass_solid,
+      buttonFirstIcon: Icons.map_rounded,
       buttonFirstText: 'Ver no Mapa',
-      buttonSecoundText: 'Pesquisar manualmente',
-      buttonSecoundIcon: null,
+      buttonSecoundText: 'Pesquisar',
+      buttonSecoundIcon: Icons.manage_search_rounded,
       buttonFirstAction: () => Get.toNamed('/explore/map'),
-      buttonSecoundAction: () => print('navegar para Pesquisa manual'),
+      buttonSecoundAction: () => Get.toNamed('/explore/search'),
     ),
     //APRENSENTAÇÃO PAGE NOTIFICAÇÃO
     const NotificationPage()

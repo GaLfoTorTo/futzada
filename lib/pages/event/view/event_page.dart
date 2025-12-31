@@ -1,7 +1,12 @@
+import 'package:futzada/pages/event/view/event_news_page.dart';
+import 'package:futzada/pages/event/view/event_rules_page.dart';
+import 'package:futzada/widget/buttons/float_button_widget.dart';
+import 'package:futzada/widget/dialogs/event_games_dialog.dart';
+import 'package:futzada/widget/dialogs/rule_dialog.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/utils/img_utils.dart';
 import 'package:futzada/helpers/app_helper.dart';
-import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/models/event_model.dart';
@@ -10,12 +15,11 @@ import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/widget/bars/header_glass_widget.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/buttons/float_button_event_widget.dart';
-import 'package:futzada/pages/event/view/event_participants_page.dart';
-import 'package:futzada/pages/event/view/event_rank_page.dart';
-import 'package:futzada/pages/event/view/event_games_page.dart';
 import 'package:futzada/pages/event/view/event_home_page.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:futzada/pages/event/view/event_private_page.dart';
+import 'package:futzada/pages/event/view/event_games_page.dart';
+import 'package:futzada/pages/event/view/event_rank_page.dart';
+import 'package:futzada/pages/event/view/event_participants_page.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -25,21 +29,21 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
-  //DEFINIR CONTROLLER DE EVENTO
+  //CONTROLLERS
   EventController eventController = EventController.instance;
-  //DEFINIR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
-  //RESGATAR EVENTO ATUAL
+  //EVENTO ATUAL
   EventModel event = Get.arguments['event'];
   //CONTROLLER DE TABS
   late final TabController tabController;
-  //CONTROLADOR DE INDEX DAS TABS
+  //ESTADO - INDEX DAS TABS
   int tabIndex = Get.arguments['index'] ?? 0;
-  //CONTROLADOR DE BRILHO DA IMAGEM
-  bool brightness = false;
   //ESTADOS - ITEMS DO EVENTO
-  late ImageProvider imgProvider;
-  late double avaliation;
+  late ImageProvider eventImage;
+  late String eventVisibility;
+  late double eventAvaliations;
+  //ESTADO - IMAGENS DA PELADA
+  bool brightness = false;
   Color textColor = AppColors.white;
 
   @override
@@ -47,21 +51,19 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     super.initState();
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
-    //RESGATAR IMAGEM DA PELADA
-    imgProvider = event.photo != null
-      ? CachedNetworkImageProvider(event.photo!)
-      : const AssetImage(AppImages.gramado) as ImageProvider;
+    //ATUALIZAR ITEMS DO EVENTOS
+    eventImage = ImgUtils.getEventImg(event.photo);
+    eventVisibility = event.visibility!.name;
+    eventAvaliations = eventController.getAvaliations(event.avaliations);
+    //DEFINIR EVENTO ATUAL NO CONTROLLER
+    eventController.setSelectedEvent(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
-    AppHelper.isImageDark(imgProvider).then((isDark) {
+    AppHelper.isImageDark(eventImage).then((isDark) {
       setState(() {
         brightness = isDark;
         textColor = isDark ? AppColors.blue_500 : AppColors.white;
       });
     });
-    //RESGATAR AVALIAÇÕES DO EVENTO
-    avaliation = eventController.getAvaliations(event.avaliations);
-    //DEFINIR EVENTO ATUAL NO CONTROLLER
-    eventController.setSelectedEvent(event);
     //BINDING DE CARREGAMENTO DA PAGINA
     WidgetsBinding.instance.addPostFrameCallback((_) async{  
       //VERIFICAR SE PARTIDAS JÁ FORAM CARREGADAS
@@ -80,8 +82,12 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       return HeaderGlassWidget(
         title: "Pelada",
         leftAction: () => Get.back(),
-        rightIcon: AppIcones.cog_solid,
-        rightAction: () => print('Favoritar'),
+        rightIcon: eventVisibility == 'Public' 
+          ? AppIcones.cog_solid 
+          : null,
+        rightAction: () => eventVisibility == 'Public' 
+          ? Get.toNamed('/event/settings') 
+          : null,
         brightness: brightness,
       ); 
     }
@@ -89,10 +95,18 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     return HeaderWidget(
       title: "Pelada",
       leftAction: () => Get.back(),
-      rightIcon: AppIcones.cog_solid,
-      rightAction: () => print('event settings'),//Get.toNamed('/event/settings'),
-      extraIcon: tabController.index == 1 ? Icons.history : null,
-      extraAction: () => tabController.index == 1 ? Get.toNamed('/event/historic') : null,
+      rightIcon: eventVisibility == 'Public' 
+        ? AppIcones.cog_solid 
+        : null,
+      rightAction: () => eventVisibility == 'Public' 
+        ? Get.toNamed('/event/settings') 
+        : null,
+      extraIcon: tabController.index == 1 
+        ? Icons.history 
+        : null,
+      extraAction: () => tabController.index == 1 
+        ? Get.toNamed('/event/historic') 
+        : null,
       shadow: false,
     );
   }
@@ -123,7 +137,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 height: dimensions.height * 0.4,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: imgProvider,
+                    image: eventImage,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -156,7 +170,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 child: Text(
-                                  avaliation.toStringAsFixed(1),
+                                  eventAvaliations.toStringAsFixed(1),
                                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                     color: textColor
                                   ),
@@ -202,84 +216,100 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 ),
               ),
             ],
-            Container(
-              color: AppColors.white,
-              child: TabBar(
-                controller: tabController,
-                onTap: (i) => setState(() {
-                  tabIndex = i;
-                }),
-                indicator: UnderlineTabIndicator(
-                  borderSide: const BorderSide(
-                    width: 5,
-                    color: AppColors.green_300,
+            if(eventVisibility == "Public")...[
+              Container(
+                color: AppColors.white,
+                child: TabBar(
+                  controller: tabController,
+                  onTap: (i) => setState(() {
+                    tabIndex = i;
+                  }),
+                  indicator: UnderlineTabIndicator(
+                    borderSide: const BorderSide(
+                      width: 5,
+                      color: AppColors.green_300,
+                    ),
+                    insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
                   ),
-                  insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
-                ),
-                labelColor: AppColors.green_300,
-                labelStyle: const TextStyle(
-                  color: AppColors.gray_500,
-                  fontWeight: FontWeight.normal,
-                ),
-                unselectedLabelColor: AppColors.gray_500,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                tabs: tabs.map((tab){
-                  if(tab == 'Partidas'){
-                    return SizedBox(
-                      width: 100,
-                      height: 50,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children:[
-                          Tab(text: tab),
-                          if(gameController.inProgressGames.isNotEmpty)...[
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: AppColors.red_300,
-                                  borderRadius: BorderRadius.circular(50)
-                                ),
+                  labelColor: AppColors.green_300,
+                  labelStyle: const TextStyle(
+                    color: AppColors.gray_500,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  unselectedLabelColor: AppColors.gray_500,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  tabs: tabs.map((tab){
+                    if(tab == 'Partidas'){
+                      return SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children:[
+                            Tab(text: tab),
+                            if(gameController.inProgressGames.isNotEmpty)...[
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.red_300,
+                                    borderRadius: BorderRadius.circular(50)
+                                  ),
+                                )
                               )
-                            )
+                            ]
                           ]
-                        ]
-                      )
-                    );
-                  }else{
-                    return SizedBox(
-                      width: 100,
-                      height: 50,
-                      child: Tab(text: tab)
-                    );
-                  }
-                }).toList()
+                        )
+                      );
+                    }else{
+                      return SizedBox(
+                        width: 100,
+                        height: 50,
+                        child: Tab(text: tab)
+                      );
+                    }
+                  }).toList()
+                ),
               ),
-            ),
-            Expanded(
+              Expanded(
               child: TabBarView(
                 physics: const NeverScrollableScrollPhysics(),
                 controller: tabController,
-                children: [
-                  const EventHomePage(),
-                  const EventGamesPage(),
-                  const EventRankPage(),
-                  const EventParticipantsPage(),
-                  Container(),
-                  Container(),
+                children: const [
+                  EventHomePage(),
+                  EventGamesPage(),
+                  EventRankPage(),
+                  EventParticipantsPage(),
+                  EventRulesPage(),
+                  EventNewsPage(),
                 ],
               ),
             ), 
+            ]else...[
+              const EventPrivatePage()
+            ]
           ]
       ),
       floatingActionButton: Obx(() {
-        //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
+        //FLOAT ACTION BUTTON DE PARTIDAS
         if (gameController.hasGames.value && tabIndex == 1 && gameController.isToday()) {
-          return FloatButtonEventWidget(index: tabController.index);
+          return FloatButtonWidget(
+            floatKey: "game_event",
+            icon: Icons.play_arrow_rounded,
+            onPressed:  () => Get.bottomSheet(const EventGamesDialog())
+          );
+        }
+        //FLOAT ACTION BUTTON DE REGRAS
+        if (gameController.hasGames.value && tabIndex == 4) {
+          return FloatButtonWidget(
+            floatKey: "rules_event",
+            icon: Icons.add,
+            onPressed: () => Get.bottomSheet(const RuleDialog(), isScrollControlled: true),
+          );
         }
         return const SizedBox.shrink();
       })

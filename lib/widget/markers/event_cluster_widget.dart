@@ -145,7 +145,7 @@ class EventClusterWidget extends StatelessWidget {
 
           final imgs = eventsAtSamePlace
               .take(3)
-              .map((e) => ImgUtils.getEventImg(e))
+              .map((e) => ImgUtils.getEventImg(e.photo))
               .toList();
 
           return Marker(
@@ -167,7 +167,7 @@ class EventClusterWidget extends StatelessWidget {
             //EVENTO DO MARKER
             final markerImg = events.firstWhere((e) => e.id.toString() == m.key.toString().numericOnly());
             //RESGATAR IMAGEM DO EVENTO E ADICIONAR A LISTA
-            return ImgUtils.getEventImg(markerImg);
+            return ImgUtils.getEventImg(markerImg.photo);
           }).toList();
 
           return setEventWidget(marker, imgs: imgs, isCluster: true, totalEvents: markers.length);

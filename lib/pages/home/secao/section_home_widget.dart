@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:futzada/utils/map_utils.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_day_event_widget.dart';
 import 'package:futzada/widget/cards/card_to_you_widget.dart';
@@ -24,8 +25,6 @@ class SectionHomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //CONTROLLADOR DE PAGINAS
     final PageController pageController = PageController();
-    //TEXTO AUXILIAR
-    String othertext = "Ver Mais";
 
     Widget cardSelected(String titulo){
       switch (titulo) {
@@ -76,21 +75,21 @@ class SectionHomeWidget extends StatelessWidget {
               ),
               if(titulo == 'Dia de Jogo' )...[
                 Container(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     color: AppColors.green_300.withAlpha(30),
                     borderRadius: BorderRadius.circular(10)
                   ),
-                  child: const Row(
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.location_on,
                         size: 20,
                         color: AppColors.green_300,
                       ),
                       Text(
-                        "Brasília/DF",
+                        MapUtils.getLocationUser(),
                         style: const TextStyle(
                           color: AppColors.green_300,
                           fontSize: 12,

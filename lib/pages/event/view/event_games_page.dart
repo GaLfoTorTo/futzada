@@ -56,23 +56,18 @@ class _EventGamesPageState extends State<EventGamesPage> {
         width: dimensions.width,
         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
         child: Column(
+          spacing: 10,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Text(
-                "Agenda",
-                style: Theme.of(context).textTheme.titleMedium,
+            Text(
+              "Agenda",
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: AppColors.blue_500
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Text(
-                "Explore a agenda completa das partidas da pelada. A quantidade de partidas e calculada a partir das informações de duração e horários de início e fim da pelada definidos pelo organizador.",
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: AppColors.gray_500,
-                ),
-                textAlign: TextAlign.center,
-              ),
+            Text(
+              "Explore a agenda completa das partidas da pelada. A quantidade de partidas e calculada a partir das informações de duração e horários de início e fim da pelada definidos pelo organizador.",
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
             ),
             //PARTIDAS DO DIA DE EVENTO
             Obx((){
