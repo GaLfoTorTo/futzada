@@ -1,8 +1,8 @@
 import 'package:futzada/pages/event/view/event_news_page.dart';
 import 'package:futzada/pages/event/view/event_rules_page.dart';
 import 'package:futzada/widget/buttons/float_button_widget.dart';
-import 'package:futzada/widget/dialogs/event_games_dialog.dart';
-import 'package:futzada/widget/dialogs/rule_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_event_games.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_rule.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/utils/img_utils.dart';
@@ -54,7 +54,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     //ATUALIZAR ITEMS DO EVENTOS
     eventImage = ImgUtils.getEventImg(event.photo);
     eventVisibility = event.visibility!.name;
-    eventAvaliations = eventController.getAvaliations(event.avaliations);
+    eventAvaliations = eventController.eventService.getEventAvaliation(event.avaliations);
     //DEFINIR EVENTO ATUAL NO CONTROLLER
     eventController.setSelectedEvent(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
@@ -218,7 +218,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ],
             if(eventVisibility == "Public")...[
               Container(
-                color: AppColors.white,
+                color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
                 child: TabBar(
                   controller: tabController,
                   onTap: (i) => setState(() {
@@ -300,7 +300,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           return FloatButtonWidget(
             floatKey: "game_event",
             icon: Icons.play_arrow_rounded,
-            onPressed:  () => Get.bottomSheet(const EventGamesDialog())
+            onPressed:  () => Get.bottomSheet(const BottomSheetEventGames())
           );
         }
         //FLOAT ACTION BUTTON DE REGRAS
@@ -308,7 +308,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           return FloatButtonWidget(
             floatKey: "rules_event",
             icon: Icons.add,
-            onPressed: () => Get.bottomSheet(const RuleDialog(), isScrollControlled: true),
+            onPressed: () => Get.bottomSheet(const BottomSheetRule(), isScrollControlled: true),
           );
         }
         return const SizedBox.shrink();

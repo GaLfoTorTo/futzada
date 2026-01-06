@@ -98,7 +98,7 @@ class MapUtils {
   }
 
   //FUNÇÃO PARA RESGATAR ENDEREÇO DO USUARIO
-  static String getLocationUser() {
+  static String getLocation() {
     //RESGATAR LOCALIZACAO DO USUARUI
     final RxMap<String, dynamic> currentLocation = Get.find(tag: 'userLocation');
     //VERIFICAR SE LOCALIZACAO DO USUARIO CONTEM CHAVE ESPECIFICA

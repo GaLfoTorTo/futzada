@@ -1,8 +1,7 @@
 import 'dart:math';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
+import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/models/escalation_model.dart';
 import 'package:futzada/models/participant_model.dart';
 
@@ -12,7 +11,7 @@ class EscalationService {
   static var random = Random();
 
   //FUNÇÃO DE GERAÇÃO DE ESCALAÇÃO DO USUARIO
-  EscalationModel generateEscalation(String category, List<ParticipantModel> participants){
+  EscalationModel generateEscalation(String category){
     //RESGATAR LISTA DE FORMAÇÕES
     List<String> listFormations = getFormations(category);
     //DEFINIR ESCALAÇÃO
@@ -21,8 +20,8 @@ class EscalationService {
       "formation" : listFormations[random.nextInt(listFormations.length)],
       "starters" : setEscalation(category, 'starters'),
       "reserves" : setEscalation(category, 'reserves'),
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 

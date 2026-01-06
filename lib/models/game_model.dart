@@ -6,6 +6,7 @@ import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/result_model.dart';
 import 'package:futzada/models/team_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class GameModel {
   final int id;
@@ -82,8 +83,8 @@ class GameModel {
       'status': status,
       'result': result?.toMap(),
       'teams': teams != null && teams!.isNotEmpty ? teams!.map((x) => x.toMap()).toList() : [],
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -110,9 +111,9 @@ class GameModel {
             ),
           ) 
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

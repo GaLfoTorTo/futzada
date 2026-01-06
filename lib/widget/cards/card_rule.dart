@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/models/rule_model.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/dialogs/rule_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_rule.dart';
 import 'package:get/get.dart';
 
 class CardRule extends StatelessWidget {
@@ -17,14 +17,10 @@ class CardRule extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     return TextButton(
-      onPressed: () => Get.bottomSheet(RuleDialog(rule: rule), isScrollControlled: true),
+      onPressed: () => Get.bottomSheet(BottomSheetRule(rule: rule), isScrollControlled: true),
       child: Container(
         width: dimensions.width,
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: AppColors.green_300,
-          borderRadius: BorderRadius.circular(10)
-        ),
         child: Row(
           spacing: 10,
           children: [

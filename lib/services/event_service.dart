@@ -1,7 +1,8 @@
 import 'dart:math';
-import 'package:futzada/models/participant_model.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
+import 'package:futzada/models/avaliation_model.dart';
+import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/address_model.dart';
@@ -68,8 +69,8 @@ class EventService {
       //GERAR NOTICIAS DO EVENTO (PELADA)
       "news" : List.generate(qtdNews, (u) => newsService.generateNews().toMap()),
       "visibility" : random.nextBool() == true ? VisibilityPerfil.Public.name : VisibilityPerfil.Private.name,
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 
@@ -87,8 +88,9 @@ class EventService {
       "zipCode" : faker.address.zipCode(),
       "latitude" : coordinates[random.nextInt(coordinates.length)]['latitude'],
       "longitude" : coordinates[random.nextInt(coordinates.length)]['longitude'],
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "photos" : List.generate(random.nextInt(5), (i) => faker.image.loremPicsum()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+"updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
   
@@ -108,7 +110,7 @@ class EventService {
   }
 
   //FUNÇÃO PARA BUSCAR EVENTOS DO USUARIO
-  List<EventModel> getSuggestionEvents(){
+  List<EventModel> getEventsSuggestion(){
     //DEFINIR ARRAY DE EVENTOS
     List<EventModel> events = [];
     //LOOP PARA EVENTOS DO USUARIO
@@ -122,6 +124,11 @@ class EventService {
     return events;
   }
   
+  //FUNÇÃO PARA BUSCAR AVALIAÇÕES DO EVNTO
+  double getEventAvaliation(List<AvaliationModel>? avaliations) {
+    if(avaliations == null || avaliations.isEmpty) return 0.0;
+    return avaliations.map((a) => a.avaliation!).reduce((a, b) => a + b) / avaliations.length;
+  }
   //FUNÇÃO PARA BUSCAR EVENTOS
   List<EventModel> getEvents(){
     //DEFINIR ARRAY DE EVENTOS

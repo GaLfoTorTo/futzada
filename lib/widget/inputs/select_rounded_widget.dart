@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:get/get.dart';
 
 class SelectRoundedWidget extends StatelessWidget {
   final String value;
@@ -15,7 +16,7 @@ class SelectRoundedWidget extends StatelessWidget {
   const SelectRoundedWidget({
     super.key,
     required this.value,
-    this.color = AppColors.gray_300,
+    this.color,
     this.size = 130,
     required this.icon,
     this.iconColor = AppColors.white,
@@ -31,6 +32,9 @@ class SelectRoundedWidget extends StatelessWidget {
       AppIcones.foot_fut7_solid,
       AppIcones.foot_futsal_solid,
     ];
+    //COR DO COMPONENTE
+    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.gray_300;
+
     return InkWell(
       onTap: () => onChanged(value),
       highlightColor: Colors.transparent,
@@ -60,7 +64,7 @@ class SelectRoundedWidget extends StatelessWidget {
                   angle: - 45 * 3.14159 / 200,
                   child: Icon(
                     icon,
-                    color: iconColor,
+                    color: checked ? AppColors.blue_500 : iconColor,
                     size: iconSize,
                   ),
                 ) 
@@ -75,11 +79,9 @@ class SelectRoundedWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 15),
             child: Text(
-              "${value}",
-              style: TextStyle(
-                color: checked == true ? AppColors.blue_500 : AppColors.gray_500,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+              value,
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: checked ? AppColors.green_300 : null
               ),
               textAlign: TextAlign.center,
             ),

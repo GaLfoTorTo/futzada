@@ -68,7 +68,6 @@ class _ChatsPageState extends State<ChatsPage> {
     }
     
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: HeaderWidget(
         title: user.userName,
         leftAction: () => Get.back(),
@@ -78,8 +77,7 @@ class _ChatsPageState extends State<ChatsPage> {
         child: SingleChildScrollView(
           child: Container(
             width: dimensions.width,
-            color: AppColors.white,
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               children: [
                 Padding(
@@ -87,7 +85,7 @@ class _ChatsPageState extends State<ChatsPage> {
                   child: InputTextWidget(
                     name: 'search',
                     hint: 'Pesquisa',
-                    bgColor: AppColors.gray_300.withAlpha(50),
+                    backgroundColor: AppColors.gray_300.withAlpha(50),
                     prefixIcon: AppIcones.search_solid,
                     textController: chatController.pesquisaController,
                     type: TextInputType.text,
@@ -133,14 +131,10 @@ class _ChatsPageState extends State<ChatsPage> {
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: TextButton(
+                        child: ElevatedButton(
                           onPressed: () => Get.toNamed(
                             "/chat_private",
                             arguments: userChat,
-                          ),
-                          style: const ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(AppColors.white),
-                            padding: WidgetStatePropertyAll(EdgeInsets.all(15)),
                           ),
                           child: Row(
                             children: [

@@ -114,9 +114,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Column(
@@ -133,9 +131,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
               child: Text(
                 widget.item['title'],
                 style: Theme.of(context)
-                    .textTheme
-                    .headlineLarge!
-                    .copyWith(color: AppColors.blue_500),
+                  .textTheme
+                  .headlineLarge!
+                  .copyWith(color: AppColors.blue_500),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -150,9 +148,9 @@ class _IntroductionPageState extends State<IntroductionPage> {
               child: Text(
                 widget.item['descricao'],
                 style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: AppColors.blue_500),
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: AppColors.blue_500),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -171,7 +169,7 @@ class _IntroductionPageState extends State<IntroductionPage> {
                 child: Lottie.asset(
                   widget.item['animation'],
                   fit: BoxFit.fill,
-                  height: dimensions.height,
+                  
                 ),
               ),
             ),

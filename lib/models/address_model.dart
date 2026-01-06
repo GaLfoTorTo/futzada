@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'package:futzada/utils/date_utils.dart';
 
 class AddressModel {
   final int? id;
@@ -13,6 +14,7 @@ class AddressModel {
   final String? zipCode;
   final double? latitude;
   final double? longitude;
+  final List<String>? photos;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
@@ -29,6 +31,7 @@ class AddressModel {
     this.zipCode,
     this.latitude,
     this.longitude,
+    this.photos,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -46,6 +49,7 @@ class AddressModel {
     String? zipCode,
     double? latitude,
     double? longitude,
+    List<String>? photos,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -62,6 +66,7 @@ class AddressModel {
       zipCode: zipCode ?? this.zipCode,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      photos: photos ?? this.photos,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -81,9 +86,10 @@ class AddressModel {
       'zipCode': zipCode,
       'latitude': latitude,
       'longitude': longitude,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
-      'deletedAt': deletedAt,
+      'photos': photos,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -100,8 +106,9 @@ class AddressModel {
       zipCode: map['zipCode'] != null ? map['zipCode'] as String : null,
       latitude: map['latitude'] != null ? map['latitude'] as double : null,
       longitude: map['longitude'] != null ? map['longitude'] as double : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      photos: map['photos'] != null ? map['photos'] as List<String> : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt:  DatetimeUtils.parseDate(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }
@@ -112,7 +119,7 @@ class AddressModel {
 
   @override
   String toString() {
-    return 'AddressModel(id: $id, street: $street, number: $number, suburb: $suburb, borough: $borough, city: $city, state: $state, country: $country, zipCode: $zipCode, latitude: $latitude, longitude: $longitude, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'AddressModel(id: $id, street: $street, number: $number, suburb: $suburb, borough: $borough, city: $city, state: $state, country: $country, zipCode: $zipCode, latitude: $latitude, longitude: $longitude, photos: $photos, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -131,6 +138,7 @@ class AddressModel {
       other.zipCode == zipCode &&
       other.latitude == latitude &&
       other.longitude == longitude &&
+      other.photos == photos &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
       other.deletedAt == deletedAt;
@@ -149,6 +157,7 @@ class AddressModel {
       zipCode.hashCode ^
       latitude.hashCode ^
       longitude.hashCode ^
+      photos.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
       deletedAt.hashCode;

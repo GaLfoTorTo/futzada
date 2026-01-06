@@ -7,7 +7,7 @@ import 'package:futzada/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:futzada/widget/buttons/button_dropdown_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_player_market_widget.dart';
-import 'package:futzada/widget/dialogs/market_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_market.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:get/get.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
@@ -22,6 +22,8 @@ class MarketPage extends StatefulWidget {
 class MarketPageState extends State<MarketPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   EscalationController escalationController = EscalationController.instance;
+  //DEFINIR COR A PARTIR DO TEMA
+  final color = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
   void selectFilter(String name, dynamic newValue){
@@ -50,7 +52,7 @@ class MarketPageState extends State<MarketPage> {
                 width: dimensions.width,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: color,
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.dark_500.withAlpha(30),
@@ -65,7 +67,6 @@ class MarketPageState extends State<MarketPage> {
                     InputTextWidget(
                       name: 'search',
                       hint: 'Pesquisa',
-                      bgColor: AppColors.gray_300.withAlpha(50),
                       prefixIcon: AppIcones.search_solid,
                       textController: escalationController.pesquisaController,
                       type: TextInputType.text,
@@ -106,14 +107,14 @@ class MarketPageState extends State<MarketPage> {
                             ),
                           ),
                           ButtonTextWidget(
-                            backgroundColor: AppColors.white,
                             text: "Filtros",
+                            backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                            textColor: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
                             textSize: AppSize.fontSm,
-                            textColor: AppColors.blue_500,
                             icon: AppIcones.filter_solid,
                             iconAfter: true,
                             width: ( dimensions.width / 3 ) - 50,
-                            action: () => Get.bottomSheet(MarketDialog(), isScrollControlled: true)
+                            action: () => Get.bottomSheet(const BottomSheetMarket(), isScrollControlled: true)
                           ),
                         ],
                       );
@@ -124,6 +125,7 @@ class MarketPageState extends State<MarketPage> {
               Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
+                  spacing: 10,
                   children: [
                     if(escalationController.filteredPlayersMarket.isNotEmpty)...[
                       ...escalationController.filteredPlayersMarket.map((entry) {
@@ -133,7 +135,7 @@ class MarketPageState extends State<MarketPage> {
                           participant: item,
                           escalation: escalationController.starters
                         );
-                      }).toList(),
+                      }),
                     ]else...[
                       Container(
                         alignment: Alignment.center,

@@ -81,202 +81,178 @@ class CardPlayerMarketWidget extends StatelessWidget {
     //DEFINIR CONFIGURAÇÕES DE BOTÃO DE COMPRA E VENDA DE JOGADOR
     var buttonConfig = setButtonBuy(player);
 
-    return Container(
-      width: dimensions.width,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.dark_500.withAlpha(30),
-            spreadRadius: 0.5,
-            blurRadius: 5,
-            offset: Offset(2, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: (dimensions.width * 0.65) - 10,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ImgCircularWidget(
-                      height: 80,
-                      width: 80,
-                      image: participant.user.photo,
-                      borderColor: AppColors.gray_300,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: (dimensions.width / 2) - 50,
-                            height: 25,
-                            child: Text(
+    return Card(
+      child: Container(
+        width: dimensions.width,
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: dimensions.width * 0.6,
+              child: Column(
+                spacing: 10,
+                children: [
+                  Row(
+                    spacing: 5,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ImgCircularWidget(
+                        height: 80,
+                        width: 80,
+                        image: participant.user.photo,
+                        borderColor: AppColors.gray_300,
+                      ),
+                      Expanded(
+                        child: Column(
+                          spacing: 5,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
                               "${participant.user.firstName} ${participant.user.lastName}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
+                              style: Theme.of(context).textTheme.titleSmall,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis
                             ),
-                          ),
-                          SizedBox(
-                            width: (dimensions.width / 2) - 50,
-                            height: 25,
-                            child: Text(
+                            Text(
                               "@${participant.user.userName}",
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                color: AppColors.gray_300
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis, 
                             ),
-                          ),
-                          SizedBox(
-                            width: (dimensions.width / 2) - 50,
-                            height: 25,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Row(
+                              spacing: 2,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                SizedBox(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      PositionWidget(
-                                        position: participant.user.player!.mainPosition,
-                                        mainPosition: true,
-                                        width: 50,
-                                        height: 30,
-                                      ),
-                                      ...playerPositions.asMap().entries.map((entry){
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                                          child: PositionWidget(
-                                            position: entry.value,
-                                            mainPosition: false,
-                                            width: 30,
-                                            height: 20,
-                                          ),
-                                        );
-                                      }),
-                                    ],
-                                  ),
+                                PositionWidget(
+                                  position: participant.user.player!.mainPosition,
+                                  mainPosition: true,
+                                  width: 40,
+                                  height: 25,
+                                ),
+                                ...playerPositions.asMap().entries.map((entry){
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                                    child: PositionWidget(
+                                      position: entry.value,
+                                      mainPosition: false,
+                                      width: 30,
+                                      height: 20,
+                                      textSide: 10,
+                                    ),
+                                  );
+                                }),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: dimensions.width * 0.6,
+                    child: Wrap(
+                      spacing: 5,
+                      runSpacing: 5,
+                      children: [
+                        ...metrics.entries.map((entry){
+                          //RESGATAR PARAMETRO DE RATING
+                          final key = entry.key;
+                          //RESGATAR LABEL DE RATING
+                          final label = entry.value;
+                          final itemWidth = key == 'points' ? ( dimensions.width * 0.60 ) : ( dimensions.width * 0.3 ) - 5;
+      
+                          return Container(
+                            width: itemWidth,
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.gray_300.withAlpha(40),
+                              borderRadius: const BorderRadius.all(Radius.circular(5))
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "${playerMap['rating'][key] != null ? playerMap['rating'][key] : 0.0}",
+                                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap['rating'][key])['color']),
+                                ),
+                                Text(
+                                  "$label",
+                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ],
-                            ),
-                          )
-                        ],
-                      ),
+                            )
+                          );
+                        }),
+                      ]
                     ),
-                  ],
-                ),
-                Container(
-                  width: (dimensions.width * 0.65) - 20,
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Wrap(
-                    spacing: 8,
-                    children: [
-                      ...metrics.entries.map((entry){
-                        //RESGATAR PARAMETRO DE RATING
-                        final key = entry.key;
-                        //RESGATAR LABEL DE RATING
-                        final label = entry.value;
-                        final itemWidth = key == 'points' ? ( dimensions.width * 0.60 ) : ( dimensions.width * 0.3 ) - 5;
-
-                        return Container(
-                          width: itemWidth,
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.symmetric(vertical: 5),
-                          decoration: BoxDecoration(
-                            color: AppColors.gray_300.withAlpha(40),
-                            borderRadius: const BorderRadius.all(Radius.circular(5))
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                "${playerMap['rating'][key] != null ? playerMap['rating'][key] : 0.0}",
-                                style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap['rating'][key])['color']),
-                              ),
-                              Text(
-                                "$label",
-                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          )
-                        );
-                      }),
-                    ]
                   ),
-                ),
-              ]
+                ]
+              ),
             ),
-          ),
-          SizedBox(
-            width: (dimensions.width * 0.3) - 10,
-            height: 210,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 25.0),
-                  child: SizedBox(
-                    child:Icon(
+            SizedBox(
+              width: (dimensions.width * 0.3) - 10,
+              height: 210,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: Icon(
                       AppHelper.setStatusPlayer(participant.status)['icon'],
                       color: AppHelper.setStatusPlayer(participant.status)['color'],
                       size: 20,
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        "Fz\$",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
-                      ),
-                      Text(
-                        "${player.rating!.price}",
-                        style: Theme.of(context).textTheme.headlineLarge,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Text(
-                              "${player.rating!.valuation}",
-                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppHelper.setColorPontuation(player.rating!.valuation)['color'], fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          "Fz\$",
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_300),
+                        ),
+                        Text(
+                          "${player.rating!.price}",
+                          style: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                "${player.rating!.valuation}",
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppHelper.setColorPontuation(player.rating!.valuation)['color'], fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          Icon(
-                            AppHelper.setColorPontuation(player.rating!.valuation)['icon'],
-                            size: 15,
-                            color: AppHelper.setColorPontuation(player.rating!.valuation)['color'],
-                          )
-                        ],
-                      )
-                    ],
+                            Icon(
+                              AppHelper.setColorPontuation(player.rating!.valuation)['icon'],
+                              size: 15,
+                              color: AppHelper.setColorPontuation(player.rating!.valuation)['color'],
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                ButtonTextWidget(
-                  text: buttonConfig['text'],
-                  height: 30,
-                  width: (dimensions.width * 0.3) - 10,
-                  textColor: AppColors.white,
-                  backgroundColor: buttonConfig['color'],
-                  disabled: buttonConfig['disabled'],
-                  action: () => setPlayerPosition(player.id),
-                )
-              ],
+                  ButtonTextWidget(
+                    text: buttonConfig['text'],
+                    height: 30,
+                    width: (dimensions.width * 0.3) - 10,
+                    textColor: AppColors.white,
+                    backgroundColor: buttonConfig['color'],
+                    disabled: buttonConfig['disabled'],
+                    action: () => setPlayerPosition(player.id),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

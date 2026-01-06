@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
+import 'package:get/get.dart';
 
 class IndicatorAvaliacaoWidget extends StatelessWidget {
   final double avaliation;
@@ -40,7 +41,7 @@ class IndicatorAvaliacaoWidget extends StatelessWidget {
                   child: Icon(
                     AppIcones.star_solid,
                     size: starSize,
-                    color: AppColors.gray_300,
+                    color: Get.isDarkMode ? AppColors.dark_500 : AppColors.gray_300,
                   ),
                 ),
                 if (avaliation >= i || (avaliation >= i - 0.5 && avaliation < i))...[

@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 
@@ -8,6 +9,8 @@ class ErroHistoricGamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //DEFINIR COR APARTIR DO TEMA
+    final backgroundColor = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
 
     return  Container(
       width: dimensions.width,
@@ -16,8 +19,8 @@ class ErroHistoricGamePage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.white.withAlpha(50),
-            AppColors.white,
+            backgroundColor.withAlpha(50),
+            backgroundColor,
           ],
           begin: Alignment.topCenter,
           end: Alignment.center,

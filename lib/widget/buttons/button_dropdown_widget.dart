@@ -26,7 +26,7 @@ class ButtonDropdownWidget extends StatelessWidget {
     this.menuHeight = 200,
     this.textSize = AppSize.fontXs,
     this.textColor = AppColors.dark_500,
-    this.color = AppColors.white,
+    this.color,
     this.borderColor,
     this.hint = 'Selecione', 
     this.aligment = 'center' 

@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:futzada/utils/date_utils.dart';
+
 class GameConfigModel {
   int? id;
   String? category;
@@ -81,8 +83,8 @@ class GameConfigModel {
       'playersPerTeam': playersPerTeam,
       'extraTime': extraTime,
       'goalLimit': goalLimit,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -100,9 +102,9 @@ class GameConfigModel {
       playersPerTeam: map['playersPerTeam'] != null ? map['playersPerTeam'] as int : null,
       extraTime: map['extraTime'] != null ? map['extraTime'] as int : null,
       goalLimit: map['goalLimit'] != null ? map['goalLimit'] as int : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

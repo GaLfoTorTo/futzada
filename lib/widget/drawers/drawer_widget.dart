@@ -1,14 +1,14 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/controllers/auth_controller.dart';
-import 'package:futzada/models/user_model.dart';
-import 'package:futzada/theme/app_animations.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/theme/app_size.dart';
+import 'package:futzada/models/user_model.dart';
+import 'package:futzada/controllers/auth_controller.dart';
+import 'package:futzada/controllers/theme_controller.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
-import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
+import 'package:futzada/widget/indicators/indicator_loading_widget.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -18,8 +18,9 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  //INSTANCIAR CONTROLLER DE AUTENTICAÇÃO
-  final controller = Get.find<AuthController>();
+  //CONTROLLERs
+  AuthController authController = AuthController.instance;
+  ThemeController themeController = ThemeController.instance;
   //DADOS DO USUÁRIO
   late UserModel? user;
   //VARIAVEL DE MENSAGEM DE ERRO
@@ -47,72 +48,99 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     setState(() {
       errorMessage = null;
     });
-    //TENTAR EFETUAR LOGIN
-    var response = controller.logout();
-    //MODAL DE STATUS DE REGISTRO DO USUARIO
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 1,
-          child: FutureBuilder<Map<String, dynamic>>(
-            future: response,
-            builder: (context, snapshot) {
-              if(snapshot.connectionState == ConnectionState.waiting) {
-                return Container(
-                  width: 300,
-                  height: 300,
-                  child: Center(
-                    child: Lottie.asset(
-                      AppAnimations.loading,
-                      fit: BoxFit.contain,
-                    ),
-                  )
-                );
-              }else if(snapshot.hasError) {
-                //FECHAR MODAL
-                completeLogout(false);
-                //ADICIONAR MENSAGEM DE ERRO
-                errorMessage = 'Houve um erro ao efetuar login.';
-              }else if(snapshot.hasData) {
-                //RESGATAR RETORNO DO SERVIDOR
-                var data = snapshot.data!;
-                //VERIFICAR SE OPERAÇÃO FOI BEM SUCEDIDA
-                if (data['status'] != 200) {
-                  //FECHAR MODAL
-                  completeLogout(false);
-                  //ADICIONAR MENSAGEM DE ERRO
-                  errorMessage = data['message'];
-                }
-              }
-              return Container(
-                width: 300,
-                height: 300,
-              );
-            }
-          )
-        );
-      },
-    );
+    //DELAY PARA EXIBIÇÃO DO OVERLAY
+    Future.delayed(const Duration(milliseconds: 300), () async {
+      await Get.showOverlay(
+        asyncFunction: () async {
+          //FINALIZAR PARTIDA
+          await authController.logout();
+        },
+        loadingWidget: const Material(
+          color: Colors.transparent,
+          child: Center(
+            child: IndicatorLoadingWidget()
+          ),
+        ),
+        opacity: 0.7,
+        opacityColor: AppColors.dark_700,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     //LISTA DE OPTIONS PARA O DRAWER
     final List<Map<String, dynamic>> drawerOptions = [
-      {'type': 'section', 'title': 'Perfil de Usuário',},
-      {'type': 'option', 'title': 'Minha Conta', 'icon': AppIcones.user_outline, 'route': '/minha_conta'},
-      {'type': 'option', 'title': 'Favoritos', 'icon': AppIcones.bookmark_outline, 'route': '/favoritos'},
-      {'type': 'option', 'title': 'Amigos', 'icon': AppIcones.users_outline, 'route': '/amigos'},
-      {'type': 'option', 'title': 'Modalidades', 'icon': AppIcones.modality_outline, 'route': '/modalidades'},
-      {'type': 'option', 'title': 'Minhas Peladas', 'icon': AppIcones.futbol_ball_outline, 'route': '/minhas_peladas'},
-      {'type': 'section', 'title': 'Privacidade e Segurança',},
-      {'type': 'option', 'title': 'Configurações', 'icon': AppIcones.cog_outline, 'route': '/configuracoes'},
-      {'type': 'option', 'title': 'Central de Ajuda', 'icon': AppIcones.question_circle_outline, 'route': '/central_ajuda'},
-      {'type': 'option', 'title': 'Sobre', 'icon': AppIcones.exclamation_circle_outline, 'route': '/sobre'},
-      {'type': 'option', 'title': 'Termos e Políticas', 'icon': AppIcones.book_outline, 'route': '/termos_politicas'},
+      {
+        'type': 'section',
+        'title': 'Perfil de Usuário',
+        'icon' : null, 
+        'action' : () => print(null)},
+      {
+        'type': 'option', 
+        'title': 'Minha Conta',
+        'icon': Icons.person, 
+        'action': () => Get.toNamed('/profile')},
+      {
+        'type': 'option', 
+        'title': 'Favoritos',
+        'icon': Icons.bookmark, 
+        'action': () => Get.toNamed('/favorits')},
+      {
+        'type': 'option', 
+        'title': 'Amigos',
+        'icon': Icons.people_alt_rounded, 
+        'action': () => Get.toNamed('/friends')},
+      {
+        'type': 'option', 
+        'title': 'Modalidades',
+        'icon': AppIcones.modality_solid, 
+        'action': () => Get.toNamed('/modalidades')},
+      {
+        'type': 'option', 
+        'title': 'Minhas Peladas',
+        'icon': Icons.sports, 
+        'action': () => Get.toNamed('/event/list')},
+      {
+        'type': 'section',
+        'title': 'Privacidade e Segurança',
+        'icon' : null, 
+        'action' : () => print(null)},
+      {
+        'type': 'option', 
+        'title': 'Tema',
+        'icon':  themeController.themeMode.value.name == "dark" ?  AppIcones.moon_solid : AppIcones.sun_solid, 
+        'action': () => themeController.alterTheme()},
+      {
+        'type': 'option', 
+        'title': 'Configurações',
+        'icon': Icons.settings, 
+        'action': () => Get.toNamed('/settings')},
+      {
+        'type': 'option', 
+        'title': 'Central de Ajuda',
+        'icon': AppIcones.question_circle_solid, 
+        'action': () => Get.toNamed('/help')},
+      {
+        'type': 'option', 
+        'title': 'Sobre',
+        'icon': AppIcones.exclamation_circle_solid, 
+        'action': () => Get.toNamed('/about')},
+      {
+        'type': 'option', 
+        'title': 'Termos e Políticas',
+        'icon': AppIcones.book_solid, 
+        'action': () => Get.toNamed('/terms')},
+      {
+        'type': 'divider',
+        'title': 'Divider',
+        'icon': AppIcones.book_solid, 
+        'action': () => {}},
+      {
+        'type': 'option', 
+        'title': 'Sair',
+        'icon': AppIcones.sign_out_solid, 
+        'action': () => logout()},
     ];
 
     return Drawer(
@@ -121,117 +149,79 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         children: [
           DrawerHeader(
             padding: EdgeInsets.zero,
-            decoration: const BoxDecoration(
-              color: AppColors.green_300,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              image: DecorationImage(
+                image: const AssetImage(AppImages.gramado) as ImageProvider,
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).primaryColor.withAlpha(200), 
+                  BlendMode.srcATop,
+                )
+              ),
             ),
-            child: Stack(
-              children: [
-                Stack(
-                  children: [
-                    Image.asset(
-                      AppImages.gramado,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                    Container(
-                      color: AppColors.green_300.withOpacity(0.8),
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ],
-                ),
-                Container(
-                  width: double.maxFinite,
-                  padding: const EdgeInsets.all(5),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ImgCircularWidget(
-                        width: 80, 
-                        height: 80, 
-                        image: user!.photo
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColors.blue_500,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            if(user!.userName != null)...[
-                              Text(
-                                '@${user!.userName}',
-                                style: const TextStyle(
-                                  color: AppColors.blue_500,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              )
-                            ]
-                          ],
-                        ),
-                      ),
-                    ],
+            child: Container(
+              width: double.maxFinite,
+              padding: const EdgeInsets.all(5),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ImgCircularWidget(
+                    width: 80, 
+                    height: 80, 
+                    image: user!.photo
                   ),
-                ),
-              ]
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.blue_500,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if(user!.userName != null)...[
+                          Text(
+                            '@${user!.userName}',
+                            style: const TextStyle(
+                              color: AppColors.blue_500,
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          )
+                        ]
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          for (var option in drawerOptions)
-            option['type'] == 'option' ? 
-              ListTile(
-                leading:Icon(
-                  option["icon"],
-                  color: AppColors.gray_700,
-                  size: AppSize.iconLg,
-                ),
-                title: Text(
-                  option['title'],
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.gray_700),
-                ),
-                onTap: () => print('Navegar para ${option['route']}'),
-              )
-              :
-              ListTile(
-                title: Text(
-                  option['title'],
-                  style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: AppColors.dark_300),
-                )
+          ...drawerOptions.map((item){
+            if(item['type'] == 'divider'){
+              return const Divider();
+            }
+            return ListTile(
+              leading: Icon(
+                item["icon"],
+                size: AppSize.iconLg,
               ),
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: AppColors.gray_500,
-                  width: 1,
-                )
+              title: Text(
+                item['title'],
+                style: item['icon'] != null 
+                  ? Theme.of(context).textTheme.bodyMedium
+                  : Theme.of(context).textTheme.titleSmall,
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
-              child: ListTile(
-                leading: const Icon(
-                  AppIcones.sign_out_outline,
-                  color: AppColors.gray_700,
-                  size: AppSize.iconLg,
-                ),
-                title: Text(
-                  "Sair",
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColors.gray_700,),
-                ),
-                onTap: () => logout(),
-              ),
-            ),
-          )            
+              onTap: item[
+                'action']
+            );
+          }),  
         ],
       ),
     );

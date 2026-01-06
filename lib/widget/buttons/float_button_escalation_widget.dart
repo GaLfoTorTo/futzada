@@ -1,10 +1,10 @@
-import 'package:futzada/widget/dialogs/escalation_confirm_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_escalation_confirm.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/widget/dialogs/escalation_capitan_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_capitan.dart';
 
 class FloatButtonEscalationWidget extends StatelessWidget {
   final bool hasCapitan;
@@ -22,8 +22,8 @@ class FloatButtonEscalationWidget extends StatelessWidget {
       child: FloatingActionButton(
         key: const ValueKey('fab-escalation'),
         onPressed: () => Get.dialog(hasCapitan
-          ? const EscalationConfirmDialog()
-          : const EscalationCapitanDialog(),
+          ? const DialogEscalationConfirm()
+          : const DialogCapitan(),
         ),
         enableFeedback: true,
         tooltip: hasCapitan ? 'Confirmar escalação' : 'Selecionar capitão',

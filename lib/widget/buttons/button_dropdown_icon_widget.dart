@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/theme/app_images.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ButtonDropdownIconWidget extends StatelessWidget {
   final dynamic selectedItem;
@@ -13,7 +13,7 @@ class ButtonDropdownIconWidget extends StatelessWidget {
   final double? menuHeight;
   final double? textSize;
   final Color? textColor;
-  final Color? color;
+  final Color? backgroundColor;
   final Color? borderColor;
   final double? iconSize;
   final bool iconAfter;
@@ -29,7 +29,7 @@ class ButtonDropdownIconWidget extends StatelessWidget {
     this.menuHeight = 200,
     this.textSize = AppSize.fontXs,
     this.textColor = AppColors.dark_500,
-    this.color = AppColors.white,
+    this.backgroundColor = AppColors.white,
     this.borderColor,
     this.iconSize = 10,
     this.iconAfter = true,
@@ -38,13 +38,13 @@ class ButtonDropdownIconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    
     return Container(
       width: width,
       alignment: aligment ?? null,
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: color ?? Colors.transparent,
+        color: backgroundColor ?? Colors.transparent,
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
           color: borderColor ?? Colors.transparent,
@@ -59,7 +59,7 @@ class ButtonDropdownIconWidget extends StatelessWidget {
           fontSize: textSize,
         ),
         isExpanded: true,
-        dropdownColor: color,
+        dropdownColor: backgroundColor,
         icon: const SizedBox.shrink(),
         underline: Container(height: 0),
         menuWidth: menuWidth ?? width,
@@ -76,8 +76,8 @@ class ButtonDropdownIconWidget extends StatelessWidget {
             value: optionValue,
             child: Padding(
               padding: !iconAfter 
-                  ? const EdgeInsets.only(right: 10) 
-                  : const EdgeInsets.only(left: 10),
+                ? const EdgeInsets.only(right: 10) 
+                : const EdgeInsets.only(left: 10),
               child: Row(
                 children: [
                   if(item is Map<String, dynamic> && !iconAfter)...[
@@ -102,8 +102,8 @@ class ButtonDropdownIconWidget extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: iconAfter
-                          ? const EdgeInsets.only(right: 5)
-                          : const EdgeInsets.only(left: 5),
+                        ? const EdgeInsets.only(right: 5)
+                        : const EdgeInsets.only(left: 5),
                       child: Text(
                         optionTitle.toString(),
                         style: Theme.of(context).textTheme.displayMedium!.copyWith(

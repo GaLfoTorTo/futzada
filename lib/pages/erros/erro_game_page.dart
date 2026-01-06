@@ -15,6 +15,8 @@ class ErroGamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //DEFINIR COR APARTIR DO TEMA
+    final backgroundColor = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
 
     return  Container(
       width: dimensions.width,
@@ -23,8 +25,8 @@ class ErroGamePage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.white.withAlpha(50),
-            AppColors.white,
+            backgroundColor.withAlpha(50),
+            backgroundColor,
           ],
           begin: Alignment.topCenter,
           end: Alignment.center,
@@ -45,7 +47,6 @@ class ErroGamePage extends StatelessWidget {
           const Icon(
             Icons.play_disabled_rounded,
             size: 200,
-            color: AppColors.blue_500,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),

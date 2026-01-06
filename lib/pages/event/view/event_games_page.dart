@@ -60,9 +60,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
           children: [
             Text(
               "Agenda",
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: AppColors.blue_500
-              ),
+              style: Theme.of(context).textTheme.titleMedium
             ),
             Text(
               "Explore a agenda completa das partidas da pelada. A quantidade de partidas e calculada a partir das informações de duração e horários de início e fim da pelada definidos pelo organizador.",

@@ -1,11 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
-import 'package:futzada/widget/dialogs/player_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_player.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/indicators/indicator_valuation_widget.dart';
 
@@ -48,7 +47,7 @@ class ButtonPlayerWidget extends StatelessWidget {
       //VERIFICAR SE JOGADOR NÃO É NULO
       if(participant != null){
         //CHAMAR DIALOG DO JOGADOR
-        Get.bottomSheet(PlayerDialog(participant: participant), isScrollControlled: true);
+        Get.bottomSheet(BottomSheetPlayer(participant: participant), isScrollControlled: true);
       }else{
         //AJUSTAR FILTRO PARA POSIÇÃO SELECIONADA
         escalationController.setFilter('positions', [position]);
@@ -65,13 +64,15 @@ class ButtonPlayerWidget extends StatelessWidget {
       if(participant != null){
         //RESGATAR JOGADOR
         PlayerModel player = participant.user.player!;
+        //DEEFINIR COR A PARTIR DO TEMA
+        final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
 
         return [
           if(player.rating!.points != null)...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: color,
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
@@ -125,11 +126,12 @@ class ButtonPlayerWidget extends StatelessWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(userDefault! ? AppImages.userDefault : AppImages.plus) as ImageProvider,
-                  fit: BoxFit.contain
-                ),
                 color: AppColors.green_300,
+                gradient: const LinearGradient(
+                  colors: [AppColors.green_300, AppColors.green_500],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter
+                ),
                 border: Border.all(
                   color: AppColors.white,
                   width: 2,
@@ -143,6 +145,12 @@ class ButtonPlayerWidget extends StatelessWidget {
                     offset: Offset(0,5), 
                   ),
                 ],
+              ),
+              child: const Icon(
+                Icons.add,
+                color: AppColors.white,
+                size: 40,
+                fontWeight: FontWeight.bold,
               ),
             )
           ),

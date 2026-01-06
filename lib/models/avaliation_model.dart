@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/models/user_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class AvaliationModel {
   final int id;
@@ -43,8 +44,8 @@ class AvaliationModel {
       'user': user.toMap(),
       'avaliation': avaliation,
       'comment': comment,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -54,8 +55,8 @@ class AvaliationModel {
       user: UserModel.fromMap(map['user'] as Map<String,dynamic>),
       avaliation: map['avaliation'] != null ? map['avaliation'] as double : null,
       comment: map['comment'] != null ? map['comment'] as String : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt:  DatetimeUtils.parseDate(map['updatedAt']),
     );
   }
 

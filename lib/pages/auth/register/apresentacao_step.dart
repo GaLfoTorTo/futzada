@@ -16,7 +16,6 @@ class ApresentacaoStep extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget( 
         leftAction: () => Get.toNamed('/login'),
       ),

@@ -51,12 +51,12 @@ class EventParticipantsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: AppColors.white,
+              color: Get.isDarkMode ? AppColors.dark_700 : AppColors.white,
               padding: const EdgeInsets.all(10),
               child: InputTextWidget(
                 name: 'search',
                 hint: 'Pesquisa',
-                bgColor: AppColors.gray_300.withAlpha(50),
+                backgroundColor: AppColors.gray_300.withAlpha(50),
                 prefixIcon: AppIcones.search_solid,
                 textController: eventController.pesquisaController,
                 type: TextInputType.text,
@@ -72,6 +72,7 @@ class EventParticipantsPage extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
+                  spacing: 10,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
@@ -83,76 +84,74 @@ class EventParticipantsPage extends StatelessWidget {
                     ),
                     ...participants.map((participant){
                       var iconRole = setRole(participant.role);
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: TextButton(
-                          style: TextButton.styleFrom(
-                            backgroundColor: AppColors.white,
-                            foregroundColor: AppColors.gray_500,
-                            padding: const EdgeInsets.all(15),
-                          ),
-                          onPressed: () => Get.toNamed('/profile', arguments: {'id': participant.user.id}),
-                          child: Row(
-                            children: [
-                              ImgCircularWidget(
-                                height: 60,
-                                width: 60,
-                                image: participant.user.photo,
-                                borderColor: AppColors.gray_500
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: (dimensions.width / 2) - 50,
-                                      height: 25,
-                                      child: Text(
-                                        "${participant.user.firstName} ${participant.user.lastName}",
-                                        style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
-                                      ),
+                      return TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+                          foregroundColor: Get.isDarkMode ? AppColors.dark_700 : AppColors.gray_300,
+                          padding: const EdgeInsets.all(15),
+                          elevation: 3
+                        ),
+                        onPressed: () => Get.toNamed('/profile', arguments: {'id': participant.user.id}),
+                        child: Row(
+                          children: [
+                            ImgCircularWidget(
+                              height: 60,
+                              width: 60,
+                              image: participant.user.photo,
+                              borderColor: AppColors.gray_500
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: (dimensions.width / 2) - 50,
+                                    height: 25,
+                                    child: Text(
+                                      "${participant.user.firstName} ${participant.user.lastName}",
+                                      style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
                                     ),
-                                    SizedBox(
-                                      width: (dimensions.width / 2) - 50,
-                                      height: 25,
-                                      child: Text(
-                                        "@${participant.user.userName}",
-                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          PositionWidget(
-                                            position: participant.user.player!.mainPosition,
-                                            mainPosition: true,
-                                            width: 35,
-                                            height: 25,
-                                            textSide: AppSize.fontXs,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.all(10),
-                                  child: Icon(
-                                    iconRole,
-                                    color: AppColors.blue_500,
-                                    size: iconRole == AppIcones.foot_futebol_solid ? 15 : 20,
                                   ),
-                                )
+                                  SizedBox(
+                                    width: (dimensions.width / 2) - 50,
+                                    height: 25,
+                                    child: Text(
+                                      "@${participant.user.userName}",
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(overflow: TextOverflow.ellipsis, color: AppColors.gray_300),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        PositionWidget(
+                                          position: participant.user.player!.mainPosition,
+                                          mainPosition: true,
+                                          width: 35,
+                                          height: 25,
+                                          textSide: AppSize.fontXs,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(
+                                  iconRole,
+                                  color: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
+                                  size: iconRole == AppIcones.foot_futebol_solid ? 15 : 20,
+                                ),
+                              )
+                            ),
+                          ],
                         ),
                       );
                     })

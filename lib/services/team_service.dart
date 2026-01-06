@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/participant_model.dart';
@@ -23,8 +22,8 @@ class TeamService {
       "name": "Time ${i + 1}",
       "emblema": emblema,
       "players": setPlayers != null && setPlayers ? setPlayersTeam(event.participants!, event.gameConfig!.playersPerTeam!) : null,
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 

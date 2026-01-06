@@ -72,7 +72,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.symmetric(vertical: 20),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Column(

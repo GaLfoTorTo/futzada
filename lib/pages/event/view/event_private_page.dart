@@ -7,6 +7,7 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/utils/img_utils.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
+import 'package:get/get.dart';
 
 class EventPrivatePage extends StatelessWidget {
   const EventPrivatePage({super.key});
@@ -24,7 +25,7 @@ class EventPrivatePage extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        color: AppColors.white,
+        color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
         padding: const EdgeInsets.all(10),
         child: Column(
           spacing: 10,

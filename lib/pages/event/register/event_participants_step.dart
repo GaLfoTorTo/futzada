@@ -1,5 +1,5 @@
 import 'package:futzada/models/user_model.dart';
-import 'package:futzada/widget/dialogs/invite_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_invite.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
@@ -28,7 +28,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
 
   //FUNÇÃO DE DEFINIÇÃO DE PREFERÊNCIAS DE CONVITE
   void openPreferencia(){
-    Get.dialog(IniviteDialog(
+    Get.dialog(DialogInvite(
       invite: eventController.invite,
     ));
   }
@@ -39,7 +39,6 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
     var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Participantes", 
         leftAction: () => Get.back(),
@@ -123,7 +122,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
                         child: TextButton(
                           onPressed: () => checked.toggle(),
-                          onLongPress: () => Get.dialog(IniviteDialog(
+                          onLongPress: () => Get.dialog(DialogInvite(
                             invite: invite,
                           )),
                           style: const ButtonStyle(

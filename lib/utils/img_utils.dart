@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/models/user_model.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/models/event_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ImgUtils {
@@ -13,12 +11,27 @@ class ImgUtils {
       : const AssetImage(AppImages.gramado) as ImageProvider;
       return imgProvider;
   }
-  
+
+  //FUNÇÃO PARA RESGATAR IMAGEM DO USUARIO
   static ImageProvider getUserImg(String? photo){
     //RESGATAR IMAGEM DA PELADA
     final imgProvider = photo != null
       ? CachedNetworkImageProvider(photo)
       : const AssetImage(AppImages.userDefault) as ImageProvider;
       return imgProvider;
+  }
+
+  //FUNÇÃO PARA RESGATAR IMAGEM DO ENDEREÇO
+  static List<ImageProvider> getAddressImg(List<String>? photos){
+    //LISTA DE IMAGENS
+    List<ImageProvider> arrPhotos = [];
+    //VERIFICAR SE EXISTEM FOTOS DO LOCAL
+    if(photos != null){
+      for(var photo in photos){
+        //RESGATAR IMAGEM DA PELADA
+        arrPhotos.add(CachedNetworkImageProvider(photo));
+      }
+    }
+    return arrPhotos;
   }
 }

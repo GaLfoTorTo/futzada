@@ -6,7 +6,7 @@ import 'package:futzada/utils/img_utils.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/utils/markers_utils.dart';
-import 'package:futzada/widget/dialogs/event_explore_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_event_explore.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class EventClusterWidget extends StatelessWidget {
@@ -155,7 +155,7 @@ class EventClusterWidget extends StatelessWidget {
             key: ValueKey("${marker.id}"),
             rotate: true,
             child: InkWell(
-              onTap: () => Get.bottomSheet(EventExploreDialog(events: eventsAtSamePlace), isScrollControlled: true),
+              onTap: () => Get.bottomSheet(BottomSheetEventExplore(events: eventsAtSamePlace), isScrollControlled: true),
               child: setEventWidget(marker, imgs: imgs, totalEvents: eventsAtSamePlace.length),
             )
           );

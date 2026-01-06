@@ -4,12 +4,13 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/utils/map_utils.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 import 'package:futzada/widget/cards/card_day_event_widget.dart';
+import 'package:futzada/widget/cards/card_event_today_widget.dart';
 import 'package:futzada/widget/cards/card_to_you_widget.dart';
 import 'package:futzada/widget/cards/card_popular_widget.dart';
 import 'package:futzada/widget/cards/card_top_ranking_widget.dart';
 import 'package:futzada/widget/cards/card_ultimos_jogos_widget.dart';
+import 'package:futzada/widget/indicators/indicator_page_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class SectionHomeWidget extends StatelessWidget {
   final dynamic options;
@@ -35,17 +36,22 @@ class SectionHomeWidget extends StatelessWidget {
           );
         case "Perto de Você":
           return CardToYouWidget(
-            events: options as List<Map<String, dynamic>>, 
+            events: options as List<EventModel>, 
+            pageController: pageController
+          );
+        case "Mais Populares":
+          return CardPopularWidget(
+            events: options as List<EventModel>,
+            pageController: pageController
+          );
+        case "Acontece Hoje":
+          return CardEventTodayWidget(
+            events: options as List<EventModel>,
             pageController: pageController
           );
         case "Top Ranking":
           return CardTopRankingWidget(
             ranking: options as List<Map<String, dynamic>>,
-            controller: pageController
-          );
-        case "Mais Populares":
-          return CardPopularWidget(
-            popular: options as List<Map<String, dynamic>>,
             controller: pageController
           );
         case "Últimos Jogos":
@@ -59,6 +65,7 @@ class SectionHomeWidget extends StatelessWidget {
     }
 
     return Column(
+      spacing: 10,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
@@ -67,11 +74,7 @@ class SectionHomeWidget extends StatelessWidget {
             children: [
               Text(
                 titulo,
-                style: const TextStyle(
-                  color: AppColors.blue_500,
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.headlineSmall
               ),
               if(titulo == 'Dia de Jogo' )...[
                 Container(
@@ -89,7 +92,7 @@ class SectionHomeWidget extends StatelessWidget {
                         color: AppColors.green_300,
                       ),
                       Text(
-                        MapUtils.getLocationUser(),
+                        MapUtils.getLocation(),
                         style: const TextStyle(
                           color: AppColors.green_300,
                           fontSize: 12,
@@ -114,20 +117,7 @@ class SectionHomeWidget extends StatelessWidget {
           ),
         ),
         cardSelected(titulo),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: SmoothPageIndicator(
-            controller: pageController,
-            count: options.length,
-            effect: const ExpandingDotsEffect(
-              dotHeight: 8,
-              dotWidth: 8,
-              activeDotColor: AppColors.blue_500,
-              dotColor: AppColors.gray_300,
-              expansionFactor: 2,
-            ),
-          ),
-        ),
+        IndicatorPageWidget(pageController: pageController, options: options.take(5).length),
       ],
     );
   }

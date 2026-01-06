@@ -154,7 +154,6 @@ class _RegisterBasicStepState extends State<RegisterBasicStep> {
     var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
         leftAction: () => Get.toNamed('/register/apresentacao')

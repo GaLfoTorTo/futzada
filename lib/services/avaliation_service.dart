@@ -1,8 +1,7 @@
 import 'dart:math';
+import 'package:faker/faker.dart';
 import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/repository/user_repository.dart';
-import 'package:intl/intl.dart';
-import 'package:faker/faker.dart';
 
 class AvaliationService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -20,13 +19,13 @@ class AvaliationService {
       "user" : userRepository.generateUser(i, false).toMap(),
       "avaliation" : double.parse(setValues(0.0, 5.0).toStringAsFixed(2)),
       "comment" : faker.lorem.sentence().toString(),
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 
   //FUNÇÃO PARA GERAR AVALIAÇÕES DO EVENTO
-  List<AvaliationModel> getAvaliations() {
+  List<AvaliationModel> getEventAvaliation() {
     //JUNTAR MAPS
     final List<AvaliationModel> arr = [];
     //GERAR LISTA DE JOGADORES

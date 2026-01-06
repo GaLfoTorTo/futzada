@@ -8,7 +8,7 @@ import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/dialogs/game_config_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_game_config.dart';
 import 'package:futzada/pages/games/config/game_config_basic_page.dart';
 import 'package:futzada/pages/games/config/game_config_teams_page.dart';
 
@@ -58,7 +58,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
           //VERIFICAR SE EVENTO JA TEM CONFIGURAÇÕES SALVAS
           if(gameController.event.gameConfig == null){
             //EXIBIR MODAL DE CONFIRMAÇÃO
-            Get.dialog(GameConfigDialog(
+            Get.dialog(DialogGameConfig(
               event: gameController.event,
               game: game,
             ));

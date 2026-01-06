@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:futzada/theme/app_icones.dart';
-import 'package:futzada/widget/dialogs/map_apps_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_map_apps.dart';
 import 'package:futzada/helpers/app_helper.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:geolocator/geolocator.dart';
@@ -71,7 +71,7 @@ class IntegrationRouteService {
     final apps = await _getMapApps(params);
     if(apps.isNotEmpty){
       //EXIBIR DIALOG DE APPS
-      Get.bottomSheet(MapAppsDialog(
+      Get.bottomSheet(BottomSheetMapApps(
         params: params,
         apps: apps
       ));

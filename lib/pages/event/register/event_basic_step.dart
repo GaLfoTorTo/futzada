@@ -175,7 +175,6 @@ class EventBasicStepState extends State<EventBasicStep> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Registro ", 
         leftAction: () => Get.back(),

@@ -1,3 +1,4 @@
+import 'package:futzada/models/event_model.dart';
 import 'package:get/get.dart';
 import 'package:futzada/services/manager_service.dart';
 import 'package:futzada/services/home_service.dart';
@@ -21,10 +22,12 @@ class HomeController extends GetxController{
 
   //LISTA DE ADS
   List<Map<String, dynamic>> ads = [];
-  //LISTA DE RANKINGS - PERTO DE VOCE
-  List<Map<String, dynamic>> toYou = [];
+  //LISTA DE EVENTOS - PERTO DE VOCE
+  late List<EventModel> toYou = [];
   //LISTA DE EVENTOS - POPULARES
-  List<Map<String, dynamic>> popular = [];
+  late List<EventModel> popular = [];
+  //LISTA DE EVENTOS - HOJE
+  late List<EventModel> today = [];
   //LISTA DE RANKINGS - TOP RANKING
   List<Map<String, dynamic>> ranking = [];
   //LISTA DE PARTIDAS
@@ -41,17 +44,18 @@ class HomeController extends GetxController{
     try {
     //EXECUTAR AS BUSCAS DE DADOS SIMULTANEAMENTE
     final results = await Future.wait([
-      homeService.fetchCloseEvents(),
-      //userService.fecthTopRanking(),
+      homeService.fetchFakeEvent(),
+      homeService.fetchFakeEvent(),
+      homeService.fetchFakeEvent(),
       //userService.fecthPopular(),
       //userService.fecthUltimosJogos(),
     ]);
-
     //PREENCHER LISTAS COM OS DADOS RESGATADOS
     toYou = results[0];
-    ranking = results[1];
-    popular = results[2];
-    partidas = results[3];
+    popular = results[1];
+    today = results[1];
+    ///ranking = results[2];
+    //partidas = results[3];
     //ATUALIZAR ESTADO DE CARREGAMENTO
     isLoading.value = false;
 

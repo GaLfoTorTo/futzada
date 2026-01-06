@@ -72,6 +72,8 @@ class EscalationPageState extends State<EscalationPage> {
     List<Map<String, dynamic>> userEvents = escalationController.myEvents.map((event){
       return {'id': event.id, 'title' : event.title, 'photo': event.photo};
     }).toList();
+    //DEFINIR COR A PARTIR DO TEMA
+    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -92,7 +94,7 @@ class EscalationPageState extends State<EscalationPage> {
                 height: 70,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.dark_500.withAlpha(30),
@@ -120,6 +122,7 @@ class EscalationPageState extends State<EscalationPage> {
                           items: userEvents,
                           onChange: selectEvent,
                           iconAfter: false,
+                          backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
                         ),
                       ),
                       SizedBox(
@@ -170,22 +173,22 @@ class EscalationPageState extends State<EscalationPage> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
-                              icon: AppIcones.escalacao_outline, 
-                              iconSize: 20,
-                              iconColor: viewType == 'escalation' ? AppColors.blue_500 : AppColors.gray_500,
                               padding: 20,
-                              backgroundColor: viewType == 'escalation' ? AppColors.green_300 : AppColors.white,
+                              iconSize: 20,
+                              icon: AppIcones.escalacao_outline, 
+                              iconColor: viewType == 'escalation' ? AppColors.blue_500 : AppColors.gray_500,
+                              backgroundColor: viewType == 'escalation' ? AppColors.green_300 : color,
                               action: () => selectView('escalation')
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: ButtonIconWidget(
-                              icon: AppIcones.clipboard_outline, 
-                              iconSize: 20,
-                              iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.gray_500,
                               padding: 20,
-                              backgroundColor: viewType == 'list' ? AppColors.green_300 : AppColors.white,
+                              iconSize: 20,
+                              icon: AppIcones.clipboard_outline, 
+                              iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.gray_500,
+                              backgroundColor: viewType == 'list' ? AppColors.green_300 : color,
                               action: () => selectView('list')
                             ),
                           )

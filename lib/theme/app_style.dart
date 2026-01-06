@@ -54,7 +54,7 @@ class AppStyle {
   );
 
   //TEXT BUTTON THEME
-  static final textButtonTheme = TextButtonThemeData(
+  static TextButtonThemeData textButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
       elevation: 0,
       backgroundColor: AppColors.green_300,
@@ -72,24 +72,42 @@ class AppStyle {
   );
 
   //ELEVATED BUTTON LIGHT THEME
-  static final elevatedButtonTheme = ElevatedButtonThemeData(
+  static ElevatedButtonThemeData lightElevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       elevation: 0,
-      backgroundColor: AppColors.green_300,
-      foregroundColor: AppColors.blue_500,
-      disabledForegroundColor: AppColors.green_100,
-      disabledBackgroundColor: AppColors.blue_100,
+      backgroundColor: AppColors.white,
+      foregroundColor: AppColors.gray_300,
+      disabledBackgroundColor: AppColors.gray_300,
+      disabledForegroundColor: AppColors.gray_500,
       padding: const EdgeInsets.all(10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       textStyle: const TextStyle(
         fontSize: AppSize.fontMd,
-        color: AppColors.blue_500,
+        color: AppColors.dark_500,
         fontWeight: FontWeight.normal
       ),
     )
   );
   
-  //BUTTON LIGHT THEME
+  //ELEVATED BUTTON DARK THEME
+  static ElevatedButtonThemeData darkElevatedButtonTheme = ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      elevation: 0,
+      backgroundColor: AppColors.dark_300,
+      foregroundColor: AppColors.dark_700,
+      disabledBackgroundColor: AppColors.dark_700,
+      disabledForegroundColor: AppColors.dark_700,
+      padding: const EdgeInsets.all(10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      textStyle: const TextStyle(
+        fontSize: AppSize.fontMd,
+        color: AppColors.white,
+        fontWeight: FontWeight.normal
+      ),
+    )
+  );
+  
+  //BUTTON OUTLINE LIGHT THEME
   static OutlinedButtonThemeData lightOutlineButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       elevation: 0,
@@ -107,9 +125,8 @@ class AppStyle {
       ),
     )
   );
-  
 
-  //BUTTON DARK THEME
+  //BUTTON OUTLINE DARK THEME
   static OutlinedButtonThemeData darkOutlineButtonTheme = OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       elevation: 0,
@@ -119,7 +136,7 @@ class AppStyle {
       disabledBackgroundColor: AppColors.dark_300,
       side: const BorderSide(color: AppColors.white),
       padding: const EdgeInsets.symmetric(vertical: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       textStyle: const TextStyle(
         fontSize: AppSize.fontMd,
         color: AppColors.white,
@@ -128,20 +145,32 @@ class AppStyle {
     )
   );
 
+  //CARD LIGHT THEME
+  static CardThemeData lightCardTheme = const CardThemeData(
+    color: AppColors.white,
+    elevation: 5,
+  );
+  
+  //CARD DARK THEME
+  static CardThemeData darkCardTheme = const CardThemeData(
+    color: AppColors.dark_300,
+    elevation: 5,
+  );
+
   //ICONE LIGHT THEME
-  static const IconThemeData iconLightTheme = IconThemeData(
+  static IconThemeData iconLightTheme = const IconThemeData(
     color: AppColors.blue_500,
     size: AppSize.iconMd,
   );
 
   //ICONE LIGHT THEME
-  static const IconThemeData iconDarkTheme = IconThemeData(
+  static IconThemeData iconDarkTheme = const IconThemeData(
     color: AppColors.white,
     size: AppSize.iconMd,
   );
 
   //APP BAR THEME
-  static const appBarTheme = AppBarTheme(
+  static AppBarTheme  appBarTheme = const AppBarTheme(
     elevation: 0,
     centerTitle: false,
     scrolledUnderElevation: 0,
@@ -152,6 +181,20 @@ class AppStyle {
     titleTextStyle: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal, color: AppColors.blue_500)
   );
 
+  //DIALOG LIGHT THEME
+  static DialogThemeData lightDialogTheme = DialogThemeData(
+    backgroundColor: AppColors.white,
+    constraints: const BoxConstraints(minWidth: double.infinity),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+  );
+
+  //DIALOG DARK THEME
+  static DialogThemeData darkDialogTheme = DialogThemeData(
+    backgroundColor: AppColors.dark_500,
+    constraints: const BoxConstraints(minWidth: double.infinity),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+  );
+
   //BOTTOM SHEET LIGHT THEME
   static BottomSheetThemeData lightBottomSheetTheme = BottomSheetThemeData(
     showDragHandle: true,
@@ -160,6 +203,7 @@ class AppStyle {
     constraints: const BoxConstraints(minWidth: double.infinity),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
   );
+
   //BOTTOM SHEET DARK THEME
   static BottomSheetThemeData darkBottomSheetTheme = BottomSheetThemeData(
     showDragHandle: true,
@@ -232,7 +276,7 @@ class AppStyle {
   //INPUT DARK THEME
   static InputDecorationTheme darkInputTheme = InputDecorationTheme(
     filled: true,
-    fillColor: AppColors.dark_500,
+    fillColor: AppColors.dark_300,
     errorMaxLines: 3,
     prefixIconColor: AppColors.white,
     suffixIconColor: AppColors.white,
@@ -256,6 +300,9 @@ class AppStyle {
       borderRadius: BorderRadius.circular(5),
     ),
     enabledBorder: const OutlineInputBorder(
+      borderSide: BorderSide.none,
+    ),
+    disabledBorder: const OutlineInputBorder(
       borderSide: BorderSide.none,
     ),
     focusedBorder: const OutlineInputBorder(
@@ -495,6 +542,7 @@ class AppStyle {
       foregroundColor: WidgetStatePropertyAll(AppColors.green_300),
     )
   );
+
   //TIME PICKER DARK THEME
   static final TimePickerThemeData darkTimePickerTheme = TimePickerThemeData(
     backgroundColor: AppColors.dark_500,
@@ -544,10 +592,10 @@ class AppStyle {
   
   //NAVIGATION BAR LIGHT THEME
   static NavigationBarThemeData lightNavigationTheme = NavigationBarThemeData(
-    elevation: 8,
+    elevation: 5,
     backgroundColor: AppColors.white,
-    indicatorColor: Colors.transparent,
-    shadowColor: AppColors.dark_500.withOpacity(0.5),
+    indicatorColor: AppColors.gray_300.withAlpha(20),
+    shadowColor: AppColors.dark_500.withAlpha(100),
     iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
       (Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
@@ -567,20 +615,20 @@ class AppStyle {
   
   //NAVIGATION BAR LIGHT THEME
   static NavigationBarThemeData darkNavigationTheme = NavigationBarThemeData(
-    elevation: 0,
-    backgroundColor: AppColors.white,
-    indicatorColor: Colors.transparent,
-    shadowColor: AppColors.dark_500.withOpacity(0.5),
+    elevation: 5,
+    backgroundColor: AppColors.dark_500,
+    indicatorColor: AppColors.dark_300.withAlpha(50),
+    shadowColor: AppColors.dark_500.withAlpha(100),
     iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
       (Set<WidgetState> states) {
         if (states.contains(WidgetState.selected)) {
           return const IconThemeData(
-            color: AppColors.white,
+            color: AppColors.blue_500,
             size: AppSize.iconXl,
           );
         }
         return const IconThemeData(
-          color: AppColors.gray_300,
+          color: AppColors.white,
           size: AppSize.iconLg,
         );
       },
@@ -588,7 +636,7 @@ class AppStyle {
     labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
   );
 
-  //BOTTON NAVIGATION BAR LIGHT THEME
+  //BOTTOM NAVIGATION BAR LIGHT THEME
   static BottomNavigationBarThemeData lightBottomNavigationTheme = const BottomNavigationBarThemeData(
     elevation: 0,
     backgroundColor: AppColors.white,
@@ -606,7 +654,7 @@ class AppStyle {
     type: BottomNavigationBarType.fixed,
   );
   
-  //BOTTON NAVIGATION BAR DARK THEME
+  //BOTTOM NAVIGATION BAR DARK THEME
   static BottomNavigationBarThemeData darkBottomNavigationTheme = const BottomNavigationBarThemeData(
     elevation: 0,
     backgroundColor: AppColors.dark_500,
@@ -626,37 +674,45 @@ class AppStyle {
   
   //TAB BAR LIGHT THEME
   static TabBarThemeData lightTabBarTheme = const TabBarThemeData(
-    indicator: BoxDecoration(),
+    indicator: UnderlineTabIndicator(
+      borderSide: BorderSide(
+        width: 5,
+        color: AppColors.green_300,
+      ),
+      insets: EdgeInsets.symmetric(horizontal: 100)
+    ),
+    labelColor: AppColors.green_300,
+    labelStyle: TextStyle(
+      color: AppColors.gray_500,
+      fontWeight: FontWeight.normal,
+    ),
+    unselectedLabelColor: AppColors.gray_500,
+    unselectedLabelStyle: TextStyle(
+      color: AppColors.gray_500,
+      fontWeight: FontWeight.normal,
+    ),
+    labelPadding: EdgeInsets.symmetric(vertical: 5),
   );
   
   //TAB BAR DARK THEME
   static TabBarThemeData darkTabBarTheme = const TabBarThemeData(
-    indicator: BoxDecoration(),
-  );
-
-  /* //DATE PICKER LIGHT THEME
-  static DatePickerTheme lightDatePickerTheme = DatePickerTheme(
-    data: DatePickerThemeData(
-      backgroundColor: AppColors.white,
-      cancelButtonStyle: ButtonStyle(
-        enableFeedback: true,
+    indicator: UnderlineTabIndicator(
+      borderSide: BorderSide(
+        width: 5,
+        color: AppColors.green_300,
       ),
-      confirmButtonStyle: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(AppColors.green_300)
-      )
-    ),      
+      insets: EdgeInsets.symmetric(horizontal: 100)
+    ),
+    labelColor: AppColors.green_300,
+    labelStyle: TextStyle(
+      color: AppColors.white,
+      fontWeight: FontWeight.bold,
+    ),
+    unselectedLabelColor: AppColors.white,
+    unselectedLabelStyle: TextStyle(
+      color: AppColors.white,
+      fontWeight: FontWeight.normal,
+    ),
+    labelPadding: EdgeInsets.symmetric(vertical: 5),
   );
-  
-  //DATE PICKER DARK THEME
-  static DatePickerTheme darkDatePickerTheme = DatePickerTheme(
-    data: DatePickerThemeData(
-      backgroundColor: AppColors.white,
-      cancelButtonStyle: ButtonStyle(
-        enableFeedback: true,
-      ),
-      confirmButtonStyle: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(AppColors.green_300)
-      )
-    ),    
-  ); */
 }

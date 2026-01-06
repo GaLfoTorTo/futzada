@@ -8,13 +8,14 @@ class InputTextWidget extends StatefulWidget {
   final String? initialValue;
   final IconData? sufixIcon;
   final IconData? prefixIcon;
-  final Color? bgColor;
+  final Color? backgroundColor;
   final bool? borderColor;
   final String? placeholder;
   final TextInputType? type;
   final int? maxLength;
   final VoidCallback? suffixFunction;
-  final bool disabled;
+  final bool enable;
+  final bool readOnly;
   final TextEditingController? textController;
   final Function(String)? onSaved;
   final Function(String)? onChanged;
@@ -28,14 +29,15 @@ class InputTextWidget extends StatefulWidget {
     this.initialValue,
     this.sufixIcon,
     this.prefixIcon,
-    this.bgColor,
+    this.backgroundColor,
     this.borderColor = false,
     this.placeholder,
     this.type,
     this.maxLength,
     this.suffixFunction,
     this.textController,
-    this.disabled = false,
+    this.enable = true,
+    this.readOnly = false,
     this.onSaved,
     this.onChanged,
     this.onValidated,
@@ -49,7 +51,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   late bool _visible;
   late Icon? _sufixIcon;
   late Icon? _prefixIcon;
-  late Color _bgColor;
+  late Color? _backgroundColor;
   late FocusNode _focusNode;
 
   @override
@@ -60,7 +62,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     _visible = widget.type == TextInputType.visiblePassword;
     _sufixIcon = widget.sufixIcon != null ? Icon(widget.sufixIcon) : null;
     _prefixIcon = widget.prefixIcon != null ? Icon(widget.prefixIcon) : null;
-    _bgColor = widget.disabled ? Colors.white60 : widget.bgColor ?? AppColors.white;
+    _backgroundColor = !widget.enable ? widget.backgroundColor : null;
   }
 
   @override
@@ -100,6 +102,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
         style: Theme.of(context).textTheme.labelLarge,
+        cursorColor: AppColors.green_300,
         focusNode: _focusNode,
         initialValue: widget.initialValue,
         controller: widget.textController,
@@ -113,18 +116,14 @@ class _InputTextWidgetState extends State<InputTextWidget> {
           hintText: widget.hint,
           labelText: widget.label,
           prefixIcon: _prefixIcon,
-          fillColor: _bgColor,
-          enabledBorder: OutlineInputBorder(
-            borderSide: widget.borderColor == true 
-              ? const BorderSide(color: AppColors.gray_300) 
-              : BorderSide.none,
-          ),
+          fillColor: _backgroundColor,
           suffixIcon: _buildSuffixIcon(),
         ),
         onChanged: (value) => widget.onChanged,
         onSaved: (value) => widget.onSaved,
         validator: widget.onValidated,
-        readOnly: widget.disabled,
+        readOnly: !widget.enable,
+        enabled: widget.enable,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/widget/cards/card_player_game_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,12 +9,12 @@ import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/services/game_service.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/widget/dialogs/emblemas_dialog.dart';
-import 'package:futzada/widget/dialogs/game_players_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_emblemas.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_game_players.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/dialogs/random_team_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_random_team.dart';
 import 'package:futzada/widget/inputs/silder_players_widget.dart';
 
 class GameConfigTeamsPage extends StatefulWidget {
@@ -37,7 +38,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
   //DEFINIR CONTROLADOR DE PARTICIPANTS DA PELADA
   List<ParticipantModel>? participants = [];
   //CONTROLADOR DE VISUALIZAÇÃO DE EQUIPE
-  bool teamDefined = false;
+  RxBool teamDefined = false.obs;
   
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     //VERIFICAR SE TIME JA ESTA DEFINIDO
     if(gameController.teamA.players.isNotEmpty && gameController.teamB.players.isNotEmpty){
       //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
-      teamDefined = true;
+      teamDefined.value = true;
     }
   }
 
@@ -75,9 +76,8 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
       gameController.teamBlength.value = gameController.teamB.players.length;
     }
     //ATUALIZAR FLAG DE EXIBIÇÃO
-    setState(() {
-      teamDefined = true;
-    });
+    teamDefined.value = true;
+    setState(() {});
     //FINALIZAR FUNÇÃO
     return true;
   }
@@ -92,7 +92,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
       gameController.teamAlength.value = qtdPlayers;
       gameController.teamBlength.value = qtdPlayers;
       //VERIFICAR SE TIMES FORAM DEFINIDOS
-      if(teamDefined){
+      if(teamDefined.value){
         //VERIFICAR QUANTOS JOGADORES ESTÃO DEFINIDOS EM CADA TIME
         if(gameController.teamA.players.length > qtdPlayers || gameController.teamB.players.length > qtdPlayers){
           //REMOVER JOGADORES EXCEDENTES DO TIME A
@@ -116,14 +116,12 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
     return Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
+          spacing: 10,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                'Definição de Equipes',
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: AppColors.green_300
-                ),
+            Text(
+              'Definição de Equipes',
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: AppColors.green_300
               ),
             ),
             Row(
@@ -175,7 +173,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                 children: [
                   InkWell(
                     onTap: () => Get.bottomSheet(
-                      EmblemasDialog(
+                      BottomSheetEmblema(
                         emblema: gameController.teamAEmblemaController.text,
                         team: true,
                       ), 
@@ -187,7 +185,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                       margin: const EdgeInsets.symmetric(vertical: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: AppColors.white,
+                        color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.dark_500.withAlpha(30),
@@ -218,7 +216,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                   ),
                   InkWell(
                     onTap: () => Get.bottomSheet(
-                      EmblemasDialog(
+                      BottomSheetEmblema(
                         emblema: gameController.teamBEmblemaController.text,
                         team: false,
                       ), 
@@ -229,7 +227,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: AppColors.white,
+                        color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.dark_500.withAlpha(30),
@@ -252,19 +250,32 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                 ],
               ),
             ),
+            if(gameController.participantsPresent.isNotEmpty)...[
+              Text(
+                "Lista de Participantes",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              SizedBox(
+                height: 210,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 15,
+                    children: gameController.event.participants!.take(5).map((item){
+                      //RESGATAR PARTICIPANT
+                      ParticipantModel participant = item;
+                      return CardPlayerGameWidget(participant: participant);
+                    }).toList(),
+                  )
+                )
+              )
+            ],
             SilderPlayersWidget(
               onChange: (value) => setPlayersPerTime(value),
               qtdPlayers: qtdPlayers.toDouble(),
               minPlayers: minPlayers.toDouble(),
               maxPlayers: maxPlayers.toDouble(),
               divisions: divisions,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Elencos",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
             ),
             ButtonTextWidget(
               width: dimensions.width,
@@ -274,13 +285,17 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
               textSize: 15,
               textColor: AppColors.blue_500,
               action: () => Get.dialog(
-                RandomTeamDialog(
+                DialogRandomTeam(
                   actionRandom: () => setRandomTeams(true),
                   actionSet: () => setRandomTeams(false),
                 ),
               )
             ),
-            if(teamDefined)...[
+            if(teamDefined.value)...[
+              Text(
+                "Elencos",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               Obx((){
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -308,14 +323,15 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             child: ButtonTextWidget(
                               width: dimensions.width,
                               height: 30,
-                              backgroundColor: gameController.teamA.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
+                              backgroundColor: gameController.teamA.players.length == qtdPlayers 
+                                ? AppColors.green_300 
+                                : Theme.of(context).inputDecorationTheme.fillColor,
+                              textColor: Theme.of(context).textTheme.bodyLarge!.color,
                               text: gameController.teamANameController.text,
-                              textSize: 15,
                               icon: AppIcones.users_solid,
-                              textColor: AppColors.blue_500,
                               iconSize: 15,
                               action: () => Get.bottomSheet(
-                                GamePlayersDialog(
+                                BottomSheetGamePlayers(
                                   team: 0,
                                   qtdPlayers: qtdPlayers
                                 ),
@@ -372,14 +388,16 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                             child: ButtonTextWidget(
                               width: dimensions.width,
                               height: 30,
-                              backgroundColor: gameController.teamB.players.length == qtdPlayers ? AppColors.green_300 : AppColors.white,
+                              backgroundColor: gameController.teamA.players.length == qtdPlayers 
+                                ? AppColors.green_300 
+                                : Theme.of(context).inputDecorationTheme.fillColor,
+                              textColor: Theme.of(context).textTheme.bodyLarge!.color,
                               text: gameController.teamBNameController.text,
                               textSize: 15,
                               icon: AppIcones.users_solid,
-                              textColor: AppColors.blue_500,
                               iconSize: 15,
                               action: () => Get.bottomSheet(
-                                GamePlayersDialog(
+                                BottomSheetGamePlayers(
                                   team: 1,
                                   qtdPlayers: qtdPlayers
                                 ),
@@ -422,20 +440,12 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
               Container(
                 width: dimensions.width,
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  boxShadow: [ 
-                    BoxShadow(
-                      color: AppColors.dark_500.withAlpha(30),
-                      spreadRadius: 0.5,
-                      blurRadius: 5,
-                      offset: const Offset(2, 5),
-                    ),
-                  ]
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  spacing: 2,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Obx((){
                       return Column(
@@ -458,7 +468,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                           return Container(
                             width: dimensions.width * 0.45,
                             decoration: BoxDecoration(
-                              color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
+                              color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                               border: const Border(
                                 bottom: BorderSide(width: 1, color: AppColors.gray_300)
                               )
@@ -525,7 +535,7 @@ class _GameConfigTeamsPageState extends State<GameConfigTeamsPage> {
                           return Container(
                             width: dimensions.width * 0.45,
                             decoration: BoxDecoration(
-                              color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
+                              color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                               border: const Border(
                                 bottom: BorderSide(width: 1, color: AppColors.gray_300)
                               )

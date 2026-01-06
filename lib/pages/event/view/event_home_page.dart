@@ -15,7 +15,7 @@ import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/escalation_service.dart';
 import 'package:futzada/services/integration_map_service.dart';
 import 'package:futzada/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/widget/dialogs/map_travel_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_map_travel.dart';
 import 'package:futzada/widget/text/expandable_text_widget.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/controllers/event_controller.dart';
@@ -61,7 +61,7 @@ class _EventHomePageState extends State<EventHomePage> {
     //RESGATAR DESTAQUES DO EVENTO
     highlights = eventController.getHighlights(event);
     //RESGATAR AVALIAÇÕES DO EVENTO
-    eventAvaliation = eventController.getAvaliations(event.avaliations);
+    eventAvaliation = eventController.eventService.getEventAvaliation(event.avaliations);
     //RESGATAR LAT E LONG DO ENDEREÇO DO EVENTO
     eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     // Aguardar controllers estarem prontos se necessário
@@ -136,7 +136,7 @@ class _EventHomePageState extends State<EventHomePage> {
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(10),
-        color: AppColors.white,
+        color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
         width: dimensions.width,
         child: Column(
           children: [
@@ -583,7 +583,6 @@ class _EventHomePageState extends State<EventHomePage> {
                   const Icon(
                     Icons.location_on_outlined,
                     size: 60,
-                    color: AppColors.blue_500,
                   ),
                   Expanded(
                     child: Column(
@@ -592,25 +591,19 @@ class _EventHomePageState extends State<EventHomePage> {
                       children: [
                         Text(
                           "${event.address!.street} ${event.address!.suburb}",
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: AppColors.blue_500
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           "${event.address!.borough}, ${event.address!.city}",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: AppColors.blue_500
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           "${event.address!.city}/${event.address!.state}",
-                          style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                            color: AppColors.gray_500
-                          ),
+                          style: Theme.of(context).textTheme.displayLarge,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         )
@@ -633,7 +626,7 @@ class _EventHomePageState extends State<EventHomePage> {
                         padding: 15,
                         iconColor: AppColors.green_300,
                         backgroundColor: AppColors.green_300.withAlpha(50),
-                        action: () => Get.bottomSheet(const MapTravelDialog())
+                        action: () => Get.bottomSheet(const BottomSheetMapTravel())
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),

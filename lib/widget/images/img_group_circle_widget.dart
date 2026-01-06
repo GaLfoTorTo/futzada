@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_images.dart';
 import 'package:futzada/widget/images/img_circle_widget.dart';
 
@@ -22,38 +21,29 @@ class ImgGroupCircularWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imgs = images ?? const [AppImages.userDefault, AppImages.userDefault];
-    
+    double sideExtra = (width * imgs.length) - ((width * imgs.length) - 35);
+
     return Container(
-      width: width + (imgs.length - 1) * (width - 10),
+      width: (width * imgs.length) - sideExtra,
       height: height,
       alignment: side == "left" ? Alignment.centerRight : Alignment.centerLeft,
       child: Stack(
-        children: _buildStackChildren(imgs),
+        children: List.generate(imgs.length, (i){
+          final index = side == "left" ? imgs.length - 1 - i : i;
+          final position = i * 23.0;
+          
+          return Positioned(
+            left: side == "right" ? position : null,
+            right: side == "left" ? position : null,
+            child: ImgCircularWidget(
+              width: width ,
+              height: height ,
+              image: images != null ? imgs[index] : null,
+              borderColor: borderColor,
+            ),
+          );
+        })
       ), 
     );
-  }
-
-  List<Widget> _buildStackChildren(List<dynamic> imgs) {
-    final children = <Widget>[];
-    
-    for (int i = 0; i < imgs.length; i++) {
-      final index = side == "left" ? imgs.length - 1 - i : i;
-      final position = i * 20.0;
-      
-      children.add(
-        Positioned(
-          left: side == "right" ? position : null,
-          right: side == "left" ? position : null,
-          child: ImgCircularWidget(
-            width: width ,
-            height: height ,
-            image: images != null ? imgs[index] : null,
-            borderColor: borderColor,
-          ),
-        ),
-      );
-    }
-    
-    return children;
   }
 }

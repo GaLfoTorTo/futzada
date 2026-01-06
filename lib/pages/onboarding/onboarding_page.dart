@@ -86,6 +86,8 @@ class OnboardingPageState extends State<OnboardingPage> {
             children: [
               ButtonOutlineWidget(
                 text: "Pular",
+                textColor: AppColors.blue_500,
+                backgroundColor: AppColors.white,
                 width: 100,
                 action: () => Get.toNamed('/home'),
               ),

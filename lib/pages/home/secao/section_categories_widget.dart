@@ -9,6 +9,7 @@ class SectionCategoriesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
     //DEFINIR CATEGORIAS (MODALIDADES)
     RxList<Map<String, dynamic>> categories = [
       {
@@ -89,8 +90,8 @@ class SectionCategoriesWidget extends StatelessWidget {
                       height: 50,
                       icon: item['icon'],
                       iconSize: 30,
-                      backgroundColor: active ? AppColors.green_300 : AppColors.white,
-                      textColor: AppColors.blue_500,
+                      backgroundColor: active ? Theme.of(context).primaryColor : color,
+                      textColor: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
                       borderRadius: 15,
                       shadow: true,
                     ),
@@ -99,10 +100,7 @@ class SectionCategoriesWidget extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
                         category,
-                        style: Theme.of( context).textTheme.displayMedium!.copyWith(
-                          color: AppColors.blue_500,
-                          fontWeight: FontWeight.bold
-                        ),
+                        style: Theme.of( context).textTheme.displayMedium,
                         textAlign: TextAlign.center,
                       ),
                     )

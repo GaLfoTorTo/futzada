@@ -1,16 +1,16 @@
-import 'package:futzada/services/news_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/enum/enums.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:futzada/models/address_model.dart';
 import 'package:futzada/models/game_config_model.dart';
-import 'package:futzada/models/avaliation_model.dart';
 import 'package:futzada/models/user_model.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/services/user_service.dart';
 import 'package:futzada/services/form_service.dart';
 import 'package:futzada/services/event_service.dart';
+import 'package:futzada/services/news_service.dart';
 import 'package:futzada/controllers/game_controller.dart';
 
 //===EVENT BASE===
@@ -80,8 +80,6 @@ class EventController extends GetxController
   @override
   void onInit() async{
     super.onInit();
-    //RESGATAR EVENTOS DO USUARIO LOGADO
-    await loadUserEvents();
   }
 
   //FUNÇÃO DE SELEÇÃO DE EVENTO
@@ -119,7 +117,7 @@ mixin EventOverview on GetxController{
   List<EventModel> getSuggestions() {
     //REGATAR SERVIÇO DE VENTO
     EventService eventService = EventController.instance.eventService;
-    return eventService.getSuggestionEvents();
+    return eventService.getEventsSuggestion();
   }
   
   //FUNÇÃO PARA BUSCAR SUGESTÕES DE EVENTOS
@@ -128,12 +126,7 @@ mixin EventOverview on GetxController{
     EventService eventService = EventController.instance.eventService;
     return eventService.getHighlightsEvent();
   }
-  
-  //FUNÇÃO PARA BUSCAR AVALIAÇÕES DO EVNTO
-  double getAvaliations(List<AvaliationModel>? avaliations) {
-    if(avaliations == null || avaliations.isEmpty) return 0.0;
-    return avaliations.map((a) => a.avaliation!).reduce((a, b) => a + b) / avaliations.length;
-  }
+
 }
 
 //===MIXIN - REGISTRO EVENTO===
@@ -357,21 +350,25 @@ mixin EventParticipants on GetxController{
   final TextEditingController pesquisaController = TextEditingController();
 }
 
+//===MIXIN - RULES===
 mixin EventRules on GetxController{
   //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
   late TextEditingController ruleTitleController;
-  late TextEditingController ruleDescriptionController;
+  late QuillController ruleDescriptionController;
 
   //FUNÇÃO PARA INICIALIZAR CONTROLLERS
   void initRuleTextControllers(Map<String, String?> values) {
     //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
     ruleTitleController = TextEditingController(text: values['title']);
-    ruleDescriptionController = TextEditingController(text: values['description']);
+    ruleDescriptionController = QuillController(
+      document: Document()..insert(0, values['description'] ?? ''),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
   }
   
   void disposeRuleTextControllers() {
     //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
-    ruleTitleController = TextEditingController();
-    ruleDescriptionController = TextEditingController();
+    ruleTitleController.dispose();
+    ruleDescriptionController.dispose();
   }
 }

@@ -21,15 +21,16 @@ class AppController extends GetxController {
       isReady.value = false;
       isLoading.value = true;
       hasError.value = false;
-      //INICIALIZAÇÃO DE CONTROLLER DE USUARIO
+      //INICIALIZAÇÃO DE CONTROLLER DE USUARIO E RESGATAR POSIÇÃO ATUAL DO USUARIO
       final userController = Get.put(UserController());
-      //RESGATAR POSIÇÃO ATUAL DO USUARIO
       await userController.getCurrentLocation();
-      //INICIALIZAÇÃO DE CONTROLLER DE HOME PAGE
+      //INICIALIZAÇÃO DE CONTROLLER DE EVENTOS E RESGATAR EVENTOS DO USUARIO
+      final eventController = Get.put(EventController());
+      await eventController.loadUserEvents();
+      //INICIALIZAÇÃO DE CONTROLLER DE HOME PAGE E RESGATAR DADOS DO HOME PAGE
       final homeController = Get.put(HomeController());
       await homeController.fetchHome();
       //INICIALIZAÇÃO DE DEMAIS CONTROLLERS
-      Get.put(EventController());
       Get.put(EscalationController());
       Get.put(GameController());
       Get.put(RankController());

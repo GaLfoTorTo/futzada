@@ -36,53 +36,53 @@ class ReserveBankWidget extends StatelessWidget {
       }
     }
     
-    return Container(
-      width: dimensions.width - 20,
-      height: 150,
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10))
+    return Card(
+      child: Container(
+        width: dimensions.width - 20,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10))
+        ),
+        child: Obx((){
+          //OBSERVAR ATUALIZAÇÕES DA ESCALAÇÃO
+          final reserves = controller.reserves;
+      
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ...reserves.asMap().entries.map((item) {
+                //RESGATAR JOGADOR NA ESCALAÇÃO
+                final index = item.key;
+                final player = item.value;
+                //RESGATAR POSIÇÃO
+                String position = getReservePosition(index);
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonPlayerWidget(
+                      participant: player,
+                      position: position,
+                      index: index,
+                      occupation: 'reserves',
+                      size: 60,
+                    ),
+                    if(player == null)...[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          position.toUpperCase(),
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.gray_300),
+                        ),
+                      )
+                    ]
+                  ],
+                );
+              })
+            ]
+          );
+        }),
       ),
-      child: Obx((){
-        //OBSERVAR ATUALIZAÇÕES DA ESCALAÇÃO
-        final reserves = controller.reserves;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ...reserves.asMap().entries.map((item) {
-              //RESGATAR JOGADOR NA ESCALAÇÃO
-              final index = item.key;
-              final player = item.value;
-              //RESGATAR POSIÇÃO
-              String position = getReservePosition(index);
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ButtonPlayerWidget(
-                    participant: player,
-                    position: position,
-                    index: index,
-                    occupation: 'reserves',
-                    size: 60,
-                  ),
-                  if(player == null)...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text(
-                        position,
-                        style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.gray_300),
-                      ),
-                    )
-                  ]
-                ],
-              );
-            })
-          ]
-        );
-      }),
     );
   }
 }

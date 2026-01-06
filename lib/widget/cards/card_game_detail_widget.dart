@@ -1,16 +1,14 @@
-import 'package:futzada/models/game_event_model.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/enum/enums.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/game_model.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_images.dart';
-import 'package:futzada/widget/animated/animated_ellipsis.dart';
-import 'package:futzada/widget/images/img_group_circle_widget.dart';
+import 'package:futzada/enum/enums.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/models/game_event_model.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/models/game_model.dart';
+import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
 
 class CardGameDetailWidget extends StatefulWidget {
@@ -74,11 +72,11 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
       margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
+        color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
-        color: AppColors.white,
         boxShadow: [
           BoxShadow(
             color: AppColors.dark_500.withAlpha(30),

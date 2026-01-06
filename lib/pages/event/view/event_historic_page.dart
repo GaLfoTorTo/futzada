@@ -1,15 +1,14 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/helpers/date_helper.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_model.dart';
-import 'package:futzada/widget/skeletons/skeleton_games_widget.dart';
-import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/cards/card_game_widget.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
 import 'package:futzada/pages/erros/erro_historic_game_page.dart';
+import 'package:futzada/widget/skeletons/skeleton_games_widget.dart';
+import 'package:futzada/widget/bars/header_widget.dart';
+import 'package:futzada/widget/cards/card_game_widget.dart';
 
 class EventHistoricPage extends StatefulWidget {
   const EventHistoricPage({super.key});
@@ -81,33 +80,17 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
             // CONTEÚDO COM TABS
             return Column(
               children: [
-                Container(
-                  color: AppColors.white,
-                  child: TabBar(
-                    controller: _tabController,
-                    indicator: UnderlineTabIndicator(
-                      borderSide: const BorderSide(
-                        width: 5,
-                        color: AppColors.green_300,
-                      ),
-                      insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4),
-                    ),
-                    labelColor: AppColors.green_300,
-                    labelStyle: const TextStyle(
-                      color: AppColors.gray_500,
-                      fontWeight: FontWeight.normal,
-                    ),
-                    unselectedLabelColor: AppColors.gray_500,
-                    isScrollable: true,
-                    tabAlignment: TabAlignment.start,
-                    tabs: tabs.map((tab) {
-                      return SizedBox(
-                        width: 100,
-                        height: 50,
-                        child: Tab(text: tab),
-                      );
-                    }).toList(),
-                  ),
+                TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  tabs: tabs.map((tab) {
+                    return SizedBox(
+                      width: 100,
+                      height: 50,
+                      child: Tab(text: tab),
+                    );
+                  }).toList(),
                 ),
                 // USAR EXPANDED PARA OCUPAR O RESTO DA TELA
                 Expanded(

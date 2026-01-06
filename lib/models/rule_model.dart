@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class RuleModel {
   final int? id;
@@ -9,6 +10,7 @@ class RuleModel {
   final ParticipantModel author;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   RuleModel({
     this.id,
@@ -17,6 +19,7 @@ class RuleModel {
     required this.author,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   RuleModel copyWith({
@@ -26,6 +29,7 @@ class RuleModel {
     ParticipantModel? author,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return RuleModel(
       id: id ?? this.id,
@@ -34,6 +38,7 @@ class RuleModel {
       author: author ?? this.author,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -43,8 +48,9 @@ class RuleModel {
       'title': title,
       'description': description,
       'author': author.toMap(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -54,8 +60,9 @@ class RuleModel {
       title: map['title'],
       description: map['description'],
       author: ParticipantModel.fromMap(map['author'] as Map<String,dynamic>),
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -65,7 +72,7 @@ class RuleModel {
 
   @override
   String toString() {
-    return 'RuleModel(id: $id, title: $title, description: $description, author: $author, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'RuleModel(id: $id, title: $title, description: $description, author: $author, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -78,7 +85,8 @@ class RuleModel {
       other.description == description &&
       other.author == author &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -88,6 +96,7 @@ class RuleModel {
       description.hashCode ^
       author.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

@@ -18,10 +18,9 @@ class PriceIndicatorWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            color: AppColors.gray_500,
-            fontSize: 10,
-          ),
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+            fontWeight: FontWeight.bold
+          )
         ),
         Text.rich(
           TextSpan(
@@ -33,11 +32,7 @@ class PriceIndicatorWidget extends StatelessWidget {
             children: [
               TextSpan(
                 text: value,
-                style: const TextStyle(
-                  color: AppColors.dark_500,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.displayMedium
               ),
             ]
           )

@@ -389,7 +389,6 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
     var dimensions = MediaQuery.of(context).size;
      
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
         leftAction: () => Get.back()

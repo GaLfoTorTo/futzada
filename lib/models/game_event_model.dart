@@ -1,11 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:futzada/enum/enums.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/models/result_model.dart';
 import 'package:futzada/models/team_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class GameEventModel {
   final int id;
@@ -67,8 +65,8 @@ class GameEventModel {
       'title' : title,
       'description' : description,
       'type' : type,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -82,9 +80,9 @@ class GameEventModel {
       title: map['title'] as String,
       description: map['description'] as String,
       type: map['type'] as GameEvent,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

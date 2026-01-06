@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/models/team_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class ResultModel {
   final TeamModel teamA;
@@ -52,8 +53,8 @@ class ResultModel {
       'teamAScore': teamAScore,
       'teamBScore': teamBScore,
       'duration': duration,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -65,9 +66,9 @@ class ResultModel {
       teamAScore: map['teamAScore'] as int,
       teamBScore: map['teamBScore'] as int,
       duration: map['duration'] != null ? map['duration'] as int : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class TeamModel {
   final int? id;
@@ -55,8 +56,8 @@ class TeamModel {
       'name': name,
       'emblema': emblema,
       'players': players.map((x) => x.toMap()).toList(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -70,13 +71,13 @@ class TeamModel {
       players: map['players'] != null
         ? List<ParticipantModel>.from((map['players'] as List<Map<String, dynamic>>)
           .map<ParticipantModel>(
-            (x) => ParticipantModel.fromMap(x as Map<String,dynamic>),
+            (x) => ParticipantModel.fromMap(x),
           ),
         )
         : [],
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

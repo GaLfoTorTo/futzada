@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/services/economy_service.dart';
 import 'package:futzada/services/escalation_service.dart';
@@ -20,6 +19,7 @@ class ManagerService {
   ManagerModel generateManager(i){
     //DEFINIR PLAYER
     return ManagerModel.fromMap({
+      "id" : i,
       "team" : faker.company.name(),
       "alias" : faker.animal.name(),
       "primary" : faker.color.color(),
@@ -27,8 +27,8 @@ class ManagerService {
       "emblem" : faker.company.name(),
       "uniform" : faker.company.name(),
       "economy" : economyService.generateEconomy(i).toMap(),
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 

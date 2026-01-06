@@ -114,11 +114,15 @@ class CardDayEventWidget extends StatelessWidget {
                           children: [
                             Text(
                               month,
-                              style: Theme.of(context).textTheme.labelMedium!
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                color: AppColors.dark_300
+                              )
                             ),
                             Text(
                               day,
-                              style: Theme.of(context).textTheme.titleSmall!
+                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                color: AppColors.dark_300
+                              )
                             ),
                           ],
                         ),
@@ -128,59 +132,55 @@ class CardDayEventWidget extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.timer,
-                                      color: AppColors.white,
-                                      size: 15,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text(
-                                        "${event.startTime} - ${event.endTime}",
-                                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                          color: AppColors.white
-                                        )
-                                      ),
-                                    ),
-                                  ]
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: AppColors.white,
-                                      size: 15,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 5.0),
-                                      child: Text(
-                                        "${event.address?.street} - ${event.address?.city}",
-                                        style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                          color: AppColors.white
-                                        )
-                                      ),
-                                    ),
-                                  ]
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 5,
+                        children: [
+                          Row(
+                            spacing: 5,
+                            children: [
+                              const Icon(
+                                Icons.timer,
+                                color: AppColors.white,
+                                size: 25,
+                              ),
+                              Text(
+                                "${event.startTime} - ${event.endTime}",
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                  color: AppColors.white
+                                )
+                              ),
+                            ]
+                          ),
+                          Row(
+                            spacing: 5,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.location_on,
+                                color: AppColors.white,
+                                size: 25,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${event.address?.street}",
+                                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                      color: AppColors.white
+                                    )
+                                  ),
+                                  Text(
+                                    "${event.address?.city}/${event.address?.state}",
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                      color: AppColors.white
+                                    )
+                                  ),
+                                ],
+                              ),
+                            ]
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -214,7 +214,7 @@ class CardDayEventWidget extends StatelessWidget {
                         action: () => Get.toNamed('/games/day', arguments: {'event': event}),
                         width: 80,
                         height: 30,
-                        text: "Juntar-se",
+                        text: "Entrar",
                         backgroundColor: AppColors.white.withAlpha(100),
                         textColor: AppColors.white,
                         borderRadius: 50,

@@ -4,7 +4,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
-import 'package:futzada/widget/dialogs/erro_escalation_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_erro_escalation.dart';
 import 'package:futzada/controllers/escalation_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 
@@ -36,9 +36,9 @@ class PresentationPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //INICIALIZAR CONTROLLER DE NAVEGACAO DE TABS E ESCALATION
-    final navigationTab = Get.find<NavigationController>();
-    final escalationController = Get.find<EscalationController>();
+    //INICIALIZAR CONTROLLER DE NAVEGACAO E DE ESCALAÇÃO
+    NavigationController navigationController = NavigationController.instance;
+    EscalationController escalationController = EscalationController.instance;
 
     //DEFINIR VARAIVEL DE VERIFICAÇÃO DE USUARIO
     bool canManager = true;
@@ -50,7 +50,7 @@ class PresentationPageWidget extends StatelessWidget {
         buttonFirstAction();
       }else{
         //EXIBIR DIALOG DE ERRO
-        Get.dialog(const ErroEscalationDialog());
+        Get.dialog(const DialogErrorEscalation());
       }
     }
 
@@ -70,18 +70,19 @@ class PresentationPageWidget extends StatelessWidget {
     }
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //DEFINIR COR APARTIR DO TEMA
+    final colorPage = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: route,
-        leftAction: () => navigationTab.directIndex(0),
+        leftAction: () => navigationController.directIndex(0),
       ),
+      backgroundColor: colorPage,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             width: dimensions.width,
-            color: AppColors.white,
             child: Column(
               children: [
                 Container(
@@ -90,14 +91,18 @@ class PresentationPageWidget extends StatelessWidget {
                     image: DecorationImage(
                       image: AssetImage(image),
                       fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                        colorPage, 
+                        BlendMode.saturation
+                      )
                     ),
                   ),
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.white.withOpacity(0.5),
-                          AppColors.white,
+                          colorPage.withAlpha(100),
+                          colorPage,
                         ],
                         begin: Alignment.center,
                         end: Alignment.bottomCenter,
@@ -115,11 +120,7 @@ class PresentationPageWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           titulo,
-                          style: const TextStyle(
-                            color: AppColors.blue_500,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineLarge,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -127,11 +128,7 @@ class PresentationPageWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           subTitulo,
-                          style: const TextStyle(
-                            color: AppColors.blue_500,
-                            fontSize: 15,
-                            fontWeight: FontWeight.normal,
-                          ),
+                          style: Theme.of(context).textTheme.titleSmall,
                           textAlign: TextAlign.center,
                         ),
                       ),

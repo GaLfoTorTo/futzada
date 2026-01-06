@@ -59,7 +59,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-              color: AppColors.white,
+              color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
               boxShadow: [
                 BoxShadow(
                   color: AppColors.dark_500.withAlpha(30),
@@ -87,7 +87,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                         height: 150,
                       ), 
                       Positioned(
-                        bottom: -80,
+                        bottom: -100,
                         child: Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()
@@ -386,25 +386,28 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                       )
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: gameController.votesMVP.entries.take(3).map((item){
-                      //RESGATAR PARTICIPANTE
-                      ParticipantModel participant = teamA.players.firstWhere((p) => p.user.uuid == item.key);
-                      //RESGATAR VALOR DE VOTAÇÃO
-                      int value = item.value;
-                      
-                      return Column(
-                      spacing: 10,
-                        children: [
-                          CardPlayerGameWidget(participant: participant),
-                          Text(
-                            "${value.toStringAsFixed(0)} votos",
-                            style: Theme.of(context).textTheme.labelMedium
-                          )
-                        ],
-                      );
-                    }).toList(),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: gameController.votesMVP.entries.take(3).map((item){
+                        //RESGATAR PARTICIPANTE
+                        ParticipantModel participant = teamA.players.firstWhere((p) => p.user.uuid == item.key);
+                        //RESGATAR VALOR DE VOTAÇÃO
+                        int value = item.value;
+                        
+                        return Column(
+                        spacing: 10,
+                          children: [
+                            CardPlayerGameWidget(participant: participant),
+                            Text(
+                              "${value.toStringAsFixed(0)} votos",
+                              style: Theme.of(context).textTheme.labelMedium
+                            )
+                          ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ]
               );

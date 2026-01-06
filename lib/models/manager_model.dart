@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:futzada/models/economy_model.dart';
 import 'package:futzada/models/escalation_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class ManagerModel {
   final int? id;
@@ -16,6 +17,7 @@ class ManagerModel {
   final EconomyModel? economy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   ManagerModel({
     this.id,
@@ -29,6 +31,7 @@ class ManagerModel {
     this.economy,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   ManagerModel copyWith({
@@ -43,6 +46,7 @@ class ManagerModel {
     EconomyModel? economy,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return ManagerModel(
       id: id ?? this.id,
@@ -56,6 +60,7 @@ class ManagerModel {
       economy: economy ?? this.economy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -70,8 +75,9 @@ class ManagerModel {
       'uniform': uniform,
       'escalation': escalation?.toMap(),
       'economy': economy?.toMap(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -86,8 +92,9 @@ class ManagerModel {
       uniform: map['uniform'] != null ? map['uniform'] as String : null,
       escalation: map['escalation'] != null ? EscalationModel.fromMap(map['escalation'] as Map<String,dynamic>) : null,
       economy: map['economy'] != null ? EconomyModel.fromMap(map['economy'] as Map<String,dynamic>) : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -97,7 +104,7 @@ class ManagerModel {
 
   @override
   String toString() {
-    return 'ManagerModel(id: $id, team: $team, alias: $alias, primary: $primary, secondary: $secondary, emblem: $emblem, uniform: $uniform, escalation: $escalation, economy: $economy, $createdAt, updatedAt: $updatedAt)';
+    return 'ManagerModel(id: $id, team: $team, alias: $alias, primary: $primary, secondary: $secondary, emblem: $emblem, uniform: $uniform, escalation: $escalation, economy: $economy, $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -115,7 +122,8 @@ class ManagerModel {
       other.escalation == escalation &&
       other.economy == economy &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -130,6 +138,7 @@ class ManagerModel {
       escalation.hashCode ^
       economy.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

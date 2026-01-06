@@ -9,6 +9,7 @@ import 'package:futzada/models/game_model.dart';
 import 'package:futzada/models/news_model.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/models/rule_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class EventModel {
   int? id;
@@ -125,8 +126,8 @@ class EventModel {
       'news': news!.map((x) => x.toMap()).toList(),
       'games': games!.map((x) => x.toMap()).toList(),
       'visibility': visibility,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -167,9 +168,9 @@ class EventModel {
       visibility: map['visibility'] != null
         ? VisibilityPerfil.values.firstWhere((e) => e.name == map['visibility'])
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

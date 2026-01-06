@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import '/theme/app_colors.dart';
 import '/theme/app_icones.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/models/user_model.dart';
@@ -37,7 +36,6 @@ class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         leftAction: () {
           final scaffoldKey = Get.find<GlobalKey<ScaffoldState>>(tag: 'appBaseScaffold');

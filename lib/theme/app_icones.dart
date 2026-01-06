@@ -55,11 +55,19 @@ class AppIcones {
   static const String moovit = "assets/icones/moovit.svg";
   //LINHAS CAMPO
   static const String futebol_sm = "assets/icones/linhas/futebol_sm.svg";
-  static const String fut7_sm = "assets/icones/linhas/fut7_sm.svg";
-  static const String futsal_sm = "assets/icones/linhas/futsal_sm.svg";
   static const String futebol_xl = "assets/icones/linhas/futebol_xl.svg";
+  static const String fut7_sm = "assets/icones/linhas/fut7_sm.svg";
   static const String fut7_xl = "assets/icones/linhas/fut7_xl.svg";
+  static const String futsal_sm = "assets/icones/linhas/futsal_sm.svg";
   static const String futsal_xl = "assets/icones/linhas/futsal_xl.svg";
+  static const String volei_sm = "assets/icones/linhas/volei_sm.svg";
+  static const String volei_xl = "assets/icones/linhas/volei_xl.svg";
+  static const String volei_areia_sm = "assets/icones/linhas/volei_areia_sm.svg";
+  static const String volei_areia_xl = "assets/icones/linhas/volei_areia_xl.svg";
+  static const String basquete_sm = "assets/icones/linhas/basquete_sm.svg";
+  static const String basquete_xl = "assets/icones/linhas/basquete_xl.svg";
+  static const String basquete_street_sm = "assets/icones/linhas/basquete_street_sm.svg";
+  static const String basquete_street_xl = "assets/icones/linhas/basquete_street_xl.svg";
 
   /* CUSTOM ICONE */
   static const IconData apito = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);

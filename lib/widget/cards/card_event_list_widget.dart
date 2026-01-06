@@ -1,13 +1,12 @@
-import 'package:futzada/controllers/game_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_images.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:futzada/utils/img_utils.dart';
+import 'package:futzada/models/event_model.dart';
+import 'package:futzada/controllers/game_controller.dart';
+import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/widget/indicators/indicator_live_widget.dart';
-import 'package:futzada/models/event_model.dart';
-import 'package:futzada/controllers/event_controller.dart';
 
 class CardEventListWidget extends StatelessWidget {
   final EventModel event;
@@ -26,7 +25,7 @@ class CardEventListWidget extends StatelessWidget {
     //DEFINIR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliation = eventController.getAvaliations(event.avaliations);
+    double avaliation = eventController.eventService.getEventAvaliation(event.avaliations);
     //RESGATAR DATA DO EVENTO
     String eventDate = event.daysWeek!.replaceAll('[', '').replaceAll(']', '').toString();
 
@@ -42,33 +41,18 @@ class CardEventListWidget extends StatelessWidget {
           }
         )
       },
-      child: Container(
-        width: dimensions.width,
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.dark_500.withAlpha(30),
-              spreadRadius: 0.5,
-              blurRadius: 5,
-              offset: Offset(2, 5),
-            ),
-          ],
-        ),
+      child: Card(
         child: Column(
+          spacing: 2,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: dimensions.width,
               height: 140,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                 image: DecorationImage(
-                  image: event.photo != null 
-                    ? CachedNetworkImageProvider(event.photo!) 
-                    : const AssetImage(AppImages.gramado) as ImageProvider,
+                  image: ImgUtils.getEventImg(event.photo),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -82,11 +66,7 @@ class CardEventListWidget extends StatelessWidget {
                     width: dimensions.width * 0.4,
                     child: Text(
                       event.title!,
-                      style: const TextStyle(
-                        color: AppColors.dark_500,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.titleSmall
                     ),
                   ),
                   SizedBox(
@@ -112,17 +92,11 @@ class CardEventListWidget extends StatelessWidget {
                 children: [
                   Text(
                     eventDate,
-                    style: const TextStyle(
-                      color: AppColors.dark_500,
-                      fontSize: 12,
-                    ),
+                    style: Theme.of(context).textTheme.labelMedium
                   ),
                   Text(
                     "${event.address!.city}/${event.address!.state}",
-                    style: const TextStyle(
-                      color: AppColors.dark_500,
-                      fontSize: 12,
-                    ),
+                    style: Theme.of(context).textTheme.labelMedium
                   ),
                 ],
               ),
@@ -134,10 +108,7 @@ class CardEventListWidget extends StatelessWidget {
                 children: [ 
                   Text(
                     "Horário: ${event.startTime} - ${event.endTime}",
-                    style: const TextStyle(
-                      color: AppColors.dark_500,
-                      fontSize: 12,
-                    ),
+                    style: Theme.of(context).textTheme.labelMedium
                   ),
                   if(gameController.inProgressGames.isNotEmpty)...[
                     const IndicatorLiveWidget(

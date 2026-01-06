@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class RatingModel {
   final Roles? modality;
@@ -12,6 +13,7 @@ class RatingModel {
   final int? games;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   RatingModel({
     this.modality = Roles.Player,
@@ -22,6 +24,7 @@ class RatingModel {
     this.games = 0,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   RatingModel copyWith({
@@ -33,6 +36,7 @@ class RatingModel {
     int? games,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return RatingModel(
       modality: modality ?? this.modality,
@@ -43,6 +47,7 @@ class RatingModel {
       games: games ?? this.games,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -54,8 +59,9 @@ class RatingModel {
       'valuation': valuation,
       'price': price,
       'games': games,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -69,8 +75,9 @@ class RatingModel {
       valuation: map['valuation'] != null ? map['valuation'] as double : null,
       price: map['price'] != null ? map['price'] as double : null,
       games: map['games'] != null ? map['games'] as int : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -80,7 +87,7 @@ class RatingModel {
 
   @override
   String toString() {
-    return 'RatingModel(modality: $modality, points: $points, avarage: $avarage, valuation: $valuation, price: $price, games: $games, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'RatingModel(modality: $modality, points: $points, avarage: $avarage, valuation: $valuation, price: $price, games: $games, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -95,7 +102,8 @@ class RatingModel {
       other.price == price &&
       other.games == games &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -107,6 +115,7 @@ class RatingModel {
       price.hashCode ^
       games.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

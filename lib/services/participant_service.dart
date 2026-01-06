@@ -4,7 +4,6 @@ import 'package:faker/faker.dart' as fakerData;
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/participant_model.dart';
 import 'package:futzada/repository/user_repository.dart';
-import 'package:intl/intl.dart';
 
 class ParticipantService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -30,8 +29,8 @@ class ParticipantService {
       "permissions" : permissions,
       "status" : setStatus(random.nextInt(3)),
       "user" : userRepository.generateUser(i, roles != null).toMap(), //GERAR USUARIO VINCULADO AO EVENTO (PELADA)
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 

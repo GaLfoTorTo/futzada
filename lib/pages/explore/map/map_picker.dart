@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/buttons/float_button_widget.dart';
 import 'package:futzada/widget/indicators/indicator_loading_widget.dart';
-import 'package:futzada/widget/dialogs/address_dialog.dart';
+import 'package:futzada/widget/bottomSheet/bottomsheet_addres.dart';
 import 'package:futzada/controllers/address_controller.dart';
 import 'package:futzada/controllers/map_controller.dart';
 import 'package:futzada/pages/explore/map/map_widget.dart';
@@ -75,7 +75,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
             FloatButtonWidget(
               floatKey: "search_map",
               icon: Icons.search_rounded,
-              onPressed: () => Get.bottomSheet(AddressDialog(), isScrollControlled: true),
+              onPressed: () => Get.bottomSheet(BottomSheetAddress(), isScrollControlled: true),
             ),
             FloatButtonWidget(
               floatKey: "position_map",

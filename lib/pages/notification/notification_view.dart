@@ -15,12 +15,12 @@ class NotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR CONTROLER DE NOTIFICAÇÕES
-    var controller =  NotificationController.instace;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //RESGATAR CONTROLER DE NOTIFICAÇÕES
+    NotificationController notificationController =  NotificationController.instace;
     //RESGATAR NOTIFICAÇÕES
-    List<Map<String, dynamic>> notifications = controller.getNotifications(type);
+    List<Map<String, dynamic>> notifications = notificationController.getNotifications(type);
     //ARRAY DE NOTIFICAÇÕES
     List<Widget> notificationList = [];
     //RESGATAR  FORMATO DAS DATAS
@@ -57,14 +57,13 @@ class NotificationView extends StatelessWidget {
           child: Container(
             width: dimensions.width,
             padding: const EdgeInsets.all(10),
-            color: AppColors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (notification['image'] is List<dynamic>) ...[
                   ImgGroupCircularWidget(
-                    width: 70,
-                    height: 70,
+                    width: 60,
+                    height: 60,
                     images: imgNotification,
                   ),
                 ] else ...[
@@ -78,21 +77,17 @@ class NotificationView extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Column(
+                      spacing: 5,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: Text(
-                            notification['title'],
-                            style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                              color: AppColors.blue_500,
-                            ),
-                          ),
+                        Text(
+                          notification['title'],
+                          style: Theme.of(context).textTheme.titleSmall,
                         ),
                         Text(
                           notification['description'],
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
                             color: AppColors.gray_500,
                           ),
                           maxLines: 2,

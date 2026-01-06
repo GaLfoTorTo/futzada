@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class EscalationModel {
   final int? id;
@@ -44,8 +45,8 @@ class EscalationModel {
       'formation': formation,
       'starters': starters!.map((x) => x).toList(),
       'reserves': reserves!.map((x) => x).toList(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -67,8 +68,8 @@ class EscalationModel {
             ),
           ) 
         : List.filled(11, null),
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt:  DatetimeUtils.parseDate(map['updatedAt']),
     );
   }
 

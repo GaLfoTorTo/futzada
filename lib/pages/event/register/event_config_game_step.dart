@@ -10,7 +10,7 @@ import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
 import 'package:futzada/widget/others/court_widget.dart';
 import 'package:futzada/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/widget/dialogs/category_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_category.dart';
 import 'package:futzada/widget/inputs/select_rounded_widget.dart';
 import 'package:futzada/widget/inputs/silder_players_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
@@ -70,7 +70,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
       setCategory();
       //EXIBIR DIALOG INFORMATIVO DE CATEGORIA
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.dialog(const CategoryDialog());
+        Get.dialog(const DialogCategory());
       });
     }
   }
@@ -179,7 +179,6 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Registro", 
         leftAction: () => Get.back(),

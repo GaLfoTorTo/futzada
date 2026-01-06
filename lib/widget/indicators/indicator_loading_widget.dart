@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
+import 'package:get/get.dart';
 
 class IndicatorLoadingWidget extends StatelessWidget {
   const IndicatorLoadingWidget({super.key});
@@ -10,10 +11,10 @@ class IndicatorLoadingWidget extends StatelessWidget {
       margin: const EdgeInsetsGeometry.only(top: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Get.isDarkMode ? AppColors.dark_700 :  AppColors.white,
         borderRadius: BorderRadius.circular(50)
       ),
-      child: const CircularProgressIndicator(color: AppColors.green_300,),
+      child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),
     );
   }
 }

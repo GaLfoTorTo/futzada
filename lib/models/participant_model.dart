@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/user_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class ParticipantModel {
   final int id;
@@ -54,8 +55,8 @@ class ParticipantModel {
       'role': role,
       'permissions': permissions,
       'status': status,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }
@@ -71,9 +72,9 @@ class ParticipantModel {
         ? List<String>.from((map['permissions'] as List<String>)) 
         : null,
       status: PlayerStatus.values.firstWhere((e) => e == map['status']),
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
-      deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 

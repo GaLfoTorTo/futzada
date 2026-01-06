@@ -9,7 +9,7 @@ import 'package:futzada/pages/games/detail/game_overview_page.dart';
 import 'package:futzada/pages/games/detail/game_statistics_page.dart';
 import 'package:futzada/pages/games/detail/game_timeline_page.dart';
 import 'package:futzada/widget/bars/header_widget.dart';
-import 'package:futzada/widget/dialogs/stop_watch_dialog.dart';
+import 'package:futzada/widget/dialogs/dialog_stop_watch.dart';
 import 'package:futzada/widget/cards/card_game_detail_widget.dart';
 import 'package:futzada/widget/buttons/float_button_timer_widget.dart';
 
@@ -95,8 +95,6 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //LISTA DE TABS
     List<String> tabs = [
       'Resumo',
@@ -139,24 +137,11 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
                 pinned: true,
                 delegate: _SliverAppBarDelegate(
                   child: Container(
-                    color: AppColors.white,
+                    color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
                     margin: EdgeInsets.symmetric(horizontal: tabMargin),
                     child: TabBar(
                       controller: tabController,
                       onTap: (i) => setState(() => tabIndex = i),
-                      indicator: UnderlineTabIndicator(
-                        borderSide: const BorderSide(
-                          width: 5,
-                          color: AppColors.green_300,
-                        ),
-                        insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
-                      ),
-                      labelColor: AppColors.green_300,
-                      labelStyle: const TextStyle(
-                        color: AppColors.gray_500,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      unselectedLabelColor: AppColors.gray_500,
                       isScrollable: true,
                       tabAlignment: TabAlignment.start,
                       tabs: tabs.map((tab){

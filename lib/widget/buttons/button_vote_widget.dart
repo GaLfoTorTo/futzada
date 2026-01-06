@@ -69,7 +69,7 @@ class ButtonVoteWidget extends StatelessWidget {
                   ),
                   PieChartSectionData(
                     value: 100 - value, 
-                    color: AppColors.dark_500.withAlpha(20),
+                    color: AppColors.gray_500.withAlpha(20),
                     radius: 15,
                     showTitle: false
                   )

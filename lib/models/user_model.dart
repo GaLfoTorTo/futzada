@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:futzada/models/manager_model.dart';
 import 'package:futzada/models/player_model.dart';
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class UserModel {
   int? id;
@@ -21,6 +22,7 @@ class UserModel {
   ManagerModel? manager;
   DateTime? createdAt;
   DateTime? updatedAt;
+  DateTime? deletedAt;
 
   UserModel({
     this.id,
@@ -38,6 +40,7 @@ class UserModel {
     this.manager,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   UserModel copyWith({
@@ -56,6 +59,7 @@ class UserModel {
     ManagerModel? manager,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -73,6 +77,7 @@ class UserModel {
       manager: manager ?? this.manager,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -91,8 +96,9 @@ class UserModel {
       'token': token,
       'player': player?.toMap(),
       'manager': manager?.toMap(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -117,8 +123,9 @@ class UserModel {
       manager: map['manager'] != null 
         ? ManagerModel.fromMap(map['manager'] as Map<String, dynamic>) 
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -128,7 +135,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, visibility: $visibility, photo: $photo, token: $token, player: $player, manager: $manager, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, visibility: $visibility, photo: $photo, token: $token, player: $player, manager: $manager, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -150,7 +157,8 @@ class UserModel {
       other.player == player &&
       other.manager == manager &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -169,6 +177,7 @@ class UserModel {
       player.hashCode ^
       manager.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

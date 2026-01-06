@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/controllers/rank_controller.dart';
 import 'package:futzada/widget/cards/card_podium_widget.dart';
 import 'package:futzada/widget/cards/card_rank_position_widget.dart';
@@ -25,9 +24,7 @@ class EventRankPage extends StatelessWidget {
               children: [
                 Text(
                   "Rankings da Pelada",
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: AppColors.blue_500
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium
                 ),
                 Text(
                   "Acompanhe de perto os jogadores e técnicos que se destacam na pelada com as melhores pontuações para cada tipo de estatística.",

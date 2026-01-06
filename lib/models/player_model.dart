@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/models/rating_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class PlayerModel {
   final int? id;
@@ -11,6 +12,7 @@ class PlayerModel {
   final RatingModel? rating;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   PlayerModel({
     this.id,
@@ -21,6 +23,7 @@ class PlayerModel {
     this.rating,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   PlayerModel copyWith({
@@ -32,6 +35,7 @@ class PlayerModel {
     RatingModel? rating,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return PlayerModel(
       id: id ?? this.id,
@@ -42,6 +46,7 @@ class PlayerModel {
       rating: rating ?? this.rating,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -53,8 +58,9 @@ class PlayerModel {
       'mainPosition': mainPosition,
       'positions': positions,
       'rating': rating?.toMap(),
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -68,8 +74,9 @@ class PlayerModel {
       rating: map['rating'] != null 
         ? RatingModel.fromMap(map['rating'] as Map<String,dynamic>) 
         : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -79,7 +86,7 @@ class PlayerModel {
 
   @override
   String toString() {
-    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, rating: $rating, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, rating: $rating, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -94,7 +101,8 @@ class PlayerModel {
       other.positions == positions &&
       other.rating == rating &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -106,6 +114,7 @@ class PlayerModel {
       positions.hashCode ^
       rating.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

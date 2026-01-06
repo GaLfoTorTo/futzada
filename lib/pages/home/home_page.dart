@@ -78,6 +78,20 @@ class _HomePageState extends State<HomePage> {
             options: homeController.toYou, 
           )
         ],
+        //SEÇÃO - POPULARES
+        if(homeController.popular.isNotEmpty)...[
+          SectionHomeWidget(
+            titulo: "Mais Populares",
+            options: homeController.popular, 
+          )
+        ],
+        //SEÇÃO - HOJE
+        if(homeController.popular.isNotEmpty)...[
+          SectionHomeWidget(
+            titulo: "Acontece Hoje",
+            options: homeController.today, 
+          )
+        ],
       ]
     );
   }

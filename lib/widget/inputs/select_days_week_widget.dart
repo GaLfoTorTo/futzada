@@ -16,6 +16,7 @@ class SelectDaysWeekWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIAS DA SEMANA
     List<String> daysOfWeek = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -33,12 +34,12 @@ class SelectDaysWeekWidget extends StatelessWidget {
                 height: 55,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: values.contains(value) ? AppColors.green_300 : AppColors.white,
+                  color: values.contains(value) ? Theme.of(context).primaryColor : color,
                   borderRadius: BorderRadius.circular(50),
                   boxShadow: [
                     if (values.contains(value))...[
                       BoxShadow(
-                        color: AppColors.green_300.withAlpha(100),
+                        color: Theme.of(context).primaryColor.withAlpha(100),
                         spreadRadius: 1,
                         blurRadius: 5,
                         offset: Offset(0,2),
@@ -49,7 +50,7 @@ class SelectDaysWeekWidget extends StatelessWidget {
                 child: Text(
                   value,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    color: values.contains(value) ? AppColors.white : AppColors.dark_500,
+                    color: values.contains(value) ? AppColors.blue_500 : null,
                     fontWeight: FontWeight.bold
                   ),
                 ),

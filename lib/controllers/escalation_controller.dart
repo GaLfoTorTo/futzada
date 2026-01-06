@@ -83,12 +83,6 @@ class EscalationController extends GetxController
 
   //FUNÇÃO DE INICIALIZAÇÃO DE DADOS DE TECNICO
   void loadUserManager(){
-    //VERIFICAR SE EVENTOS FORAM ADICIONADOS AO GET
-    if(Get.isRegistered<List<EventModel>>(tag: 'events')){
-      //RESGATAR EVENTOS
-      myEvents = Get.find<List<EventModel>>(tag: 'events');
-      print(myEvents);
-    }
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DE ALGUM EVENTO
     if(myEvents.isNotEmpty){
       //VERIFICAR SE USUARIO ESTA HABILITADO COMO TECNICO NO EVENTO 
@@ -112,7 +106,9 @@ mixin EscalationManagerMixin on GetxController implements EscalationBase {
   @override
   UserModel user = Get.find(tag: 'user');
   @override
-  List<EventModel> myEvents = [];
+  List<EventModel> myEvents = Get.isRegistered<List<EventModel>>(tag: 'events') 
+    ? Get.find<List<EventModel>>(tag: 'events') 
+    : [];
   @override
   bool canManager = false;
   @override
@@ -164,7 +160,7 @@ mixin EscalationManagerMixin on GetxController implements EscalationBase {
   //FUNÇÃO QUE RESGATAR DADOS DE ESCALAÇÃO DO USUARIO NO EVENTO SELECIONADO
   void setUserInfo() {
     //RESGATAR ESCALAÇÃO DO USUARIO PARA EVENTO SELECIONADO
-    EscalationModel userEscalation = escalationService.generateEscalation(selectedCategory.value, selectedEvent!.participants!);
+    EscalationModel userEscalation = escalationService.generateEscalation(selectedCategory.value);
     //RESGATAR FORMAÇÃO DA ESCALAÇAÕ DO USUARIO NO EVENTO SELECIONADO
     selectedFormation.value = userEscalation.formation!;
     //RESGATAR ESCALAÇÃO DE TITULARES E RESERVAS DO USUARIO NO EVENTO SELECIONADO

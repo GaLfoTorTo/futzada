@@ -33,7 +33,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-          color: AppColors.white,
+          color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.dark_500.withAlpha(30),
@@ -106,7 +106,8 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 2,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Obx((){
                   return Column(
@@ -129,7 +130,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                       return Container(
                         width: dimensions.width * 0.45,
                         decoration: BoxDecoration(
-                          color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
+                          color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                           border: const Border(
                             bottom: BorderSide(width: 1, color: AppColors.gray_300)
                           )
@@ -196,7 +197,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                       return Container(
                         width: dimensions.width * 0.45,
                         decoration: BoxDecoration(
-                          color: name == 'Jogador' ? AppColors.gray_300.withAlpha(50) : AppColors.white,
+                          color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
                           border: const Border(
                             bottom: BorderSide(width: 1, color: AppColors.gray_300)
                           )

@@ -1,15 +1,15 @@
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:futzada/theme/app_size.dart';
 import 'package:futzada/models/event_model.dart';
 import 'package:futzada/models/game_config_model.dart';
 import 'package:futzada/controllers/event_controller.dart';
 import 'package:futzada/controllers/game_controller.dart';
-import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
 import 'package:futzada/widget/inputs/input_text_widget.dart';
+import 'package:futzada/widget/inputs/input_switch_widget.dart';
+import 'package:futzada/widget/buttons/button_dropdown_icon_widget.dart';
 
 class GameConfigBasicPage extends StatefulWidget {
   const GameConfigBasicPage({super.key});
@@ -88,12 +88,12 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding: EdgeInsets.only(right: 10),
+                  padding: const EdgeInsets.only(right: 10),
                   child: InputTextWidget(
                     name: 'number',
                     label: 'Nº',
                     textController: gameController.numberController,
-                    disabled: true,
+                    enable: false,
                   ),
                 ),
               ),
@@ -103,7 +103,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                   name: 'category',
                   label: 'Categoria',
                   textController: gameController.categoryController,
-                  disabled: true,
+                  enable: false,
                 ),
               ),
             ],
@@ -119,7 +119,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                     label: 'Início',
                     prefixIcon: Icons.access_time_rounded,
                     textController: gameController.startTimeController,
-                    disabled: true,
+                    enable: false,
                   ),
                 ),
               ),
@@ -131,7 +131,7 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
                   prefixIcon: Icons.access_time_rounded,
                   textController: gameController.endTimeController,
                   type: TextInputType.text,
-                  disabled: true,
+                  enable: false,
                 ),
               ),
             ],
@@ -146,78 +146,31 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
             type: TextInputType.number,
             onChanged: (value) => setDuration(value),
           ),
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 13),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: SwitchListTile(
-                  value: bool.parse(gameController.hasTwoHalvesController.text),
-                  onChanged: (value){
-                    setState(() {
-                      //ATUALIZAR VALOR DO SWITCH
-                      gameController.hasTwoHalvesController.text = value.toString();
-                      //RECLACULAR PERIODO DE PARTIDA
-                      setDuration(gameController.durationController.text);
-                    });
-                  },
-                  activeThumbColor: AppColors.green_300,
-                  inactiveTrackColor: AppColors.gray_300,
-                  inactiveThumbColor: AppColors.gray_500,
-                  secondary: const Icon(
-                    Icons.safety_divider_rounded,
-                    color: AppColors.gray_500,
-                    size: 30,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 20,
-                child: Text(
-                  'Dois Tempos',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
-                ),
-              ),
-            ]
+          InputSwitchWidget(
+            name: "dois_tempos", 
+            label: "Dois Tempos", 
+            prefixIcon: Icons.safety_divider_rounded,
+            value: bool.parse(gameController.hasTwoHalvesController.text), 
+            textController: gameController.hasTwoHalvesController,
+            onChanged: (value){
+              setState(() {
+                gameController.hasTwoHalvesController.text = value.toString();
+              });
+            },
           ),
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 13),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: SwitchListTile(
-                  value: bool.parse(gameController.hasExtraTimeController.text),
-                  onChanged: (value){
-                    setState(() {
-                      //ATUALIZAR VALOR 
-                      hasExtraTime = value;
-                      gameController.hasExtraTimeController.text = value.toString();
-                    });
-                  },
-                  activeThumbColor: AppColors.green_300,
-                  inactiveTrackColor: AppColors.gray_300,
-                  inactiveThumbColor: AppColors.gray_500,
-                  secondary: const Icon(
-                    Icons.more_time_rounded,
-                    color: AppColors.gray_500,
-                    size: 25,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 20,
-                child: Text(
-                  'Prorrogação',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
-                ),
-              ),
-            ]
+          InputSwitchWidget(
+            name: "prorrogacao", 
+            label: "Prorrogação", 
+            prefixIcon: Icons.more_time_rounded,
+            value: bool.parse(gameController.hasExtraTimeController.text), 
+            textController: gameController.hasExtraTimeController,
+            onChanged: (value){
+              setState(() {
+                //ATUALIZAR VALOR 
+                hasExtraTime = value;
+                gameController.hasExtraTimeController.text = value.toString();
+              });
+            },
           ),
           if(hasExtraTime)...[
             InputTextWidget(
@@ -229,77 +182,31 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               onChanged: (value) => gameController.event.gameConfig!.extraTime = int.parse(value),
             ),
           ],
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 13),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: SwitchListTile(
-                  value: bool.parse(gameController.hasPenaltyController.text),
-                  onChanged: (value){
-                    setState(() {
-                      gameController.hasPenaltyController.text = value.toString();
-                    });
-                  },
-                  activeThumbColor: AppColors.green_300,
-                  inactiveTrackColor: AppColors.gray_300,
-                  inactiveThumbColor: AppColors.gray_500,
-                  secondary: SvgPicture.asset(
-                    AppIcones.chuteiras['campo']!,
-                    width: 25,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.gray_500,
-                      BlendMode.srcIn
-                    ),
-                  )
-                ),
-              ),
-              Positioned(
-                left: 20,
-                child: Text(
-                  'Pênaltis',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
-                ),
-              ),
-            ]
+          InputSwitchWidget(
+            name: "penaltis", 
+            label: "Pênaltis", 
+            prefixIcon: Icons.sports,
+            value: bool.parse(gameController.hasPenaltyController.text), 
+            textController: gameController.hasPenaltyController,
+            onChanged: (value){
+              setState(() {
+                gameController.hasPenaltyController.text = value.toString();
+              });
+            },
           ),
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 13),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: SwitchListTile(
-                  value: bool.parse(gameController.hasGoalLimitController.text),
-                  onChanged: (value){
-                    setState(() {
-                      hasGoalLimit = value;
-                      gameController.hasGoalLimitController.text = value.toString();
-                    });
-                  },
-                  activeThumbColor: AppColors.green_300,
-                  inactiveTrackColor: AppColors.gray_300,
-                  inactiveThumbColor: AppColors.gray_500,
-                  secondary: const Icon(
-                    Icons.scoreboard_outlined,
-                    color: AppColors.gray_500,
-                    size: 25,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 20,
-                child: Text(
-                  'Limite de Gols',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
-                ),
-              ),
-            ]
+          InputSwitchWidget(
+            name: "limit_goals", 
+            label: "Limite de Gols", 
+            prefixIcon: Icons.scoreboard_outlined,
+            value: bool.parse(gameController.hasGoalLimitController.text), 
+            textController: gameController.hasGoalLimitController,
+            onChanged: (value){
+              setState(() {
+                //ATUALIZAR VALOR 
+                hasGoalLimit = value;
+                gameController.hasGoalLimitController.text = value.toString();
+              });
+            },
           ),
           if(hasGoalLimit)...[
             InputTextWidget(
@@ -311,46 +218,26 @@ class _GameConfigBasicPageState extends State<GameConfigBasicPage> {
               onChanged: (value) => gameController.event.gameConfig!.goalLimit = int.parse(value),
             ),
           ],
-          Stack(
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 13),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(5)
-                ),
-                child: SwitchListTile(
-                  value: bool.parse(gameController.hasRefereerController.text),
-                  onChanged: (value) {
-                    setState(() {
-                      hasRefereer = value;
-                      gameController.hasRefereerController.text = value.toString();
-                    });
-                  },
-                  activeThumbColor: AppColors.green_300,
-                  inactiveTrackColor: AppColors.gray_300,
-                  inactiveThumbColor: AppColors.gray_500,
-                  secondary: const Icon(
-                    AppIcones.apito,
-                    color: AppColors.gray_500,
-                  ),
-                ),
-              ),
-              Positioned(
-                left: 20,
-                child: Text(
-                  'Árbitro',
-                  style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
-                ),
-              ),
-            ]
+          InputSwitchWidget(
+            name: "refeer", 
+            label: "Árbitro", 
+            prefixIcon: Icons.sports,
+            value: bool.parse(gameController.hasRefereerController.text), 
+            textController: gameController.hasRefereerController,
+            onChanged: (value){
+              setState(() {
+                //ATUALIZAR VALOR 
+                hasRefereer = value;
+                gameController.hasRefereerController.text = value.toString();
+              });
+            },
           ),
           if(hasRefereer)...[
             ButtonDropdownIconWidget(
               width: dimensions.width,
               menuWidth: dimensions.width - 20, 
               menuHeight: 200,
-              color: AppColors.white,
+              backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
               iconAfter: false,
               iconSize: 30,
               textSize: AppSize.fontMd,

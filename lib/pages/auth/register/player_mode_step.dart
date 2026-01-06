@@ -150,7 +150,6 @@ class PlayerModeStepState extends State<PlayerModeStep> {
     var dimensions = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.light,
       appBar: HeaderWidget(
         title: "Cadastro", 
         leftAction: () => Get.back()

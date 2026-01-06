@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:futzada/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/widget/buttons/button_text_widget.dart';
 
 class ErroParticipantsPage extends StatelessWidget {
@@ -13,6 +12,8 @@ class ErroParticipantsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    //DEFINIR COR APARTIR DO TEMA
+    final backgroundColor = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
 
     return  Container(
       width: dimensions.width,
@@ -21,8 +22,8 @@ class ErroParticipantsPage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.white.withAlpha(50),
-            AppColors.white,
+            backgroundColor.withAlpha(50),
+            backgroundColor,
           ],
           begin: Alignment.topCenter,
           end: Alignment.center,
@@ -35,20 +36,19 @@ class ErroParticipantsPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              'Sua pelada não tem nenhuma partida agendada',
+              'Sua pelada não tem nenhum participante registrado',
               style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
           ),
           const Icon(
-            Icons.play_disabled_rounded,
+            Icons.person_off_rounded,
             size: 200,
-            color: AppColors.blue_500,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Text(
-              'Parece que sua peladas não tem nenhuma partida ao vivo ou agendada. Inicie uma nova partida agora ou entre em contato com o organizador ou colaboradores da pelada.',
+              'Parece que sua peladas não tem nenhum participante registrado até o momento. Inicie a convocação dos participantes para fazerem parte da sua pelada.',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -58,9 +58,9 @@ class ErroParticipantsPage extends StatelessWidget {
               ButtonTextWidget(
                 text: "Adicionar Participantes",
                 width: dimensions.width,
-                icon: Icons.play_arrow_rounded,
+                icon: Icons.person_add,
                 iconSize: 30,
-                action: () => Get.toNamed('/explore/map'),
+                action: () => {},
               ),
             ],
           )

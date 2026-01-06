@@ -27,7 +27,7 @@ class InputTextAreaWidget extends StatelessWidget {
       child: TextFormField(
         controller: textController,
         keyboardType: TextInputType.text,
-        minLines: 3,
+        minLines: 5,
         maxLines: null,
         maxLength: null,
         style: Theme.of(context).textTheme.bodyMedium,

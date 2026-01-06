@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:futzada/controllers/auth_controller.dart';
 import 'package:futzada/controllers/navigation_controller.dart';
 import 'package:futzada/routes/app_routes.dart';
@@ -35,6 +36,9 @@ class AppWidget extends StatelessWidget {
           storage.write('currentRoute', routing.current);
         }
       },
+      localizationsDelegates: const [
+        FlutterQuillLocalizations.delegate,
+      ],
     );
   }
 }

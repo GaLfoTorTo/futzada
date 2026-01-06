@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/utils/date_utils.dart';
 
 class NewsModel {
   final int? id;
@@ -11,6 +12,7 @@ class NewsModel {
   final ParticipantModel? participant;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final DateTime? deletedAt;
 
   NewsModel({
     this.id,
@@ -20,6 +22,7 @@ class NewsModel {
     this.participant,
     this.createdAt,
     this.updatedAt,
+    this.deletedAt,
   });
 
   NewsModel copyWith({
@@ -30,6 +33,7 @@ class NewsModel {
     ParticipantModel? participant,
     DateTime? createdAt,
     DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
     return NewsModel(
       id: id ?? this.id,
@@ -39,6 +43,7 @@ class NewsModel {
       participant: participant ?? this.participant,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -49,8 +54,9 @@ class NewsModel {
       'description': description,
       'type': type,
       'participant': participant,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
     };
   }
 
@@ -61,8 +67,9 @@ class NewsModel {
       description: map['description'],
       type: map['type'] as NewsType,
       participant: map['participant'] != null ? ParticipantModel.fromMap(map['participant'] as Map<String,dynamic>) : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as DateTime : null,
-      updatedAt: map['updatedAt'] != null ? map['updatedAt'] as DateTime : null,
+      createdAt: DatetimeUtils.parseDate(map['createdAt']),
+      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
+      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
     );
   }
 
@@ -72,7 +79,7 @@ class NewsModel {
 
   @override
   String toString() {
-    return 'NewsModel(id: $id, title: $title, description: $description, type: $type, participant: $participant, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'NewsModel(id: $id, title: $title, description: $description, type: $type, participant: $participant, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -86,7 +93,8 @@ class NewsModel {
       other.type == type &&
       other.participant == participant &&
       other.createdAt == createdAt &&
-      other.updatedAt == updatedAt;
+      other.updatedAt == updatedAt &&
+      other.deletedAt == deletedAt;
   }
 
   @override
@@ -98,6 +106,7 @@ class NewsModel {
       type.hashCode ^
       participant.hashCode ^
       createdAt.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      deletedAt.hashCode;
   }
 }

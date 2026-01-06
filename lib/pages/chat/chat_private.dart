@@ -36,10 +36,10 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
 
   //FUNÇÃO PARA ROLAGEM DE PAGINA AO ADICIONAR MENSAGEM
   void scrollToBottom() {
-    Future.delayed(Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 100), () {
       scrollController.animateTo(
         scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
     });
@@ -47,9 +47,8 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
 
   @override
   Widget build(BuildContext context) {
-
+    
     return Scaffold(
-      backgroundColor: AppColors.white,
       appBar: HeaderWidget(
         title: user.userName,
         leftAction: () => Get.back(),
@@ -118,15 +117,14 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border(top: BorderSide(color: Colors.grey.shade300)),
+                color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: InputTextWidget(
                       hint: 'Mensagem...',
-                      bgColor: AppColors.gray_300.withAlpha(50),
+                      backgroundColor: AppColors.gray_300.withAlpha(50),
                       textController: controller.messageController,
                       type: TextInputType.text,
                     ),
@@ -167,13 +165,15 @@ class ChatBubble extends StatelessWidget {
     //DEFINIR ALINHAMENTO DE MENSAGEM
     final alignment = autor ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     //DEFINIR GRADIENTE DE COR
+    final color = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
+    final textColorTheme = Get.isDarkMode ? AppColors.white : AppColors.dark_500;
     final gradient = autor
         ? [AppColors.green_300, AppColors.green_500.withGreen(160)]
-        : [AppColors.light, AppColors.light];
+        : [color, color];
     //DEFINIR COR DO TEXTO DA MENSAGEM
     final textColor = autor 
         ? AppColors.white
-        : AppColors.dark_300;
+        : textColorTheme;
     //DEFINIR BORDARS DA MENSAGEM
     final radius = autor
         ? const BorderRadius.only(

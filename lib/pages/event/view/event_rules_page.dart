@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
 import 'package:futzada/models/event_model.dart';
@@ -46,9 +45,7 @@ class _EventRulesPageState extends State<EventRulesPage> {
           children: [
             Text(
               "Regras",
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: AppColors.blue_500
-              ),
+              style: Theme.of(context).textTheme.titleMedium
             ),
             Text(
               "As regras da pelada são definidas pelos organizadores afim de manter a qualidade e o controle sobre pelada. Consulte os organizadores e colaboradores em caso duvidas.",

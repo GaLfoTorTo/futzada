@@ -30,9 +30,7 @@ class EventNewsPage extends StatelessWidget {
           children: [
             Text(
               "Notícias",
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: AppColors.blue_500
-              ),
+              style: Theme.of(context).textTheme.titleMedium
             ),
             Text(
               "As notícias são os registros de eventos e acontecimentos da referentes a pelada. Alteração de horarios e locais, adição ou remoção de participantes, alteração de regras, todas as informações são registras e podem ser visualizadas nesta aba.",
@@ -68,92 +66,92 @@ class EventNewsPage extends StatelessWidget {
                         ),
                       )
                     ),
-                    endChild: Container(
-                      width: dimensions.width,
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.only(left: 10),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.symmetric(vertical: BorderSide(color: newsEvent["color"], width: 8))
-                      ),
-                      child: Column(
-                        spacing: 10,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                event.title,
-                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                  fontWeight: FontWeight.bold
-                                ),
-                              ),
-                              Row(
-                                spacing: 5,
-                                children: [
-                                  const Icon(
-                                    Icons.access_time,
-                                    color: AppColors.gray_300,
-                                    size: 15,
+                    endChild: Card(
+                      child: Container(
+                        width: dimensions.width,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.symmetric(vertical: BorderSide(color: newsEvent["color"], width: 8))
+                        ),
+                        child: Column(
+                          spacing: 10,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  event.title,
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontWeight: FontWeight.bold
                                   ),
-                                  Text(
-                                    DateFormat("HH:mm").format(event.createdAt!),
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                      color: AppColors.gray_500
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          const Divider(),
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Container(
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(color: newsEvent['color'], width: 2)
                                 ),
-                                child: CircleAvatar(
-                                  backgroundImage: event.participant != null 
-                                    ? ImgUtils.getUserImg(event.participant!.user.photo)
-                                    : ImgUtils.getEventImg(null),
-                                ),
-                              ),
-                              Expanded(
-                                child: Column(
+                                Row(
+                                  spacing: 5,
                                   children: [
-                                    if(event.participant != null)...[
-                                      Column(
-                                        children: [
-                                          Text(
-                                            UserUtils.getFullName(event.participant!.user),
-                                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                              fontWeight: FontWeight.bold
-                                            ),
-                                          ),
-                                          Text(
-                                            "@${event.participant!.user.userName}",
-                                            style: Theme.of(context).textTheme.bodySmall,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                    const Icon(
+                                      Icons.access_time,
+                                      color: AppColors.gray_300,
+                                      size: 15,
+                                    ),
                                     Text(
-                                      event.description,
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                      DateFormat("HH:mm").format(event.createdAt!),
+                                      style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                        color: AppColors.gray_500
+                                      ),
                                     ),
                                   ],
+                                )
+                              ],
+                            ),
+                            const Divider(),
+                            Row(
+                              spacing: 10,
+                              children: [
+                                Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    border: Border.all(color: newsEvent['color'], width: 2)
+                                  ),
+                                  child: CircleAvatar(
+                                    backgroundImage: event.participant != null 
+                                      ? ImgUtils.getUserImg(event.participant!.user.photo)
+                                      : ImgUtils.getEventImg(null),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      if(event.participant != null)...[
+                                        Column(
+                                          children: [
+                                            Text(
+                                              UserUtils.getFullName(event.participant!.user),
+                                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                                fontWeight: FontWeight.bold
+                                              ),
+                                            ),
+                                            Text(
+                                              "@${event.participant!.user.userName}",
+                                              style: Theme.of(context).textTheme.bodySmall,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                      Text(
+                                        event.description,
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     )
                   );

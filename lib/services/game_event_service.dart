@@ -1,11 +1,10 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:futzada/models/participant_model.dart';
-import 'package:futzada/models/team_model.dart';
-import 'package:futzada/theme/app_icones.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
+import 'package:flutter/material.dart';
 import 'package:futzada/enum/enums.dart';
+import 'package:futzada/models/participant_model.dart';
+import 'package:futzada/models/team_model.dart';
 import 'package:futzada/models/game_event_model.dart';
 
 class GameEventService {

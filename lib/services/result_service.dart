@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/models/result_model.dart';
 
@@ -16,8 +15,8 @@ class ResultService {
       "teamAScore" : random.nextInt(2),
       "teamBScore" : random.nextInt(2),
       "duration" : random.nextInt(10),
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 }

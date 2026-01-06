@@ -50,15 +50,15 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
             Obx(() {
               return Container(
                 padding: const EdgeInsets.all(10),
-                color: AppColors.white,
+                color: Get.isDarkMode ? AppColors.dark_700 : AppColors.white,
                 child: Column(
                   spacing: 5,
                   children: [
                     InputTextWidget(
                       name: 'search',
                       hint: 'Pesquisa',
-                      bgColor: AppColors.gray_300.withAlpha(50),
                       prefixIcon: AppIcones.search_solid,
+                      backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
                       textController: exploreController.pesquisaController,
                       type: TextInputType.text,
                     ),
@@ -77,7 +77,8 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
                           text: "Filtros",
                           icon: Icons.filter_alt,
                           width: dimensions.width * 0.25,
-                          backgroundColor: AppColors.white,
+                          textColor: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
+                          backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
                           action: () => Get.toNamed("explore/filter"),
                         ),
                         ButtonTextWidget(
@@ -103,11 +104,33 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
               if(!mapWidgetController.isLoaded.value){
                 return const IndicatorLoadingWidget();
               }
+              if(mapWidgetController.events.isEmpty){
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text(
+                        "Não foi possível buscar os eventos!",
+                      ),
+                      const Icon(
+                        Icons.content_paste_off_rounded,
+                        size: 120,
+                      ),
+                      ButtonTextWidget(
+                        text: "Tentar Novamente!",
+                        icon: Icons.refresh_rounded,
+                        width: dimensions.width - 50,
+                        action: () => {},
+                      ),
+                    ],
+                  ),
+                );
+              }
               return Expanded(
                 child: ListView(
                   children: mapWidgetController.events.map((event){
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      padding: const EdgeInsets.all(5),
                       child: CardEventSearchWidget(event: event),
                     );
                   }).toList(),

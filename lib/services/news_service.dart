@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:futzada/theme/app_colors.dart';
-import 'package:intl/intl.dart';
+
 import 'package:faker/faker.dart';
 import 'package:futzada/enum/enums.dart';
 import 'package:futzada/models/news_model.dart';
@@ -23,8 +23,8 @@ class NewsService {
       "title" : getEventNews(type)['title'],
       "description": faker.lorem.sentence().toString(),
       "type": type,
-      "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
-      "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2024, maxYear: 2025).toString()),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });
   }
 

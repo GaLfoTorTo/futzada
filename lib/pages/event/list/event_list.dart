@@ -23,50 +23,32 @@ class EventListPage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.all(10),
             child: Column(
+              spacing: 15,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if(eventController.myEvents.isNotEmpty)...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Participando',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
+                  Text(
+                    'Participando',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Column(
-                    children: eventController.myEvents.map((entry) {
-                      //RESGATAR ITENS 
-                      EventModel item = entry;
-                      return  CardEventListWidget(event: item);
+                    spacing: 10,
+                    children: eventController.myEvents.map((event) {
+                      return  CardEventListWidget(event: event);
                     }).toList(),
                   ),
                 ],
                 if(suggestions.isNotEmpty)...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Sugestões',
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
+                  Text(
+                    'Sugestões',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Column(
-                    children: suggestions.map((entry) {
-                      //RESGATAR ITENS 
-                      EventModel sugestion = entry;
-                      return  CardEventListWidget(event: sugestion);
+                    spacing: 10,
+                    children: suggestions.map((suggestion) {
+                      return  CardEventListWidget(event: suggestion);
                     }).toList(),
                   ),
                 ]

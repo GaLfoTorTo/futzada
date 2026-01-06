@@ -127,7 +127,7 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
       return Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
           border: Border.all(color: AppColors.gray_300),
           borderRadius: BorderRadius.circular(10)
         ),
@@ -157,7 +157,7 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-          color: AppColors.white,
+          color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.dark_500.withAlpha(30),
