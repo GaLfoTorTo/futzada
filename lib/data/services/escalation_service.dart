@@ -1,0 +1,308 @@
+import 'dart:math';
+import 'package:get/get.dart';
+import 'package:faker/faker.dart';
+import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/data/models/escalation_model.dart';
+import 'package:futzada/data/models/participant_model.dart';
+
+class EscalationService {
+  //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
+  static var faker = Faker();
+  static var random = Random();
+
+  //FUNÇÃO DE GERAÇÃO DE ESCALAÇÃO DO USUARIO
+  EscalationModel generateEscalation(String category){
+    //RESGATAR LISTA DE FORMAÇÕES
+    List<String> listFormations = getFormations(category);
+    //DEFINIR ESCALAÇÃO
+    return EscalationModel.fromMap({
+      "id" : random.nextInt(2),
+      "eventId" : 1,
+      "formation" : listFormations[random.nextInt(listFormations.length)],
+      "starters" : setEscalation(category, 'starters'),
+      "reserves" : setEscalation(category, 'reserves'),
+      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+    });
+  }
+
+  //FUNÇÃO PARA CONVERTER ESCALAÇÃO EM RXMAP
+  RxMap<int, ParticipantModel?> convertToRxMap(
+    Map<int, ParticipantModel?> escalation,
+  ) {
+    return escalation.obs;
+  }
+  
+  //FUNÇÃO PARA CONVERTER ESCALÇAI EM MAP
+  Map<int, ParticipantModel?> convertToMap(
+    RxMap<int, ParticipantModel?> escalation,
+  ) {
+    return Map<int, ParticipantModel?>.from(escalation);
+  }
+
+  //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
+  List<int?> setEscalation(String category, String occupation) {
+    //VARIAVEL DE CONTROLE DE QUANTIDADE DE JOGADORES POR CATEGORIA
+    int numSta;
+    int numRes;
+    switch (category) {
+      case 'Futebol':
+        numSta = 11;
+        numRes = 5;
+        break;
+      case 'Fut7':
+        numSta = 9;
+        numRes = 3;
+      case 'Futsal':
+        numSta = 6;
+        numRes = 2;
+        break;
+      default:
+        numSta = 11;
+        numRes = 5;
+        break;
+    }
+    //RETORNAR ESCALAÇÃO
+    if(occupation == 'starters'){
+      //INICIALIZAR TITULARES COM VALORES NULOS
+      return RxList<int?>.filled(numSta, null);
+    } else {
+      //INICIALIZAR RESERVAS COM VALORES NULOS
+      return RxList<int?>.filled(numRes, null);
+    }
+  }
+
+  //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
+  String getPositionName(int sectorIndex, String category, String formationString) {
+    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+    final formation = getFormationList(formationString);
+    final totalGroups = formation.length;
+    
+    switch (category) {
+      case 'Futebol':
+        return getFootballPosition(sectorIndex, totalGroups);
+      case 'Fut7':
+        return getFut7Position(sectorIndex, totalGroups);
+      case 'Futsal':
+        return getFutsalPosition(sectorIndex);
+      default:
+        return 'Jogador';
+    }
+  }
+
+  //FUNÇÃO PARA RESGATAR POSIÇÃO DO JOGADOR NA ESCALAÇÃO
+  String getPositionEscalation(int index, String category, String formationString) {
+    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+    final formation = getFormationList(formationString);
+    int sectorIndex = 0;
+    //LOOP NO ARRAY DE FORMAÇÃOS
+    for(int i = 0; i < formation.length; i++){
+      //RESGTAR LINHAS DE CADA SETOR
+      int lines = formation[i];
+      //VERIFICAR SE O ÍNDICE É MENOR QUE A QUANTIDADE DE LINHAS DO SETOR
+      if(index < lines){
+        //RESGATAR NOME DA POSIÇÃO
+        return getPositionName(i, category, formationString);
+      }else{
+        index -= lines;
+      }
+    }
+    return getPositionName(sectorIndex, category, formationString);
+  }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTEBOL
+  String getFootballPosition(int index, int linhas) {
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    if(linhas == 4){
+      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+          return 'Meio-Campo';
+        case 2:
+          return 'Zagueiro';
+        case 3:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    }else if(linhas == 5){
+      //VERIFICAR QUANTIDADE DE ZAGUEIROS OU MEIAS
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+        case 2:
+          return 'Meio-Campo';
+        case 3:
+          return 'Zagueiro';
+        case 4:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }
+    return 'Jogador';
+  }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUT7
+  String getFut7Position(int index, int linhas){
+    //VERIFICAR LINHAS DE LINHAS NA FORMAÇÃO
+    if(linhas == 5){
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+        case 2:
+          return 'Meio-Campo';
+        case 3:
+          return 'Zagueiros';
+        case 4:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }else{
+      switch (index) {
+        case 0:
+          return 'Atacante';
+        case 1:
+          return 'Meio-Campo';
+        case 2:
+          return 'Zagueiros';
+        case 3:
+          return 'Goleiro';
+        default:
+          return 'Jogador';
+      }
+    }
+  }
+  
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTSAL
+  String getFutsalPosition(int index){
+    switch (index) {
+      case 0:
+        return 'Pivô';
+      case 1:
+        return 'Ala';
+      case 2:
+        return 'Fixo';
+      case 3:
+        return 'Goleiro';
+      default:
+        return 'Jogador';
+    }
+  }
+  
+  //FUNÇÃO DE ESTAMPA DO CAMPO
+  String fieldType(String? category){
+    switch (category) {
+      case 'Futebol':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futebol_sm;
+      case 'Fut7':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.fut7_sm;
+      case 'Futsal':
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futsal_sm;
+      default:
+        //DEFINIR LINHAS DE CAMPO
+        return AppIcones.futebol_sm;
+    }
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+  List<int> getFormationList(String formation) {
+    List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
+    splitedFormation.insert(0, 1);
+    return splitedFormation.reversed.toList();
+  }
+
+  //FUNÇÃO PARA DEFINIR OS TIPOS DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
+  List<String> getFormations(String category){
+    switch (category) {
+      case 'Futebol':
+        return [
+          '4-3-3',
+          '4-1-2-3',
+          '4-2-1-3',
+          '4-2-3-1',
+          '4-4-2',
+          '3-4-3',
+          '3-2-4-1',
+          '3-4-2-1',
+          '5-3-2',
+          '5-4-1'
+        ];
+      case 'Fut7':
+        return [
+          '3-1-2',
+          '3-2-1',
+          '3-0-3',
+          '2-1-3',
+          '2-1-2-1',
+          '2-2-2',
+          '2-3-1',
+          '1-4-1',
+          '1-3-2',
+          '1-2-3',
+        ];
+      case 'Futsal':
+        return [
+          '2-0-2',
+          '2-1-1',
+          '1-2-1',
+          '1-3',
+          '1-1-2',
+        ];
+      default:
+        return [
+          '4-3-3',
+          '4-1-2-3',
+          '4-2-1-3',
+          '4-2-3-1',
+          '4-4-2',
+          '3-4-3',
+          '3-2-4-1',
+          '3-4-2-1',
+          '5-3-2',
+          '5-4-1'
+        ];
+    }
+  }
+
+  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
+  List<int> setFormation(qtd){
+    switch (qtd) {
+      case 4:
+        //SETORES PARA 4 JOGADORES
+        return [0, 2, 1];
+      case 5:
+        //SETORES PARA 5 JOGADORES
+        return [1, 2, 1];
+      case 6:
+        //SETORES PARA 6 JOGADORES
+        return [1, 2, 2];
+      case 7:
+        //SETORES PARA 7 JOGADORES
+        return [1, 3, 2];
+      case 8:
+        //SETORES PARA 8 JOGADORES
+        return [2, 3, 2];
+      case 9:
+        //SETORES PARA 9 JOGADORES
+        return [2, 3, 3];
+      case 10:
+        //SETORES PARA 10 JOGADORES
+        return [3, 3, 3];
+      case 11:
+        //SETORES PARA 11 JOGADORES
+        return [3, 4, 4];
+      default:
+        return [3, 4, 4];
+    }
+  }
+}

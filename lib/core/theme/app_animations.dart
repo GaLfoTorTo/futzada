@@ -1,0 +1,16 @@
+class AppAnimations {
+  AppAnimations._();
+  //ANIMAÇÕES DE STATUS DE REGISTROS
+  static const userSuccess = 'assets/animations/userSuccess.json';
+  static const userError = 'assets/animations/userError.json';
+  static const eventSuccess = 'assets/animations/eventSuccess.json';
+  static const eventError = 'assets/animations/eventError.json';
+  //ANIMAÇÕES DE LOADING
+  static const loading = 'assets/animations/loading.json';
+  //ANIMAÇÕES DE APRESENTAÇÃO (ON BOARDING)
+  static const introductionFlag = 'assets/animations/introducaoFlag.json';
+  static const introductionPhone = 'assets/animations/introducaoCelular.json';
+  static const introductionEscalation = 'assets/animations/introducaoEstadio.json';
+  static const introductionManager = 'assets/animations/introducaoTecnico.json';
+  static const introductionPlayer = 'assets/animations/introducaoJogador.json';
+}
