@@ -1,3 +1,4 @@
+import 'package:futzada/core/theme/app_colors.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/controllers/notification_controller.dart';
@@ -29,6 +30,9 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
   
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Notificações',
@@ -40,6 +44,21 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
           children: [
             TabBar(
               controller: tabController,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(
+                  width: 5,
+                  color: Theme.of(context).primaryColor,
+                ),
+                insets: EdgeInsets.symmetric(horizontal: dimensions.width / 2)
+              ),
+              labelColor: Theme.of(context).primaryColor,
+              labelStyle: const TextStyle(
+                color: AppColors.grey_500,
+                fontWeight: FontWeight.normal,
+              ),
+              unselectedLabelColor: AppColors.grey_500,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
               tabs: const [
                 Text("Todas"),
                 Tab(text: 'Para você'),

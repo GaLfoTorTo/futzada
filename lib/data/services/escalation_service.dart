@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:faker/faker.dart';
-import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/data/models/escalation_model.dart';
 import 'package:futzada/data/models/participant_model.dart';
 
@@ -196,24 +195,6 @@ class EscalationService {
     }
   }
   
-  //FUNÇÃO DE ESTAMPA DO CAMPO
-  String fieldType(String? category){
-    switch (category) {
-      case 'Futebol':
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.futebol_sm;
-      case 'Fut7':
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.fut7_sm;
-      case 'Futsal':
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.futsal_sm;
-      default:
-        //DEFINIR LINHAS DE CAMPO
-        return AppIcones.futebol_sm;
-    }
-  }
-
   //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
   List<int> getFormationList(String formation) {
     List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();

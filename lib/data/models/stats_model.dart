@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class StatsModel {
   int? gameId;
@@ -48,9 +48,9 @@ class StatsModel {
     return StatsModel(
       gameId : map['gameId'] as int,
       stats : map['stats'] != null ? map['stats'] as List<Map<String, int>> : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 

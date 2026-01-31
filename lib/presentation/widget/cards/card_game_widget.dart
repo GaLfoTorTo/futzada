@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
@@ -19,7 +19,7 @@ class CardGameWidget extends StatefulWidget {
   final bool? active;
   final bool? historic;
 
-  CardGameWidget({
+  const CardGameWidget({
     super.key,
     this.width,
     required this.event,
@@ -37,6 +37,10 @@ class CardGameWidget extends StatefulWidget {
 class _CardGameWidgetState extends State<CardGameWidget> {
   //RESGATAR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
+  late Color eventTextColor;
+  late String eventImage;
   //RESGATAR PROPS DE NAVEGAÇÃO E ATIVAÇÃO DO CARD
   bool propNavigate = false;
   bool propActive = false;
@@ -44,8 +48,11 @@ class _CardGameWidgetState extends State<CardGameWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
+    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
     //RESGATAR PROP DE NAVEGAÇÃO PADRÃO
     propNavigate = widget.navigate != null ? widget.navigate! : false;
     //RESGATAR PROP DE ATIVAÇÃO PADRÃO DO CARD
@@ -94,10 +101,10 @@ class _CardGameWidgetState extends State<CardGameWidget> {
             ),
           ],
           image: DecorationImage(
-            image: const AssetImage(AppImages.cardFootball) as ImageProvider,
+            image: AssetImage(eventImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              AppColors.green_300.withAlpha(180),
+              eventColor.withAlpha(200),
               BlendMode.srcATop,
             )
           ),
@@ -115,7 +122,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
               Text(
                 "#${widget.game.number}",
                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: AppColors.white
+                  color: eventTextColor
                 )
               ),
               Padding(
@@ -128,7 +135,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                       width: 50,
                       height: 50,
                       colorFilter: ColorFilter.mode(
-                        AppColors.white,
+                        eventTextColor,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -138,7 +145,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                         Text(
                           widget.gameDate,
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: AppColors.white,
+                            color: eventTextColor,
                             fontSize: !propHistoric ? 18 : 16
                           ),
                         ),
@@ -149,20 +156,20 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                               Text(
                                 "$teamAScore",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: AppColors.white,
+                                  color: eventTextColor,
                                   fontSize: 42
                                 ),
                               ),
                               Text(
                                 "X",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: AppColors.white,
+                                  color: eventTextColor,
                                 ),
                               ),
                               Text(
                                 "$teamBScore",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: AppColors.white,
+                                  color: eventTextColor,
                                   fontSize: 42
                                 ),
                               ),
@@ -172,7 +179,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                         Text(
                           "$gameStartTime - $gameEndTime",
                           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: AppColors.white,
+                            color: eventTextColor,
                           ),
                         ),
                       ],
@@ -182,7 +189,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                       width: 50,
                       height: 50,
                       colorFilter: ColorFilter.mode(
-                        AppColors.white,
+                        eventTextColor,
                         BlendMode.srcIn,
                       ),
                     ),

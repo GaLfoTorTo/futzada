@@ -32,4 +32,12 @@ class DateHelper {
     }
     return date.toString().replaceAll('[', '').replaceAll(']', '').toString();
   }
+
+  //FUNNÇÃO DE TRANSFORMAÇÃO DE DATA
+  static DateTime? parseDate(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.parse(value);
+    return null;
+  }
 }

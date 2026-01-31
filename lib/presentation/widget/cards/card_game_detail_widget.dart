@@ -1,12 +1,12 @@
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/game_event_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -30,16 +30,19 @@ class CardGameDetailWidget extends StatefulWidget {
 class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
   //RESGATAR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
-  //LISTA DE IMAGENS DOS JOGADORES
-  List<String?>teamAplayersImg = [];
-  List<String?>teamBplayersImg = [];
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
+  late Color eventTextColor;
+  late String eventImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    teamAplayersImg = gameController.currentGame.teams!.first.players.take(3).map((user) => user.photo).toList();
-    teamBplayersImg = gameController.currentGame.teams!.first.players.take(3).map((user) => user.photo).toList();
+    //ESTADO - ITEMS EVENTO
+    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   //FUNÇÃO DE AGRUPAMENTO DE EVENTOS DE GOL DO JOGADOR
@@ -48,7 +51,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
     final Map<int, List<int>> grouped = {};
 
     for (final gameEvent in gameEvents) {
-      final user = EventUtils.getUserEvent(gameController.event, gameEvent.userId!);
+      final user = EventHelper.getUserEvent(gameController.event, gameEvent.userId!);
       if (user == null) continue;
       //ADICIONAR JOGADOR
       grouped.putIfAbsent(user.id!, () => []);
@@ -97,11 +100,12 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
             padding: const EdgeInsets.symmetric(vertical: 15),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: eventColor,
               image: DecorationImage(
-                image: const AssetImage(AppImages.cardFootball) as ImageProvider,
+                image: AssetImage(eventImage) as ImageProvider,
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  AppColors.green_300.withAlpha(150), 
+                  eventColor.withAlpha(200), 
                   BlendMode.srcATop,
                 )
               ),
@@ -115,22 +119,22 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                       Text(
                         gameController.currentGame.teams!.first.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: AppColors.blue_500
+                          color: eventTextColor
                         )
                       ),
                       SvgPicture.asset(
                         AppIcones.emblemas[gameController.currentGame.teams!.first.emblem]!,
                         width: 100,
                         height: 100,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.white, 
+                        colorFilter: ColorFilter.mode(
+                          eventTextColor,
                           BlendMode.srcIn,
                         ),
                       ),
                       Text(
                         'Home',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: AppColors.blue_500
+                          color: eventTextColor
                         )
                       ),
                     ],
@@ -173,7 +177,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                             Text(
                               "$teamAScore",
                               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: AppColors.white,
+                                color: eventTextColor,
                                 fontSize: 60
                               )
                             ),
@@ -182,14 +186,14 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                               child: Text(
                                 'X', 
                                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                  color: AppColors.blue_500
+                                  color: eventTextColor
                                 )
                               ),
                             ),
                             Text(
                               "$teamBScore",
                               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: AppColors.white,
+                                color: eventTextColor,
                                 fontSize: 60
                               )
                             ),
@@ -239,22 +243,22 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                       Text(
                         gameController.currentGame.teams!.last.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: AppColors.blue_500
+                          color: eventTextColor
                         )
                       ),
                       SvgPicture.asset(
                         AppIcones.emblemas[gameController.currentGame.teams!.last.emblem!]!,
                         width: 100,
                         height: 100,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.white, 
+                        colorFilter: ColorFilter.mode(
+                          eventTextColor,
                           BlendMode.srcIn,
                         ),
                       ),
                       Text(
                         'Away',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: AppColors.blue_500
+                          color: eventTextColor
                         )
                       ),
                     ],
@@ -286,10 +290,10 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                       final playerId = entry.key;
                       final minutes = entry.value..sort();
                       final event = teamGameEvents.firstWhere(
-                        (e) => EventUtils.getUserEvent(gameController.event, e.userId!)!.id == playerId,
+                        (e) => EventHelper.getUserEvent(gameController.event, e.userId!)!.id == playerId,
                       );
                   
-                      final user = EventUtils.getUserEvent(gameController.event, event.userId!)!;
+                      final user = EventHelper.getUserEvent(gameController.event, event.userId!)!;
                       return Row(
                         spacing: 5,
                         children: [
@@ -300,7 +304,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                               color: AppColors.grey_500,
                             ),
                             Text(
-                              UserUtils.getFullName(user),
+                              UserHelper.getFullName(user),
                               style: Theme.of(context).textTheme.displaySmall!.copyWith(
                                 color: AppColors.grey_500
                               ),

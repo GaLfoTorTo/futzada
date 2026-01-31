@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
@@ -56,7 +56,7 @@ class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        UserUtils.getFullName(widget.user),
+                        UserHelper.getFullName(widget.user),
                         style: Theme.of(Get.context!).textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis
@@ -74,8 +74,8 @@ class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Icon(
-                    AppHelper.setStatusPlayer(UserUtils.getParticipant(widget.user.participants, gameController.event.id!)!.status)['icon'],
-                    color: AppHelper.setStatusPlayer(UserUtils.getParticipant(widget.user.participants, gameController.event.id!)!.status)['color'],
+                    AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, gameController.event.id!)!.status)['icon'],
+                    color: AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, gameController.event.id!)!.status)['color'],
                     size: 20,
                   ),
                 ),

@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
@@ -24,7 +24,7 @@ class DialogEscalationConfirm extends StatelessWidget {
     EscalationController escalationController = EscalationController.instance;
     //RESGATAR CAPITÃO
     int i = escalationController.starters.firstWhere((p) => p == escalationController.selectedPlayerCapitan.value)!;
-    UserModel capitan = EventUtils.getUserEvent(escalationController.event!, i)!;
+    UserModel capitan = EventHelper.getUserEvent(escalationController.event!, i)!;
 
     return Dialog(
       child: Padding(
@@ -81,7 +81,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                           width: 30,
                           height: 30,
                           side: "right",
-                          images: escalationController.starters.take(3).map((i) => EventUtils.getUserEvent(escalationController.event!, i!)?.photo).toList()
+                          images: escalationController.starters.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
                         ),
                       ),
                       Text(
@@ -103,7 +103,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                             width: 30,
                             height: 30,
                             side: "right",
-                            images: escalationController.reserves.take(3).map((i) => EventUtils.getUserEvent(escalationController.event!, i!)?.photo).toList()
+                            images: escalationController.reserves.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
                           ),
                         ),
                       ]else...[
@@ -140,7 +140,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    UserUtils.getFullName(capitan),
+                                    UserHelper.getFullName(capitan),
                                     style: Theme.of(context).textTheme.labelLarge,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
@@ -148,10 +148,12 @@ class DialogEscalationConfirm extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SvgPicture.asset(
-                              AppIcones.posicao['cap']!,
-                              width: 20,
-                              height: 20,
+                            const PositionWidget(
+                              position: "CAP",
+                              mainPosition: true,
+                              width: 35,
+                              height: 25,
+                              textSide: 10,
                             ),
                           ],
                         )

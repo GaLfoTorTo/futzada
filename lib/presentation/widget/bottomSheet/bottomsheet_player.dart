@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/player_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/data/models/player_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
@@ -134,10 +133,10 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
                       height: 100,
                       width: 100,
                       image: user.photo,
-                      borderColor: AppHelper.setColorPosition(player.mainPosition),
+                      borderColor: PlayerHelper.setColorPosition(player.mainPosition),
                     ),
                     Text(
-                      UserUtils.getFullName(user),
+                      UserHelper.getFullName(user),
                       style: Theme.of(context).textTheme.titleSmall,
                       textAlign: TextAlign.center,
                     ),
@@ -170,13 +169,15 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
                 ),
               ),
               if(isCapitan)...[
-                Positioned(
+                const Positioned(
                   top: 70,
                   left: 80,
-                  child: SvgPicture.asset(
-                    AppIcones.posicao['cap']!,
-                    width: 25,
+                  child: PositionWidget(
+                    position: "cap",
+                    mainPosition: true,
+                    width: 35,
                     height: 25,
+                    textSide: 10,
                   ),
                 ),
               ]
@@ -205,9 +206,9 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
                       children: [
                         if(name == 'status')...[
                           Icon(
-                            AppHelper.setStatusPlayer(UserUtils.getParticipant(user.participants, escalationController.event!.id!)!.status)['icon'],
+                            AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['icon'],
                             size: 30,
-                            color: AppHelper.setStatusPlayer(UserUtils.getParticipant(user.participants, escalationController.event!.id!)!.status)['color'],
+                            color: AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['color'],
                           )
                         ]else...[
                           Text(

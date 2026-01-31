@@ -1,7 +1,8 @@
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
@@ -28,6 +29,8 @@ class GameRandomTeamsPage extends StatefulWidget {
 class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
   //CONTROLLER - PARTIDA
   GameController gameController = GameController.instance;
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
   //LISTA DE PARTICIPANTES - TEMPORARIA
   List<UserModel> participantsPresentClone = [];
   //ESTADOS - EQUIPES
@@ -41,6 +44,8 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
     super.initState();
     //INICIALIZAR CONTROLLERS DE EQUIPES
     gameController.initTeamsControllers();
+    //ESTADO - ITEMS EVENTO
+    eventColor = ModalityHelper.getEventModalityColor(gameController.event.gameConfig?.category ?? gameController.event.modality!.name)['color'];
     //RESGATAR QUANTIDADE DE JOGADORES DEFINIDO
     qtdPlayers = gameController.currentGameConfig!.playersPerTeam!;
     //VERIFICAR SE CONFIGURAÇÕES E EQUIPES DA PARTIDA ESTÃO PRONTOS 
@@ -66,8 +71,10 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
       gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam && 
       gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam
     ){
-      //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+      //DEIFNIR EQUIEPES E DISPENSAR CONTROLLERS DE EQUIPES
       gameController.disposeTeamsControllers();
+      gameController.isGameReady.value = true;
+      //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
       Get.offNamed('/games/overview', arguments: {
         'game': gameController.currentGame,
         'event': gameController.event,
@@ -93,11 +100,6 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
         gameController.participantsPresent.value = gameController.participantsClone.toList();
         break;
     }
-    //DEBUG
-    /* print(action);
-    print("Presentes ${gameController.participantsPresent.take(5).map((e) => e.id).toList()}");
-    print("Clone ${gameController.participantsClone.take(5).map((e) => e.id).toList()}");
-    print("Clone page ${participantsPresentClone.take(5).map((e) => e.id).toList()}"); */
     participantsPresentClone = [];
     gameController.update();
     //ATUALIZAR ESTADO
@@ -111,6 +113,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Definição de Equipes",
+        backgroundColor: eventColor,
         leftAction: () => Get.back(),
         rightIcon: AppIcones.cog_solid,
         rightAction: () {
@@ -130,7 +133,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
               Container(
                 padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
-                  color: AppColors.green_300,
+                  color: eventColor,
                   borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50)),
                   boxShadow: [
                     BoxShadow(
@@ -323,7 +326,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                         boxShadow: [
                                           if (qtdPlayers == teamLength)...[
                                             BoxShadow(
-                                              color: Theme.of(context).primaryColor.withAlpha(70),
+                                              color: eventColor.withAlpha(70),
                                               spreadRadius: 5,
                                               blurRadius: 1,
                                               offset: const Offset(0,0),
@@ -335,7 +338,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                         width: dimensions.width,
                                         height: 30,
                                         backgroundColor: qtdPlayers == teamLength
-                                          ? Theme.of(context).primaryColor 
+                                          ? eventColor 
                                           : Theme.of(context).inputDecorationTheme.fillColor,
                                         textColor: qtdPlayers == teamLength
                                           ? AppColors.blue_500
@@ -392,7 +395,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                         ? gameController.teamA.players[item]
                                         : gameController.teamB.players[item];
                                       //RESGATAR NOME, USER NAME E FOTO DO PARTICIPANTE
-                                      name = UserUtils.getFullName(user);
+                                      name = UserHelper.getFullName(user);
                                       userName = user.userName!;
                                       photo = user.photo;
                                     }
@@ -460,6 +463,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                       ButtonTextWidget(
                         text: "Definir Equipes",
                         width: dimensions.width,
+                        backgroundColor: eventColor,
                         height: 30,
                         action: () => setTeams()
                       ),
@@ -470,7 +474,10 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                         iconSize: 30,
                         action: () async{
                           await Get.showOverlay(
-                            asyncFunction: () => gameController.teamService.resetPlayersTeams(),
+                            asyncFunction: (){
+                              teamDefined.value = false;
+                              return gameController.teamService.resetPlayersTeams();
+                            },
                             loadingWidget: const Center(child: IndicatorLoadingWidget()),
                             opacity: 0.7,
                             opacityColor: AppColors.dark_700
@@ -498,7 +505,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                     icon: Icons.reorder_rounded,
                                     width: 100,
                                     height: 20,
-                                    textColor: AppColors.green_300,
+                                    textColor: eventColor,
                                     backgroundColor: Colors.transparent,
                                     action: () => {
                                       participantsPresentClone = gameController.participantsPresent.toList(),
@@ -570,7 +577,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                     );
                                   },
                                   children: gameController.participantsPresent
-                                    .where((p) => UserUtils.getParticipant(p.participants, gameController.event.id!)!.role!.contains("Player"))
+                                    .where((p) => UserHelper.getParticipant(p.participants, gameController.event.id!)!.role!.contains("Player"))
                                     .take(gameController.event.gameConfig!.playersPerTeam! * 2)
                                     .map((user){
                                       return Row(
@@ -597,7 +604,6 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                               Column(
                                 spacing: 5,
                                 children: gameController.participantsPresent
-                                  .where((p) => UserUtils.getParticipant(p.participants, gameController.event.id!)!.role!.contains("Player"))
                                   .take(gameController.event.gameConfig!.playersPerTeam! * 2)
                                   .map((user){
                                     return CardPlayerPresentWidget(
@@ -621,7 +627,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                   icon: Icons.add_rounded,
                                   width: 100,
                                   height: 20,
-                                  textColor: AppColors.green_300,
+                                  textColor: eventColor,
                                   backgroundColor: Colors.transparent,
                                   action: () {},
                                 ) 
@@ -631,7 +637,6 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: gameController.participantsPresent
-                                  .where((p) => UserUtils.getParticipant(p.participants, gameController.event.id!)!.role!.contains("Player"))
                                   .skip(gameController.event.gameConfig!.playersPerTeam! * 2)
                                   .take(gameController.event.gameConfig!.playersPerTeam!)
                                   .map((user){
@@ -654,10 +659,11 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
         )
       ),
       floatingActionButton: Obx((){
-        if(!teamDefined.value){
+        if(!teamDefined.value && gameController.participantsPresent.length >= gameController.currentGameConfig!.playersPerTeam! * 2){
           return FloatButtonWidget(
-            icon: Icons.content_paste_go_rounded, 
             floatKey: "escalation_game",
+            icon: Icons.content_paste_go_rounded,
+            backgroundColor: eventColor,
             onPressed: () => Get.dialog(
               DialogRandomTeam(
                 actionRandom: () async {
@@ -680,4 +686,4 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
       }),
     );
   }
-}                                                                           
+}

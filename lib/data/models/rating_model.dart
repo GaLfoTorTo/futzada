@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class RatingModel {
   int? id;
@@ -90,9 +90,9 @@ class RatingModel {
       valuation: map['valuation'] != null ? map['valuation'] as double : null,
       price: map['price'] != null ? map['price'] as double : null,
       games: map['games'] != null ? map['games'] as int : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 

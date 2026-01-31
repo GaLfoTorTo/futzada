@@ -5,7 +5,7 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
@@ -85,7 +85,7 @@ class EventParticipantsPage extends StatelessWidget {
                     ),
                     ...participants.map((user){
                       //RESGATAR TIPO DE PARTICIPANT
-                      var iconRole = setRole(UserUtils.getParticipant(user.participants, eventController.event.id!)?.role);
+                      var iconRole = setRole(UserHelper.getParticipant(user.participants, eventController.event.id!)?.role);
                       return TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
@@ -112,7 +112,7 @@ class EventParticipantsPage extends StatelessWidget {
                                     width: (dimensions.width / 2) - 50,
                                     height: 25,
                                     child: Text(
-                                      UserUtils.getFullName(user),
+                                      UserHelper.getFullName(user),
                                       style: Theme.of(context).textTheme.titleSmall!.copyWith(overflow: TextOverflow.ellipsis),
                                     ),
                                   ),

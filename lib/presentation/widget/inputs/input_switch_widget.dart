@@ -71,7 +71,7 @@ class _InputTextWidgetState extends State<InputSwitchWidget> {
           left: 20,
           child: Text(
             widget.label,
-            style: Theme.of(context).textTheme.titleSmall,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
         ),
       ]

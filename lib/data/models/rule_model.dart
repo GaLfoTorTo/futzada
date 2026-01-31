@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class RuleModel {
   int? id;
@@ -59,9 +59,9 @@ class RuleModel {
       eventId: map['eventId'],
       title: map['title'],
       description: map['description'],
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 

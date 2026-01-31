@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/core/helpers/player_helper.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
 import 'package:futzada/presentation/widget/buttons/button_player_widget.dart';
@@ -35,7 +36,7 @@ class CardEscalationListWidget extends StatelessWidget {
         ? escalationController.starters[index]
         : escalationController.reserves[index];
       //RESGATAR JOGADOR REFERENCIADO NA ESCALAÇÃO
-      UserModel? user = EventUtils.getUserEvent(escalationController.event!, i!);
+      UserModel? user = EventHelper.getUserEvent(escalationController.event!, i!);
       return Card(
         child: Container(
           padding: const EdgeInsets.all(10),
@@ -55,13 +56,13 @@ class CardEscalationListWidget extends StatelessWidget {
                         height: 70,
                         width: 70,
                         image: user.photo,
-                        borderColor: AppHelper.setColorPosition(position),
+                        borderColor: PlayerHelper.setColorPosition(position),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            UserUtils.getFullName(user),
+                            UserHelper.getFullName(user),
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                           Text(
@@ -78,8 +79,8 @@ class CardEscalationListWidget extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Icon(
-                            AppHelper.setStatusPlayer(UserUtils.getParticipant(user.participants, escalationController.event!.id!)!.status)['icon'],
-                            color: AppHelper.setStatusPlayer(UserUtils.getParticipant(user.participants, escalationController.event!.id!)!.status)['color'],
+                            AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['icon'],
+                            color: AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['color'],
                             size: 30,
                           ),
                         ),

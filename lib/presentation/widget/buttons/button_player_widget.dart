@@ -1,5 +1,5 @@
 import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -67,7 +67,7 @@ class ButtonPlayerWidget extends StatelessWidget {
         //RESGATAR JOGADOR
         PlayerModel player = user.player!;
         //RESGATAR RATING DO EVENTO
-        RatingModel rating = UserUtils.getRating(player, escalationController.event!.id!);
+        RatingModel rating = UserHelper.getRating(player, escalationController.event!.id!);
         //DEEFINIR COR A PARTIR DO TEMA
         final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
 
@@ -111,7 +111,7 @@ class ButtonPlayerWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Text(
-                UserUtils.getFullName(user),
+                UserHelper.getFullName(user),
                 style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   color: AppColors.white, 
                 ),

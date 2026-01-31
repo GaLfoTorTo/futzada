@@ -117,7 +117,7 @@ class EventBasicStepState extends State<EventBasicStep> {
   void validForm(){
     setState(() {  
       //VERIFICAR SE VISIBILIDADE FOI SELECIONADA
-      if(eventController.visibilityController.text.isEmpty){
+      if(eventController.privacyController.text.isEmpty){
         isValid = false;
       }
       //VERIFICAR SE COLABORADORES ESTÃO ATIVADOS
@@ -158,20 +158,20 @@ class EventBasicStepState extends State<EventBasicStep> {
     //LISTA DE INPUTS RADIO
     final List<Map<String, dynamic>> radios = [
       {
-        'name': 'visibility',
+        'name': 'privacy',
         'placeholder' : 'Qualquer usuário pode visualizar as informações.',
         'label': 'Publico',
-        'value': VisibilityProfile.Public.name,
+        'value': Privacy.Public.name,
         'icon' : AppIcones.door_open_solid,
-        'controller': eventController.visibilityController,
+        'controller': eventController.privacyController,
       },
       {
-        'name': 'visibility',
+        'name': 'privacy',
         'placeholder' : 'Apenas os participantes podem visualizar as informações.',
         'label': 'Privado',
-        'value': VisibilityProfile.Private.name,
+        'value': Privacy.Private.name,
         'icon' : AppIcones.door_close_solid,
-        'controller': eventController.visibilityController,
+        'controller': eventController.privacyController,
       },
     ];
 
@@ -242,11 +242,14 @@ class EventBasicStepState extends State<EventBasicStep> {
                     onValidated: (value) => eventController.apiService.validateEmpty(value, 'titulo'),
                     type: TextInputType.text,
                   ),
-                  InputTextAreaWidget(
+                  InputTextWidget(
                     name: 'bio',
                     label: 'Bio',
                     hint: 'Ex: Melhor Pelada do Brasil',
                     textController: eventController.bioController,
+                    textArea: true,
+                    onValidated: (value) => eventController.apiService.validateEmpty(value, 'titulo'),
+                    type: TextInputType.text,
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
@@ -274,13 +277,13 @@ class EventBasicStepState extends State<EventBasicStep> {
                           textController: radio['controller'],
                           onChanged: (value){
                             setState(() {
-                              eventController.visibilityController.text = value;
+                              eventController.privacyController.text = value;
                             });
                           },
                         );
                       }),
                       //VALIDAÇÃO DE VISIBILIDADE
-                      if(!isValid && eventController.visibilityController.text.isEmpty)...[
+                      if(!isValid && eventController.privacyController.text.isEmpty)...[
                         const Padding(
                           padding: EdgeInsets.only(left: 8.0),
                           child: Text(

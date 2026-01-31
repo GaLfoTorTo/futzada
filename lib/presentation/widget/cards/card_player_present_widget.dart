@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/user_utils.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -19,6 +19,7 @@ class CardPlayerPresentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Card(
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -32,7 +33,7 @@ class CardPlayerPresentWidget extends StatelessWidget {
                   width: 80,
                   height: 80,
                   child: CircleAvatar(
-                    backgroundImage: ImgUtils.getUserImg(user.photo),
+                    backgroundImage: ImgHelper.getUserImg(user.photo),
                   ),
                 ),
                 Column(
@@ -40,7 +41,7 @@ class CardPlayerPresentWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      UserUtils.getFullName(user),
+                      UserHelper.getFullName(user),
                       style: Theme.of(context).textTheme.labelMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -57,20 +58,22 @@ class CardPlayerPresentWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    PositionWidget(
-                      position: user.player!.mainPosition[modality]!,
-                      mainPosition: true,
-                      width: 35,
-                      height: 25,
-                      textSide: 10,
-                    ),
+                    if(user.player != null)...[
+                      PositionWidget(
+                        position: user.player!.mainPosition[modality]!,
+                        mainPosition: true,
+                        width: 35,
+                        height: 25,
+                        textSide: 10,
+                      ),
+                    ]
                   ],
                 ),
               ],
             ),
             Icon(
               present ? Icons.check_circle : AppIcones.question_circle_solid,
-              color: present ? AppColors.green_500 : AppColors.yellow_500,
+              color: present ? AppColors.green_300 : AppColors.yellow_500,
               size: 30,
             )
           ],

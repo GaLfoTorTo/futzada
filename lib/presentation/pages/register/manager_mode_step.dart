@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/utils/manager_utils.dart';
+import 'package:futzada/core/helpers/manager_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:futzada/presentation/controllers/register_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
@@ -52,8 +52,8 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
     registerController.primaryController.text = AppColors.colors.entries.firstWhere((c) => c.value == primaryColor).key;
     registerController.secondaryController.text = AppColors.colors.entries.firstWhere((c) => c.value == secondaryColor).key;
     //INICIALIZAR CONFIGURAÇÕES DE EMBLEMA
-    registerController.configEmblem = registerController.configEmblem ?? ManagerUtils.configEmblem(primaryColor);
-    registerController.configUniform = registerController.configUniform ?? ManagerUtils.configUniform(primaryColor);
+    registerController.configEmblem = registerController.configEmblem ?? ManagerHelper.configEmblem(primaryColor);
+    registerController.configUniform = registerController.configUniform ?? ManagerHelper.configUniform(primaryColor);
     initConfig(registerController.configEmblem!, "Emblema");
     initConfig(registerController.configUniform!, "Uniforme");
     //RESGATAR INDEX DO EMBLEMA SELECIONADO PELO USUARIO

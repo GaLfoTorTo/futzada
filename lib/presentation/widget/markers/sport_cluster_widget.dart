@@ -3,7 +3,7 @@ import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/markers_utils.dart';
+import 'package:futzada/core/helpers/markers_helper.dart';
 import 'package:futzada/presentation/controllers/map_controller.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
@@ -21,8 +21,8 @@ class SportClusterWidget extends StatelessWidget {
 
     Widget setSportPlaceMarkerWidget(Map<String, dynamic> marker) {
       //RESGATAR ESPORTE DOMINANTE NA AREA E ESTILOS
-      final dominantSport = MarkersUtils.getDominantSport(marker['sport']);
-      final style = MarkersUtils.getMarkerStyle(dominantSport);
+      final dominantSport = MarkersHelper.getDominantSport(marker['sport']);
+      final style = MarkersHelper.getMarkerStyle(dominantSport);
 
       return ButtonIconWidget(
         icon: style['icon'],

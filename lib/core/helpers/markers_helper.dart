@@ -2,7 +2,7 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-class MarkersUtils {
+class MarkersHelper {
   //FUNÇÃO PARA OBTER COR DO ESPORTE DOMINANTE
   static String getDominantSport(List<Marker> markers){
     //CONTADORES DE ESPORTE PREDOMINANTE

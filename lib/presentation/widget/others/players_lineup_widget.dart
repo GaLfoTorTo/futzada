@@ -1,10 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/escalation_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 
 class PlayersLineupWidget extends StatelessWidget {
   final List<UserModel> players;
@@ -12,6 +11,7 @@ class PlayersLineupWidget extends StatelessWidget {
   final double? height;
   final String category;
   final String? command;
+  final bool? showPlayerName;
   
   const PlayersLineupWidget({
     super.key,
@@ -20,31 +20,8 @@ class PlayersLineupWidget extends StatelessWidget {
     this.width = 342,
     this.height = 518,
     this.category = "Futebol",
+    this.showPlayerName = false,
   });
-
-  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-  List<int> _getFormation(int count) {
-    switch (count) {
-      case 4:
-        return [1, 1, 2, 0];
-      case 5:
-        return [1, 1, 2, 1];
-      case 6:
-        return [1, 1, 3, 1];
-      case 7:
-        return [1, 3, 2, 1];
-      case 8:
-        return [1, 3, 3, 1];
-      case 9:
-        return [1, 3, 3, 2];
-      case 10:
-        return [1, 3, 3, 3];
-      case 11:
-        return [1, 4, 3, 3];
-      default:
-        return [1, 4, 3, 3];
-    }
-  }
 
   double calcSizeAvatar(int qtd) {
     // Mapeia a quantidade para um tamanho fixo baseado em faixas
@@ -56,11 +33,11 @@ class PlayersLineupWidget extends StatelessWidget {
   }
 
   //FUNÇÃO PARA CALCULAR A POSIÇÃO DOS JOGADORES
-  List<Row> _buildPlayers() {
+  List<Row> _buildPlayers(BuildContext context) {
     //CALCULAR TAMANHO DOS PLAYERS 
     double size = calcSizeAvatar(players.length);
     //DEFINIR FORMAÇÃO
-    var formation = _getFormation(players.length);
+    var formation = EscalationHelper.getFormation(category, players.length);
     //VERIFICAR MANDO DE CAMPO
     if(command == 'Away'){
       formation = formation.reversed.toList();
@@ -74,28 +51,56 @@ class PlayersLineupWidget extends StatelessWidget {
             //RESGATAR JOGADOR
             final player = players[key];
 
-            return Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                color: AppColors.green_300,
-                border: Border.all(
-                  color: command == "Home" ? AppColors.blue_300 : AppColors.red_300,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.dark_300.withAlpha(50),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                    offset: Offset(0,5), 
+            return Column(
+              spacing: 5,
+              children: [
+                Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: command == "Home" ? AppColors.blue_300 : AppColors.red_300,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.dark_300.withAlpha(50),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(0,5), 
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: CircleAvatar(
-                backgroundImage: ImgUtils.getUserImg(player.photo),
-              ),
+                  child: CircleAvatar(
+                    backgroundImage: ImgHelper.getUserImg(player.photo),
+                  ),
+                ),
+                if(showPlayerName!)...[
+                  Container(
+                    width: 80,
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: AppColors.dark_300.withAlpha(50),
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.dark_700.withAlpha(50),
+                          blurRadius: 2,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      UserHelper.getFullName(player),
+                      style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                        color: AppColors.white
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ]
+              ],
             );
           })
         )
@@ -110,10 +115,10 @@ class PlayersLineupWidget extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: _buildPlayers(),
+        children: _buildPlayers(context),
       ),
     );
   }

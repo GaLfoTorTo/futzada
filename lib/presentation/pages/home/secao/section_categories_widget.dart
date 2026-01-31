@@ -14,9 +14,15 @@ class SectionCategoriesWidget extends StatelessWidget {
     //DEFINIR CATEGORIAS (MODALIDADES)
     RxList<Map<String, dynamic>> categories = [
       {
+        'category': 'Todos',
+        'icon': AppIcones.modality_solid,
+        'active' : true,
+        'color' : AppColors.green_500,
+      },
+      {
         'category': 'Futebol',
         'icon': AppIcones.futebol_ball_solid,
-        'active' : true,
+        'active' : false,
         'color' : AppColors.green_500,
       },
       {
@@ -40,6 +46,12 @@ class SectionCategoriesWidget extends StatelessWidget {
       {
         'category': 'Volei de Praia',
         'icon': Icons.sports_volleyball,
+        'active' : false,
+        'color' : AppColors.bege_500,
+      },
+      {
+        'category': 'Fut Volei',
+        'icon': AppIcones.volei_ball_solid,
         'active' : false,
         'color' : AppColors.bege_500,
       },

@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class GameEventModel {
   final int id;
@@ -84,9 +84,9 @@ class GameEventModel {
       title: map['title'] as String,
       description: map['description'] as String,
       type: map['type'] as GameEvent,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 

@@ -1,26 +1,27 @@
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/pages/event/view/event_news_page.dart';
-import 'package:futzada/presentation/pages/event/view/event_rules_page.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_event_games.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_rule.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
+import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/widget/bars/header_glass_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/pages/event/view/event_home_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_private_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_games_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_rank_page.dart';
+import 'package:futzada/presentation/pages/event/view/event_news_page.dart';
+import 'package:futzada/presentation/pages/event/view/event_rules_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_participants_page.dart';
+import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
+import 'package:futzada/presentation/widget/bars/header_glass_widget.dart';
+import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
+import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_event_games.dart';
+import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_rule.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -33,9 +34,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   //CONTROLLERS
   EventController eventController = EventController.instance;
   GameController gameController = GameController.instance;
-  //USUARIO ATUAL
+  //ESTADOS - USUARIO E EVENTO
   UserModel user = Get.find(tag: "user");
-  //EVENTO ATUAL
   EventModel event = Get.arguments['event'];
   //CONTROLLER - TABS
   late final TabController tabController;
@@ -43,25 +43,27 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   //ESTADOS - ITEMS DO EVENTO
   bool isParticipant = false;
   late ImageProvider eventImage;
-  late String eventVisibility;
+  late String eventPrivacy;
   late double eventAvaliations;
   //ESTADO - IMAGENS DA PELADA
   bool brightness = false;
   Color textColor = AppColors.white;
+  late Color eventColor;
+  late Color eventTextColor;
 
   @override
   void initState() {
     super.initState();
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DO EVENTO ATUAL
-    eventController.events.map((event){
-      isParticipant = event.participants?.firstWhere((u) => u.id == user.id) != null;
-    });
+    isParticipant = event.participants!.any((p) => p.id == user.id);
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
     //ATUALIZAR ITEMS DO EVENTOS
-    eventImage = ImgUtils.getEventImg(event.photo);
-    eventVisibility = event.visibility!.name;
-    eventAvaliations = 4.2;//eventController.eventService.getEventAvaliation(event.avaliations);
+    eventImage = ImgHelper.getEventImg(event.photo);
+    eventPrivacy = event.privacy!.name;
+    eventAvaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
+    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     //DEFINIR EVENTO ATUAL NO CONTROLLER
     eventController.setSelectedEvent(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
@@ -78,10 +80,10 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       return HeaderGlassWidget(
         title: "Pelada",
         leftAction: () => Get.back(),
-        rightIcon: eventVisibility == 'Public' 
+        rightIcon: eventPrivacy == 'Public' 
           ? AppIcones.cog_solid 
           : null,
-        rightAction: () => eventVisibility == 'Public' 
+        rightAction: () => eventPrivacy == 'Public' 
           ? Get.toNamed('/event/settings') 
           : null,
         brightness: brightness,
@@ -90,11 +92,12 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
 
     return HeaderWidget(
       title: "Pelada",
+      backgroundColor: eventColor,
       leftAction: () => Get.back(),
-      rightIcon: eventVisibility == 'Public' 
+      rightIcon: eventPrivacy == 'Public' 
         ? AppIcones.cog_solid 
         : null,
-      rightAction: () => eventVisibility == 'Public' 
+      rightAction: () => eventPrivacy == 'Public' 
         ? Get.toNamed('/event/settings') 
         : null,
       extraIcon: tabController.index == 1 
@@ -144,7 +147,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [AppColors.dark_700.withAlpha(20), AppColors.dark_700.withAlpha(150)]
+                          colors: [AppColors.dark_700.withAlpha(50), AppColors.dark_700.withAlpha(200)]
                         )
                       ),
                     ),
@@ -212,7 +215,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 ),
               ),
             ],
-            if(isParticipant || eventVisibility == "Public")...[
+            if(isParticipant || eventPrivacy == "Public")...[
               Container(
                 color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
                 child: TabBar(
@@ -223,11 +226,11 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                   indicator: UnderlineTabIndicator(
                     borderSide: BorderSide(
                       width: 5,
-                      color: Theme.of(context).primaryColor,
+                      color: eventColor,
                     ),
                     insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
                   ),
-                  labelColor: Theme.of(context).primaryColor,
+                  labelColor: eventColor,
                   labelStyle: const TextStyle(
                     color: AppColors.grey_500,
                     fontWeight: FontWeight.normal,
@@ -296,6 +299,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           return FloatButtonWidget(
             floatKey: "game_event",
             icon: Icons.play_arrow_rounded,
+            backgroundColor: eventColor,
+            color: eventTextColor,
             onPressed:  () => Get.bottomSheet(const BottomSheetEventGames())
           );
         }
@@ -303,7 +308,9 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
         if (gameController.hasGames.value && tabIndex == 4) {
           return FloatButtonWidget(
             floatKey: "rules_event",
-            icon: Icons.add,
+            icon: Icons.add_rounded,
+            backgroundColor: eventColor,
+            color: eventTextColor,
             onPressed: () => Get.bottomSheet(const BottomSheetRule(), isScrollControlled: true),
           );
         }

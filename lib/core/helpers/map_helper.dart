@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapUtils {
+class MapHelper {
 
   //OPÇÕES DE TRANSPORTE
   static List<Map<String, dynamic>> transports = [

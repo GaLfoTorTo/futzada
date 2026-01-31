@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/icon_utils.dart';
-import 'package:futzada/core/utils/form_utils.dart';
+import 'package:futzada/core/helpers/icon_helper.dart';
+import 'package:futzada/core/helpers/form_helper.dart';
 import 'package:futzada/presentation/controllers/explorer_controller.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_date_widget.dart';
@@ -115,7 +115,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: categories.map((category){
                       //RESGATAR ICONE DA CATEGORIA
-                      IconData icone = IconUtils.getIconCategory(category);
+                      IconData icone = IconHelper.getIconCategory(category);
                       return SelectRoundedWidget(
                         value: category,
                         icon: icone,
@@ -168,7 +168,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                           name: 'horaInicio',
                           label: 'Hora de Início',
                           textController: exploreController.startTimeController,
-                          showModal: () => FormUtils.selectTime(context, 'horaInicio'),
+                          showModal: () => FormHelper.selectTime(context, 'horaInicio'),
                         ),
                       ),
                       SizedBox(
@@ -177,7 +177,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                           name: 'horaFim',
                           label: 'Hora de Fim',
                           textController: exploreController.endTimeController,
-                          showModal: () => FormUtils.selectTime(context, 'horaFim'),
+                          showModal: () => FormHelper.selectTime(context, 'horaFim'),
                         ),
                       ),
                     ],

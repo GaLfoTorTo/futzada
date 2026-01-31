@@ -12,8 +12,6 @@ class ParticipantService {
   //FUNÇÃO DE GERAÇÃO DE TECNICO
 
   ParticipantModel generateParticipant(int eventId, int userId) {
-    //DEFINIR TIPO DE PARTICIPAÇÃO NO EVENTO
-    List<String>? roles = setRoles(eventId + 1);
     //DEFINIR STATUS DE PERMISSÃO
     bool permissionState = random.nextBool();
     //DEFINIR PERMISSÕES DO EVENTO
@@ -24,7 +22,7 @@ class ParticipantService {
       "id" : random.nextInt(100),
       "userId" : userId,
       "eventId" : eventId,
-      "role" : roles,
+      "role" : setRoles(userId),
       "permissions" : permissions,
       "status" : setStatus(random.nextInt(3)),
       "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
@@ -91,7 +89,7 @@ class ParticipantService {
       case 1:
         return [Roles.Organizator.name, Roles.Colaborator.name, Roles.Player.name, Roles.Manager.name];
       default:
-        return List.generate(random.nextInt(4), (i) => Roles.values[i + 1].name);
+        return List.generate(faker.randomGenerator.integer(4, min: 1), (i) => Roles.values[i + 1].name);
     }
   }
 }

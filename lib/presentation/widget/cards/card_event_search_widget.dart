@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
@@ -59,7 +59,7 @@ class CardEventSearchWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: ImgUtils.getEventImg(event.photo),
+                        image: ImgHelper.getEventImg(event.photo),
                         fit: BoxFit.cover
                       )
                     ),
@@ -83,7 +83,7 @@ class CardEventSearchWidget extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis
                               ),
                             ),
-                            if(event.visibility!.name != "Public")...[
+                            if(event.privacy!.name != "Public")...[
                               const Icon(
                                 Icons.lock_rounded,
                                 color: AppColors.grey_300,
@@ -91,7 +91,7 @@ class CardEventSearchWidget extends StatelessWidget {
                             ]
                           ],
                         ),
-                        if(event.visibility!.name == "Public")...[
+                        if(event.privacy!.name == "Public")...[
                           Row(
                             spacing: 10,
                             children: [

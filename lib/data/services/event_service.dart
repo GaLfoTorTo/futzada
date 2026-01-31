@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:futzada/data/models/user_model.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/core/api/api.dart';
@@ -33,6 +35,7 @@ class EventService {
     //DEFINIR STATUS DE PERMISSÃO
     bool permissionState = random.nextBool();
     List<String> daysWeek = ['Dom','Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    String modality = Modality.values[faker.randomGenerator.integer(2, min: 0)].name;
     //GERAR EVENTO (PELADA)
     return EventModel.fromMap({
       "id" : i,
@@ -42,16 +45,16 @@ class EventService {
       "date" : List.generate(random.nextInt(6), (d) => daysWeek[d]),
       "startTime" : "${random.nextInt(23)}:${random.nextInt(59)}",
       "endTime" : "${random.nextInt(23)}:${random.nextInt(59)}",
-      "modality" : Modality.values[random.nextInt(2)].name,
+      "modality" : modality,
       "collaborators" : permissionState,
       "photo" : random.nextBool() == true ? faker.image.loremPicsum() : null,
-      "visibility" : random.nextBool() == true ? VisibilityProfile.Public.name : VisibilityProfile.Private.name,
+      "privacy" : random.nextBool() == true ? Privacy.Public.name : Privacy.Private.name,
       //GERAR ENDEREÇO DO EVENTO (PELADA)
       "address" : addressService.generateAddress(i).toMap(),
       //GERAR CONFIGURAÇÕES DE PARTIDA DO EVENTO (PELADA)
-      "gameConfig" : gameService.generateGameConfig(i).toMap(),
+      "gameConfig" : gameService.generateGameConfig(i, modality).toMap(),
       //GERAR AVALIAÇÕES DO EVENTO (PELADA)
-      "avaliations" : List.generate(qtdAvaliations, (u) => avaliationService.generateAvaliation(u + 1, i, i).toMap()),
+      "avaliations" : List.generate(qtdAvaliations, (u) => avaliationService.generateAvaliation(u + 1, u, i).toMap()),
       //GERAR NOTICIAS DO EVENTO (PELADA)
       "news" : List.generate(qtdNews, (u) => newsService.generateNews().toMap()),
       "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2026),
@@ -61,7 +64,7 @@ class EventService {
 
   //FUNÇÃO DE BUSCA EVENTO ESPECIFICO
   Future<EventModel> fetchEventById(int id) async{
-    Future.delayed(Duration(milliseconds: 500));
+    Future.delayed(const Duration(milliseconds: 500));
     //BUSCAR USUARIO
     /* final response = await apiService.get('${AppApi.url}${AppApi.getEvent}/$id');
     response['data'].map((json) => UserModel.fromJson(json)); */
@@ -71,7 +74,7 @@ class EventService {
   //FUNÇÃO DE BUSCA DE TODOS OS EVENTOS
   Future<List<EventModel>> fetchEvents() async{
     UserService userService = UserService();
-    Future.delayed(Duration(milliseconds: 500));
+    Future.delayed(const Duration(milliseconds: 500));
     //BUSCAR USUARIO
     /* final response = await apiService.get('${AppApi.url}${AppApi.getEvents}');
     response['data'].map((json) => UserModel.fromJson(json)); */
@@ -99,16 +102,18 @@ class EventService {
     final response = await apiService.get('AppApi.getUrl("${AppApi.getEvents}?userId=$userId");
     events = response['data'].map((json) => UserModel.fromJson(json)).toList();
      */
-    if(random.nextBool()){
+    /* if(random.nextBool()){ */
       int count = faker.randomGenerator.integer(5, min: 1);
+      final user = Get.find<UserModel>(tag: "user");
       //LOOP PARA EVENTOS DO USUARIO
       for (var i = 0; i <= count; i++) {
         int e = i + 1;
         //ADICIONAR JOGADOR A LISTA
         events.add(generateEvent(e));
-        events[i].participants = List.generate(faker.randomGenerator.integer(50, min: 30), (p) => userService.generateUser(p, eventId: i));
+        events[i].participants = List.generate(faker.randomGenerator.integer(50, min: 30), (userId) => userService.generateUser(userId, eventId: e));
+        events[i].participants!.add(user);
       }
-    }
+    /* } */
     //RETORNAR LISTA DE NOTIFICAÇÕES
     return events;
   }

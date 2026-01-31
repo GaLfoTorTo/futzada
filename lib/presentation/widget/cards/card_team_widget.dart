@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/manager_model.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
@@ -40,7 +40,7 @@ class CardTeamWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       image: DecorationImage(
-                        image: ImgUtils.getEventImg(null),
+                        image: ImgHelper.getEventImg(null),
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
                           AppColors.green_300.withAlpha(220), 
@@ -86,7 +86,7 @@ class CardTeamWidget extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          UserUtils.getFullName(user),
+                          UserHelper.getFullName(user),
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         Text(

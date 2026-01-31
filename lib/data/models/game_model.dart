@@ -2,7 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/result_model.dart';
 import 'package:futzada/data/models/team_model.dart';
 
@@ -109,9 +109,9 @@ class GameModel {
             ),
           ) 
         : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 

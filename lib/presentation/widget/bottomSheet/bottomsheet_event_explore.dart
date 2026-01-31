@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/map_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/map_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/event_model.dart';
@@ -76,12 +76,12 @@ class BottomSheetEventExplore extends StatelessWidget {
                 //RESGATAR POSIÇÕES DO MARKER
                 final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
                 //RESGATAR DISTANCIA ATE O LOCAL
-                double distance = MapUtils.getDistance(userLatLon, eventLatLon);
+                double distance = MapHelper.getDistance(userLatLon, eventLatLon);
                 //RESGATAR MELHOR METODO DE TRANSPORTE BASEADO NA DISTANCIA
-                Map<String, dynamic> travelMode = MapUtils.getTravelMode(distance);
+                Map<String, dynamic> travelMode = MapHelper.getTravelMode(distance);
                 //RESGATAR TEMPO DE VIAGEM ATE O LOCAL
-                Duration timeTravelMode = MapUtils.getTravelTime(distance, travelMode['speed']);
-                String timeTravel = MapUtils.setTimeTravel(timeTravelMode);
+                Duration timeTravelMode = MapHelper.getTravelTime(distance, travelMode['speed']);
+                String timeTravel = MapHelper.setTimeTravel(timeTravelMode);
                 //RESGATAR FOTO DOS 3 PRIMEIROS PARTICIPANTES
                 List<String?> imgParticipantes = [];
                 //VERIFICAR SE EXISTEM PARTICIPANTES
@@ -90,7 +90,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                   imgParticipantes = event.participants!.take(3).map((user) => user.photo).toList();
                 }
                 //RESGATAR IMAGEM DO LOCAL
-                final addressImg = ImgUtils.getAddressImg(event.address?.photos);
+                final addressImg = ImgHelper.getAddressImg(event.address?.photos);
                 //RESGATAR ORGANIZADOR
                 final eventOrganizador = event.participants!.firstWhere((user) => user.participants!.where((p) => p.eventId == event.id).first.role!.contains("Organizator"));
             
@@ -112,7 +112,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                    image: ImgUtils.getEventImg(event.photo),
+                                    image: ImgHelper.getEventImg(event.photo),
                                     fit: BoxFit.cover
                                   )
                                 ),
@@ -130,7 +130,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis
                                     ),
-                                    if(event.visibility!.name == "Public")...[
+                                    if(event.privacy!.name == "Public")...[
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         spacing: 5,
@@ -203,7 +203,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                         ],
                       ),
                       const Divider(color: AppColors.grey_300),
-                      if(event.visibility!.name == "Public")...[
+                      if(event.privacy!.name == "Public")...[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -315,14 +315,14 @@ class BottomSheetEventExplore extends StatelessWidget {
                               width: 35,
                               height: 35,
                               child: CircleAvatar(
-                                backgroundImage: ImgUtils.getUserImg(eventOrganizador.photo),
+                                backgroundImage: ImgHelper.getUserImg(eventOrganizador.photo),
                               ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  UserUtils.getFullName(eventOrganizador),
+                                  UserHelper.getFullName(eventOrganizador),
                                   style: Theme.of(context).textTheme.titleSmall,
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,

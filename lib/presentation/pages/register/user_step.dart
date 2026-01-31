@@ -55,9 +55,9 @@ class _UserStepState extends State<UserStep> {
   }
 
   //SELECIONAR A VISIBILIDADE DO PERFIL
-  void selectedVisibility(value){
+  void selectedprivacy(value){
     setState(() {
-      registerController.visibilityController.text = VisibilityProfile.values.firstWhere((e) => e.name == value).name;
+      registerController.privacyController.text = Privacy.values.firstWhere((e) => e.name == value).name;
     });
   }
 
@@ -120,18 +120,18 @@ class _UserStepState extends State<UserStep> {
     //LISTA DE INPUTS RADIO
     final List<Map<String, dynamic>> radios = [
       {
-        'name': 'visibility',
+        'name': 'privacy',
         'placeholder' : 'Qualquer usuário pode visualizar suas informações.',
         'value': 'Public',
         'label': 'Publico',
-        'controller': registerController.visibilityController,
+        'controller': registerController.privacyController,
       },
       {
-        'name': 'visibility',
+        'name': 'privacy',
         'placeholder' : 'Apenas você e seus amigos podem visualizar suas informações.',
         'value': 'Private',
         'label': 'Privado',
-        'controller': registerController.visibilityController,
+        'controller': registerController.privacyController,
       },
     ];
 
@@ -230,7 +230,7 @@ class _UserStepState extends State<UserStep> {
                     value: radio['value'],
                     placeholder: radio['placeholder'],
                     textController: radio['controller'],
-                    onChanged: selectedVisibility,
+                    onChanged: selectedprivacy,
                   )
                 ).toList(),
               ),

@@ -1,4 +1,4 @@
-import 'package:futzada/core/utils/map_utils.dart';
+import 'package:futzada/core/helpers/map_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/user_model.dart';
@@ -67,7 +67,7 @@ class CardPresentationWidget extends StatelessWidget {
                         color: AppColors.blue_500,
                       ),
                       Text(
-                        MapUtils.getLocation(),
+                        MapHelper.getLocation(),
                         style: Theme.of(context).textTheme.displayMedium!.copyWith(
                           color: AppColors.blue_500
                         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/event_model.dart';
 
@@ -16,23 +16,19 @@ class CardEventTodayWidget extends StatelessWidget {
     
     return  Card(
       child: Container(
-        height: 250,
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-        ),
         child: Column(
           spacing: 5,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: dimensions.width,
+              width: dimensions.width * 0.8,
               height: 100,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: ImgUtils.getEventImg(event.photo),
+                  image: ImgHelper.getEventImg(event.photo),
                   fit: BoxFit.cover,
                 ),
               ),

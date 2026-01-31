@@ -1,3 +1,4 @@
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -31,14 +32,19 @@ class _EventGamesPageState extends State<EventGamesPage> {
   late PageController inProgressController;
   //ESTADO - EVENTO
   late EventModel event;
-  //ESTADO - DIA ATUAL
+  //ESTADO - ITEMS EVENTO
   late String eventDate;
+  late Color eventColor;
+  late Color eventTextColor;
 
   @override
   void initState() {
     super.initState();
     //RESGATAR EVENT
     event = eventController.event;
+    //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
+    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     //INICIALIZAR CONTROLLER DE PARTIDAS AO VIVO
     inProgressController = PageController();
     //RESGATAR DATA DO PROXIMO DIA DO EVENTO
@@ -191,14 +197,14 @@ class _EventGamesPageState extends State<EventGamesPage> {
                       text: "Ver Mais ${gameController.nextGames.length}",
                       width: 120,
                       height: 20,
-                      textColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(20),
+                      textColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(20),
                       action: () => {},
                     ),
                   ]);
                 }
               }
-              if(gameController.nextGames.isNotEmpty && gameController.nextGames.length < 4){
+              if(gameController.scheduledGames.isNotEmpty && gameController.scheduledGames.length < 4){
                 //VERIFICAR SE EXISTE PARTIDAS PROGRAMADAS                
                 if (gameController.scheduledGames.isEmpty) {
                   return const SizedBox.shrink();

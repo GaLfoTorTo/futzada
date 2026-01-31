@@ -1,5 +1,5 @@
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/event_utils.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
@@ -42,7 +42,7 @@ class EscalationListWidget extends StatelessWidget {
                 final index = entry.key;
                 //RESGATAR JOGADOR
                 final i = entry.value;
-                UserModel user = EventUtils.getUserEvent(escalationController.event!, i!)!;
+                UserModel user = EventHelper.getUserEvent(escalationController.event!, i!)!;
                 //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
                 String position = escalationController.escalationService.getPositionEscalation(
                   index, 

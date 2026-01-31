@@ -63,7 +63,7 @@ class UserRepository {
           bornDate: "1998-06-12",
           phone: "61982413358",
           photo: data.photoUrl,
-          visibility: VisibilityProfile.Public,
+          privacy: Privacy.Public,
           config: config,
           player: PlayerService().generatePlayer(1),
           manager: ManagerService().generateManager(1),

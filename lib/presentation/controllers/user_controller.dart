@@ -83,8 +83,7 @@ class UserController extends GetxController {
         await getUserEvents();
         isReady.value = true;
       }
-    } catch (e, stackTrace) {
-      print(stackTrace);
+    } catch (e) {
       hasError.value = true;
       //NAVEGAR PARA LOGIN PAGE
       Get.toNamed('/login');

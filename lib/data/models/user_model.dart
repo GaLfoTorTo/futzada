@@ -1,11 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
+import 'package:futzada/core/enum/enums.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/manager_model.dart';
 import 'package:futzada/data/models/participant_model.dart';
 import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/utils/date_utils.dart';
 import 'package:futzada/data/models/user_config_model.dart';
 
 class UserModel {
@@ -18,7 +17,7 @@ class UserModel {
   String? bornDate;
   String? phone;
   String? photo;
-  VisibilityProfile? visibility;
+  Privacy? privacy;
   UserConfigModel? config;
   PlayerModel? player;
   ManagerModel? manager;
@@ -36,7 +35,7 @@ class UserModel {
     this.email,
     this.bornDate,
     this.phone,
-    this.visibility,
+    this.privacy,
     this.photo,
     this.config,
     this.player,
@@ -57,7 +56,7 @@ class UserModel {
     String? bornDate,
     String? phone,
     String? photo,
-    VisibilityProfile? visibility,
+    Privacy? privacy,
     UserConfigModel? config,
     PlayerModel? player,
     ManagerModel? manager,
@@ -77,7 +76,7 @@ class UserModel {
       phone: phone ?? this.phone,
       photo: photo ?? this.photo,
       config: config ?? this.config,
-      visibility: visibility ?? this.visibility,
+      privacy: privacy ?? this.privacy,
       player: player ?? this.player,
       manager: manager ?? this.manager,
       participants: participants ?? this.participants,
@@ -99,7 +98,7 @@ class UserModel {
       'phone': phone,
       'photo': photo,
       'config': config?.toMap(),
-      'visibility': visibility?.name,
+      'privacy': privacy?.name,
       'player': player?.toMap(),
       'manager': manager?.toMap(),
       'participants': participants?.map((x) => x.toMap()).toList(),
@@ -122,8 +121,8 @@ class UserModel {
       config: map['config'] != null 
         ? UserConfigModel.fromMap(map['config'] as Map<String, dynamic>) 
         : null,
-      visibility: map['visibility'] != null
-        ? VisibilityProfile.values.firstWhere((e) => e.name == map['visibility'])
+      privacy: map['privacy'] != null
+        ? Privacy.values.firstWhere((e) => e.name == map['privacy'])
         : null,
       photo: map['photo'] != null ? map['photo'] as String : null,
       player: map['player'] != null 
@@ -139,9 +138,9 @@ class UserModel {
           ),
         )
         : [],
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 
@@ -151,7 +150,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, visibility: $visibility, photo: $photo, player: $player, manager: $manager, participants: $participants, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, privacy: $privacy, photo: $photo, player: $player, manager: $manager, participants: $participants, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -167,7 +166,7 @@ class UserModel {
       other.email == email &&
       other.bornDate == bornDate &&
       other.phone == phone &&
-      other.visibility == visibility &&
+      other.privacy == privacy &&
       other.photo == photo &&
       other.player == player &&
       other.manager == manager &&
@@ -188,7 +187,7 @@ class UserModel {
       email.hashCode ^
       bornDate.hashCode ^
       phone.hashCode ^
-      visibility.hashCode ^
+      privacy.hashCode ^
       photo.hashCode ^
       player.hashCode ^
       manager.hashCode ^

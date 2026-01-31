@@ -1,11 +1,7 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/data/models/team_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 
 class CardDayGameWidget extends StatefulWidget {
@@ -20,13 +16,19 @@ class CardDayGameWidget extends StatefulWidget {
 }
 
 class _CardGameLiveWidgetState extends State<CardDayGameWidget> {
-  //DEFINIR COR DO CARD
-  late Color cardColor = AppColors.green_300;
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
+  late Color eventTextColor;
+  late String eventImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    //ESTADO - ITEMS EVENTO
+    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   @override
@@ -42,12 +44,12 @@ class _CardGameLiveWidgetState extends State<CardDayGameWidget> {
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Theme.of(context).primaryColor,
+        color: eventColor,
         image: DecorationImage(
-          image: const AssetImage(AppImages.cardFootball) as ImageProvider,
+          image: AssetImage(eventImage) as ImageProvider,
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            AppColors.green_300.withAlpha(220), 
+            eventColor.withAlpha(200), 
             BlendMode.srcATop,
           )
         ),

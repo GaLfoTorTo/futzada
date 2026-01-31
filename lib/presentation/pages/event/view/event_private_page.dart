@@ -4,8 +4,8 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
@@ -79,14 +79,14 @@ class EventPrivatePage extends StatelessWidget {
                       width: 35,
                       height: 35,
                       child: CircleAvatar(
-                        backgroundImage: ImgUtils.getUserImg(eventOrganizador.photo)
+                        backgroundImage: ImgHelper.getUserImg(eventOrganizador.photo)
                       ),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          UserUtils.getFullName(eventOrganizador),
+                          UserHelper.getFullName(eventOrganizador),
                           style: Theme.of(context).textTheme.labelMedium!.copyWith(
                             fontWeight: FontWeight.bold,
                           ),

@@ -42,6 +42,8 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   //FUNÇÃO DE DEFINIÇÃO DE DIMENSOES DA SEÇÃO
   PageController setPageController(){
     switch (widget.title) {
+      case "Acontece Hoje":
+        return PageController(viewportFraction: 0.8);
       case "Talvez você conheça":
         return PageController(viewportFraction: 0.45);
       default:
@@ -70,12 +72,12 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
       case "Acontece Hoje":
         return  BoxConstraints(
           maxHeight: 230,
-          maxWidth: widget.options.length > 1 ? Get.width * 0.8 : Get.width
+          maxWidth: Get.width
         );
       case "Talvez você conheça":
         return  BoxConstraints(
           maxHeight: 250,
-          maxWidth: Get.width * 0.9
+          maxWidth: Get.width
         );
       default:
         return  BoxConstraints(

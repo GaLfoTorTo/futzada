@@ -1,5 +1,6 @@
 
 import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/widget/overlays/form_overlay_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
       //RESGATAR CATEGORIA
       final category = eventController.category.value;
       //RESGATAR VALORES POR CATEGORIA
-      final mapPlayers = gameService.getQtdPlayers(category);
+      final mapPlayers = ModalityHelper.getQtdPlayers(category);
       //ATUALIZAR ESTADOS
       qtdPlayers = mapPlayers['qtdPlayers']!;
       minPlayers = mapPlayers['minPlayers']!;

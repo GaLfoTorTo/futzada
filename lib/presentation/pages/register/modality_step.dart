@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/controllers/theme_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
 import 'package:futzada/presentation/widget/inputs/select_rounded_widget.dart';
@@ -79,7 +79,7 @@ class ModalityStepState extends State<ModalityStep> {
                 children: modality.asMap().entries.map((entry){
                   //RESGATAR ICONE DA CATEGORIA
                   final key = modality[entry.key];
-                  final item = AppHelper.getIconModality(key);
+                  final item = ModalityHelper.getIconModality(key);
                   final isMain = registerController.mainModalityController.text == key;
 
                   return AnimatedSwitcher(
@@ -200,7 +200,7 @@ class ModalityStepState extends State<ModalityStep> {
                     if(registerController.modalities.contains(m))...[
                       ...category[m]!.map((key){
                         //RESGATAR ICONE DA CATEGORIA
-                        final item = AppHelper.getIconCategory(key);
+                        final item = ModalityHelper.getIconCategory(key);
                         return SelectRoundedWidget(
                           value: key,
                           icon: item["icon"],

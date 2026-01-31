@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:futzada/core/utils/form_utils.dart';
+import 'package:futzada/core/helpers/form_helper.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -246,7 +246,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 label: 'Hora de Início',
                                 textController: eventController.startTimeController,
                                 onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Início'),
-                                showModal: () => FormUtils.selectTime(context, 'horaInicio'),
+                                showModal: () => FormHelper.selectTime(context, 'horaInicio'),
                               ),
                             ),
                             SizedBox(
@@ -256,7 +256,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 label: 'Hora de Fim',
                                 textController: eventController.endTimeController,
                                 onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Fim'),
-                                showModal: () => FormUtils.selectTime(context, 'horaFim'),
+                                showModal: () => FormHelper.selectTime(context, 'horaFim'),
                               ),
                             ),
                           ],

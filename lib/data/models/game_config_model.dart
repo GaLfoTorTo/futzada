@@ -1,14 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class GameConfigModel {
   int? id;
   int eventId;
   String category;
   int? duration;
-  int? playersPerTeam; 
+  int? playersPerTeam;
+  int? points;
+  int? refereerId;
   Map<String, dynamic>? config;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -20,6 +21,8 @@ class GameConfigModel {
     required this.category,
     this.duration,
     this.playersPerTeam,
+    this.points,
+    this.refereerId,
     this.config,
     this.createdAt,
     this.updatedAt,
@@ -32,6 +35,8 @@ class GameConfigModel {
     String? category,
     int? duration,
     int? playersPerTeam, 
+    int? points, 
+    int? refereerId, 
     Map<String, dynamic>? config,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -43,6 +48,8 @@ class GameConfigModel {
       category: category ?? this.category,
       duration: duration ?? this.duration,
       playersPerTeam: playersPerTeam ?? this.playersPerTeam,
+      points: points ?? this.points,
+      refereerId: refereerId ?? this.refereerId,
       config: config ?? this.config,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -57,6 +64,8 @@ class GameConfigModel {
       'category': category,
       'duration': duration,
       'playersPerTeam': playersPerTeam,
+      'points': points,
+      'refereerId': refereerId,
       'config': config,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -71,10 +80,12 @@ class GameConfigModel {
       category: map['category'] as String,
       duration: map['duration'] != null ? map['duration'] as int : null,
       playersPerTeam: map['playersPerTeam'] != null ? map['playersPerTeam'] as int : null,
+      points: map['points'] != null ? map['points'] as int : null,
+      refereerId: map['refereerId'] != null ? map['refereerId'] as int : null,
       config: map['config'] != null ? map['config'] as Map<String, dynamic> : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 
@@ -84,7 +95,7 @@ class GameConfigModel {
 
   @override
   String toString() {
-    return 'GameConfigModel(id: $id, eventId: $eventId, category: $category, duration: $duration, playersPerTeam: $playersPerTeam, config: $config, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'GameConfigModel(id: $id, eventId: $eventId, category: $category, duration: $duration, playersPerTeam: $playersPerTeam, points: $points, refereerId: $refereerId, config: $config, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -97,6 +108,8 @@ class GameConfigModel {
       other.category == category &&
       other.duration == duration &&
       other.playersPerTeam == playersPerTeam &&
+      other.points == points &&
+      other.refereerId == refereerId &&
       other.config == config &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
@@ -111,6 +124,8 @@ class GameConfigModel {
       category.hashCode ^
       duration.hashCode ^
       playersPerTeam.hashCode ^
+      points.hashCode ^
+      refereerId.hashCode ^
       config.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^

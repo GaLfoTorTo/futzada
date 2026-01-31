@@ -1,10 +1,10 @@
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/core/helpers/player_helper.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
+import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
@@ -50,7 +50,7 @@ class DialogCapitan extends StatelessWidget {
               child: ListView(
                 children: escalationController.starters.map((i) {
                   //RESGATAR JOGADOR REFERENCIADO NA ESCALAÇÃO
-                  UserModel? user = EventUtils.getUserEvent(escalationController.event!, i!)!;
+                  UserModel? user = EventHelper.getUserEvent(escalationController.event!, i!)!;
                   int index = escalationController.starters.indexOf(i);
                   //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
                   String position = escalationController.escalationService.getPositionEscalation(
@@ -77,7 +77,7 @@ class DialogCapitan extends StatelessWidget {
                               height: 50,
                               width: 50,
                               image: user.photo,
-                              borderColor: AppHelper.setColorPosition(positionAlias),
+                              borderColor: PlayerHelper.setColorPosition(positionAlias),
                             ),
                             Container (
                               width: dimensions.width * 0.4,
@@ -86,7 +86,7 @@ class DialogCapitan extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    UserUtils.getFullName(user),
+                                    UserHelper.getFullName(user),
                                     style: Theme.of(context).textTheme.titleSmall,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,

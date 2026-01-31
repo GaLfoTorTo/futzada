@@ -1,13 +1,11 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/user_utils.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
@@ -19,7 +17,6 @@ import 'package:futzada/presentation/widget/cards/card_mvp_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class GamesDayPage extends StatelessWidget {
   const GamesDayPage({super.key});
@@ -32,14 +29,17 @@ class GamesDayPage extends StatelessWidget {
     EventModel event = Get.arguments['event'];
     //RESGATAR CONTROLLER DE PARTIDAS
     GameController gameController = GameController.instance;
+    //ESTADO - ITEMS EVENTO
+    Color eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //CONTROLLADOR DE BARRA DE ROLAGEM
     PageController nextGamesController = PageController();
     //JOGADORES DESTAQUE
-    final highlightsPlayers = event.participants!.take(3);
+    final highlightsPlayers = event.participants!.take(3).where((u) => u.participants!.any((p) => p.role!.contains("Player")));
     
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Dia de Jogo',
+        backgroundColor: eventColor,
         leftAction: () => Get.back(),
         rightIcon: Icons.history,
         rightAction: () => Get.toNamed('/games/historic'),
@@ -47,7 +47,7 @@ class GamesDayPage extends StatelessWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               spacing: 10,
               children: [
@@ -90,10 +90,10 @@ class GamesDayPage extends StatelessWidget {
                     ),
                     ButtonTextWidget(
                       text: "Ver Mais",
-                      icon: LineAwesomeIcons.plus_solid,
+                      icon: Icons.add_rounded,
                       width: 100,
                       height: 20,
-                      textColor: AppColors.green_300,
+                      textColor: eventColor,
                       backgroundColor: Colors.transparent,
                       action: () {},
                     )
@@ -130,10 +130,10 @@ class GamesDayPage extends StatelessWidget {
                     ),
                     ButtonTextWidget(
                       text: "Ver Mais",
-                      icon: LineAwesomeIcons.plus_solid,
+                      icon: Icons.add_rounded,
                       width: 100,
                       height: 20,
-                      textColor: AppColors.green_300,
+                      textColor: eventColor,
                       backgroundColor: Colors.transparent,
                       action: () {},
                     )
@@ -202,7 +202,7 @@ class GamesDayPage extends StatelessWidget {
                                       width: 80,
                                       height: 80,
                                       child: CircleAvatar(
-                                        backgroundImage: ImgUtils.getUserImg(user.photo)
+                                        backgroundImage: ImgHelper.getUserImg(user.photo)
                                       ),
                                     ),
                                     Padding(
@@ -211,7 +211,7 @@ class GamesDayPage extends StatelessWidget {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            UserUtils.getFullName(user),
+                                            UserHelper.getFullName(user),
                                             style: Theme.of(context).textTheme.labelLarge!.copyWith(
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -243,7 +243,7 @@ class GamesDayPage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: AppColors.green_300.withAlpha(50),
+                                    color: eventColor.withAlpha(50),
                                     borderRadius: BorderRadius.circular(10)
                                   ),
                                   child: Column(
@@ -251,14 +251,14 @@ class GamesDayPage extends StatelessWidget {
                                       Text(
                                         "3 Gols",
                                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                          color: AppColors.green_300,
+                                          color: eventColor,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
                                       Icon(
                                         Icons.sports_soccer,
                                         size: 30,
-                                        color: AppColors.green_300,
+                                        color: eventColor,
                                       ),
                                     ],
                                   ),

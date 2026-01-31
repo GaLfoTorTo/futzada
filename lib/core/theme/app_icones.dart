@@ -35,14 +35,6 @@ class AppIcones {
     "zag": "assets/icones/posicoes/silhueta_zag.svg",
     "gol": "assets/icones/posicoes/silhueta_gol.svg",
   };
-  //POSIÇÕES
-  static const Map<String, String> posicao = {
-    "ata": "assets/icones/posicoes/posicao_ata.svg",
-    "mei": "assets/icones/posicoes/posicao_mei.svg",
-    "zag": "assets/icones/posicoes/posicao_zag.svg",
-    "gol": "assets/icones/posicoes/posicao_gol.svg",
-    "cap": "assets/icones/posicoes/posicao_cap.svg",
-  };
   //REDES SOCIAIS
   static const String facebook = "assets/icones/facebook.svg";
   static const String google = "assets/icones/google.svg";
@@ -53,7 +45,7 @@ class AppIcones {
   static const String ninetyNine= "assets/icones/99.svg";
   static const String waze = "assets/icones/waze.svg";
   static const String moovit = "assets/icones/moovit.svg";
-  //LINHAS CAMPO
+  //QUADRAS/CAMPOS
   static const String futebol_sm = "assets/icones/linhas/futebol_sm.svg";
   static const String futebol_xl = "assets/icones/linhas/futebol_xl.svg";
   static const String fut7_sm = "assets/icones/linhas/fut7_sm.svg";
@@ -68,6 +60,23 @@ class AppIcones {
   static const String basquete_xl = "assets/icones/linhas/basquete_xl.svg";
   static const String basquete_street_sm = "assets/icones/linhas/basquete_street_sm.svg";
   static const String basquete_street_xl = "assets/icones/linhas/basquete_street_xl.svg";
+
+  static const Map<String, String> courts = {
+    "futebol_sm" : futebol_sm,
+    "futebol_xl" : futebol_xl,
+    "fut7_sm" : fut7_sm,
+    "fut7_xl" : fut7_xl,
+    "futsal_sm" : futsal_sm,
+    "futsal_xl" : futsal_xl,
+    "volei_sm" : volei_sm,
+    "volei_xl" : volei_xl,
+    "volei_areia_sm" : volei_areia_sm,
+    "volei_areia_xl" : volei_areia_xl,
+    "basquete_sm" : basquete_sm,
+    "basquete_xl" : basquete_xl,
+    "basquete_street_sm" : basquete_street_sm,
+    "basquete_street_xl" : basquete_street_xl,
+  };
 
   /* CUSTOM ICONE */
   static const IconData apito = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);

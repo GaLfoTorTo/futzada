@@ -1,10 +1,13 @@
+import 'package:futzada/core/helpers/date_helper.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/core/api/api.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/map_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/map_helper.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -39,12 +42,13 @@ class _EventHomePageState extends State<EventHomePage> {
   EscalationService escalationService = EscalationService();
   //RESGATAR EVENT
   late EventModel event;
-  //ESTADO - DESTAQUES
-  late List<Map<String, dynamic>> highlights;
   //ESTADO - ITEMS DO EVENTO
-  late double eventAvaliation;
+  late double eventAvaliations;
   late LatLng eventLatLon;
   late UserModel eventOrganizador;
+  late String eventDate;
+  late String eventCategory;
+  late Color eventColor;
   //ESTADOS - MAPA/VIAGEM
   Rxn<LatLng> userLatLon = Get.find(tag: 'userLatLog');
   RxBool isMapLoaded = false.obs;
@@ -52,14 +56,18 @@ class _EventHomePageState extends State<EventHomePage> {
   late double distance;
   late Duration timeTravelMode;
   late String timeTravel;
+  //ESTADO - DESTAQUES
+  late List<Map<String, dynamic>> highlights;
 
   @override
   void initState() {
     super.initState();
     event = eventController.event;
-    eventAvaliation = 4.2;//eventController.eventRepository.getEventAvaliation(event.avaliations);
+    eventAvaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
     eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
-    eventOrganizador = event.participants![0];/* !.firstWhere((user) => user.participants!.where((p) => p.eventId == event.id).first.role!.contains("Organizator")); */
+    eventOrganizador = EventHelper.getUserOrganizator(event);
+    eventDate = DateHelper.getEventDate(event.date!);
+    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //VERIFICAR SE MAPA ESTA PRONTO PARA INICIAR
     isMapLoaded.value = true;
     //DEFINIR TEMPO E METODO DE VIAGEM
@@ -69,12 +77,12 @@ class _EventHomePageState extends State<EventHomePage> {
   //FUNÇÃO DE DEFINIÇÃO DE TEMPO DE VIAGEM
   void setTravelModel(){
     //RESGATAR DISTANCIA
-    distance = MapUtils.getDistance(userLatLon.value!, eventLatLon);
+    distance = MapHelper.getDistance(userLatLon.value!, eventLatLon);
     //RESGATAR MODO DE VIAGEM
-    travelMode = MapUtils.getTravelMode(distance);
+    travelMode = MapHelper.getTravelMode(distance);
     //RESGATAR TEMPO
-    timeTravelMode = MapUtils.getTravelTime(distance, travelMode['speed']);
-    timeTravel = MapUtils.setTimeTravel(timeTravelMode);
+    timeTravelMode = MapHelper.getTravelTime(distance, travelMode['speed']);
+    timeTravel = MapHelper.setTimeTravel(timeTravelMode);
     //ATUALIZAR METODO DE VIAGEM DO CONTROLLER
     eventController.travelMode.value = travelMode['type'];
   }
@@ -83,41 +91,8 @@ class _EventHomePageState extends State<EventHomePage> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR ITEMS DO EVENTO
-    String eventDate = event.date.toString().replaceAll('[', '').replaceAll(']', '').toString();
     //LISTA DE INFORMAÇÕES SOBRE AS PARTIDAS
-    List<Map<String, dynamic>> infoGame = [
-      {
-        'label': "Jogadores por Equipe",
-        'icon': AppIcones.users_solid,
-        'value' : event.gameConfig!.playersPerTeam.toString(),
-      },
-      {
-        'label': "Duração (min)",
-        'icon': AppIcones.stopwatch_solid,
-        'value' : event.gameConfig!.duration.toString(),
-      },
-      {
-        'label': "Limite de Gols",
-        'icon': Icons.scoreboard,
-        'value' : event.gameConfig!.config!["goalLimit"].toString(),
-      },
-      {
-        'label': "2 Tempos",
-        'icon': Icons.safety_divider_rounded,
-        'value' : event.gameConfig!.config!["hasTwoHalves"]! ? "Sim" : "Não",
-      },
-      {
-        'label': "Pênaltis",
-        'icon': Icons.sports_soccer,
-        'value' : event.gameConfig!.config!["hasPenalty"]! ? "Sim" : "Não",
-      },
-      {
-        'label': "Árbitro",
-        'icon': AppIcones.apito,
-        'value' : event.gameConfig!.config!["hasRefereer"]! ? "Sim" : "Não",
-      },
-    ];
+    List<Map<String, dynamic>> infoGame = EventHelper.getInfoGameConfig(event);
     
     return SingleChildScrollView(
       child: Container(
@@ -133,9 +108,9 @@ class _EventHomePageState extends State<EventHomePage> {
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.location_on,
-                        color: AppColors.green_300,
+                        color: eventColor,
                         size: 20
                       ),
                       Container(
@@ -152,9 +127,9 @@ class _EventHomePageState extends State<EventHomePage> {
                   ),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_month_rounded,
-                        color: AppColors.green_300,
+                        color: eventColor,
                         size: 20
                       ),
                       Container(
@@ -171,9 +146,9 @@ class _EventHomePageState extends State<EventHomePage> {
                   ),
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.new_label_rounded,
-                        color: AppColors.green_300,
+                        color: eventColor,
                         size: 20
                       ),
                       Container(
@@ -214,7 +189,7 @@ class _EventHomePageState extends State<EventHomePage> {
                             width: 35,
                             height: 35,
                             child: CircleAvatar(
-                              backgroundImage: ImgUtils.getUserImg(eventOrganizador.photo)
+                              backgroundImage: ImgHelper.getUserImg(eventOrganizador.photo)
                             ),
                           ),
                           Column(
@@ -249,16 +224,16 @@ class _EventHomePageState extends State<EventHomePage> {
                             icon: AppIcones.paper_plane_solid,
                             iconSize: 20,
                             padding: 15,
-                            iconColor: AppColors.green_300,
-                            backgroundColor: AppColors.green_300.withAlpha(50),
+                            iconColor: eventColor,
+                            backgroundColor: eventColor.withAlpha(50),
                             action: () {},
                           ),
                           ButtonIconWidget(
                             icon: AppIcones.user_plus_solid,
                             iconSize: 20,
                             padding: 15,
-                            iconColor: AppColors.green_300,
-                            backgroundColor: AppColors.green_300.withAlpha(50),
+                            iconColor: eventColor,
+                            backgroundColor: eventColor.withAlpha(50),
                             action: () {},
                           ),
                         ],
@@ -287,8 +262,8 @@ class _EventHomePageState extends State<EventHomePage> {
                       icon: AppIcones.users_solid,
                       iconSize: 30,
                       padding: 20,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
+                      iconColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(50),
                       action: () {},
                     ),
                     Padding(
@@ -296,7 +271,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       child: Text(
                         "${event.participants!.length}",
                         style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          color: AppColors.green_300,
+                          color: eventColor,
                           fontWeight: FontWeight.bold
                         ),
                       ),
@@ -316,8 +291,8 @@ class _EventHomePageState extends State<EventHomePage> {
                       icon: AppIcones.escalacao_solid,
                       iconSize: 30,
                       padding: 20,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
+                      iconColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(50),
                       action: () {},
                     ),
                     Padding(
@@ -325,7 +300,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       child: Text(
                         event.gameConfig!.category,
                         style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          color: AppColors.green_300,
+                          color: eventColor,
                           fontWeight: FontWeight.bold
                         ),
                       ),
@@ -345,8 +320,8 @@ class _EventHomePageState extends State<EventHomePage> {
                       icon: AppIcones.apito,
                       iconSize: 30,
                       padding: 20,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
+                      iconColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(50),
                       action: () {},
                     ),
                     Padding(
@@ -354,7 +329,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       child: Text(
                         "${event.games?.length ?? 0}",
                         style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          color: AppColors.green_300,
+                          color: eventColor,
                           fontWeight: FontWeight.bold
                         ),
                       ),
@@ -374,16 +349,16 @@ class _EventHomePageState extends State<EventHomePage> {
                       icon: AppIcones.lock_solid,
                       iconSize: 30,
                       padding: 20,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
+                      iconColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(50),
                       action: () {},
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: Text(
-                        event.visibility!.name,
+                        event.privacy!.name,
                         style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                          color: AppColors.green_300,
+                          color: eventColor,
                           fontWeight: FontWeight.bold
                         ),
                       ),
@@ -411,7 +386,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   ), 
                   //AREA DE BOTÕES 
                   Positioned(
-                    bottom: -10,
+                    bottom: -15,
                     left: 0,
                     right: 0,
                     child: Container(
@@ -434,19 +409,19 @@ class _EventHomePageState extends State<EventHomePage> {
                                     alignment: Alignment.center,
                                     padding: const EdgeInsets.all(5),
                                     decoration: BoxDecoration(
-                                      color: AppColors.green_300.withAlpha(50),
+                                      color: eventColor.withAlpha(50),
                                       borderRadius: BorderRadius.circular(10)
                                     ),
                                     child: Icon(
                                       item['icon'],
-                                      color: AppColors.green_300,
+                                      color: eventColor,
                                       size: 25,
                                     ),
                                   ),
                                   Text(
                                     item['value'],
                                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                      color: AppColors.green_300,
+                                      color: eventColor,
                                       fontWeight: FontWeight.bold
                                     ),
                                     textAlign: TextAlign.center,
@@ -461,14 +436,14 @@ class _EventHomePageState extends State<EventHomePage> {
                                 ],
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
                   ),           
                   // COMPONENTE DE CAMPO
                   Positioned(
-                    bottom: 130,
+                    bottom: 150,
                     child: Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.identity()
@@ -486,12 +461,12 @@ class _EventHomePageState extends State<EventHomePage> {
                               color: AppColors.dark_300.withAlpha(50),
                               spreadRadius: 1,
                               blurRadius: 5,
-                              offset: Offset(5, 0),
+                              offset: const Offset(5, 0),
                             ),
                           ],
                         ),
                         child: SvgPicture.asset(
-                          escalationService.fieldType(event.gameConfig!.category),
+                          ModalityHelper.getCategoryCourt(event.gameConfig!.category),
                           fit: BoxFit.fill,
                         ),
                       ),
@@ -517,9 +492,9 @@ class _EventHomePageState extends State<EventHomePage> {
               child: Obx(() {
                 //EXIBIR LOADING DE CARREGAMENTO DO MAPA
                 if (!isMapLoaded.value) {
-                  return const Center(
+                  return Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.green_300,
+                      color: eventColor,
                     )
                   );
                 }
@@ -544,10 +519,10 @@ class _EventHomePageState extends State<EventHomePage> {
                           point: eventLatLon,
                           width: 50,
                           height: 50,
-                          child: const Icon(
+                          child: Icon(
                             Icons.location_on,
                             size: 20,
-                            color: AppColors.green_300,
+                            color: eventColor,
                           )
                         ),
                       ],
@@ -607,11 +582,11 @@ class _EventHomePageState extends State<EventHomePage> {
                 return Column(
                     children: [
                       ButtonIconWidget(
-                        icon: MapUtils.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['icon'],
+                        icon: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['icon'],
                         iconSize: 30,
                         padding: 15,
-                        iconColor: AppColors.green_300,
-                        backgroundColor: AppColors.green_300.withAlpha(50),
+                        iconColor: eventColor,
+                        backgroundColor: eventColor.withAlpha(50),
                         action: () => Get.bottomSheet(const BottomSheetMapTravel())
                       ),
                       Padding(
@@ -636,11 +611,11 @@ class _EventHomePageState extends State<EventHomePage> {
                       icon: Icons.directions,
                       iconSize: 30,
                       padding: 15,
-                      iconColor: AppColors.green_300,
-                      backgroundColor: AppColors.green_300.withAlpha(50),
+                      iconColor: eventColor,
+                      backgroundColor: eventColor.withAlpha(50),
                       action: () => IntegrationRouteService.openDialogApps(
                         event.address!,
-                        travelModel: MapUtils.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['type']
+                        travelModel: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['type']
                       ),
                     ),
                     Padding(

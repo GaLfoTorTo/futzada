@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/map_utils.dart';
+import 'package:futzada/core/helpers/map_helper.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 
 class BottomSheetMapTravel extends StatelessWidget {
@@ -29,7 +29,7 @@ class BottomSheetMapTravel extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const Divider(color: AppColors.grey_300),
-            ...MapUtils.transports.map((item) {
+            ...MapHelper.transports.map((item) {
               return ListTile(
                 leading: Container(
                   width: 50,

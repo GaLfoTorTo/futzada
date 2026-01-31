@@ -37,6 +37,18 @@ class AvaliationService {
     return arr;
   }
 
+  //FUNÇÃO DE CALCULO DE AVALIAÇÕES DO EVENTO
+  double getRatingAvaliation(List<AvaliationModel>? avaliations){
+    double num = 0.0;
+    if(avaliations != null){
+      for(var a in avaliations){
+        num+= a.avaliation ?? 0.0;
+      }
+      return num / 5;
+    }
+    return num;
+  }
+
   //FUNÇÃO PARA GERAÇÃO DE VALORES (TEMPORARIAMENTE)
   static double setValues(double min, double max){
     return min + random.nextDouble() * (max - min);

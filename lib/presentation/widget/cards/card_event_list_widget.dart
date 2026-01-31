@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
@@ -26,7 +26,7 @@ class CardEventListWidget extends StatelessWidget {
     //DEFINIR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliation = 4.2;//eventController.eventService.getEventAvaliation(event.avaliations);
+    double avaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
     //RESGATAR DATA DO EVENTO
     String eventDate = DateHelper.getEventDate(event.date!);
 
@@ -53,7 +53,7 @@ class CardEventListWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
                 image: DecorationImage(
-                  image: ImgUtils.getEventImg(event.photo),
+                  image: ImgHelper.getEventImg(event.photo),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -80,7 +80,7 @@ class CardEventListWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IndicatorAvaliacaoWidget(
-                              avaliation: avaliation,
+                              avaliation: avaliations,
                               width: dimensions.width / 4.5,
                               starSize: 15,
                             ),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:futzada/data/models/participant_model.dart';
 import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -33,7 +33,7 @@ class CardPlayerMarketWidget extends StatelessWidget {
     //RESGATAR JOGADOR
     PlayerModel player = user.player!;
     //RESGATAR RATING DO EVENTO
-    RatingModel rating = UserUtils.getRating(player, escalationController.event!.id!);
+    RatingModel rating = UserHelper.getRating(player, escalationController.event!.id!);
     //RESGTAR JOGADOR COMO MAP
     Map<String, dynamic> playerMap = player.toMap();
     //RESGATAR POSIÇÕES DO JOGADOR
@@ -118,7 +118,7 @@ class CardPlayerMarketWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              UserUtils.getFullName(user),
+                              UserHelper.getFullName(user),
                               style: Theme.of(context).textTheme.titleSmall,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis

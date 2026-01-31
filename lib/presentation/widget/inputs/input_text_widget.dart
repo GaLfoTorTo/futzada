@@ -15,6 +15,7 @@ class InputTextWidget extends StatefulWidget {
   final TextInputType? type;
   final int? maxLength;
   final VoidCallback? suffixFunction;
+  final bool textArea;
   final bool enable;
   final bool readOnly;
   final TextEditingController? textController;
@@ -38,6 +39,7 @@ class InputTextWidget extends StatefulWidget {
     this.maxLength,
     this.suffixFunction,
     this.textController,
+    this.textArea = false,
     this.enable = true,
     this.readOnly = false,
     this.onSaved,
@@ -113,6 +115,8 @@ class _InputTextWidgetState extends State<InputTextWidget> {
         controller: widget.textController,
         keyboardType: widget.type,
         obscureText: _visible,
+        minLines: widget.textArea ? 5 : 1,
+        maxLines: widget.textArea ? 10 : 1,
         maxLength: widget.maxLength,
         textCapitalization: widget.maxLength != null 
           ? TextCapitalization.characters 

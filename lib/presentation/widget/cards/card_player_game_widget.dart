@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 
 class CardPlayerGameWidget extends StatelessWidget {
@@ -27,13 +27,13 @@ class CardPlayerGameWidget extends StatelessWidget {
               width: 100,
               height: 100,
               child: CircleAvatar(
-                backgroundImage: ImgUtils.getUserImg(user.photo),
+                backgroundImage: ImgHelper.getUserImg(user.photo),
               ),
             ),
             Column(
               children: [
                 Text(
-                  UserUtils.getFullName(user),
+                  UserHelper.getFullName(user),
                   style: Theme.of(context).textTheme.labelMedium!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

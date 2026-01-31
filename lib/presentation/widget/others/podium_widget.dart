@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
@@ -128,7 +128,7 @@ class PodiumWidget extends StatelessWidget {
                       textSide: 10,
                     ),
                     Text(
-                      UserUtils.getFullName(user),
+                      UserHelper.getFullName(user),
                       style: Theme.of(context).textTheme.labelSmall,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,

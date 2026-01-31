@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/services/event_service.dart';
 
@@ -21,7 +21,7 @@ class CardPopularWidget extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: ImgUtils.getEventImg(event.photo),
+            image: ImgHelper.getEventImg(event.photo),
             fit: BoxFit.cover,
           ),
         ),

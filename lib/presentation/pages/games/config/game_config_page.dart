@@ -1,4 +1,5 @@
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -54,10 +55,10 @@ class _GameConfigPageState extends State<GameConfigPage> {
     //INICIALIZAR VALORES DE SLIDER (QTD DE JOGADORES)
     qtdPlayers = gameController.playersPerTeamController.text.isNotEmpty 
       ? int.parse(gameController.playersPerTeamController.text) 
-      : gameController.gameService.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
-    minPlayers = gameController.gameService.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
-    maxPlayers = gameController.gameService.getQtdPlayers(gameController.categoryController.text)['maxPlayers']!;
-    divisions = gameController.gameService.getQtdPlayers(gameController.categoryController.text)['divisions']!;
+      : ModalityHelper.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
+    minPlayers = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
+    maxPlayers = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['maxPlayers']!;
+    divisions = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['divisions']!;
   }
 
   //FUNÇÃO PARA AJUSTAR DATA DE INICIO, FIM E DURAÇÃO DE PARTIDA
@@ -307,7 +308,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                         items: List.generate(gameController.event.participants!.length, (i){
                           return {
                             'id': gameController.event.participants![i].id,
-                            'title': UserUtils.getFullName(gameController.event.participants![i]),
+                            'title': UserHelper.getFullName(gameController.event.participants![i]),
                             'photo': gameController.event.participants![i].photo,
                           };
                         }),

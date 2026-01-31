@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class EconomyModel {
   final int? id;
@@ -79,8 +78,8 @@ class EconomyModel {
       valuation: map['valuation'] != null ? map['valuation'] as double : null,
       points: map['points'] != null ? map['points'] as double : null,
       totalPoints: map['totalPoints'] != null ? map['totalPoints'] as double : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt:  DatetimeUtils.parseDate(map['updatedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt:  DateHelper.parseDate(map['updatedAt']),
     );
   }
 

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/map_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/map_helper.dart';
 
 class CardToYouWidget extends StatelessWidget {
   final EventModel event;
@@ -20,14 +20,14 @@ class CardToYouWidget extends StatelessWidget {
     //RESGATAR POSIÇÕES DO MARKER
     final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     //RESGATAR DISTANCIA ATE O LOCAL
-    double distance = MapUtils.getDistance(userLatLog.value!, eventLatLon);
+    double distance = MapHelper.getDistance(userLatLog.value!, eventLatLon);
           
     return Card(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: ImgUtils.getEventImg(event.photo),
+            image: ImgHelper.getEventImg(event.photo),
             fit: BoxFit.cover,
           ),
         ),

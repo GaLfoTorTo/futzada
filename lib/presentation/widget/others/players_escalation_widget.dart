@@ -1,11 +1,10 @@
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/event_utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/core/helpers/player_helper.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
+import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_player_widget.dart';
 
 class PlayersEscalationWidget extends StatelessWidget {
@@ -44,12 +43,12 @@ class PlayersEscalationWidget extends StatelessWidget {
               escalationController.formation.value
             );
             if(escalationController.starters[playerIndex] != null){
-              user = EventUtils.getUserEvent(escalationController.event!, escalationController.starters[playerIndex]!);
+              user = EventHelper.getUserEvent(escalationController.event!, escalationController.starters[playerIndex]!);
             }
             //RESGATAR ABREVIAÇÃO DA POSIÇÃO
             String positionAlias = position.characters.getRange(0,3).toLowerCase().toString();
             //DEFINIR BORDA DE POSIÇÃO
-            var borderColor = AppHelper.setColorPosition(positionAlias);
+            var borderColor = PlayerHelper.setColorPosition(positionAlias);
             //VERIFICAR SE JOGADOR E O CAPITÃO
             if(escalationController.selectedPlayerCapitan.value == user?.id){
               return Stack(
@@ -65,13 +64,15 @@ class PlayersEscalationWidget extends StatelessWidget {
                     borderColor: borderColor,
                     showName: true,
                   ),
-                  Positioned(
+                  const Positioned(
                     top: 50,
                     left: 0,
-                    child: SvgPicture.asset(
-                      AppIcones.posicao['cap']!,
-                      width: 15,
-                      height: 15,
+                    child: PositionWidget(
+                      position: "CAP",
+                      mainPosition: true,
+                      width: 35,
+                      height: 25,
+                      textSide: 10,
                     ),
                   ),
                 ]

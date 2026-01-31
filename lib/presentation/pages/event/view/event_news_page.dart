@@ -3,9 +3,9 @@ import 'package:futzada/data/models/news_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:intl/intl.dart';
 
@@ -46,7 +46,7 @@ class EventNewsPage extends StatelessWidget {
                   //RESGATAR NOTICIA
                   Map<String, dynamic> newsEvent = eventController.newsService.getEventNews(eventNew.type);
                   //RESGATAR AUTHOR
-                  UserModel? user = EventUtils.getUserEvent(eventController.event, eventNew.userId!);
+                  UserModel? user = EventHelper.getUserEvent(eventController.event, eventNew.userId!);
                   
                   return TimelineTile(
                     alignment: TimelineAlign.start,
@@ -124,8 +124,8 @@ class EventNewsPage extends StatelessWidget {
                                   ),
                                   child: CircleAvatar(
                                     backgroundImage: eventNew.userId != null 
-                                      ? ImgUtils.getUserImg(user?.photo)
-                                      : ImgUtils.getEventImg(null),
+                                      ? ImgHelper.getUserImg(user?.photo)
+                                      : ImgHelper.getEventImg(null),
                                   ),
                                 ),
                                 Expanded(
@@ -135,7 +135,7 @@ class EventNewsPage extends StatelessWidget {
                                         Column(
                                           children: [
                                             Text(
-                                              UserUtils.getFullName(user),
+                                              UserHelper.getFullName(user),
                                               style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                                 fontWeight: FontWeight.bold
                                               ),

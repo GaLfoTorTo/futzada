@@ -44,7 +44,7 @@ class UserService {
         ? [participantService.generateParticipant(eventId, userId).toMap()]
         : null,
       //DEFINIR ALEATORIAMENTE SE PARTICIPANTE ATUARÁ COMO TÉCNICO
-      "visibility": VisibilityProfile.values[random.nextInt(2)].name,
+      "privacy": Privacy.values[random.nextInt(2)].name,
       "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
       "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
     });

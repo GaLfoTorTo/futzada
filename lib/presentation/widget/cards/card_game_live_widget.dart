@@ -1,4 +1,3 @@
-import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,10 +6,11 @@ import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/widget/animated/animated_ellipsis.dart';
 import 'package:futzada/presentation/widget/others/timer_counter_widget.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 
 class CardGameLiveWidget extends StatefulWidget {
   final EventModel event;
@@ -26,11 +26,19 @@ class CardGameLiveWidget extends StatefulWidget {
 }
 
 class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
+  late Color eventTextColor;
+  late String eventImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
+    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   @override
@@ -58,12 +66,12 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: AppColors.green_300,
+          color: eventColor,
           image: DecorationImage(
-            image: const AssetImage(AppImages.cardFootball) as ImageProvider,
+            image: AssetImage(eventImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              AppColors.green_300.withAlpha(220), 
+              eventColor.withAlpha(200),
               BlendMode.srcATop,
             )
           ),
@@ -103,7 +111,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
               Text(
                 "#${game.number}",
                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: AppColors.blue_500,
+                  color: eventTextColor,
                 ),
               ),
               Row(
@@ -116,8 +124,8 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                         SvgPicture.asset(
                           AppIcones.emblemas["emblema_1"]!,
                           width: 60,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.blue_500,
+                          colorFilter: ColorFilter.mode(
+                            eventTextColor,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -126,7 +134,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamA.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: AppColors.blue_500,
+                              color: eventTextColor,
                             ),
                           ),
                         ),
@@ -167,8 +175,8 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                         SvgPicture.asset(
                           AppIcones.emblemas['emblema_2']!,
                           width: 60,
-                          colorFilter: const ColorFilter.mode(
-                            AppColors.blue_500, 
+                          colorFilter: ColorFilter.mode(
+                            eventTextColor, 
                             BlendMode.srcIn,
                           ),
                         ),
@@ -177,7 +185,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamB.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: AppColors.blue_500,
+                              color: eventTextColor,
                             ),
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,12 +40,12 @@ class _EscalationWidgetState extends State<EscalationWidget> {
             color: AppColors.dark_300.withAlpha(50),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0,5), 
+            offset: const Offset(0,5), 
           ),
         ],
       ),
       child: SvgPicture.asset(
-        escalationController.escalationService.fieldType(widget.category),
+        ModalityHelper.getCategoryCourt(widget.category),
       )
     );
   }

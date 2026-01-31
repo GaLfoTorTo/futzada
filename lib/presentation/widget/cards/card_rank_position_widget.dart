@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
@@ -110,7 +110,7 @@ class CardRankPositionWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          UserUtils.getFullName(user),
+                          UserHelper.getFullName(user),
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         Text(

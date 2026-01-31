@@ -3,7 +3,7 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 
 class ButtonDropdownIconWidget extends StatelessWidget {
   final dynamic selectedItem;
@@ -87,7 +87,7 @@ class ButtonDropdownIconWidget extends StatelessWidget {
                         width: iconSize! * 3, 
                         height: iconSize! * 3,
                         child: CircleAvatar(
-                          backgroundImage: ImgUtils.getUserImg(item['photo']),
+                          backgroundImage: ImgHelper.getUserImg(item['photo']),
                         ),
                       ),
                     ]else...[

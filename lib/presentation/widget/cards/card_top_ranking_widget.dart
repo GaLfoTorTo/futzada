@@ -18,7 +18,7 @@ class CardTopRankingWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     return Center(
-      child: Container(
+      child: SizedBox(
         height: 380,
         width: dimensions.width,
         child: PageView(
@@ -31,17 +31,17 @@ class CardTopRankingWidget extends StatelessWidget {
             //RESGATAR DADOS DOS JOGADORES
             var jogadores = item['jogadores'];
             return Container(
-              margin: EdgeInsets.only(top: 10, bottom: 10, right: 10),
-              padding: EdgeInsets.all(10),
+              margin: const EdgeInsets.only(top: 10, bottom: 10, right: 10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: AppColors.green_300,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.dark_500.withOpacity(0.5),
+                    color: AppColors.dark_500.withAlpha(50),
                     spreadRadius: 0.5,
                     blurRadius: 5,
-                    offset: Offset(2, 5),
+                    offset: const Offset(2, 5),
                   ),
                 ],
               ),
@@ -57,7 +57,7 @@ class CardTopRankingWidget extends StatelessWidget {
                         borderColor: AppColors.white,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: const EdgeInsets.only(left: 10),
                         child: Text(
                           pelada['titulo'],
                           style: const TextStyle(
@@ -84,7 +84,7 @@ class CardTopRankingWidget extends StatelessWidget {
                         CardRankingWidget(
                           width: jogador['colocacao'] == '1' ? 120 : 100,
                           height: jogador['colocacao'] == '1' ? 200 : 180,
-                          usuario: jogador,
+                          user: jogador,
                           indicador: rank,
                         )
                     ]

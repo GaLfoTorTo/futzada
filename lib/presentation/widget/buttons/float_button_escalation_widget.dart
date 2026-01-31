@@ -1,10 +1,10 @@
-import 'package:futzada/presentation/widget/dialogs/dialog_escalation_confirm.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/dialogs/dialog_capitan.dart';
+import 'package:futzada/presentation/widget/dialogs/dialog_escalation_confirm.dart';
 
 class FloatButtonEscalationWidget extends StatelessWidget {
   final bool hasCapitan;
@@ -50,10 +50,12 @@ class FloatButtonEscalationWidget extends StatelessWidget {
               ),
             ]
           )
-          : SvgPicture.asset(
-              AppIcones.posicao['cap']!,
-              width: 38,
-              height: 38,
+          : const PositionWidget(
+              position: "CAP",
+              mainPosition: true,
+              width: 35,
+              height: 25,
+              textSide: 10,
             ),
         )
     );

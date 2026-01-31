@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/services/escalation_service.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/others/players_court_widget.dart';
@@ -37,12 +38,12 @@ class _CourtWidgetState extends State<CourtWidget> {
             color: AppColors.dark_300.withAlpha(50),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0,5), 
+            offset: const Offset(0,5), 
           ),
         ],
       ),
       child: SvgPicture.asset(
-        escalationService.fieldType(widget.category),
+        ModalityHelper.getCategoryCourt(widget.category),
       )
     );
   }

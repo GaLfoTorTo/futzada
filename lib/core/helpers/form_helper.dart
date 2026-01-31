@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FormUtils {
+class FormHelper {
   //FUNÇÃO PARA PICKER DE HORAS
   static Future<String?> selectTime(BuildContext context, name) async {
     final TimeOfDay? timeSelected = await showTimePicker(

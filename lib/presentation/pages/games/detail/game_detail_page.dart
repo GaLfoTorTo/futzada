@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/data/models/event_model.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/pages/games/detail/game_escalation_page.dart';
 import 'package:futzada/presentation/pages/games/detail/game_overview_page.dart';
@@ -11,9 +12,7 @@ import 'package:futzada/presentation/pages/games/detail/game_timeline_page.dart'
 import 'package:futzada/presentation/widget/bars/header_scroll_widget.dart';
 import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
 import 'package:futzada/presentation/widget/dialogs/dialog_alert_start.dart';
-import 'package:futzada/presentation/widget/dialogs/dialog_stop_watch.dart';
 import 'package:futzada/presentation/widget/cards/card_game_detail_widget.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_timer_widget.dart';
 
 class GameDetailPage extends StatefulWidget {
   const GameDetailPage({super.key});
@@ -27,6 +26,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
   GameController gameController = GameController.instance;
   //DEFINIR EVENTO
   late EventModel event;
+  //ESTADO - ITEMS EVENTO
+  late Color eventColor;
+  late Color eventTextColor;
+  late String eventImage;
   //CONTROLLER DE TABS
   late TabController tabController;
   //CONTROLLER DE SCROLL
@@ -42,6 +45,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     tabController = TabController(length: 4, vsync: this);
     //RESGATAR EVENTO 
     event = gameController.event;
+    //ESTADO - ITEMS EVENTO
+    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    eventImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
     //INICIAR LISTENER DE SCROLL DA PAGINA
     scrollController.addListener(handleScroll);
     //SIMULAR JOGADORES PRESENTES
@@ -77,6 +84,8 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     
   @override
   Widget build(BuildContext context) {
+    //RESGATAR DIMENSÕES DO DISPOSITIVO
+    var dimensions = MediaQuery.of(context).size;
     //LISTA DE TABS
     List<String> tabs = [
       'Resumo',
@@ -89,10 +98,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
       body: NestedScrollView(
         controller: scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
-          
           return [
             HeaderScrollWidget(
               title: "Partida #${gameController.currentGame.number}",
+              backgroundColor: eventColor,
               leftAction: () => Get.back(),
               rightIcon: AppIcones.cog_solid,
               rightAction: () {
@@ -122,6 +131,19 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
                     child: TabBar(
                       controller: tabController,
                       onTap: (i) => setState(() => tabIndex = i),
+                      indicator: UnderlineTabIndicator(
+                        borderSide: BorderSide(
+                          width: 5,
+                          color: eventColor,
+                        ),
+                        insets: EdgeInsets.symmetric(horizontal: dimensions.width / 5)
+                      ),
+                      labelColor: eventColor,
+                      labelStyle: const TextStyle(
+                        color: AppColors.grey_500,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      unselectedLabelColor: AppColors.grey_500,
                       isScrollable: true,
                       tabAlignment: TabAlignment.start,
                       tabs: tabs.map((tab){
@@ -150,20 +172,21 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
       ),
       floatingActionButton: Obx((){
         if(gameController.isGameReady.value && tabIndex == 0){
-          return FloatButtonTimerWidget(
-            actionButton: () => Get.dialog(const StopWatchDialog(),
-              barrierColor: Colors.transparent,
-              useSafeArea: true,
-              transitionDuration: Durations.short1
-            ),
-            isRunning: gameController.isGameRunning.value,
+          return FloatButtonWidget(
+            floatKey: "control_games",
+            icon: Icons.play_arrow,
+            backgroundColor: eventColor,
+            color: eventTextColor,
+            onPressed: (){}
           );
         }
         if(!gameController.isGameReady.value){
           return FloatButtonWidget(
-            onPressed: () => Get.toNamed("/games/teams"),
             floatKey: "teams_games",
             icon: AppIcones.escalacao_outline,
+            backgroundColor: eventColor,
+            color: eventTextColor,
+            onPressed: () => Get.toNamed("/games/teams"),
           );
         }
         return const SizedBox.shrink();

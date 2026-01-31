@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/core/enum/enums.dart';
@@ -43,30 +44,50 @@ class GameService {
   }
 
   //FUNÇÃO PARA GERAR CONFIGURAÇÕES DE PARTIDA
-  GameConfigModel generateGameConfig(int i){
+  GameConfigModel generateGameConfig(int eventId, String modality){
     //DEFINIR CATEGORIA
-    String category = getCategory();
+    String category = ModalityHelper.getCategory(modality, faker.randomGenerator.integer(2));
     //GERAR JOGO (PARTIDA)
     return GameConfigModel.fromMap({
-      "id": i,
-      "eventId": i,
+      "id": faker.randomGenerator.integer(100, min: 1),
+      "eventId": eventId,
       "duration" : random.nextInt(10),
       "category" : category,
-      "playersPerTeam" : getQtdPlayers(category)['qtdPlayers'],
-      "config" : {
-        "hasTwoHalves" : random.nextBool(),
-        "hasExtraTime" : random.nextBool(),
-        "hasPenalty" : random.nextBool(),
-        "hasGoalLimit" : random.nextBool(),
-        "hasRefereer" : random.nextBool(),
-        "extraTime" : random.nextInt(15),
-        "goalLimit" : random.nextInt(5),
-      },
+      "playersPerTeam" : ModalityHelper.getQtdPlayers(category)['qtdPlayers'],
+      "points" : generateLimitPoints(modality),
+      "refereerId" : random.nextInt(30),
+      "config" : generateExtraGameConfig(modality),
       "createdAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
       "updatedAt" : DateFormat('yyyy-MM-dd HH:mm:ss').parse(faker.date.dateTime(minYear: 2025, maxYear: 2025).toString()),
     });
   }
 
+  //FUNÇÃO PARA GERAR CONFIGURAÇÕES DA PARTIDA A PARTIR DA MODALIDADE
+  Map<String, dynamic> generateExtraGameConfig(String modality){
+    switch (modality) {
+      case "Volleyball":
+        return {
+          "sets" : faker.randomGenerator.integer(3, min: 1),
+          "tieBreakPoints" : faker.randomGenerator.integer(15, min: 3),
+        };
+      case "Basketball":
+        return {
+          "quarters" : faker.randomGenerator.integer(4, min: 1),
+          "shotClock" : faker.randomGenerator.integer(60, min: 30),
+        };
+      default:
+        return {
+          "halves" : faker.randomGenerator.integer(2, min: 1),
+          "penalty" : random.nextBool()
+        }; 
+    }
+  }
+
+  int? generateLimitPoints(modality){
+    return modality == "Volleyball" 
+      ? faker.randomGenerator.integer(25, min: 10)
+      : random.nextInt(100);
+  }
   //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
   List<GameModel?>getListGames(EventModel event){
     //RESGATAR DURAÇÃO DA PARTIDA
@@ -115,57 +136,6 @@ class GameService {
         return GameStatus.Completed;
       default:
         return GameStatus.Completed;
-    }
-  }
-
-  //FUNÇÃO PARA RESGATAR CATEGORIA DO EVENTO
-  String getCategory(){
-    int num = random.nextInt(3);
-    switch (num) {
-      case 1:
-        return "Futebol";
-      case 2:
-        return "Fut7";
-      case 3:
-        return "Futsal";
-      default:
-        return "Futebol";
-    }
-  }
-
-  //FUNÇÃO PARA DEFINIÇÃO DE QUANTIDADE DE JOGADORES POR CATEGORIA
-  Map<String, int> getQtdPlayers(String category){
-    //SELECIONAR TIPO DE CAMPO
-    switch (category) {
-      //DEFINIR VALOR PARA SLIDER
-      case "Futebol":
-        return {
-          "qtdPlayers" : 11,
-          "minPlayers" :  9,
-          "maxPlayers" : 11,
-          "divisions" : 2,
-        };
-      case "Fut7":
-        return {
-          "qtdPlayers" : 4,
-          "minPlayers" :  4,
-          "maxPlayers" : 8,
-          "divisions" : 4,
-        };
-      case "Futsal":
-        return {
-          "qtdPlayers" : 5,
-          "minPlayers" :  4,
-          "maxPlayers" : 6,
-          "divisions" : 2,
-        };
-      default:
-        return {
-          "qtdPlayers" : 11,
-          "minPlayers" :  9,
-          "maxPlayers" : 11,
-          "divisions" : 2,
-        };
     }
   }
 }

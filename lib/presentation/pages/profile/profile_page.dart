@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/user_utils.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/user_controller.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
@@ -151,7 +151,7 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
                       child: Column(
                         children: [
                           Text(
-                            UserUtils.getFullName(user),
+                            UserHelper.getFullName(user),
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
                           if(user.userName != null)...[

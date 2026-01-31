@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:futzada/core/theme/app_colors.dart';
 
-class ManagerUtils {
+class ManagerHelper {
   //FUNÇÃO DE GERAÇÃO DE OBJETO PADRÃO DE EMBLEMA
   static Map<String, Map<String, dynamic>> configEmblem(Color primaryColor) {
     //DEFINIR CONFIGURAÇÃO INICIAL DE EMBLEMA

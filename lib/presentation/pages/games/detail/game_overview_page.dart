@@ -1,14 +1,15 @@
 import 'dart:math';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:futzada/core/theme/app_colors.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
+import 'package:futzada/data/models/game_model.dart';
+import 'package:futzada/data/models/team_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/event_utils.dart';
-import 'package:futzada/core/utils/img_utils.dart';
-import 'package:futzada/core/utils/user_utils.dart';
-import 'package:futzada/data/services/escalation_service.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/widget/buttons/button_vote_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
@@ -21,35 +22,48 @@ class GameOverviewPage extends StatefulWidget {
 }
 
 class _GameOverviewPageState extends State<GameOverviewPage> {
+  //RESGATAR CONTROLLER DE PARTIDAS
+  GameController gameController = GameController.instance;
+  //ITEMS DO EVENTO
+  late Color eventColor;
+  //ITEMS DE PARTIDA
+  late GameModel game;
+  late TeamModel teamA;
+  late TeamModel teamB;
+  late double team1Value;
+  late double team2Value;
+
+  @override
+  void initState(){
+    super.initState();
+    eventColor = ModalityHelper.getEventModalityColor(gameController.event.gameConfig?.category ?? gameController.event.modality!.name)['color'];
+    //PARTIDA ATUAL
+    game = gameController.currentGame;
+    //RESGATAR EQUIPES
+    teamA = gameController.currentGame.teams!.first;
+    teamB = gameController.currentGame.teams!.last;
+    //RESGATAR VALORES DE VOTAÇÃO
+    team1Value = gameController.votesGame['team1'] ?? 0.0;
+    team2Value = gameController.votesGame['team2'] ?? 0.0;
+  }
+
+  //FUNÇÃO DE COLETA DE CHAVES
+  String getOption(String key) {
+    if (key == 'team1') {
+      return team1Value > team2Value ? "Win" : "Lose";
+    }
+    if (key == 'team2') {
+      return team2Value > team1Value ? "Win" : "Lose";
+    }
+    return "Draw";
+  }
+  
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE PARTIDAS
-    GameController gameController = GameController.instance;
-    //DEFINIR SERVIÇO DE CAMPO/QUADRA
-    EscalationService escalationService = EscalationService();
-    //PARTIDA ATUAL
-    final game = gameController.currentGame;
-    //RESGATAR EQUIPES
-    final teamA = gameController.currentGame.teams!.first;
-    final teamB = gameController.currentGame.teams!.last;
-    //RESGATAR VALORES DE VOTAÇÃO
-    final team1Value = gameController.votesGame['team1'] ?? 0.0;
-    final team2Value = gameController.votesGame['team2'] ?? 0.0;
-
-    //FUNÇÃO DE COLETA DE CHAVES
-    String getOption(String key) {
-      if (key == 'team1') {
-        return team1Value > team2Value ? "Win" : "Lose";
-      }
-
-      if (key == 'team2') {
-        return team2Value > team1Value ? "Win" : "Lose";
-      }
-
-      return "Draw";
-    }
+    //LISTA DE INFORMAÇÕES SOBRE AS PARTIDAS
+    List<Map<String, dynamic>> infoGame = EventHelper.getDetailGame(gameController.event);
     
     return SingleChildScrollView(
       child: Column(
@@ -66,7 +80,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                   color: AppColors.dark_500.withAlpha(30),
                   spreadRadius: 0.5,
                   blurRadius: 5,
-                  offset: Offset(2, 5),
+                  offset: const Offset(2, 5),
                 ),
               ],
             ),
@@ -106,12 +120,12 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                                   color: AppColors.dark_300.withAlpha(50),
                                   spreadRadius: 1,
                                   blurRadius: 5,
-                                  offset: Offset(5, 0),
+                                  offset: const Offset(5, 0),
                                 ),
                               ],
                             ),
                             child: SvgPicture.asset(
-                              escalationService.fieldType(gameController.event.gameConfig!.category),
+                              ModalityHelper.getCategoryCourt(gameController.event.gameConfig!.category),
                               fit: BoxFit.fill,
                             ),
                           ),
@@ -119,153 +133,64 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                       ),
                     ]
                   ),
-                  Row(
-                    spacing: 10,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        spacing: 10,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.green_300.withAlpha(50),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: const Icon(
-                                  Icons.calendar_month_rounded,
-                                  size: 30,
-                                  color: AppColors.green_300,
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "Previsão de Início/Fim",
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                      color: AppColors.grey_500
+                  SizedBox(
+                    width: dimensions.width,
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      alignment: WrapAlignment.spaceEvenly,
+                      children: [
+                        ...infoGame.map((item){
+                          return SizedBox(
+                            width: dimensions.width * 0.4,
+                            child: Column(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  spacing: 10,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: eventColor.withAlpha(50),
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: Icon(
+                                        item['icon'],
+                                        size: 30,
+                                        color: eventColor,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "${DateFormat("HH:ss").format(game.startTime!)} - ${DateFormat("HH:ss").format(game.endTime!)}",
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),      
-                            ],
-                          ),
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.green_300.withAlpha(50),
-                                  borderRadius: BorderRadius.circular(10)
+                                    Column(
+                                      children: [
+                                        SizedBox(
+                                          width: 100,
+                                          child: Text(
+                                            item['label'],
+                                            style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                                              color: AppColors.grey_500
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Text(
+                                          item['value'],
+                                          style: Theme.of(context).textTheme.titleSmall,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),      
+                                  ],
                                 ),
-                                child: const Icon(
-                                  Icons.timer_rounded,
-                                  size: 30,
-                                  color: AppColors.green_300,
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "Duração de Partida",
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                      color: AppColors.grey_500
-                                    ),
-                                  ),
-                                  Text(
-                                    "${gameController.currentGameConfig?.duration} minutos",
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),      
-                            ],
-                          )
-                        ],
-                      ),
-                      Column(
-                        spacing: 10,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.green_300.withAlpha(50),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: const Icon(
-                                  Icons.scoreboard_rounded,
-                                  size: 30,
-                                  color: AppColors.green_300,
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "Limite de Gols",
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                      color: AppColors.grey_500
-                                    ),
-                                  ),
-                                  Text(
-                                    "${gameController.currentGameConfig!.config!["goalLimit"] ?? 'Nenhum'}",
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),      
-                            ],
-                          ),
-                          Row(
-                            spacing: 10,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.green_300.withAlpha(50),
-                                  borderRadius: BorderRadius.circular(10)
-                                ),
-                                child: const Icon(
-                                  Icons.people,
-                                  size: 30,
-                                  color: AppColors.green_300,
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "Nº Jogadores",
-                                    style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                                      color: AppColors.grey_500
-                                    ),
-                                  ),
-                                  Text(
-                                    "${gameController.currentGameConfig?.playersPerTeam}",
-                                    style: Theme.of(context).textTheme.titleSmall,
-                                  ),
-                                ],
-                              ),      
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
                   ),
                   if(gameController.currentGameConfig?.config!["hasRefereer"] ?? false)...[
                     const Divider(),
@@ -278,8 +203,8 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                             width: 50,
                             height: 50,
                             child: CircleAvatar(
-                              backgroundImage: ImgUtils.getUserImg(
-                                EventUtils.getUserEvent(gameController.event, gameController.currentGame.refereeId!)?.photo 
+                              backgroundImage: ImgHelper.getUserImg(
+                                EventHelper.getUserEvent(gameController.event, gameController.currentGame.refereeId!)?.photo 
                               ),
                             ),
                           ),
@@ -295,15 +220,15 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                                       color: AppColors.grey_500
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.sports,
                                     size: 20,
-                                    color: AppColors.green_300,
+                                    color: eventColor,
                                   ),
                                 ],
                               ),
                               Text(
-                                UserUtils.getFullName(EventUtils.getUserEvent(gameController.event, gameController.currentGame.refereeId!)!),
+                                UserHelper.getFullName(EventHelper.getUserEvent(gameController.event, gameController.currentGame.refereeId!)!),
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],
@@ -346,7 +271,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                               : "Empate";
                       //RESGATAR COR DE STATUS DE VOTAÇÃO
                       final Color statusColor = option == "Win"
-                          ? AppColors.green_300
+                          ? eventColor
                           : option == "Lose"
                               ? AppColors.red_300
                               : AppColors.grey_300;

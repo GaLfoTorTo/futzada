@@ -1,15 +1,15 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:futzada/core/theme/app_size.dart';
+import 'package:futzada/core/theme/app_colors.dart';
+import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_checkbox_widget.dart';
-import 'package:get/get.dart';
-import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
 import 'package:futzada/presentation/widget/buttons/button_dropdown_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/inputs/select_rounded_widget.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
 
 class BottomSheetMarket extends StatefulWidget {
 
@@ -115,10 +115,10 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
     
     //LISTA DE STATUS DISPONIVEIS
     List<Map<String, dynamic>> positionsOptions = [
-      {'label': 'ATA','value': 'ata', 'icon': AppIcones.posicao['ata'], 'checked': escalationController.filtrosMarket['positions'].contains('ATA') ? true : false},
-      {'label': 'MEI','value': 'mei', 'icon': AppIcones.posicao['mei'], 'checked': escalationController.filtrosMarket['positions'].contains('MEI') ? true : false},
-      {'label': 'ZAG','value': 'zag', 'icon': AppIcones.posicao['zag'], 'checked': escalationController.filtrosMarket['positions'].contains('ZAG') ? true : false},
-      {'label': 'GOL','value': 'gol', 'icon': AppIcones.posicao['gol'], 'checked': escalationController.filtrosMarket['positions'].contains('GOL') ? true : false},
+      {'label': 'ATA','value': 'ata', 'checked': escalationController.filtrosMarket['positions'].contains('ATA') ? true : false},
+      {'label': 'MEI','value': 'mei', 'checked': escalationController.filtrosMarket['positions'].contains('MEI') ? true : false},
+      {'label': 'ZAG','value': 'zag', 'checked': escalationController.filtrosMarket['positions'].contains('ZAG') ? true : false},
+      {'label': 'GOL','value': 'gol', 'checked': escalationController.filtrosMarket['positions'].contains('GOL') ? true : false},
     ];
 
     return  SingleChildScrollView(
@@ -216,10 +216,12 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
                               final item = entry.value;
                               return Column(
                                 children: [
-                                  SvgPicture.asset(
-                                    item['icon'],
-                                    width: 25,
+                                  PositionWidget(
+                                    position: item["label"],
+                                    mainPosition: true,
+                                    width: 35,
                                     height: 25,
+                                    textSide: 10,
                                   ),
                                   InputCheckBoxWidget(
                                     name: item['label'],

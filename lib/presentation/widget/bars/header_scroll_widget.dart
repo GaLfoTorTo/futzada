@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 
 class HeaderScrollWidget extends StatelessWidget implements PreferredSizeWidget{
   final String? title;
+  final Color? backgroundColor;
   final VoidCallback? leftAction;
   final IconData? leftIcon;
   final VoidCallback? rightAction;
@@ -18,7 +19,8 @@ class HeaderScrollWidget extends StatelessWidget implements PreferredSizeWidget{
 
   const HeaderScrollWidget({
     super.key, 
-    this.title, 
+    this.title,
+    this.backgroundColor,
     this.leftAction, 
     this.leftIcon = Icons.arrow_back_rounded, 
     this.rightAction, 
@@ -39,7 +41,7 @@ class HeaderScrollWidget extends StatelessWidget implements PreferredSizeWidget{
       pinned: true,
       floating: false,
       snap: false,
-      backgroundColor: brightness ? Colors.transparent : Theme.of(context).primaryColor,
+      backgroundColor: brightness ? Colors.transparent : ( backgroundColor ?? Theme.of(context).primaryColor),
       title: title != null 
         ? Text(
           title!,
@@ -62,13 +64,13 @@ class HeaderScrollWidget extends StatelessWidget implements PreferredSizeWidget{
         if(rightAction != null)...[
           IconButton(
             icon: home != null && home == true
-            ? CircleAvatar(backgroundImage: ImgUtils.getUserImg(photo))
+            ? CircleAvatar(backgroundImage: ImgHelper.getUserImg(photo))
             : Icon(rightIcon),
             onPressed: rightAction!,
           )
         ]
       ], 
-      elevation: 8,
+      elevation: 3,
       shadowColor: shadow ? AppColors.dark_500.withAlpha(100) : null,
       bottom: bottom,
     );

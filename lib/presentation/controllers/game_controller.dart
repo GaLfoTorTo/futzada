@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
@@ -275,10 +276,14 @@ mixin GameDayEventMixin on GetxController implements GameBase{
   
   //FUNÇÃO DE SIMULAÇÃO DE CONFIRMAÇÃO DE JOGADORES
   void addParticipantsPresents() {
-    for(var item in event!.participants!) {
-      participantsClone.add(item);
-      participantsPresent.add(item);
-      update();
+    for(var user in event!.participants!) {
+      final player = UserHelper.getParticipant(user.participants, event!.id!);
+      //VERIFICAR SE PARTICIPANTE ATUA COMO JOGADOR
+      if(user.player != null && player != null && player.role!.contains("Player")){
+        participantsClone.add(user);
+        participantsPresent.add(user);
+        update();
+      }
     }
   }
 

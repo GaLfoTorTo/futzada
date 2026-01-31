@@ -2,10 +2,10 @@ import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/core/utils/markers_utils.dart';
+import 'package:futzada/core/helpers/markers_helper.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_event_explore.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
@@ -41,7 +41,7 @@ class EventClusterWidget extends StatelessWidget {
     //FUNÇÃO PARA GERAÇÃO DE WIDGET DE MARKER DE EVENTO
     Widget setEventWidget(EventModel marker, {bool isCluster = false, List<ImageProvider> imgs = const [], int totalEvents = 1}) {
       //RESGATAR ESTILOS DO MARKER
-      final style = MarkersUtils.getMarkerStyle(marker.gameConfig!.category!);
+      final style = MarkersHelper.getMarkerStyle(marker.gameConfig!.category!);
       //ATUALIZAR BADGE DE QUANTIDADE DE EVENTOS
       int count = totalEvents;
 
@@ -145,7 +145,7 @@ class EventClusterWidget extends StatelessWidget {
 
           final imgs = eventsAtSamePlace
               .take(3)
-              .map((e) => ImgUtils.getEventImg(e.photo))
+              .map((e) => ImgHelper.getEventImg(e.photo))
               .toList();
 
           return Marker(
@@ -167,7 +167,7 @@ class EventClusterWidget extends StatelessWidget {
             //EVENTO DO MARKER
             final markerImg = events.firstWhere((e) => e.id.toString() == m.key.toString().numericOnly());
             //RESGATAR IMAGEM DO EVENTO E ADICIONAR A LISTA
-            return ImgUtils.getEventImg(markerImg.photo);
+            return ImgHelper.getEventImg(markerImg.photo);
           }).toList();
 
           return setEventWidget(marker, imgs: imgs, isCluster: true, totalEvents: markers.length);

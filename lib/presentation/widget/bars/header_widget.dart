@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/utils/img_utils.dart';
+import 'package:futzada/core/helpers/img_helper.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final String? title;
+  final Color? backgroundColor;
   final VoidCallback? leftAction;
   final IconData? leftIcon;
   final VoidCallback? rightAction;
@@ -18,7 +19,8 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
 
   const HeaderWidget({
     super.key, 
-    this.title, 
+    this.title,
+    this.backgroundColor,
     this.leftAction, 
     this.leftIcon = Icons.arrow_back_rounded, 
     this.rightAction, 
@@ -36,7 +38,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
 
     return AppBar(
-      backgroundColor: brightness ? Colors.transparent : Theme.of(context).primaryColor,
+      backgroundColor: brightness ? Colors.transparent : ( backgroundColor ?? Theme.of(context).primaryColor),
       title: title != null 
         ? Text(
           title!,
@@ -60,14 +62,14 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           IconButton(
             icon: home != null && home == true
             ? CircleAvatar(
-              backgroundImage: ImgUtils.getUserImg(photo),
+              backgroundImage: ImgHelper.getUserImg(photo),
             )
             : Icon(rightIcon),
             onPressed: rightAction!,
           )
         ]
       ], 
-      elevation: 8,
+      elevation: 3,
       shadowColor: shadow ? AppColors.dark_500.withAlpha(100) : null,
       bottom: bottom,
     );

@@ -1,28 +1,20 @@
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/utils/user_utils.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/others/lineup_widget.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/widget/others/players_lineup_widget.dart';
 
-class GameEscalationPage extends StatefulWidget {
+class GameEscalationPage extends StatelessWidget {
   const GameEscalationPage({super.key});
 
   @override
-  State<GameEscalationPage> createState() => _GameEscalationPageState();
-}
-
-class _GameEscalationPageState extends State<GameEscalationPage> {
-  //RESGATAR CONTROLLER DE PARTIDAS
-  GameController gameController = GameController.instance;
-  //CONTROLADOR DE VISUALIZAÇÃO DE ESCALAÇÃO
-  bool escalationView = true;
-  
-  @override
   Widget build(BuildContext context) {
+    //RESGATAR CONTROLLER DE PARTIDAS
+    GameController gameController = GameController.instance;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR EQUIPES
@@ -72,17 +64,27 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  LineupWidget(category: gameController.currentGameConfig!.category!),
+                  LineupWidget(category: gameController.currentGameConfig!.category),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
                         height: 400,
-                        child: PlayersLineupWidget(players: teamA.players, command: "Home")
+                        child: PlayersLineupWidget(
+                          category: gameController.currentGameConfig!.category,
+                          players: teamA.players, 
+                          command: "Home",
+                          showPlayerName: true,
+                        )
                       ),
                       SizedBox(
                         height: 400,
-                        child: PlayersLineupWidget(players: teamB.players, command: "Away")
+                        child: PlayersLineupWidget(
+                          category: gameController.currentGameConfig!.category,
+                          players: teamB.players, 
+                          command: "Away",
+                          showPlayerName: true,
+                        )
                       )
                     ],
                   )
@@ -121,15 +123,6 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                       ? gameController.teamAlength.value
                       : gameController.teamBlength.value;
           
-                    //RESGATAR TAMANHO DAS EQUIPES (ESTATICO)
-                    final teamCount = i == 0 
-                      ? gameController.teamA.players.length
-                      : gameController.teamB.players.length;
-                    //RESGATAR NOME DAS EQUIPES
-                    final teamName = i == 0 
-                      ? gameController.teamANameController.text
-                      : gameController.teamBNameController.text;
-          
                     return Expanded(
                       child: Column(
                         children: List.generate(gameController.currentGame.teams!.first.players.length, (item){
@@ -144,7 +137,7 @@ class _GameEscalationPageState extends State<GameEscalationPage> {
                               ? gameController.teamA.players[item]
                               : gameController.teamB.players[item];
                             //RESGATAR NOME, USER NAME E FOTO DO PARTICIPANTE
-                            name = UserUtils.getFullName(user);
+                            name = UserHelper.getFullName(user);
                             userName = user.userName!;
                             photo = user.photo;
                           }

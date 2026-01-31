@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:get/get.dart';
 import 'package:faker/faker.dart';
-import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/services/rating_service.dart';
 import 'package:futzada/data/models/player_model.dart';
 
@@ -91,7 +89,7 @@ class PlayerService {
         case 4:
           return 'ATA';
         default:
-          return 'ata';
+          return 'ATA';
       }
     }
     if(modality == "Volleyball"){

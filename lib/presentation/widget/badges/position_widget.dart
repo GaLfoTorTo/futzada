@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_size.dart';
+import 'package:futzada/core/helpers/player_helper.dart';
 
 class PositionWidget extends StatelessWidget {
   final String position;
@@ -21,6 +21,7 @@ class PositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Stack(
       children: [ 
         Card(
@@ -28,14 +29,14 @@ class PositionWidget extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: AppHelper.setColorPosition(position),
+              color: PlayerHelper.setColorPosition(position),
               borderRadius: BorderRadius.circular(5),
             ),
             alignment: Alignment.center,
             child: Text(
               position.toUpperCase(),
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                color: position != 'gol' ? AppColors.white : AppColors.dark_700,
+                color: !position.contains('GOL') || position.contains('PIV') ? AppColors.white : AppColors.dark_700,
                 fontWeight: FontWeight.bold,
                 fontSize: textSide
               ),
@@ -44,11 +45,13 @@ class PositionWidget extends StatelessWidget {
         ),
         if(mainPosition)...[
           Positioned(
-            top: 0,
-            right: 0,
+            top: 4,
+            right: 4,
             child: CustomPaint(
               size: const Size(12, 12),
-              painter: TrianglePainter(color: AppColors.yellow_500),
+              painter: TrianglePainter(
+                color: !position.contains('GOL') || position.contains('PIV') ? AppColors.yellow_500 : AppColors.yellow_700
+              ),
             ),
           ),
         ]

@@ -2,11 +2,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/core/enum/enums.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/data/models/news_model.dart';
 import 'package:futzada/data/models/rule_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/utils/date_utils.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/data/models/avaliation_model.dart';
 import 'package:futzada/data/models/game_config_model.dart';
@@ -22,7 +22,7 @@ class EventModel {
   Modality? modality;
   bool? collaborators;
   String? photo;
-  VisibilityProfile? visibility;
+  Privacy? privacy;
   AddressModel? address;
   GameConfigModel? gameConfig;
   List<UserModel>? participants;
@@ -52,7 +52,7 @@ class EventModel {
     this.rules,
     this.news,
     this.games,
-    this.visibility,
+    this.privacy,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -77,7 +77,7 @@ class EventModel {
     List<RuleModel>? rules,
     List<NewsModel>? news,
     List<GameModel>? games,
-    VisibilityProfile? visibility,
+    Privacy? privacy,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
@@ -100,7 +100,7 @@ class EventModel {
       rules: rules ?? this.rules,
       news: news ?? this.news,
       games: games ?? this.games,
-      visibility: visibility ?? this.visibility,
+      privacy: privacy ?? this.privacy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -126,7 +126,7 @@ class EventModel {
       'rules': rules!.map((x) => x.toMap()).toList(),
       'news': news!.map((x) => x.toMap()).toList(),
       'games': games!.map((x) => x.toMap()).toList(),
-      'visibility': visibility,
+      'privacy': privacy,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
@@ -168,12 +168,12 @@ class EventModel {
       games: map['games'] != null 
         ? List<GameModel>.from((map['games'] as List<Map<String, dynamic>>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
         : null,
-      visibility: map['visibility'] != null
-        ? VisibilityProfile.values.firstWhere((e) => e.name == map['visibility'])
+      privacy: map['privacy'] != null
+        ? Privacy.values.firstWhere((e) => e.name == map['privacy'])
         : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt: DatetimeUtils.parseDate(map['updatedAt']),
-      deletedAt: DatetimeUtils.parseDate(map['deletedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt: DateHelper.parseDate(map['updatedAt']),
+      deletedAt: DateHelper.parseDate(map['deletedAt']),
     );
   }
 
@@ -183,7 +183,7 @@ class EventModel {
 
   @override
   String toString() {
-    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, date: $date, startTime: $startTime, endTime: modality: $modality, $endTime, collaborators: $collaborators, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, rules: $rules, news: $news, games: $games, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'EventModel(id: $id, uuid: $uuid, title: $title, bio: $bio, date: $date, startTime: $startTime, endTime: modality: $modality, $endTime, collaborators: $collaborators, photo: $photo, address: $address, gameConfig: $gameConfig, avaliations: $avaliations, participants: $participants, rules: $rules, news: $news, games: $games, privacy: $privacy, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -208,7 +208,7 @@ class EventModel {
       listEquals(other.rules, rules) &&
       listEquals(other.news, news) &&
       listEquals(other.games, games) &&
-      other.visibility == visibility &&
+      other.privacy == privacy &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
       other.deletedAt == deletedAt;
@@ -224,7 +224,7 @@ class EventModel {
       startTime.hashCode ^
       endTime.hashCode ^
       modality.hashCode ^
-      visibility.hashCode ^
+      privacy.hashCode ^
       collaborators.hashCode ^
       photo.hashCode ^
       address.hashCode ^

@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 
 class CardRankingWidget extends StatefulWidget {
   final double width;
   final double height;
-  final Map<String, dynamic> usuario;
+  final Map<String, dynamic> user;
   final String indicador;
   
   const CardRankingWidget({
     super.key,
     required this.width,
     required this.height,
-    required this.usuario,
+    required this.user,
     required this.indicador,
   });
 
@@ -30,8 +29,6 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
   @override
   void initState() {
     super.initState();
-    //ADICIONAR A FLAG DE POSIÇÃO PRINCIPAL
-    posicao = AppHelper.mainPosition(AppIcones.posicao[widget.usuario['posicao']]).toString();
     
   }
 
@@ -54,7 +51,7 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
     return Container(
       width: widget.width,
       height: widget.height,
-      padding: EdgeInsets.all(5),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         color: AppColors.white,
@@ -67,8 +64,8 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
               ImgCircularWidget(
                 width: 80,
                 height: 80,
-                image: widget.usuario['image'],
-                borderColor: colocacao(widget.usuario['colocacao']),
+                image: widget.user['image'],
+                borderColor: colocacao(widget.user['colocacao']),
               ),
               Positioned(
                 top: 60,
@@ -93,20 +90,22 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
                     AppIcones.trash_solid,
                     width: 20,
                     height: 20,
-                    color: colocacao(widget.usuario['colocacao']),
+                    color: colocacao(widget.user['colocacao']),
                   ), */
                   Icon(AppIcones.trophy_solid),
                 ),
               ),
             ]
           ),
-          SvgPicture.string(
-            posicao,
-            width: 20,
-            height: 20,
+          PositionWidget(
+            position: widget.user['mainPosition'],
+            mainPosition: true,
+            width: 35,
+            height: 25,
+            textSide: 10,
           ),
           Text(
-            widget.usuario['nome'],
+            widget.user['nome'],
             style: const TextStyle(
               color: AppColors.dark_300,
               fontSize: 10,
@@ -114,7 +113,7 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
             ),
           ), 
           Text(
-            '@${widget.usuario['user_name']}',
+            '@${widget.user['user_name']}',
             style: const TextStyle(
               color: AppColors.grey_300,
               fontSize: 8,
@@ -134,7 +133,7 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children:[
               Text(
-                widget.usuario['media'],
+                widget.user['media'],
                 style: const TextStyle(
                   color: AppColors.green_300,
                   fontSize: 10,

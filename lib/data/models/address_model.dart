@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/core/utils/date_utils.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 
 class AddressModel {
   int? id;
@@ -113,8 +113,8 @@ class AddressModel {
       latitude: map['latitude'] != null ? map['latitude'] as double : null,
       longitude: map['longitude'] != null ? map['longitude'] as double : null,
       photos: map['photos'] != null ? map['photos'] as List<String> : null,
-      createdAt: DatetimeUtils.parseDate(map['createdAt']),
-      updatedAt:  DatetimeUtils.parseDate(map['updatedAt']),
+      createdAt: DateHelper.parseDate(map['createdAt']),
+      updatedAt:  DateHelper.parseDate(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,
     );
   }

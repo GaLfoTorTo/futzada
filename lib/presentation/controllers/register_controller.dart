@@ -37,7 +37,7 @@ class RegisterController extends GetxController {
   late TextEditingController emailController;
   late MaskedTextController phoneController;
   late MaskedTextController bornDateController;
-  late TextEditingController visibilityController;
+  late TextEditingController privacyController;
   late TextEditingController passwordController;
   late TextEditingController photoController;
   late TextEditingController mainModalityController;
@@ -78,7 +78,7 @@ class RegisterController extends GetxController {
     emailController = TextEditingController();
     phoneController = MaskedTextController(mask: "(00) 00000-0000");
     bornDateController = MaskedTextController(mask: "00/00/0000");
-    visibilityController = TextEditingController();
+    privacyController = TextEditingController();
     passwordController = TextEditingController();
     photoController = TextEditingController();
     //PLAYER
@@ -106,7 +106,7 @@ class RegisterController extends GetxController {
     emailController.dispose();
     phoneController.dispose();
     bornDateController.dispose();
-    visibilityController.dispose();
+    privacyController.dispose();
     passwordController.dispose();
     photoController.dispose();
     bestSideController.dispose();

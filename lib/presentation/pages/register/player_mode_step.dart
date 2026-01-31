@@ -1,3 +1,4 @@
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_images.dart';
@@ -203,7 +204,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
                         const CardInfoWidget(description: "Selecione sua posição principal clicando 2 vezes na posição escolhida em cada modalidade."),
                         Column(
                           children: registerController.modalities.map((modality){
-                            final modalitySettings = AppHelper.getIconCategory(modality);
+                            final modalitySettings = ModalityHelper.getIconCategory(modality);
                             return ExpansionTile(
                               initiallyExpanded: true,
                               title: Text(
