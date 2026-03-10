@@ -99,8 +99,7 @@ class CardRankPositionWidget extends StatelessWidget {
                     ),
                   ),
                   ImgCircularWidget(
-                    height: 60,
-                    width: 60,
+                    size: 70,
                     image: user.photo,
                     borderColor: AppColors.green_500
                   ),

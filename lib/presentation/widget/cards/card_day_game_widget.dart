@@ -17,18 +17,18 @@ class CardDayGameWidget extends StatefulWidget {
 
 class _CardGameLiveWidgetState extends State<CardDayGameWidget> {
   //ESTADO - ITEMS EVENTO
-  late Color eventColor;
-  late Color eventTextColor;
-  late String eventImage;
+  late Color modalityColor;
+  late Color modalityTextColor;
+  late String modalityImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     //ESTADO - ITEMS EVENTO
-    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
-    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
+    modalityColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   @override
@@ -38,29 +38,31 @@ class _CardGameLiveWidgetState extends State<CardDayGameWidget> {
     //RESGATAR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
 
-    return Container(
-      width: dimensions.width - 10,
-      height: 300,
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: eventColor,
-        image: DecorationImage(
-          image: AssetImage(eventImage) as ImageProvider,
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            eventColor.withAlpha(200), 
-            BlendMode.srcATop,
-          )
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.dark_500.withAlpha(50),
-            spreadRadius: 0.5,
-            blurRadius: 5,
-            offset: const Offset(2, 5),
+    return Card(
+      child: Container(
+        width: dimensions.width - 10,
+        height: 300,
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: modalityColor,
+          image: DecorationImage(
+            image: AssetImage(modalityImage) as ImageProvider,
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              modalityColor.withAlpha(200), 
+              BlendMode.srcATop,
+            )
           ),
-        ],
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.dark_500.withAlpha(50),
+              spreadRadius: 0.5,
+              blurRadius: 5,
+              offset: const Offset(2, 5),
+            ),
+          ],
+        ),
       ),
     );
   }

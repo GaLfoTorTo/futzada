@@ -27,9 +27,9 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
   //DEFINIR EVENTO
   late EventModel event;
   //ESTADO - ITEMS EVENTO
-  late Color eventColor;
-  late Color eventTextColor;
-  late String eventImage;
+  late Color modalityColor;
+  late Color modalityTextColor;
+  late String modalityImage;
   //CONTROLLER DE TABS
   late TabController tabController;
   //CONTROLLER DE SCROLL
@@ -46,9 +46,9 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     //RESGATAR EVENTO 
     event = gameController.event;
     //ESTADO - ITEMS EVENTO
-    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    eventImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
+    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
     //INICIAR LISTENER DE SCROLL DA PAGINA
     scrollController.addListener(handleScroll);
     //SIMULAR JOGADORES PRESENTES
@@ -101,7 +101,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           return [
             HeaderScrollWidget(
               title: "Partida #${gameController.currentGame.number}",
-              backgroundColor: eventColor,
+              backgroundColor: modalityColor,
               leftAction: () => Get.back(),
               rightIcon: AppIcones.cog_solid,
               rightAction: () {
@@ -134,11 +134,11 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
                       indicator: UnderlineTabIndicator(
                         borderSide: BorderSide(
                           width: 5,
-                          color: eventColor,
+                          color: modalityColor,
                         ),
                         insets: EdgeInsets.symmetric(horizontal: dimensions.width / 5)
                       ),
-                      labelColor: eventColor,
+                      labelColor: modalityColor,
                       labelStyle: const TextStyle(
                         color: AppColors.grey_500,
                         fontWeight: FontWeight.normal,
@@ -175,8 +175,8 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           return FloatButtonWidget(
             floatKey: "control_games",
             icon: Icons.play_arrow,
-            backgroundColor: eventColor,
-            color: eventTextColor,
+            backgroundColor: modalityColor,
+            color: modalityTextColor,
             onPressed: (){}
           );
         }
@@ -184,8 +184,8 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           return FloatButtonWidget(
             floatKey: "teams_games",
             icon: AppIcones.escalacao_outline,
-            backgroundColor: eventColor,
-            color: eventTextColor,
+            backgroundColor: modalityColor,
+            color: modalityTextColor,
             onPressed: () => Get.toNamed("/games/teams"),
           );
         }

@@ -73,8 +73,7 @@ class BottomSheetEventGames extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(right: 20),
                                 child: ImgCircularWidget(
-                                  width: 70, 
-                                  height: 70,
+                                  size: 70,
                                   image: eventController.event.photo,
                                   element: "event",
                                 ),

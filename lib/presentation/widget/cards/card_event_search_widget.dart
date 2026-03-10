@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
+import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 
@@ -19,21 +20,17 @@ class CardEventSearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
     //DEFINIR CONTROLLER DE EVENTO 
-    EventController eventController = EventController.instance;
+    AvaliationService avaliationService = AvaliationService();
     //DEFINIR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliation = 12.2;//eventController.eventService.getEventAvaliation(event.avaliations);
+    double avaliations = avaliationService.getRatingAvaliation(event.avaliations);
     //RESGATAR DATA DO EVENTO
-    String eventDate = event.date.toString().replaceAll('[', '').replaceAll(']', '').toString();
+    String eventDate = DateHelper.getEventDate(event.date!);
 
     return InkWell(
       onTap: () => {
-        //DEFINIR EVENTO ATUAL NO CONTROLLER
-        eventController.setSelectedEvent(event),
         //NAVEGAR PARA PAGINA DO EVENTO
         Get.toNamed(
           "/event/geral",
@@ -43,15 +40,32 @@ class CardEventSearchWidget extends StatelessWidget {
         )
       },
       child: Card(
-        child: Container(
-          width: dimensions.width,
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            spacing: 10,
             children: [
               Row(
+                spacing: 5,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    event.title!, 
+                    style: Theme.of(context).textTheme.titleSmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis
+                  ),
+                  if(event.privacy!.name != "Public")...[
+                    const Icon(
+                      Icons.lock_rounded,
+                      color: AppColors.grey_300,
+                    )
+                  ]
+                ],
+              ),
+              Row(
                 spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 100,
@@ -64,33 +78,12 @@ class CardEventSearchWidget extends StatelessWidget {
                       )
                     ),
                   ),
-                  SizedBox(
-                    width: dimensions.width * 0.6,
+                  Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 5,
                       children: [
-                        Row(
-                          spacing: 5,
-                          children: [
-                            SizedBox(
-                              width: dimensions.width * 0.4,
-                              child: Text(
-                                event.title!, 
-                                style: Theme.of(context).textTheme.titleSmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis
-                              ),
-                            ),
-                            if(event.privacy!.name != "Public")...[
-                              const Icon(
-                                Icons.lock_rounded,
-                                color: AppColors.grey_300,
-                              )
-                            ]
-                          ],
-                        ),
                         if(event.privacy!.name == "Public")...[
                           Row(
                             spacing: 10,
@@ -104,13 +97,16 @@ class CardEventSearchWidget extends StatelessWidget {
                                     color: AppColors.grey_300,
                                     size: 20
                                   ),
-                                  Text(
-                                    eventDate,
-                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                      color: AppColors.grey_500
+                                  SizedBox(
+                                    width: 110,
+                                    child: Text(
+                                      eventDate,
+                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                        color: AppColors.grey_500
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ]
                               ),
@@ -145,12 +141,12 @@ class CardEventSearchWidget extends StatelessWidget {
                             spacing: 5,
                             children: [
                               IndicatorAvaliacaoWidget(
-                                avaliation: avaliation,
+                                avaliation: avaliations,
                                 width: 100,
                                 starSize: 15,
                               ),
                               Text(
-                                avaliation.toStringAsFixed(1),
+                                avaliations.toStringAsFixed(1),
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),
                             ],

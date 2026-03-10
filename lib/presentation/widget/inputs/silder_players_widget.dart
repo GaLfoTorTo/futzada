@@ -62,8 +62,7 @@ class SilderPlayersWidget extends StatelessWidget {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 2),
                 child: ImgCircularWidget(
-                  width: 30, 
-                  height: 30
+                  size: 30, 
                 ),
               );
             }).toList()

@@ -53,8 +53,7 @@ class CardEscalationListWidget extends StatelessWidget {
                     spacing: 10,
                     children: [
                       ImgCircularWidget(
-                        height: 70,
-                        width: 70,
+                        size: 70,
                         image: user.photo,
                         borderColor: PlayerHelper.setColorPosition(position),
                       ),
@@ -97,8 +96,7 @@ class CardEscalationListWidget extends StatelessWidget {
                       child: Row(
                         children: [
                           const ImgCircularWidget(
-                            height: 70,
-                            width: 70,
+                            size: 70,
                             image: null,
                             borderColor: AppColors.grey_300,
                           ),

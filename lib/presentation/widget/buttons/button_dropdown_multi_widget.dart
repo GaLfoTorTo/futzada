@@ -143,8 +143,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
                       ),
                       if (item.containsKey('photo')) ...[
                         ImgCircularWidget(
-                          width: widget.iconSize!,
-                          height: widget.iconSize!,
+                          size: widget.iconSize!,
                           image: item['photo'],
                         ),
                       ] else if (item.containsKey('icon')) ...[

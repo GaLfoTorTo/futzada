@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 //===EVENT BASE===
 abstract class ExploreBase {
@@ -11,7 +11,6 @@ class ExplorerController extends GetxController
   with ExploreFilter implements ExploreBase {
   //DEFINIR CONTROLLER UNICO NO GETX
   static ExplorerController get instance => Get.find();
-  //DEFINIR DE PARTICIPANTES
   //LISTA DE ENDEREÇO DE QUADRAS/CAMPOS PUBLICOS E PRIVADOS
   @override
   RxList<Map<String, dynamic>> sportPlaces = <Map<String, dynamic>>[].obs;

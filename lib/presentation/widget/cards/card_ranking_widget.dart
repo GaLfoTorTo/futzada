@@ -62,8 +62,7 @@ class _CardRankingWidgetState extends State<CardRankingWidget> {
           Stack(
             children: [
               ImgCircularWidget(
-                width: 80,
-                height: 80,
+                size: 70,
                 image: widget.user['image'],
                 borderColor: colocacao(widget.user['colocacao']),
               ),

@@ -1,17 +1,17 @@
 import 'dart:io';
-import 'package:futzada/presentation/widget/inputs/input_switch_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:futzada/presentation/widget/inputs/input_switch_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_radio_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_textarea_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 
 class EventSettingsPage extends StatefulWidget {
   const EventSettingsPage({super.key});

@@ -1,11 +1,10 @@
-import 'dart:convert';
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/data/models/participant_model.dart';
+import 'package:futzada/data/models/rating_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/player_model.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
@@ -106,8 +105,7 @@ class CardPlayerMarketWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       ImgCircularWidget(
-                        height: 80,
-                        width: 80,
+                        size: 70,
                         image: user.photo,
                         borderColor: AppColors.grey_300,
                       ),

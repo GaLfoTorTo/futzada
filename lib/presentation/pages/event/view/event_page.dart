@@ -42,14 +42,14 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   int tabIndex = Get.arguments['index'] ?? 0;
   //ESTADOS - ITEMS DO EVENTO
   bool isParticipant = false;
-  late ImageProvider eventImage;
+  late ImageProvider modalityImage;
   late String eventPrivacy;
   late double eventAvaliations;
   //ESTADO - IMAGENS DA PELADA
   bool brightness = false;
   Color textColor = AppColors.white;
-  late Color eventColor;
-  late Color eventTextColor;
+  late Color modalityColor;
+  late Color modalityTextColor;
 
   @override
   void initState() {
@@ -59,15 +59,15 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 6, vsync: this);
     //ATUALIZAR ITEMS DO EVENTOS
-    eventImage = ImgHelper.getEventImg(event.photo);
+    modalityImage = ImgHelper.getEventImg(event.photo);
     eventPrivacy = event.privacy!.name;
     eventAvaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
-    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     //DEFINIR EVENTO ATUAL NO CONTROLLER
     eventController.setSelectedEvent(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
-    AppHelper.isImageDark(eventImage).then((isDark) {
+    AppHelper.isImageDark(modalityImage).then((isDark) {
       setState(() {
         brightness = isDark;
         textColor = isDark ? AppColors.blue_500 : AppColors.white;
@@ -92,7 +92,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
 
     return HeaderWidget(
       title: "Pelada",
-      backgroundColor: eventColor,
+      backgroundColor: modalityColor,
       leftAction: () => Get.back(),
       rightIcon: eventPrivacy == 'Public' 
         ? AppIcones.cog_solid 
@@ -136,7 +136,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                 height: dimensions.height * 0.4,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: eventImage,
+                    image: modalityImage,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -226,11 +226,11 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                   indicator: UnderlineTabIndicator(
                     borderSide: BorderSide(
                       width: 5,
-                      color: eventColor,
+                      color: modalityColor,
                     ),
                     insets: EdgeInsets.symmetric(horizontal: dimensions.width / 4)
                   ),
-                  labelColor: eventColor,
+                  labelColor: modalityColor,
                   labelStyle: const TextStyle(
                     color: AppColors.grey_500,
                     fontWeight: FontWeight.normal,
@@ -299,8 +299,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           return FloatButtonWidget(
             floatKey: "game_event",
             icon: Icons.play_arrow_rounded,
-            backgroundColor: eventColor,
-            color: eventTextColor,
+            backgroundColor: modalityColor,
+            color: modalityTextColor,
             onPressed:  () => Get.bottomSheet(const BottomSheetEventGames())
           );
         }
@@ -309,8 +309,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           return FloatButtonWidget(
             floatKey: "rules_event",
             icon: Icons.add_rounded,
-            backgroundColor: eventColor,
-            color: eventTextColor,
+            backgroundColor: modalityColor,
+            color: modalityTextColor,
             onPressed: () => Get.bottomSheet(const BottomSheetRule(), isScrollControlled: true),
           );
         }

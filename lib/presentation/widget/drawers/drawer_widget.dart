@@ -167,8 +167,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ImgCircularWidget(
-                    width: 80, 
-                    height: 80, 
+                    size: 80, 
                     image: user!.photo
                   ),
                   Padding(

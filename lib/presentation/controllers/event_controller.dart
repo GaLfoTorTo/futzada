@@ -6,12 +6,12 @@ import 'package:futzada/data/services/news_service.dart';
 import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/mixin/event/event_overview_mixin.dart';
-import 'package:futzada/presentation/mixin/event/event_config_mixin.dart';
-import 'package:futzada/presentation/mixin/event/event_participants_mixin.dart';
-import 'package:futzada/presentation/mixin/event/event_rank_mixin.dart';
-import 'package:futzada/presentation/mixin/event/event_register_mixin.dart';
-import 'package:futzada/presentation/mixin/event/event_rules_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_config_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_overview_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_participants_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_rank_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_register_mixin.dart';
+import 'package:futzada/presentation/controllers/mixin/event/event_rule_mixin.dart';
 
 //===EVENT BASE===
 abstract class EventBase {

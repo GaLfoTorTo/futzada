@@ -116,7 +116,6 @@ class ModalityStepState extends State<ModalityStep> {
                                     "Volei",
                                     "Basquete",
                                   ];
-                                  print(modality);
                                 } else {
                                   registerController.modalities.add(key);
                                 }

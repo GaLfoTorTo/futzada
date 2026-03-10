@@ -137,8 +137,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                                   Padding(
                                     padding: const EdgeInsets.only(right: 10.0),
                                     child: ImgCircularWidget(
-                                      height: 80,
-                                      width: 80,
+                                      size: 80,
                                       image: user.photo,
                                     ),
                                   ),

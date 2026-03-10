@@ -130,8 +130,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
                 child: Column(
                   children: [
                     ImgCircularWidget(
-                      height: 100,
-                      width: 100,
+                      size: 100,
                       image: user.photo,
                       borderColor: PlayerHelper.setColorPosition(player.mainPosition),
                     ),

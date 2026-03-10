@@ -6,9 +6,10 @@ class ButtonIconWidget extends StatelessWidget {
   final Color? iconColor;
   final double? iconSize;
   final Color? backgroundColor;
+  final Color? borderColor;
+  final double? borderRadius;
   final double? padding;
   final bool? disabled;
-  final double? borderRadius;
   final bool? shadow;
   final VoidCallback action;
 
@@ -18,6 +19,7 @@ class ButtonIconWidget extends StatelessWidget {
     this.iconColor = AppColors.white, 
     this.iconSize = 20, 
     this.backgroundColor = AppColors.green_300,  
+    this.borderColor,
     this.padding = 10, 
     this.borderRadius = 10,
     this.shadow = false,
@@ -40,6 +42,7 @@ class ButtonIconWidget extends StatelessWidget {
         backgroundColor: backgroundColor ?? backgroundColor,
         foregroundColor: iconColor,
         shape: RoundedRectangleBorder(
+          side: BorderSide(width: 1, color: borderColor ?? Colors.transparent),
           borderRadius: BorderRadius.circular(borderRadius ?? 10),
         ),
         textStyle: TextStyle(

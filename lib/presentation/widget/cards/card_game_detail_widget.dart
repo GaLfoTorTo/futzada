@@ -31,18 +31,18 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
   //RESGATAR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
   //ESTADO - ITEMS EVENTO
-  late Color eventColor;
-  late Color eventTextColor;
-  late String eventImage;
+  late Color modalityColor;
+  late Color modalityTextColor;
+  late String modalityImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     //ESTADO - ITEMS EVENTO
-    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
-    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
+    modalityColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   //FUNÇÃO DE AGRUPAMENTO DE EVENTOS DE GOL DO JOGADOR
@@ -100,12 +100,12 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
             padding: const EdgeInsets.symmetric(vertical: 15),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              color: eventColor,
+              color: modalityColor,
               image: DecorationImage(
-                image: AssetImage(eventImage) as ImageProvider,
+                image: AssetImage(modalityImage) as ImageProvider,
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
-                  eventColor.withAlpha(200), 
+                  modalityColor.withAlpha(200), 
                   BlendMode.srcATop,
                 )
               ),
@@ -119,7 +119,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                       Text(
                         gameController.currentGame.teams!.first.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: eventTextColor
+                          color: modalityTextColor
                         )
                       ),
                       SvgPicture.asset(
@@ -127,14 +127,14 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                         width: 100,
                         height: 100,
                         colorFilter: ColorFilter.mode(
-                          eventTextColor,
+                          modalityTextColor,
                           BlendMode.srcIn,
                         ),
                       ),
                       Text(
                         'Home',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: eventTextColor
+                          color: modalityTextColor
                         )
                       ),
                     ],
@@ -177,7 +177,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                             Text(
                               "$teamAScore",
                               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: eventTextColor,
+                                color: modalityTextColor,
                                 fontSize: 60
                               )
                             ),
@@ -186,14 +186,14 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                               child: Text(
                                 'X', 
                                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                  color: eventTextColor
+                                  color: modalityTextColor
                                 )
                               ),
                             ),
                             Text(
                               "$teamBScore",
                               style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: eventTextColor,
+                                color: modalityTextColor,
                                 fontSize: 60
                               )
                             ),
@@ -243,7 +243,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                       Text(
                         gameController.currentGame.teams!.last.name!,
                         style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: eventTextColor
+                          color: modalityTextColor
                         )
                       ),
                       SvgPicture.asset(
@@ -251,14 +251,14 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                         width: 100,
                         height: 100,
                         colorFilter: ColorFilter.mode(
-                          eventTextColor,
+                          modalityTextColor,
                           BlendMode.srcIn,
                         ),
                       ),
                       Text(
                         'Away',
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: eventTextColor
+                          color: modalityTextColor
                         )
                       ),
                     ],

@@ -11,7 +11,7 @@ class ImgHelper {
   //FUNÇÃO PARA RESGATAR IMAGEM DO EVENTO
   static ImageProvider getEventImg(String? photo){
     //RESGATAR IMAGEM DA PELADA
-    final imgProvider = photo != null
+    final imgProvider = photo != null && photo.startsWith('http')
       ? CachedNetworkImageProvider(photo)
       : const AssetImage(AppImages.cardFootball) as ImageProvider;
       return imgProvider;
@@ -20,7 +20,7 @@ class ImgHelper {
   //FUNÇÃO PARA RESGATAR IMAGEM DO USUARIO
   static ImageProvider getUserImg(String? photo){
     //RESGATAR IMAGEM DA PELADA
-    final imgProvider = photo != null
+    final imgProvider = photo != null && photo.startsWith('http')
       ? CachedNetworkImageProvider(photo)
       : const AssetImage(AppImages.userDefault) as ImageProvider;
       return imgProvider;

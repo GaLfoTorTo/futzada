@@ -59,10 +59,13 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
               unselectedLabelColor: AppColors.grey_500,
               isScrollable: true,
               tabAlignment: TabAlignment.start,
-              tabs: const [
-                Text("Todas"),
-                Tab(text: 'Para você'),
-              ],
+              tabs: ['Todas','Para Você'].map((tab){
+                return SizedBox(
+                  width: dimensions.width / 2,
+                  height: 50,
+                  child: Tab(text: tab)
+                );
+              }).toList()
             ),
             Expanded(
               child: TabBarView(

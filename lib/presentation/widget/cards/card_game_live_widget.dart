@@ -27,18 +27,18 @@ class CardGameLiveWidget extends StatefulWidget {
 
 class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
   //ESTADO - ITEMS EVENTO
-  late Color eventColor;
-  late Color eventTextColor;
-  late String eventImage;
+  late Color modalityColor;
+  late Color modalityTextColor;
+  late String modalityImage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
-    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
-    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
+    modalityColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
   @override
@@ -66,12 +66,12 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: eventColor,
+          color: modalityColor,
           image: DecorationImage(
-            image: AssetImage(eventImage) as ImageProvider,
+            image: AssetImage(modalityImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              eventColor.withAlpha(200),
+              modalityColor.withAlpha(200),
               BlendMode.srcATop,
             )
           ),
@@ -111,7 +111,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
               Text(
                 "#${game.number}",
                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: eventTextColor,
+                  color: modalityTextColor,
                 ),
               ),
               Row(
@@ -125,7 +125,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           AppIcones.emblemas["emblema_1"]!,
                           width: 60,
                           colorFilter: ColorFilter.mode(
-                            eventTextColor,
+                            modalityTextColor,
                             BlendMode.srcIn,
                           ),
                         ),
@@ -134,7 +134,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamA.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: eventTextColor,
+                              color: modalityTextColor,
                             ),
                           ),
                         ),
@@ -176,7 +176,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           AppIcones.emblemas['emblema_2']!,
                           width: 60,
                           colorFilter: ColorFilter.mode(
-                            eventTextColor, 
+                            modalityTextColor, 
                             BlendMode.srcIn,
                           ),
                         ),
@@ -185,7 +185,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
                           child: Text(
                             "${teamB.name}",
                             style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                              color: eventTextColor,
+                              color: modalityTextColor,
                             ),
                           ),
                         ),

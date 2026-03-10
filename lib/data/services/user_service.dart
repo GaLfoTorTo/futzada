@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:faker/faker.dart';
 import 'package:futzada/core/api/api.dart';
 import 'package:futzada/core/enum/enums.dart';
+import 'package:futzada/data/models/user_config_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/services/api_service.dart';
 import 'package:futzada/data/services/event_service.dart';
@@ -43,10 +44,30 @@ class UserService {
       "participants": eventId != null
         ? [participantService.generateParticipant(eventId, userId).toMap()]
         : null,
+      "config": generateUserConfig(userId).toMap(),
       //DEFINIR ALEATORIAMENTE SE PARTICIPANTE ATUARÁ COMO TÉCNICO
-      "privacy": Privacy.values[random.nextInt(2)].name,
+      "privacy": Privacy.values[faker.randomGenerator.integer(2, min: 0)].name,
       "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
       "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+    });
+  }
+
+  UserConfigModel generateUserConfig(int userId){
+    final modalities = List.generate(faker.randomGenerator.integer(3, min: 1), (m) => Modality.values[m].name);
+    final len = modalities.length - 1;
+    final index = faker.randomGenerator.integer(len, min: 0);
+    print(faker.randomGenerator.integer(3, min: 1));
+    print(modalities);
+    print(len);
+    print(index);
+    
+    return UserConfigModel.fromMap({
+      "id": userId,
+      "userId": userId,
+      "mainModality": modalities[index],
+      "modalities": modalities,
+      "createdAt": DateTime.now(),
+      "updatedAt": DateTime.now(),
     });
   }
 

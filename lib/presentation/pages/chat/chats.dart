@@ -69,7 +69,7 @@ class _ChatsPageState extends State<ChatsPage> {
     
     return Scaffold(
       appBar: HeaderWidget(
-        title: user.userName,
+        title: "@${user.userName}",
         leftAction: () => Get.back(),
         shadow: false,
       ),
@@ -141,8 +141,7 @@ class _ChatsPageState extends State<ChatsPage> {
                               Padding(
                                 padding: const EdgeInsets.only(right: 10.0),
                                 child: ImgCircularWidget(
-                                  height: 60,
-                                  width: 60,
+                                  size: 60,
                                   image: userChat.photo,
                                 ),
                               ),

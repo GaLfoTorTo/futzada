@@ -53,7 +53,6 @@ class ReserveBankWidget extends StatelessWidget {
               ...escalationController.reserves.asMap().entries.map((item) {
                 //RESGATAR JOGADOR NA ESCALAÇÃO
                 final index = item.key;
-                final player = item.value;
                 UserModel? user;
                 if(escalationController.reserves[index] != null){
                   user =EventHelper.getUserEvent(escalationController.event!, escalationController.starters[index]!);

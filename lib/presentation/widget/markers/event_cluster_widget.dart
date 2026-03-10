@@ -41,7 +41,7 @@ class EventClusterWidget extends StatelessWidget {
     //FUNÇÃO PARA GERAÇÃO DE WIDGET DE MARKER DE EVENTO
     Widget setEventWidget(EventModel marker, {bool isCluster = false, List<ImageProvider> imgs = const [], int totalEvents = 1}) {
       //RESGATAR ESTILOS DO MARKER
-      final style = MarkersHelper.getMarkerStyle(marker.gameConfig!.category!);
+      final style = MarkersHelper.getMarkerStyle(marker.gameConfig!.category);
       //ATUALIZAR BADGE DE QUANTIDADE DE EVENTOS
       int count = totalEvents;
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/presentation/widget/others/podium_widget.dart';
 
 class CardPodiumWidget extends StatelessWidget {
@@ -21,6 +21,10 @@ class CardPodiumWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+
+    //ESTADO - ITEMS EVENTO
+    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    String modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
     
     return Container(
       width: dimensions.width,
@@ -29,11 +33,12 @@ class CardPodiumWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
+        color: modalityColor,
         image: DecorationImage(
-          image: const AssetImage(AppImages.cardFootball) as ImageProvider,
+          image: AssetImage(modalityImage) as ImageProvider,
           fit: BoxFit.cover,
           colorFilter: ColorFilter.mode(
-            AppColors.green_300.withAlpha(220), 
+            modalityColor.withAlpha(200), 
             BlendMode.srcATop,
           )
         ),

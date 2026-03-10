@@ -30,7 +30,7 @@ class GamesDayPage extends StatelessWidget {
     //RESGATAR CONTROLLER DE PARTIDAS
     GameController gameController = GameController.instance;
     //ESTADO - ITEMS EVENTO
-    Color eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //CONTROLLADOR DE BARRA DE ROLAGEM
     PageController nextGamesController = PageController();
     //JOGADORES DESTAQUE
@@ -39,7 +39,7 @@ class GamesDayPage extends StatelessWidget {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Dia de Jogo',
-        backgroundColor: eventColor,
+        backgroundColor: modalityColor,
         leftAction: () => Get.back(),
         rightIcon: Icons.history,
         rightAction: () => Get.toNamed('/games/historic'),
@@ -55,8 +55,7 @@ class GamesDayPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ImgCircularWidget(
-                      width: 30, 
-                      height: 30,
+                      size: 30,
                       image: event.photo,
                       element: "event",
                     ),
@@ -93,7 +92,7 @@ class GamesDayPage extends StatelessWidget {
                       icon: Icons.add_rounded,
                       width: 100,
                       height: 20,
-                      textColor: eventColor,
+                      textColor: modalityColor,
                       backgroundColor: Colors.transparent,
                       action: () {},
                     )
@@ -133,7 +132,7 @@ class GamesDayPage extends StatelessWidget {
                       icon: Icons.add_rounded,
                       width: 100,
                       height: 20,
-                      textColor: eventColor,
+                      textColor: modalityColor,
                       backgroundColor: Colors.transparent,
                       action: () {},
                     )
@@ -243,7 +242,7 @@ class GamesDayPage extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: eventColor.withAlpha(50),
+                                    color: modalityColor.withAlpha(50),
                                     borderRadius: BorderRadius.circular(10)
                                   ),
                                   child: Column(
@@ -251,14 +250,14 @@ class GamesDayPage extends StatelessWidget {
                                       Text(
                                         "3 Gols",
                                         style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                          color: eventColor,
+                                          color: modalityColor,
                                         ),
                                         textAlign: TextAlign.center,
                                       ),
                                       Icon(
                                         Icons.sports_soccer,
                                         size: 30,
-                                        color: eventColor,
+                                        color: modalityColor,
                                       ),
                                     ],
                                   ),

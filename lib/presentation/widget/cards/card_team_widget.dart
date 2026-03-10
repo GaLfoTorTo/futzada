@@ -79,8 +79,7 @@ class CardTeamWidget extends StatelessWidget {
                   spacing: 5,
                   children: [
                     ImgCircularWidget(
-                      width: 40, 
-                      height: 40,
+                      size: 70,
                       image: user.photo,
                     ),
                     Column(

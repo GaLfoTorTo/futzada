@@ -16,9 +16,9 @@ class CardMvpWidget extends StatelessWidget {
     //RESGATAR EVENTO
     EventModel event = Get.arguments['event'];
     //ESTADO - ITEMS EVENTO
-    Color eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    Color eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    String eventImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
+    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    //Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    String modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
     UserModel player = event.participants!.first;
     //DEFINIR ESTATISTICAS
     Map<String, dynamic> stats = {
@@ -38,12 +38,12 @@ class CardMvpWidget extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: eventColor,
+          color: modalityColor,
           image: DecorationImage(
-            image: AssetImage(eventImage) as ImageProvider,
+            image: AssetImage(modalityImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              eventColor.withAlpha(200), 
+              modalityColor.withAlpha(200), 
               BlendMode.srcATop,
             )
           ),

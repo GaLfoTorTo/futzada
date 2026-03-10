@@ -78,8 +78,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: ImgGroupCircularWidget(
-                          width: 30,
-                          height: 30,
+                          size: 30,
                           side: "right",
                           images: escalationController.starters.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
                         ),
@@ -100,8 +99,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: ImgGroupCircularWidget(
-                            width: 30,
-                            height: 30,
+                            size: 30,
                             side: "right",
                             images: escalationController.reserves.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
                           ),
@@ -128,8 +126,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                         child: Row(
                           children: [
                             ImgCircularWidget(
-                              height: 30,
-                              width: 30,
+                              size: 30,
                               image: capitan.photo,
                               borderColor: AppColors.yellow_200
                             ),

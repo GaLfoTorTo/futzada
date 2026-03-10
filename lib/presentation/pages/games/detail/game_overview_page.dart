@@ -25,7 +25,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
   //RESGATAR CONTROLLER DE PARTIDAS
   GameController gameController = GameController.instance;
   //ITEMS DO EVENTO
-  late Color eventColor;
+  late Color modalityColor;
   //ITEMS DE PARTIDA
   late GameModel game;
   late TeamModel teamA;
@@ -36,7 +36,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
   @override
   void initState(){
     super.initState();
-    eventColor = ModalityHelper.getEventModalityColor(gameController.event.gameConfig?.category ?? gameController.event.modality!.name)['color'];
+    modalityColor = ModalityHelper.getEventModalityColor(gameController.event.gameConfig?.category ?? gameController.event.modality!.name)['color'];
     //PARTIDA ATUAL
     game = gameController.currentGame;
     //RESGATAR EQUIPES
@@ -155,13 +155,13 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: eventColor.withAlpha(50),
+                                        color: modalityColor.withAlpha(50),
                                         borderRadius: BorderRadius.circular(10)
                                       ),
                                       child: Icon(
                                         item['icon'],
                                         size: 30,
-                                        color: eventColor,
+                                        color: modalityColor,
                                       ),
                                     ),
                                     Column(
@@ -223,7 +223,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                                   Icon(
                                     Icons.sports,
                                     size: 20,
-                                    color: eventColor,
+                                    color: modalityColor,
                                   ),
                                 ],
                               ),
@@ -271,7 +271,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                               : "Empate";
                       //RESGATAR COR DE STATUS DE VOTAÇÃO
                       final Color statusColor = option == "Win"
-                          ? eventColor
+                          ? modalityColor
                           : option == "Lose"
                               ? AppColors.red_300
                               : AppColors.grey_300;

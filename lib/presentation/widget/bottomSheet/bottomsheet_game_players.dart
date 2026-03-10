@@ -138,8 +138,7 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: ImgCircularWidget(
-                                    width: 50, 
-                                    height: 50,
+                                    size: 50,
                                     image: participant!.photo,
                                   ),
                                 ),

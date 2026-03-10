@@ -83,8 +83,7 @@ class PodiumWidget extends StatelessWidget {
                   child: Stack(
                     children: [
                       ImgCircularWidget(
-                        height: 90,
-                        width: 90,
+                        size: 90,
                         image: user.photo,
                         borderColor: podiumRank['color']
                       ),

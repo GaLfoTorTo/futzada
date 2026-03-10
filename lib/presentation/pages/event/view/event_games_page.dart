@@ -34,8 +34,8 @@ class _EventGamesPageState extends State<EventGamesPage> {
   late EventModel event;
   //ESTADO - ITEMS EVENTO
   late String eventDate;
-  late Color eventColor;
-  late Color eventTextColor;
+  late Color modalityColor;
+  late Color modalityTextColor;
 
   @override
   void initState() {
@@ -43,8 +43,8 @@ class _EventGamesPageState extends State<EventGamesPage> {
     //RESGATAR EVENT
     event = eventController.event;
     //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
-    eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     //INICIALIZAR CONTROLLER DE PARTIDAS AO VIVO
     inProgressController = PageController();
     //RESGATAR DATA DO PROXIMO DIA DO EVENTO
@@ -197,8 +197,8 @@ class _EventGamesPageState extends State<EventGamesPage> {
                       text: "Ver Mais ${gameController.nextGames.length}",
                       width: 120,
                       height: 20,
-                      textColor: eventColor,
-                      backgroundColor: eventColor.withAlpha(20),
+                      textColor: modalityColor,
+                      backgroundColor: modalityColor.withAlpha(20),
                       action: () => {},
                     ),
                   ]);

@@ -34,8 +34,6 @@ class _InputRadioWidgetState extends State<InputRadioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var dimensions = MediaQuery.of(context).size;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(

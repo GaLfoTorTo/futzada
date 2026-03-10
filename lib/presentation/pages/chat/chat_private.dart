@@ -50,7 +50,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
     
     return Scaffold(
       appBar: HeaderWidget(
-        title: user.userName,
+        title: "@${user.userName}",
         leftAction: () => Get.back(),
       ),
       body: SafeArea(
@@ -87,8 +87,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: ImgCircularWidget(
-                            height: 120,
-                            width: 120,
+                            size: 120,
                             image: user.photo,
                           ),
                         ),

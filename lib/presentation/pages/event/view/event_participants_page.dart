@@ -97,8 +97,7 @@ class EventParticipantsPage extends StatelessWidget {
                         child: Row(
                           children: [
                             ImgCircularWidget(
-                              height: 60,
-                              width: 60,
+                              size: 60,
                               image: user.photo,
                               borderColor: AppColors.grey_500
                             ),

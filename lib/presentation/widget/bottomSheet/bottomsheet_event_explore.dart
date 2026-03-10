@@ -7,7 +7,6 @@ import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/controllers/map_controller.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
@@ -388,8 +387,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                                 spacing: 5,
                                 children: [
                                   ImgGroupCircularWidget(
-                                    width: 40, 
-                                    height: 40,
+                                    size: 40, 
                                     images: imgParticipantes
                                   ),
                                   Text(

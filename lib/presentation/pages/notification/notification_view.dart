@@ -62,14 +62,12 @@ class NotificationView extends StatelessWidget {
               children: [
                 if (notification['image'] is List<dynamic>) ...[
                   ImgGroupCircularWidget(
-                    width: 60,
-                    height: 60,
+                    size: 60,
                     images: imgNotification,
                   ),
                 ] else ...[
                   ImgCircularWidget(
-                    width: 70,
-                    height: 70,
+                    size: 70,
                     image: notification['image'],
                   ),
                 ],

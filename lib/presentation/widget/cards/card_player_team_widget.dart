@@ -46,8 +46,7 @@ class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
                 Padding(
                   padding: const EdgeInsets.only(right: 20),
                   child: ImgCircularWidget(
-                    width: 70, 
-                    height: 70,
+                    size: 70,
                     image: widget.user.photo,
                   ),
                 ),

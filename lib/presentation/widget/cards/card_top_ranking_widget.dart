@@ -51,8 +51,7 @@ class CardTopRankingWidget extends StatelessWidget {
                   Row(
                     children: [
                       ImgCircularWidget(
-                        width: 30,
-                        height: 30,
+                        size: 70,
                         image: pelada['image'],
                         borderColor: AppColors.white,
                       ),

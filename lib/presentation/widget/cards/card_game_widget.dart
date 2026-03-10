@@ -38,9 +38,9 @@ class _CardGameWidgetState extends State<CardGameWidget> {
   //RESGATAR CONTROLLER DE PARTIDA
   GameController gameController = GameController.instance;
   //ESTADO - ITEMS EVENTO
-  late Color eventColor;
-  late Color eventTextColor;
-  late String eventImage;
+  late Color modalityColor;
+  late Color modalityTextColor;
+  late String modalityImage;
   //RESGATAR PROPS DE NAVEGAÇÃO E ATIVAÇÃO DO CARD
   bool propNavigate = false;
   bool propActive = false;
@@ -50,9 +50,9 @@ class _CardGameWidgetState extends State<CardGameWidget> {
   void initState() {
     super.initState();
     //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
-    eventColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
-    eventTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
-    eventImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
+    modalityColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
     //RESGATAR PROP DE NAVEGAÇÃO PADRÃO
     propNavigate = widget.navigate != null ? widget.navigate! : false;
     //RESGATAR PROP DE ATIVAÇÃO PADRÃO DO CARD
@@ -101,10 +101,10 @@ class _CardGameWidgetState extends State<CardGameWidget> {
             ),
           ],
           image: DecorationImage(
-            image: AssetImage(eventImage) as ImageProvider,
+            image: AssetImage(modalityImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              eventColor.withAlpha(200),
+              modalityColor.withAlpha(200),
               BlendMode.srcATop,
             )
           ),
@@ -122,7 +122,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
               Text(
                 "#${widget.game.number}",
                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                  color: eventTextColor
+                  color: modalityTextColor
                 )
               ),
               Padding(
@@ -135,7 +135,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                       width: 50,
                       height: 50,
                       colorFilter: ColorFilter.mode(
-                        eventTextColor,
+                        modalityTextColor,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -145,7 +145,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                         Text(
                           widget.gameDate,
                           style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            color: eventTextColor,
+                            color: modalityTextColor,
                             fontSize: !propHistoric ? 18 : 16
                           ),
                         ),
@@ -156,20 +156,20 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                               Text(
                                 "$teamAScore",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: eventTextColor,
+                                  color: modalityTextColor,
                                   fontSize: 42
                                 ),
                               ),
                               Text(
                                 "X",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: eventTextColor,
+                                  color: modalityTextColor,
                                 ),
                               ),
                               Text(
                                 "$teamBScore",
                                 style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                  color: eventTextColor,
+                                  color: modalityTextColor,
                                   fontSize: 42
                                 ),
                               ),
@@ -179,7 +179,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                         Text(
                           "$gameStartTime - $gameEndTime",
                           style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                            color: eventTextColor,
+                            color: modalityTextColor,
                           ),
                         ),
                       ],
@@ -189,7 +189,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
                       width: 50,
                       height: 50,
                       colorFilter: ColorFilter.mode(
-                        eventTextColor,
+                        modalityTextColor,
                         BlendMode.srcIn,
                       ),
                     ),

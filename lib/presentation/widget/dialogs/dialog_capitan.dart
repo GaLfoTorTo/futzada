@@ -74,8 +74,7 @@ class DialogCapitan extends StatelessWidget {
                               onChanged: (bool? selected) => setCapitan(user.id),
                             ),
                             ImgCircularWidget(
-                              height: 50,
-                              width: 50,
+                              size: 50,
                               image: user.photo,
                               borderColor: PlayerHelper.setColorPosition(positionAlias),
                             ),

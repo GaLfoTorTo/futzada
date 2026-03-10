@@ -25,9 +25,9 @@ class CardDayEventWidget extends StatelessWidget {
     //RESGATAR CONTROLLER DE PARTIDAS
     GameController gameController = GameController.instance;
     //ESTADO - ITEMS EVENTO
-    Color eventColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    Color eventTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    String eventImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
+    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    String modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
     //RESGATAR DATA DO EVENTO
     final now = DateTime.now();
     final day = now.day.toString();
@@ -42,12 +42,12 @@ class CardDayEventWidget extends StatelessWidget {
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: eventColor,
+          color: modalityColor,
           image: DecorationImage(
-            image: AssetImage(eventImage) as ImageProvider,
+            image: AssetImage(modalityImage) as ImageProvider,
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              eventColor.withAlpha(200), 
+              modalityColor.withAlpha(200), 
               BlendMode.srcATop,
             )
           ),
@@ -66,7 +66,7 @@ class CardDayEventWidget extends StatelessWidget {
                       child: Text(
                         "${event.title}",
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: eventTextColor,
+                          color: modalityTextColor,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -126,13 +126,13 @@ class CardDayEventWidget extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.timer,
-                          color: eventTextColor,
+                          color: modalityTextColor,
                           size: 25,
                         ),
                         Text(
                           "${event.startTime!} - ${event.endTime!}",
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: eventTextColor
+                            color: modalityTextColor
                           )
                         ),
                       ]
@@ -143,7 +143,7 @@ class CardDayEventWidget extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.location_on,
-                          color: eventTextColor,
+                          color: modalityTextColor,
                           size: 25,
                         ),
                         Column(
@@ -152,13 +152,13 @@ class CardDayEventWidget extends StatelessWidget {
                             Text(
                               "${event.address?.street}",
                               style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                color: eventTextColor
+                                color: modalityTextColor
                               )
                             ),
                             Text(
                               "${event.address?.city}/${event.address?.state}",
                               style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                color: eventTextColor
+                                color: modalityTextColor
                               )
                             ),
                           ],
@@ -174,16 +174,15 @@ class CardDayEventWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 ImgGroupCircularWidget(
-                  width: 40, 
-                  height: 40,
-                  borderColor: eventTextColor,
+                  size: 40, 
+                  borderColor: modalityTextColor,
                   images: userImages,
                 ),
                 IconButton(
                   onPressed: () => print('share'), 
                   icon: Icon(
                     Icons.share,
-                    color: eventTextColor,
+                    color: modalityTextColor,
                     size: 20,
                   ),
                 ),
@@ -191,7 +190,7 @@ class CardDayEventWidget extends StatelessWidget {
                   onPressed: () => print('heart'), 
                   icon: Icon(
                     AppIcones.heart_solid,
-                    color: eventTextColor,
+                    color: modalityTextColor,
                     size: 20,
                   ),
                 ),
@@ -200,8 +199,8 @@ class CardDayEventWidget extends StatelessWidget {
                   width: 80,
                   height: 30,
                   text: "Entrar",
-                  backgroundColor: eventColor.withAlpha(200),
-                    textColor: eventTextColor,
+                  backgroundColor: modalityColor.withAlpha(200),
+                    textColor: modalityTextColor,
                   borderRadius: 50,
                 )
               ],

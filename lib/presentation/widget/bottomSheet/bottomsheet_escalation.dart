@@ -69,7 +69,7 @@ class _BottomSheetEscalationState extends State<BottomSheetEscalation> {
           ),
           const Divider(color: AppColors.grey_300),
           LineupWidget(
-            category: gameController.currentGameConfig!.category!
+            category: gameController.currentGameConfig!.category
           )
         ],
       ),

@@ -96,8 +96,7 @@ class ButtonPlayerWidget extends StatelessWidget {
             onTap: () => selectPlayer(user),
             child:
               ImgCircularWidget(
-                height: size!,
-                width: size!,
+                size: size!,
                 image: user.photo,
                 borderColor: borderColor,
               ),

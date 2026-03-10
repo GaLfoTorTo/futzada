@@ -4,8 +4,8 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
+import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 
@@ -22,18 +22,16 @@ class CardEventListWidget extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //DEFINIR CONTROLLER DE EVENTO 
-    EventController eventController = EventController.instance;
+    AvaliationService avaliationService = AvaliationService();
     //DEFINIR CONTROLLER DE PARTIDA
     GameController gameController = GameController.instance;
     //RESGATAR AVALIAÇÃO DO EVENTO
-    double avaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
+    double avaliations = avaliationService.getRatingAvaliation(event.avaliations);
     //RESGATAR DATA DO EVENTO
     String eventDate = DateHelper.getEventDate(event.date!);
 
     return InkWell(
       onTap: () => {
-        //DEFINIR EVENTO ATUAL NO CONTROLLER
-        eventController.setSelectedEvent(event),
         //NAVEGAR PARA PAGINA DO EVENTO
         Get.toNamed(
           "/event/geral",

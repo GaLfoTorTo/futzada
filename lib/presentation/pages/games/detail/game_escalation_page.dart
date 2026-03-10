@@ -156,8 +156,7 @@ class GameEscalationPage extends StatelessWidget {
                               children: [
                                 if(i == 0)...[
                                   ImgCircularWidget(
-                                    width: 40, 
-                                    height: 40,
+                                    size: 40,
                                     borderColor: AppColors.blue_300,
                                     image: photo,
                                   ),
@@ -188,8 +187,7 @@ class GameEscalationPage extends StatelessWidget {
                                 ),
                                 if(i == 1)...[
                                   ImgCircularWidget(
-                                    width: 40, 
-                                    height: 40,
+                                    size: 40,
                                     borderColor: AppColors.red_300,
                                     image: photo,
                                   ),
