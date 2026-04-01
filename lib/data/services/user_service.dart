@@ -56,10 +56,6 @@ class UserService {
     final modalities = List.generate(faker.randomGenerator.integer(3, min: 1), (m) => Modality.values[m].name);
     final len = modalities.length - 1;
     final index = faker.randomGenerator.integer(len, min: 0);
-    print(faker.randomGenerator.integer(3, min: 1));
-    print(modalities);
-    print(len);
-    print(index);
     
     return UserConfigModel.fromMap({
       "id": userId,

@@ -1,7 +1,29 @@
-import 'package:faker/faker.dart';
 import 'package:intl/intl.dart';
+import 'package:faker/faker.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
+  //INSTANCIAR NOTIFICAÇÕES
+  final notification = FlutterLocalNotificationsPlugin();
+
+  //FUNÇÃO DE EXIBIÇÃO DE NOTIFICAÇÃO
+  Future<void> showNotification(RemoteMessage message) async {
+    const android = AndroidNotificationDetails(
+      'default_channel',
+      'Notificações',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    await notification.show(
+      id: 0,
+      title: message.notification?.title,
+      body: message.notification?.body,
+      notificationDetails: const NotificationDetails(android: android),
+    );
+  }
+
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
   static var faker = Faker();
 

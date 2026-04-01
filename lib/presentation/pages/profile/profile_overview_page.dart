@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/event_model.dart';
@@ -59,15 +60,16 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
     var dimensions = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.all(10),
+        color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
         child: Column(
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
-            CardLevelWidget(
+            /* CardLevelWidget(
               user: profileController.user,
-            ),
+            ), */
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: modalities.map((item){
@@ -80,19 +82,30 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
                 return Stack(
                   alignment: AlignmentGeometry.topCenter,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 25),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: itemColor.withAlpha(20),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: itemColor, width: 2)
-                      ),
-                      child: Icon(
-                        icon['icon'],
-                        color: itemColor,
-                        size: itemSize,
-                      ),
+                    Column(
+                      spacing: 5,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 25),
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: itemColor.withAlpha(20),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: itemColor, width: 2)
+                          ),
+                          child: Icon(
+                            icon['icon'],
+                            color: itemColor,
+                            size: itemSize,
+                          ),
+                        ),
+                        Text(
+                          item.name,
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: itemColor
+                          ),
+                        )
+                      ],
                     ),
                     if(isMainModality)...[
                       Container(
@@ -111,6 +124,10 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
                   ],
                 );
               }).toList()
+            ),
+            Text(
+              "Peladas",
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(
               "Peladas",

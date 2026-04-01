@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 class InputSwitchWidget extends StatefulWidget {
   final String name;
   final String label;
+  final String labelPosition;
+  final String? subtitle;
   final bool value;
   final IconData prefixIcon;
   final bool enable;
@@ -16,6 +18,8 @@ class InputSwitchWidget extends StatefulWidget {
     super.key,
     required this.name,
     required this.label,
+    this.labelPosition = 'top',
+    this.subtitle,
     required this.value,
     required this.prefixIcon,
     required this.textController,
@@ -65,15 +69,29 @@ class _InputTextWidgetState extends State<InputSwitchWidget> {
               color: Get.isDarkMode ? AppColors.white : AppColors.grey_500,
               size: 25,
             ),
+            title: widget.labelPosition == 'center'
+              ? Text(
+                  widget.label,
+                  style: Theme.of(context).textTheme.titleMedium,
+                )
+              : null,
+            subtitle: widget.subtitle != null
+              ? Text(
+                  widget.subtitle!,
+                  style: Theme.of(context).textTheme.displaySmall,
+                )
+              : null,
           ),
         ),
-        Positioned(
-          left: 20,
-          child: Text(
-            widget.label,
-            style: Theme.of(context).textTheme.titleMedium,
+        if(widget.labelPosition == 'top')...[
+          Positioned(
+            left: 20,
+            child: Text(
+              widget.label,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           ),
-        ),
+        ]
       ]
     );
   }

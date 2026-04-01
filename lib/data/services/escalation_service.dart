@@ -17,6 +17,7 @@ class EscalationService {
     return EscalationModel.fromMap({
       "id" : random.nextInt(2),
       "eventId" : 1,
+      "managerId" : 1,
       "formation" : listFormations[random.nextInt(listFormations.length)],
       "starters" : setEscalation(category, 'starters'),
       "reserves" : setEscalation(category, 'reserves'),

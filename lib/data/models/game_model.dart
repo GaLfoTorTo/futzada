@@ -82,7 +82,7 @@ class GameModel {
       'result': result?.toMap(),
       'teams': teams != null && teams!.isNotEmpty ? teams!.map((x) => x.toMap()).toList() : [],
       'createdAt': createdAt?.toIso8601String(),
-    'updatedAt': updatedAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt,
     };
   }

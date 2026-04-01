@@ -18,6 +18,15 @@ class EventHelper {
     });
   }
   
+  //FUNÇÃO PARA RESGATAR COLABORADORES DO EVENTO
+  static List<UserModel?> getCollaborators(EventModel event){
+    final arr = event.participants!.where((u){
+      final item = u.participants!.where((p) => p.eventId == event.id).first;
+      return item.role!.contains("Colaborator");
+    }).toList();
+    return arr;
+  }
+  
   //FUNÇÃO PARA RESGATAR JOGADOR DO EVENTO
   static UserModel getUserPlayer(EventModel event, int userId){
     return event.participants!.firstWhere((u){

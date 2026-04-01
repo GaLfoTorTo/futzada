@@ -1,10 +1,12 @@
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/app_widget.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:futzada/core/theme/app_colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:futzada/data/services/firebase_service.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -18,11 +20,14 @@ void main() async {
     await dotenv.load(fileName: ".env",);
     await GetStorage.init();
     //4 - INICIALIZAR FIREBASE (com timeout para evitar travamentos)
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ).timeout(const Duration(seconds: 10));
-    }
+    //4.1 - INICIALIZAR FIREBASE
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).timeout(const Duration(seconds: 10));
+    //4.2 - INICIALIZAR FIREBASE MESSAGING (BACKGROUND)
+    FirebaseMessaging.onBackgroundMessage(initFirebaseHandler);
+    //4.3 - INICIALIZAR FIREBASE MESSAGING
+    initFirebaseMessaging();
     //5 - INICIALIZAR ARVORE DE WIDGETS (APPWIDGET)
     runApp(const AppWidget());
   } catch (e, stack) {
@@ -65,4 +70,9 @@ void main() async {
       )
     );
   }
+}
+
+Future<void> initFirebaseHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("*******************Handling a background message: ${message.messageId}");
 }

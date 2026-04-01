@@ -6,6 +6,7 @@ import 'package:futzada/core/helpers/date_helper.dart';
 class EscalationModel {
   final int? id;
   final int? eventId;
+  final int? managerId;
   final String? formation;
   final List<int?>? starters;
   final List<int?>? reserves;
@@ -15,6 +16,7 @@ class EscalationModel {
   EscalationModel({
     this.id,
     this.eventId,
+    this.managerId,
     this.formation,
     this.starters,
     this.reserves,
@@ -25,6 +27,7 @@ class EscalationModel {
   EscalationModel copyWith({
     int? id,
     int? eventId,
+    int? managerId,
     String? formation,
     List<int?>? starters,
     List<int?>? reserves,
@@ -34,6 +37,7 @@ class EscalationModel {
     return EscalationModel(
       id: id ?? this.id,
       eventId: eventId ?? this.eventId,
+      managerId: managerId ?? this.managerId,
       formation: formation ?? this.formation,
       starters: starters ?? this.starters,
       reserves: reserves ?? this.reserves,
@@ -46,6 +50,7 @@ class EscalationModel {
     return <String, dynamic>{
       'id': id,
       'eventId': eventId,
+      'managerId': managerId,
       'formation': formation,
       'starters': starters!.map((x) => x).toList(),
       'reserves': reserves!.map((x) => x).toList(),
@@ -58,6 +63,7 @@ class EscalationModel {
     return EscalationModel(
       id: map['id'] as int,
       eventId: map['eventId'] as int,
+      managerId: map['managerId'] as int,
       formation: map['formation'] != null ? map['formation'] as String : null,
       starters: map['starters'] != null
         ? List<int?>.from(
@@ -84,7 +90,7 @@ class EscalationModel {
 
   @override
   String toString() {
-    return 'EscalationModel(id: $id, eventId: $eventId, formation: $formation, starters: $starters, reserves: $reserves, $createdAt, updatedAt: $updatedAt)';
+    return 'EscalationModel(id: $id, eventId: $eventId, managerId: $managerId, formation: $formation, starters: $starters, reserves: $reserves, $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -94,6 +100,7 @@ class EscalationModel {
     return 
       other.id == id &&
       other.eventId == eventId &&
+      other.managerId == managerId &&
       other.formation == formation &&
       listEquals(other.starters, starters) &&
       listEquals(other.reserves, reserves) &&
@@ -106,6 +113,7 @@ class EscalationModel {
     return 
       id.hashCode ^
       eventId.hashCode ^
+      managerId.hashCode ^
       formation.hashCode ^
       starters.hashCode ^
       reserves.hashCode ^

@@ -3,7 +3,7 @@ enum Privacy { Public, Private }
 //MODALIDADE DE EVENTO
 enum Modality { Football, Basketball, Volleyball }
 //CATEGORIAS 
-enum Category { Futebl, Fut7, Futsal, Volei, Volei_de_Praia, Fut_volei, Basquete, Streetball }
+enum Category { Futebol, Fut7, Futsal, Volei, Volei_de_Praia, Fut_volei, Basquete, Streetball }
 //PERMISSÕES DE COLABORADORES DO EVENTO
 enum Permissions { Add, Remove, Edit }
 //REGRAS DE PARTICIPAÇÃO DO EVENTO
