@@ -2,12 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
-import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_ads.dart';
 import 'package:futzada/presentation/widget/cards/card_presentation_widget.dart';
+import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
+import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,9 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //CONTROLLERS -HOME, EVENTS, GAME
+  //CONTROLLERS - HOME
   HomeController homeController = HomeController.instance;
-  GameController gameController = GameController.instance;
+  final ShowcaseController showcaseController = ShowcaseController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
 
@@ -28,6 +29,10 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //RESGATAR USUARIO
     user = homeController.user;
+    //CONFIGURAR SHOWCASE
+    showcaseController.setShowCase();
+    //INICIAR SHOWCASE APÓS RENDERIZAÇÃO DA HOME
+    WidgetsBinding.instance.addPostFrameCallback((_) => showcaseController.startShowcases());
   }
   
   @override
@@ -58,9 +63,9 @@ class _HomePageState extends State<HomePage> {
         //SEÇÃO - CATEGORIAS
         const SectionCategoriesWidget(),
         //SEÇÃO - EVENTO DO DIA
-        if(gameController.isToday() && homeController.events.isNotEmpty)...[
+        if(homeController.events.isNotEmpty)...[
           SectionHomeWidget(
-            title: "Dia de Jogo",
+            title: "Meus Eventos",
             options: homeController.events,
           )
         ],

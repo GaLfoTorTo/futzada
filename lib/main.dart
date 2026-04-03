@@ -6,7 +6,6 @@ import 'package:get_storage/get_storage.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:futzada/data/services/firebase_service.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -26,8 +25,6 @@ void main() async {
     ).timeout(const Duration(seconds: 10));
     //4.2 - INICIALIZAR FIREBASE MESSAGING (BACKGROUND)
     FirebaseMessaging.onBackgroundMessage(initFirebaseHandler);
-    //4.3 - INICIALIZAR FIREBASE MESSAGING
-    initFirebaseMessaging();
     //5 - INICIALIZAR ARVORE DE WIDGETS (APPWIDGET)
     runApp(const AppWidget());
   } catch (e, stack) {
@@ -74,5 +71,4 @@ void main() async {
 
 Future<void> initFirebaseHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("*******************Handling a background message: ${message.messageId}");
 }

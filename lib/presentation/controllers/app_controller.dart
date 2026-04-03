@@ -1,3 +1,4 @@
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:futzada/data/services/timer_service.dart';
@@ -34,16 +35,18 @@ class AppController extends GetxController {
   void onReady() {
     super.onReady();
     isLoading.value = true;
-    //INICIALIZAR CONTROLLERS
+    //INICIALIZAR CONTROLLER DE USUARIO
     userController = Get.put(UserController(), permanent: true);
+    //OBSERVER - USUARIO LOGADO
     userWorker = ever<bool>(userController.isReady, (isReady) async {
       if(!isReady)return;
+      //INICIALIZAR CONTROLLER DE HOME
       homeController = Get.put(HomeController(), permanent: true);
-      Get.put(GameController(), permanent: true);
-      //ESPERAR HOME CONTROLLER INICIALIZAR
+      //OBSERVER - HOME PAGE
       homeWorker = ever<bool>(homeController.isReady, (homeReady) async {
         if (!homeReady) return;
         navigateUser();
+        //INICIALIZAR SERVIÇO DE NOTIFICAÇÕES - FIREBASE MESSAGING
         await initControllers();
         //ENCERRAR WORKERS
         userWorker.dispose();
@@ -60,8 +63,11 @@ class AppController extends GetxController {
   //FUNÇÃO DE INICIALIZAÇÃO DE DADOS DE USUARIO
   Future<void> initControllers() async {
     try {
-      //INICIALIZAÇÃO - CONTROLLERS (EVENTO, ESCALAÇÃO, STATISTICA, GAME, RANK, EXPLORER, CHAT, NOTIFICATION)
+      //INICIALIZAÇÃO - CONTROLLERS (EVENTO, PARTIDAS, ESCALAÇÃO, STATISTICA, GAME, RANK, EXPLORER, CHAT, NOTIFICATION)
+      //INICIALIZAR CONTROLLER DE SHOWCASE
+      Get.lazyPut(() => ShowcaseController(), fenix: true);
       Get.lazyPut(() => EventController(), fenix: true);
+      Get.lazyPut(() => GameController(), fenix: true);
       Get.lazyPut(() => EscalationController(), fenix: true);
       Get.lazyPut(() => StatisticsController(), fenix: true);
       Get.lazyPut(() => RankController(), fenix: true);

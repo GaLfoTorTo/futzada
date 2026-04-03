@@ -13,9 +13,13 @@ Future<void> initFirebaseMessaging() async {
   );
 
   // TOKEN DO DISPOSITIVO
-  String? token = await messaging.getToken();
-  print("FCM TOKEN: $token");
-
+  String? token = await messaging
+      .getToken()
+      .timeout(
+        const Duration(seconds: 8),
+        onTimeout: () => null,
+      );
+  
   // ATUALIZAR TOKEN
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
     print("NOVO TOKEN: $newToken");

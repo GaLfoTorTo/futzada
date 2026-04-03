@@ -1,4 +1,5 @@
 import 'package:futzada/core/helpers/map_helper.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/user_model.dart';
@@ -32,23 +33,26 @@ class CardPresentationWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppHelper.saudacaoPeriodo(),
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        color: AppColors.blue_500
-                      )
-                    ),
-                    Text(
-                      '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        color: AppColors.blue_500,
-                        fontWeight: FontWeight.normal
-                      )
-                    ),
-                  ],
+                WizardWidget(
+                  elementKey: 'home',
+                  child:  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppHelper.saudacaoPeriodo(),
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                          color: AppColors.blue_500
+                        )
+                      ),
+                      Text(
+                        '${user!.firstName?.capitalize} ${user!.lastName?.capitalize}',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: AppColors.blue_500,
+                          fontWeight: FontWeight.normal
+                        )
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(5),

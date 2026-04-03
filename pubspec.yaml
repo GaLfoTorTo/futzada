@@ -72,6 +72,7 @@ dependencies:
   flutter_quill: ^11.5.0
   flutter_dotenv: ^6.0.0
   flutter_local_notifications: ^21.0.0
+  showcaseview: ^5.0.1
 
 dev_dependencies:
   faker: ^2.1.0

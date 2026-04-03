@@ -1,11 +1,12 @@
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/data/services/address_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/data/services/address_service.dart';
+import 'package:futzada/data/services/firebase/firebase_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
 import 'package:futzada/data/repositories/user_repository.dart';
 
@@ -80,6 +81,7 @@ class UserController extends GetxController {
       if(Get.isRegistered<UserModel>(tag: 'user')){
         user = Get.find(tag: "user");
         await getCurrentLocation();
+        await initFirebaseMessaging();
         await getUserEvents();
         isReady.value = true;
       }

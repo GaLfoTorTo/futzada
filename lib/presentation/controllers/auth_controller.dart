@@ -60,7 +60,10 @@ class AuthController extends GetxController{
       Get.put(user, tag: 'user', permanent: true);
       isAuthenticated.value = true;
       Get.put(AppController());
+      return;
     }
+    //NAVEGAR PARA APRESENTAÇÃO PAGE
+    Get.offAllNamed('/login');
   }
 
   //FUNÇÃO SE SALVAMENTO DE USUARIO LOCAL
@@ -81,11 +84,18 @@ class AuthController extends GetxController{
   //FUNÇÃO DE LOGIN COM GOOLGE (OLD TESTES)
   Future<Map<String, dynamic>>googleLogin(BuildContext context) async {
     //INICIALIZAR AUTHENTICAÇÃO COM GOOGLE PELO EMAIL
-    GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+    GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: ['email','profile'],
+      serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
+    );
     //TENTAR LOGAR
     try {
       //ENVIAR SOLICITAÇÃO AO GOOGLE
       final resp = await googleSignIn.signIn();
+      // Usuário cancelou
+      if (resp == null) {
+        return {'status': 401, 'message': 'Login cancelado pelo usuário.'};
+      }
       //RESGATAR USUARIO
       final user = await userRepository.getUserGoogle(resp);
       if(user != null){

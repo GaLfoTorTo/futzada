@@ -16,11 +16,12 @@ abstract class HomeBase {
   RxBool get isReady;
   RxBool get isLoading;
   RxBool get hasError;
-  //ESTADOS - HOME
+    //ESTADOS - CARDS EVENT
   List<Map<String, dynamic>> get ads;
   List<EventModel> get toYou;
   List<EventModel> get popular;
   List<EventModel> get today;
+  //ESTADOS - USERS
   List<UserModel> get suggestionFriends;
   List<Map<String, dynamic>> get ranking;
   List<Map<String, dynamic>> get partidas;

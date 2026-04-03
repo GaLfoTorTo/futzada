@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "974765527307-g7bo2vrgq5f7doo3s0uns3sbsg7ba08e.apps.googleusercontent.com",
+          "client_id": "974765527307-da5so89gpajjmoemtq4q9d26d6arrja4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.futzada",
-            "certificate_hash": "fd49d467c38d7297b6c4fcf2ef70b68eee8e28fd"
+            "certificate_hash": "9190740b269581874d99b3b81a9352af2e19f97c"
           }
         }
       ],
@@ -29,7 +29,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974765527307-eenr8qqu5ucpoh3l5ag5edmor1g5mcd8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

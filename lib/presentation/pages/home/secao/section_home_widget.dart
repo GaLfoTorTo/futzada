@@ -54,7 +54,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   //FUNÇÃO DE DEFINIÇÃO DE DIMENSOES DA SEÇÃO
   BoxConstraints setSectionDimensions(){
     switch (widget.title) {
-      case "Dia de Jogo":
+      case "Meus Eventos":
         return  BoxConstraints(
           maxHeight: 300,
           maxWidth: Get.width
@@ -90,7 +90,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   //FUNÇÃO DE DEFINIÇÃO DE CARD DA SEÇÃO
   Widget setCardSection(value){
     switch (widget.title) {
-      case "Dia de Jogo":
+      case "Meus Eventos":
         return CardDayEventWidget(event: value);  
       case "Perto de Você":
         return CardToYouWidget(event: value);
@@ -152,7 +152,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
                 widget.title,
                 style: Theme.of(context).textTheme.headlineSmall
               ),
-              if(widget.title != 'Dia de Jogo' )...[
+              if(widget.title != 'Meus Eventos' )...[
                 ButtonTextWidget(
                   text: "Ver Mais",
                   icon: Icons.add_rounded,
