@@ -1,3 +1,4 @@
+import 'package:futzada/presentation/controllers/navigation_controller.dart';
 import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -64,7 +65,6 @@ class AppController extends GetxController {
   Future<void> initControllers() async {
     try {
       //INICIALIZAÇÃO - CONTROLLERS (EVENTO, PARTIDAS, ESCALAÇÃO, STATISTICA, GAME, RANK, EXPLORER, CHAT, NOTIFICATION)
-      //INICIALIZAR CONTROLLER DE SHOWCASE
       Get.lazyPut(() => ShowcaseController(), fenix: true);
       Get.lazyPut(() => EventController(), fenix: true);
       Get.lazyPut(() => GameController(), fenix: true);
@@ -77,6 +77,7 @@ class AppController extends GetxController {
       //ATUALIZAR ESTADOS DE INICIALIZAÇÃO
       isLoading.value = false;
       isReady.value = true;
+      NavigationController.instance.isReady.value = true;
     } catch (e) {
       //ATUALUZAR ESTADOS DE INICIALIZAÇÃO
       hasError.value = true;

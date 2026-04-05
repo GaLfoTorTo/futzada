@@ -1,3 +1,4 @@
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:get/get.dart';
 import 'package:futzada/presentation/controllers/auth_controller.dart';
 import 'package:futzada/presentation/controllers/navigation_controller.dart';
@@ -9,6 +10,7 @@ class AppBinding extends Bindings {
     //INICIALIZAÇÃO DE CONTROLLERS
     Get.put(ThemeController(), permanent: true);
     Get.put(AuthController(), permanent: true);
+    Get.put(ShowcaseController(), permanent: true);
     Get.put(NavigationController(), permanent: true);
   }
 }

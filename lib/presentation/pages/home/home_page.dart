@@ -29,16 +29,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //RESGATAR USUARIO
     user = homeController.user;
-    //CONFIGURAR SHOWCASE
-    showcaseController.setShowCase();
-    //INICIAR SHOWCASE APÓS RENDERIZAÇÃO DA HOME
-    WidgetsBinding.instance.addPostFrameCallback((_) => showcaseController.startShowcases());
   }
   
   @override
   Widget build(BuildContext context) {
+    //CONFIGURAR SHOWCASE
+    showcaseController.setShowCase();
+
     return Column(
       children: [
+        //SHOWCASE TUTORIAL
+        const WizardWidget(
+          elementKey: 'start',
+          child: SizedBox.shrink()
+        ),
         //CARD USUARIO
         Container(
           padding: const EdgeInsets.all(10.0),

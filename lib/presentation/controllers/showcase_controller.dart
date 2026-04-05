@@ -13,25 +13,33 @@ class ShowcaseController extends GetxController {
   final GlobalKey showcaseEndKey = GlobalKey();
   //CONTROLLADOR DE SHOWCASE
   final RxSet<String> completedShowcases = <String>{}.obs;
+  RxBool isReady = false.obs;
 
   //FUNÇÃO DE MAPEAMENTO DE ELEMENTOS DO SHOWCASE
   Map<String, dynamic> elements = {
-    'home': {
+    'start': {
       'key': GlobalKey(),
       'title': 'Boas Vindas',
-      'description': 'Olá, sejá bem vindo ao Futzada sua plataforma esportiva personalizada. Aqui, você tem tudo o que precisa para aprimorar sua diversão com seus amigos. Vamos juntos? Deixe-me te mostrar como tornar sua experiência esportiva ainda melhor!',
+      'description': 'Olá, sejá bem vindo ao Futzada sua plataforma esportiva personalizada. Aqui, você tem tudo o que precisa para aprimorar sua diversão com seus amigos.',
+      'subDescription': 'Vamos juntos? Que tal um tuor pela sua nova experiência esportiva?',
       'progress': 0.1,
     },
     'navigation': {
       'key': GlobalKey(),
       'title': 'Barra de Navigação',
       'description': 'Na barra de navegação você pode acessar as principais seções do aplicativo, a pagina de home, escalações, eventos, exploração e notificações.',
+      'progress': 0.2,
+    },
+    'home': {
+      'key': GlobalKey(),
+      'title': 'Home',
+      'description': 'Ná Pagina inicial você encontra de tudo, resumos de suas atividades, recomendações, convites, eventos proximos e muito mais.',
       'progress': 0.3,
     },
     'end': {
       'key': GlobalKey(),
       'title': 'É isso!',
-      'description': 'Seja bem vindo e aproveite o máximo sua nova jornada.',
+      'description': 'Seja bem vindo novamente e aproveite o máximo sua nova jornada.',
       'progress': 1,
     },
   };
@@ -45,12 +53,11 @@ class ShowcaseController extends GetxController {
       //CONFIGURAÇÕES DE SHOWCASE
       ShowcaseView.register(
         blurValue: 1,
-        disableBarrierInteraction: true,
-        autoPlayDelay: const Duration(seconds: 3),
+        enableAutoScroll: true,
         hideFloatingActionWidgetForShowcase: [showcaseEndKey],
         globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
           left: 16,
-          bottom: 16,
+          bottom: 25,
           child: ButtonTextWidget(
             text: 'Pular',
             height: 20,
@@ -68,7 +75,7 @@ class ShowcaseController extends GetxController {
             name: 'Anterior',
             type: TooltipDefaultActionType.previous,
             textStyle: const TextStyle(color: AppColors.blue_500),
-            hideActionWidgetForShowcase: [elements['home']['key'] as GlobalKey],
+            hideActionWidgetForShowcase: [elements['start']['key'] as GlobalKey],
           ),
           //ESCONDER TOOTIP BUTTON PARA ULTIMA AÇÃO
           TooltipActionButton(
@@ -76,20 +83,25 @@ class ShowcaseController extends GetxController {
             type: TooltipDefaultActionType.next,
             textStyle: const TextStyle(color: AppColors.blue_500),
             hideActionWidgetForShowcase: [elements['end']['key'] as GlobalKey],
+            onTap: () => print('Próximo Pressionado')
           ),
         ],
         onDismiss: (key) {
           completeShowcase(key.toString());
         },
       );
+      // ESPERAR RENDERIZAÇÃO DOS WIDGETS ANTES DE INICIAR SHOWCASE
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        isReady.value = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          startShowcases();
+        });
+      });
     }
   }
 
   //FUNÇÃO DE SHOWCASE - HOME 
-  Future<void> startShowcases() async {
-    //INICIAR SHOWCASE
-    ShowcaseView.get().startShowCase(elements.values.map((e) => e['key'] as GlobalKey).toList());
-  }
+  void startShowcases() => ShowcaseView.get().startShowCase(elements.values.map((e) => e['key'] as GlobalKey).toList());
   
   //FUNÇÃO PARA VERIFICAÇÃO DE ETAPA DE SHOWCASE COMPLETO
   bool isShowcaseCompleted(String showcaseId) {

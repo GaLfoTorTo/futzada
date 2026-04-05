@@ -27,7 +27,6 @@ class NavigationController extends GetxController {
     super.onInit();
     //ADICIONAR KEY DO SCAFFOLD GLOBALMENT AO GET
     Get.put(scaffoldKey, tag: 'appBaseScaffold', permanent: true);
-    isReady.value = true;
   }
   
   //FUNÇÃO DE ATUALIZAÇÃO DE INDEX
