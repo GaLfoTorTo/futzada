@@ -18,6 +18,7 @@ class WizardWidget extends StatelessWidget {
     //RESGATAR ELEMENTO DO SHOWCASE;
     ShowcaseController showcaseController = ShowcaseController.instance;
     final data = showcaseController.elements[elementKey];
+    final index = showcaseController.elementKeys.indexWhere((k) => k == elementKey);
     
     //VERIIFICAR SE ELEMENTO FOI ENCONTRADO
     if (data == null) return child;
@@ -28,13 +29,17 @@ class WizardWidget extends StatelessWidget {
     return Obx((){
       //VERIFICAR SE SHOWCASE ESTÁ PRONTO PARA NAVEGAR
       if(!showcaseController.isReady.value) return child;
-      
+
+      showcaseController.currentShowcase.value = showcaseController.elementKeys[index + 1];
+      //ARREDONDADR BORDAS DE ACORDO COM O ELEMENTO
+      final borderCircular = elementKey == 'menu' || elementKey == 'profile' || elementKey == 'chat';
+
       return Showcase.withWidget(
         key: data['key'], 
-        targetBorderRadius: BorderRadius.circular(10),
-        targetShapeBorder: const CircleBorder(),
-        targetPadding: const EdgeInsets.all(10),
         overlayOpacity: 0.8,
+        targetBorderRadius: BorderRadius.circular(borderCircular ? 50 : 10),
+        targetShapeBorder: const CircleBorder(),
+        targetPadding: const EdgeInsets.all(5),
         container: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(

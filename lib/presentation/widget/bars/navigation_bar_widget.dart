@@ -39,28 +39,34 @@ class NavigationBarWidget extends StatelessWidget {
             final key = item.key;
             final option = item.value;
             if(key == navigationController.index.value){
-              return NavigationDestination(
-                icon: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: AppColors.green_300,
-                    borderRadius: BorderRadius.circular(50)
-                  ),
-                  child: Icon(
-                    option['icon'],
-                    color: AppColors.blue_500,
-                    size: 30
-                  ),
-                ), 
-                label: option['label']
+              return WizardWidget(
+                elementKey: option['key'],
+                child: NavigationDestination(
+                  icon: Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: AppColors.green_300,
+                      borderRadius: BorderRadius.circular(50)
+                    ),
+                    child: Icon(
+                      option['icon'],
+                      color: AppColors.blue_500,
+                      size: 30
+                    ),
+                  ), 
+                  label: option['label']
+                ),
               );
             }
-            return NavigationDestination(
-              icon: Icon(
-                option['icon'],
-                size: 25
-              ), 
-              label: option['label']
+            return WizardWidget(
+              elementKey: option['key'],
+              child: NavigationDestination(
+                icon: Icon(
+                  option['icon'],
+                  size: 25
+                ), 
+                label: option['label']
+              ),
             );
           }).toList(),
         )

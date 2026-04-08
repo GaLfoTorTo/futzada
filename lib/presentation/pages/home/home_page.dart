@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
     return Column(
       children: [
-        //SHOWCASE TUTORIAL
+        //SHOWCASE TUTORIAL (START)
         const WizardWidget(
           elementKey: 'start',
           child: SizedBox.shrink()

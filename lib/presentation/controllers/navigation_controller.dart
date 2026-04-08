@@ -15,11 +15,11 @@ class NavigationController extends GetxController {
   final RxBool isReady = false.obs;
   final Rx<int> index = 0.obs; 
   final List<Map<String, dynamic>> options = [
-    {'label' : "Home", "icon" : Icons.home_filled,},
-    {'label' : "Escalação", "icon" : AppIcones.escalacao_outline,},
-    {'label' : "Peladas", "icon" : AppIcones.apito},
-    {'label' : "Explore", "icon" : Icons.map_rounded,},
-    {'label' : "Notificações", "icon" : Icons.notifications,},
+    {'label' : "Home", 'key' : 'home', "icon" : Icons.home_filled,},
+    {'label' : "Escalação", 'key' : 'escalation', "icon" : AppIcones.escalacao_outline,},
+    {'label' : "Eventos", 'key' : 'events', "icon" : AppIcones.apito},
+    {'label' : "Explore", 'key' : 'explorer', "icon" : Icons.map_rounded,},
+    {'label' : "Notificações", 'key' : 'notifications', "icon" : Icons.notifications,},
   ];
 
   @override

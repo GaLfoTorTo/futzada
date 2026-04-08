@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final String? title;
@@ -47,25 +48,34 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           ),
         )
         : null ,
-      leading: IconButton(
-        icon: Icon(leftIcon),
-        onPressed: leftAction
+      leading: WizardWidget(
+        elementKey: 'menu',
+        child: IconButton(
+          icon: Icon(leftIcon),
+          onPressed: leftAction
+        ),
       ),
       actions: [
         if(extraAction != null)...[
-          IconButton(
-            icon: Icon(extraIcon),
-            onPressed: extraAction!,
+          WizardWidget(
+            elementKey: 'chat',
+            child: IconButton(
+              icon: Icon(extraIcon),
+              onPressed: extraAction!,
+            ),
           )
         ],
         if(rightAction != null)...[
-          IconButton(
-            icon: home != null && home == true
-            ? CircleAvatar(
-              backgroundImage: ImgHelper.getUserImg(photo),
-            )
-            : Icon(rightIcon),
-            onPressed: rightAction!,
+          WizardWidget(
+            elementKey: 'profile',
+            child: IconButton(
+              icon: home != null && home == true
+              ? CircleAvatar(
+                backgroundImage: ImgHelper.getUserImg(photo),
+              )
+              : Icon(rightIcon),
+              onPressed: rightAction!,
+            ),
           )
         ]
       ], 

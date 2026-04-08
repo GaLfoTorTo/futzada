@@ -1,3 +1,5 @@
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
@@ -31,6 +33,16 @@ class EscalationPageState extends State<EscalationPage> {
   String viewType = 'escalation';
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   EscalationController escalationController = EscalationController.instance;
+  ShowcaseController showcaseController = ShowcaseController.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    //CARREGAR DADOS INICIAIS PARA ESCALAÇÃO
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showcaseController.startShowcasesCurrent();
+    });
+  }
 
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(id){
@@ -98,6 +110,7 @@ class EscalationPageState extends State<EscalationPage> {
           }
           return SingleChildScrollView(
             child: Column(
+              spacing: 10,
               children: [
                 Container(
                   width: dimensions.width,
@@ -127,6 +140,7 @@ class EscalationPageState extends State<EscalationPage> {
 
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                           width: dimensions.width * 0.25,
@@ -167,8 +181,9 @@ class EscalationPageState extends State<EscalationPage> {
                     );
                   })
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                Container(
+                  width: dimensions.width,
+                  padding: const EdgeInsets.all(10),
                   child: Row(
                     children: [
                       SizedBox(
@@ -182,9 +197,10 @@ class EscalationPageState extends State<EscalationPage> {
                         width: ( dimensions.width / 2 ) -10 ,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
+                          spacing: 10,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                            WizardWidget(
+                              elementKey: 'escalation',
                               child: ButtonIconWidget(
                                 padding: 20,
                                 iconSize: 20,
@@ -194,22 +210,19 @@ class EscalationPageState extends State<EscalationPage> {
                                 action: () => selectView('escalation')
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
-                              child: ButtonIconWidget(
-                                padding: 20,
-                                iconSize: 20,
-                                icon: AppIcones.clipboard_outline, 
-                                iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.grey_500,
-                                backgroundColor: viewType == 'list' ? AppColors.green_300 : color,
-                                action: () => selectView('list')
-                              ),
+                            ButtonIconWidget(
+                              padding: 20,
+                              iconSize: 20,
+                              icon: AppIcones.clipboard_outline, 
+                              iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.grey_500,
+                              backgroundColor: viewType == 'list' ? AppColors.green_300 : color,
+                              action: () => selectView('list')
                             )
                           ],
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ),
                 //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
                 if (viewType == 'escalation') ...[
