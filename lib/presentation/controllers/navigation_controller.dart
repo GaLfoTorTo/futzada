@@ -29,18 +29,6 @@ class NavigationController extends GetxController {
     Get.put(scaffoldKey, tag: 'appBaseScaffold', permanent: true);
   }
   
-  //FUNÇÃO DE ATUALIZAÇÃO DE INDEX
-  void directIndex(int newIndex) {
-    index.value = newIndex;
-  }
-  //FUNÇÃO DE INCREMENTAÇÃO DE INDEX
-  void nextIndex() {
-    index.value = index.value + 1;
-  }
-  //FUNÇÃO DE DECREMENTAÇÃO DE INDEX
-  void backIndex() {
-    index.value = index.value - 1;
-  }
   //FUNÇÃO DE RETORNO PARA HOME
   void backHome(BuildContext context) {
     Get.dialog(const DialogBackHome());

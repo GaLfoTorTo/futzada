@@ -1,5 +1,3 @@
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
-import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:futzada/data/services/timer_service.dart';
@@ -14,6 +12,7 @@ import 'package:futzada/presentation/controllers/rank_controller.dart';
 import 'package:futzada/presentation/controllers/chat_controller.dart';
 import 'package:futzada/presentation/controllers/notification_controller.dart';
 import 'package:futzada/presentation/controllers/statistics_controller.dart';
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 
 class AppController extends GetxController {
   //DEFINIR CONTROLLER UNICO NO GETX
@@ -77,7 +76,6 @@ class AppController extends GetxController {
       //ATUALIZAR ESTADOS DE INICIALIZAÇÃO
       isLoading.value = false;
       isReady.value = true;
-      NavigationController.instance.isReady.value = true;
     } catch (e) {
       //ATUALUZAR ESTADOS DE INICIALIZAÇÃO
       hasError.value = true;

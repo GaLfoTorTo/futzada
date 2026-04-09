@@ -35,15 +35,6 @@ class EscalationPageState extends State<EscalationPage> {
   EscalationController escalationController = EscalationController.instance;
   ShowcaseController showcaseController = ShowcaseController.instance;
 
-  @override
-  void initState() {
-    super.initState();
-    //CARREGAR DADOS INICIAIS PARA ESCALAÇÃO
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showcaseController.startShowcasesCurrent();
-    });
-  }
-
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(id){
     setState(() {

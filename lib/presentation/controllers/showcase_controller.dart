@@ -10,18 +10,18 @@ class ShowcaseController extends GetxController {
   final GlobalKey showcaseStartKey = GlobalKey();
   final GlobalKey showcaseEndKey = GlobalKey();
   //CONTROLLADOR DE SHOWCASE
-  final RxSet<String> completedShowcases = <String>{}.obs;
   final RxString currentShowcase = 'start'.obs;
   final RxBool isReady = false.obs;
+  final RxBool isCompleted = false.obs;
 
   //CHAVES DE ELEMENTOS SHOWCASE
   final List<String> elementKeys = [
     'start',
     'navigation',
-    'home',
     'menu',
     'chat',
     'profile',
+    'home',
     'escalation',
     'events',
     'explorer',
@@ -52,7 +52,7 @@ class ShowcaseController extends GetxController {
     'chat': {
       'key': GlobalKey(),
       'title': 'Chat',
-      'description': 'No chat você pode conversar com seus amigos, individualmente ou em grupos, compartilhar ideias, organizar eventos e manter-se em contato com a comunidade.',
+      'description': 'No chat você pode conversar com seus amigos individualmente ou em grupos, compartilhar ideias, organizar eventos e manter-se em contato com a comunidade.',
       'progress': 0.3,
     },
     'profile': {
@@ -70,76 +70,65 @@ class ShowcaseController extends GetxController {
     'escalation': {
       'key': GlobalKey(),
       'title': 'Escalation',
-      'description': 'Na aba de escalação você pode acessar, criar e editar escalações para sua equipe particular com os participantes do eventos que você participa. Lembrando que esse recurso só é habilitado para usuários que atuam como técnico.',
+      'description': 'Na aba de escalação você pode acessar, criar e editar escalações para sua equipe particular com os participantes dos eventos que você esta participando participa.',
       'progress': 0.6,
     },
     'events': {
       'key': GlobalKey(),
       'title': 'Eventos',
-      'description': 'Na aba de eventos você pode conferir os eventos que você participando ou criar novos eventos e convidar os amigos para participar. Gerêncie seus eventos, partidas, participantes e muito mais.',
+      'description': 'Na aba de eventos você pode conferir os eventos que você esta participando ou criar novos eventos para se divertir com seus amigos podendo gerenciar partidas, rankings e muito mais.',
       'progress': 0.7,
     },
     'explorer': {
       'key': GlobalKey(),
       'title': 'Explorer',
-      'description': 'Na aba do explorer você pode descobrir novos eventos pertos de você interagindo com mapas ou com buscas personalizadas. Encontre eventos que se encaixam com seu perfil e participe de novas experiências esportivas.',
+      'description': 'Na aba do explorer você pode descobrir novos eventos em sua região interagindo com mapas ou com buscas personalizadas. Encontre eventos que se encaixam com seu perfil e participe de novas experiências esportivas.',
       'progress': 0.8,
     },
     'notifications': {
       'key': GlobalKey(),
       'title': 'Notificações',
-      'description': 'Na aba de notificações você pode visualizar as notificações recebidas sobre eventos, convites, mensagens e outras atividades relacionadas ao seu perfil e interações dentro do aplicativo.',
+      'description': 'Na aba de notificações você pode visualizar as notificações recebidas sobre eventos, convites, mensagens, interações e outras atividades relacionadas ao seu perfil.',
       'progress': 0.9,
     },
     'end': {
       'key': GlobalKey(),
-      'title': 'É isso!',
+      'title': 'Eai ? preparado para começar!',
       'description': 'Seja bem vindo novamente e aproveite ao máximo sua nova jornada!',
-      'progress': 1,
-      'action': () => ShowcaseView.get().dismiss(),
+      'subDescription': 'Complete as tarefas de cadastro para finalize seu perfil de usuário.',
+      'progress': 1.0,
     },
   };
 
+  //FUNÇÃO DE DEFINIÇÃO DE INDEX (NAVBAR)
+  int setIndexNavigation(){
+    switch(currentShowcase.value){
+      case 'escalation':
+        return 1;
+      case 'events':
+        return 2;
+      case 'explorer':
+        return 3;
+      case 'notifications':
+        return 4;
+      default:
+        return 0;
+    }
+  }
+  
   //FUNÇÃO DE CONFIGURAÇÃO DE SHOWCASE
   void setShowCase() {
     //RESGATAR SE USUARIO PASSOU POR ONBORADING (SHOWCASE)
-    final tutorial = /* GetStorage().read('tutorial') ??  */false;
+    final tutorial = GetStorage().read('tutorial') ?? false;
     //VERIFICAR SE USUARIO JÁ PASSOU PELO SHOWCASE
     if(!tutorial) {
       //CONFIGURAÇÕES DE SHOWCASE
       ShowcaseView.register(
         blurValue: 0,
-        /* disableBarrierInteraction: true, */
         hideFloatingActionWidgetForShowcase: [showcaseEndKey],
-        /* globalTooltipActionConfig: const TooltipActionConfig(
-          alignment: MainAxisAlignment.spaceBetween,
-          actionGap: 20,
-        ),
-        globalTooltipActions: [
-          TooltipActionButton(
-            name: 'Anterior',
-            type: TooltipDefaultActionType.previous,
-            textStyle: const TextStyle(color: AppColors.blue_500),
-            hideActionWidgetForShowcase: [elements['start']['key'] as GlobalKey],
-            onTap: () => ShowcaseView.getNamed('tutorial').previous(),
-          ),
-          TooltipActionButton(
-            name: 'Pular',
-            type: TooltipDefaultActionType.skip,
-            textStyle: const TextStyle(color: AppColors.blue_500),
-            hideActionWidgetForShowcase: [elements['end']['key'] as GlobalKey],
-            onTap: () => ShowcaseView.getNamed('tutorial').dismiss(),
-          ),
-          TooltipActionButton(
-            name: 'Próximo',
-            type: TooltipDefaultActionType.next,
-            textStyle: const TextStyle(color: AppColors.blue_500),
-            hideActionWidgetForShowcase: [elements['end']['key'] as GlobalKey],
-            onTap: () => ShowcaseView.getNamed('tutorial').next(force: true),
-          ),
-        ], */
+        onComplete: (showcaseIndex, key) => completeShowcase(),
       );
-      // ESPERAR RENDERIZAÇÃO DOS WIDGETS ANTES DE INICIAR SHOWCASE
+      //ESPERAR RENDERIZAÇÃO DOS WIDGETS ANTES DE INICIAR SHOWCASE
       WidgetsBinding.instance.addPostFrameCallback((_) {
         isReady.value = true;
         WidgetsBinding.instance.addPostFrameCallback((_) => startShowcases());
@@ -147,27 +136,21 @@ class ShowcaseController extends GetxController {
     }
   }
 
-  //FUNÇÃO DE SHOWCASE - INICIAR A PARTIR DO SHOWCASE ATUAL
-  void startShowcasesCurrent() => ShowcaseView.get().startShowCase(
-    elements.entries
-      .skip(elements.keys.toList().indexOf(currentShowcase.value))
-      .map((e) => e.value['key'] as GlobalKey)
-      .toList()
-  );
-
   //FUNÇÃO DE SHOWCASE - HOME 
-  void startShowcases() => ShowcaseView.get().startShowCase(elements.values.map((e) => e['key'] as GlobalKey).toList());
-  
-  //FUNÇÃO PARA VERIFICAÇÃO DE ETAPA DE SHOWCASE COMPLETO
-  bool isShowcaseCompleted(String showcaseId) {
-    return completedShowcases.contains(showcaseId);
+  void startShowcases() {
+    //INICIALIZAR SHOWCASE
+    ShowcaseView.get().startShowCase(
+      elements.values
+        .map((e) => e['key'] as GlobalKey)
+        .toList()
+      );
   }
-
+  
   //FUNÇÃO PARA COMPLETAR SHOWCASE
-  void completeShowcase(String showcaseId) {
+  void completeShowcase() {
+    isCompleted.value = true;
     //MARCAR SHOW CASE COMO TRUE
     GetStorage().write('tutorial', true);
-    completedShowcases.add(showcaseId);
     ShowcaseView.get().unregister();
     ShowcaseView.get().dismiss();
   }
@@ -176,7 +159,6 @@ class ShowcaseController extends GetxController {
   void resetShowcases() {
     //MARCAR SHOW CASE COMO TRUE
     GetStorage().write('tutorial', false);
-    completedShowcases.clear();
     startShowcases();
   }
 }

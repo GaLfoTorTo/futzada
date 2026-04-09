@@ -4,10 +4,11 @@ import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/pages/home/home_page.dart';
 import 'package:futzada/presentation/pages/home/home_error_page.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/skeletons/skeleton_home_widget.dart';
+import 'package:futzada/presentation/controllers/home_controller.dart';
+import 'package:futzada/presentation/controllers/navigation_controller.dart';
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 
 class HomeBase extends StatefulWidget {
   const HomeBase({super.key});
@@ -20,6 +21,7 @@ class _HomeBaseState extends State<HomeBase> with SingleTickerProviderStateMixin
   //CONTROLLERS - NAVEGAÇÃO
   final HomeController homeController = HomeController.instance;
   final NavigationController navigationController = NavigationController.instance;
+  final ShowcaseController showcaseController = ShowcaseController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
 

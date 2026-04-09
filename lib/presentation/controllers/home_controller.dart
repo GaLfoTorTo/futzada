@@ -3,6 +3,7 @@ import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/services/home_service.dart';
 import 'package:futzada/data/services/user_service.dart';
+import 'package:futzada/presentation/controllers/navigation_controller.dart';
 
 //===HOME BASE===
 abstract class HomeBase {
@@ -92,6 +93,7 @@ class HomeController extends GetxController implements HomeBase {
       //partidas = results[3];
       //ATUALIZAR ESTADO DE CARREGAMENTO
       isLoading.value = false;
+      NavigationController.instance.isReady.value = true;
     } catch (e, stackTrace) { 
       hasError.value = true;
       isLoading.value = false;

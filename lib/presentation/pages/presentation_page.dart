@@ -57,7 +57,7 @@ class PresentationPageWidget extends StatelessWidget {
     return Scaffold(
       appBar: HeaderWidget(
         title: route,
-        leftAction: () => navigationController.directIndex(0),
+        leftAction: () => navigationController.index.value = 0,
       ),
       backgroundColor: colorPage,
       body: SafeArea(

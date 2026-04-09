@@ -1,3 +1,4 @@
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/widget/drawers/drawer_widget.dart';
@@ -10,6 +11,9 @@ class AppBase extends StatelessWidget {
   Widget build(BuildContext context) {
     //CONTROLLER - NAVEGAÇÃO
     final NavigationController navigationController = NavigationController.instance;
+    final ShowcaseController showcaseController = ShowcaseController.instance;
+    //CONFIGURAR SHOWCASE
+    showcaseController.setShowCase();
 
     return Scaffold(
       key: navigationController.scaffoldKey,

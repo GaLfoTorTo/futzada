@@ -9,6 +9,7 @@ import 'package:futzada/presentation/widget/cards/card_presentation_widget.dart'
 import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
 import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
 import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //CONTROLLERS - HOME
   HomeController homeController = HomeController.instance;
-  final ShowcaseController showcaseController = ShowcaseController.instance;
+  ShowcaseController showcaseController = ShowcaseController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
 
@@ -33,16 +34,15 @@ class _HomePageState extends State<HomePage> {
   
   @override
   Widget build(BuildContext context) {
-    //CONFIGURAR SHOWCASE
-    showcaseController.setShowCase();
-
     return Column(
       children: [
-        //SHOWCASE TUTORIAL (START)
-        const WizardWidget(
-          elementKey: 'start',
-          child: SizedBox.shrink()
-        ),
+        Obx((){
+          //SHOWCASE TUTORIAL (START)
+          return WizardWidget(
+            elementKey: showcaseController.currentShowcase.value == 'start' ? 'start' : 'end',
+            child: const SizedBox.shrink()
+          );
+        }),
         //CARD USUARIO
         Container(
           padding: const EdgeInsets.all(10.0),
