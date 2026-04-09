@@ -22,12 +22,30 @@ class UserController extends GetxController {
   final RxBool isReady = false.obs;
   final RxBool hasError = false.obs;
   final RxBool hasPermission = false.obs;
+  final RxBool profileCompleted = false.obs;
 
   //ESTADOS - POSIÇÃO, ZOOM E CARREGAMENTO DO MAPA
   late UserModel user;
   final RxMap<String, dynamic> currentLocation = <String, dynamic>{}.obs;
   final Rxn<Position> currentPosition = Rxn<Position>();
   final Rxn<LatLng> currentLatLog = Rxn<LatLng>();
+  final RxList<Map<String, dynamic>> tasks = [
+    {
+      'task' : 'Definições de Jogador',
+      'description' : "Defina suas informações de jogador.",
+      'value' : false
+    },
+    {
+      'task' : 'Definições de Técnico',
+      'description' : "Defina suas informações de Técnico do seu perfil",
+      'value' : false
+    },
+    {
+      'task' : 'Participe de um evento',
+      'description' : "Crie ou entre de um evento.",
+      'value' : false
+    },
+  ].obs;
 
   @override
   void onReady() {

@@ -1,21 +1,21 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/data/models/event_model.dart';
+import 'package:futzada/core/theme/app_icones.dart';
+import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/presentation/controllers/user_controller.dart';
 
 class CardTasksWidget extends StatelessWidget {
-  final EventModel event;
+  final UserModel user;
   
   const CardTasksWidget({
     super.key, 
-    required this.event,
+    required this.user,
   });
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSOES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
+    UserController userController = UserController.instance;
             
     return Card(
       child: Container(
@@ -35,8 +35,59 @@ class CardTasksWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 10,
           children: [
-
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Finalize as tarefas para completar seu perfil de usuário',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                ),
+                Container(
+                  width: 60,
+                  height: 60,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.green_300,
+                    borderRadius: BorderRadius.circular(50)
+                  ),
+                  child: const Icon(
+                    AppIcones.clipboard_solid,
+                    size: 35,
+                    color: AppColors.blue_500,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              "Checklist: ${userController.tasks.length} Tarefas",
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            const Divider(color: AppColors.grey_500),
+            Obx((){
+              return Column(
+                children: userController.tasks.take(3).map((task){
+                  return RadioGroup(
+                    onChanged: (value) => task['value'] = value,
+                    child: RadioListTile(
+                      title: Text(
+                        task['task'],
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      subtitle: Text(
+                        task['description'],
+                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                          color: AppColors.grey_500
+                        ),
+                      ),
+                      value: task['value']
+                    )
+                  );
+                }).toList(),
+              );
+            })
           ],
         ),
       ),

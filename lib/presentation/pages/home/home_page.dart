@@ -1,15 +1,16 @@
-
+import 'package:futzada/presentation/widget/cards/card_tasks_widget.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/controllers/showcase_controller.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_ads.dart';
 import 'package:futzada/presentation/widget/cards/card_presentation_widget.dart';
 import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
 import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
-import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
-import 'package:get/get.dart';
+import 'package:futzada/presentation/controllers/home_controller.dart';
+import 'package:futzada/presentation/controllers/showcase_controller.dart';
+import 'package:futzada/presentation/controllers/user_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //CONTROLLERS - HOME
   HomeController homeController = HomeController.instance;
+  UserController userController = UserController.instance;
   ShowcaseController showcaseController = ShowcaseController.instance;
   //DEFINIR USUARIO LOGADO
   late UserModel? user;
@@ -29,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //RESGATAR USUARIO
-    user = homeController.user;
+    user = userController.user;
   }
   
   @override
@@ -66,6 +68,15 @@ class _HomePageState extends State<HomePage> {
         ),
         //SEÇÃO - CATEGORIAS
         const SectionCategoriesWidget(),
+        //SEÇÃO - TASKS
+        if(!userController.profileCompleted.value)...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: CardTasksWidget(
+              user: user!
+            ),
+          )
+        ],
         //SEÇÃO - EVENTO DO DIA
         if(homeController.events.isNotEmpty)...[
           SectionHomeWidget(

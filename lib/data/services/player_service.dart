@@ -20,6 +20,7 @@ class PlayerService {
       'userId': i,
       'bestSide': random.nextBool() ? 'Right' : 'Left',
       'type': faker.lorem.sentence().toString(),
+      'numer': random.nextInt(99),
       'mainPosition': {
         "Football": randomPosition("Football", random.nextInt(5)),
         "Volleyball": randomPosition("Volleyball", random.nextInt(5)),

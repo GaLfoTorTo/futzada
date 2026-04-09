@@ -2,10 +2,12 @@ import 'dart:math';
 import 'package:faker/faker.dart';
 import 'package:futzada/core/api/api.dart';
 import 'package:futzada/core/enum/enums.dart';
+import 'package:futzada/data/models/achivment_model.dart';
+import 'package:futzada/data/models/level_model.dart';
 import 'package:futzada/data/models/user_config_model.dart';
+import 'package:futzada/data/models/user_level_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/services/api_service.dart';
-import 'package:futzada/data/services/event_service.dart';
 import 'package:futzada/data/services/manager_service.dart';
 import 'package:futzada/data/services/participant_service.dart';
 import 'package:futzada/data/services/player_service.dart';
@@ -44,6 +46,8 @@ class UserService {
       "participants": eventId != null
         ? [participantService.generateParticipant(eventId, userId).toMap()]
         : null,
+      "userLevel": generateUserLevel(userId, faker.randomGenerator.integer(10, min: 1)).toMap(),
+      "achievements": generateUserAchivments(userId).map((a) => a.toMap()).toList(),
       "config": generateUserConfig(userId).toMap(),
       //DEFINIR ALEATORIAMENTE SE PARTICIPANTE ATUARÁ COMO TÉCNICO
       "privacy": Privacy.values[faker.randomGenerator.integer(2, min: 0)].name,
@@ -52,6 +56,7 @@ class UserService {
     });
   }
 
+  //FUNÇÃO DE GERAÇÃO DE CONFIGURAÇÕES DO USUÁRIO
   UserConfigModel generateUserConfig(int userId){
     final modalities = List.generate(faker.randomGenerator.integer(3, min: 1), (m) => Modality.values[m].name);
     final len = modalities.length - 1;
@@ -67,7 +72,48 @@ class UserService {
     });
   }
 
-  
+  //FUNÇÃO DE GERAÇÃO DE NIVEIS
+  LevelModel generateLevel(int levelId){
+    return LevelModel.fromMap({
+      "id": levelId,
+      "number": levelId,
+      "title": "Level $levelId",
+      "points_min": (levelId - 1) * 100,
+      "points_max": levelId * 100,
+      "image": faker.image.loremPicsum(),
+      "color": 'green_300',
+    });
+  }
+
+  //FUNÇÃO DE GERAÇÃO DE NIVEL DO USUARIO
+  UserLevelModel generateUserLevel(int userId, int levelId){
+    return UserLevelModel.fromMap({
+      "id": userId,
+      "userId": userId,
+      "levelId": levelId,
+      "points": faker.randomGenerator.integer(100, min: 0),
+      "level": generateLevel(levelId).toMap(),
+    });
+  }
+
+  //FUNÇÃO DE GERAÇÃO DE CONQUISTAS
+  AchivmentModel generateAchivment(int achivmentId){
+    return AchivmentModel.fromMap({
+      "id": achivmentId,
+      "title": faker.lorem.words(2).join(' '),
+      "description": faker.lorem.sentence(),
+      "image": faker.image.loremPicsum(),
+      "rarity": faker.randomGenerator.element(['Common', 'Rare', 'Epic', 'Legendary']),
+      "points": faker.randomGenerator.integer(100, min: 10),
+    });
+  }
+
+  //FUNÇÃO DE GERAÇÃO DE LISTA DE CONQUISTAS DO USUARIO
+  List<AchivmentModel> generateUserAchivments(int userId){
+    final numAchivments = faker.randomGenerator.integer(5, min: 0);
+    return List.generate(numAchivments, (i) => generateAchivment(i + 1));
+  }
+
   //FUNÇÃO PARA BUSCAR SUGESTÃO DE AMIGOS
   Future<List<UserModel>> fecthSuggestionFriends() async {
     //BUSCAR EVENTOS DO USUARIO

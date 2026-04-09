@@ -10,8 +10,6 @@ abstract class HomeBase {
   //SERVICES 
   UserService get userService;
   HomeService get homeService;
-  //GETTER - USUARIO, EVENTOS DO USUARIO
-  UserModel get user;
   List<EventModel> get events;
   //ESTADO - CARREGAMENTO DE DADOS
   RxBool get isReady;
@@ -37,10 +35,6 @@ class HomeController extends GetxController implements HomeBase {
   UserService userService = UserService();
   @override
   HomeService homeService = HomeService();
-
-  //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
-  @override
-  final UserModel user = Get.find(tag: 'user');
   
   //DEFINIR EVENTOS DO USUARIO LOGADO - OBRIGATÓRIO
   @override

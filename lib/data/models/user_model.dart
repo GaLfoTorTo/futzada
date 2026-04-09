@@ -2,10 +2,12 @@
 import 'dart:convert';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
+import 'package:futzada/data/models/achivment_model.dart';
 import 'package:futzada/data/models/manager_model.dart';
 import 'package:futzada/data/models/participant_model.dart';
 import 'package:futzada/data/models/player_model.dart';
 import 'package:futzada/data/models/user_config_model.dart';
+import 'package:futzada/data/models/user_level_model.dart';
 
 class UserModel {
   int? id;
@@ -19,9 +21,11 @@ class UserModel {
   String? photo;
   Privacy? privacy;
   UserConfigModel? config;
+  UserLevelModel? level;
   PlayerModel? player;
   ManagerModel? manager;
   List<ParticipantModel>? participants;
+  List<AchivmentModel>? achievements;
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
@@ -38,9 +42,11 @@ class UserModel {
     this.privacy,
     this.photo,
     this.config,
+    this.level,
     this.player,
     this.manager,
     this.participants,
+    this.achievements,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -58,9 +64,11 @@ class UserModel {
     String? photo,
     Privacy? privacy,
     UserConfigModel? config,
+    UserLevelModel? level,
     PlayerModel? player,
     ManagerModel? manager,
     List<ParticipantModel>? participants,
+    List<AchivmentModel>? achievements,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt
@@ -76,10 +84,12 @@ class UserModel {
       phone: phone ?? this.phone,
       photo: photo ?? this.photo,
       config: config ?? this.config,
+      level: level ?? this.level,
       privacy: privacy ?? this.privacy,
       player: player ?? this.player,
       manager: manager ?? this.manager,
       participants: participants ?? this.participants,
+      achievements: achievements ?? this.achievements,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -98,10 +108,12 @@ class UserModel {
       'phone': phone,
       'photo': photo,
       'config': config?.toMap(),
+      'level': level?.toMap(),
       'privacy': privacy?.name,
       'player': player?.toMap(),
       'manager': manager?.toMap(),
       'participants': participants?.map((x) => x.toMap()).toList(),
+      'achievements': achievements?.map((x) => x.toMap()).toList(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),
@@ -121,6 +133,9 @@ class UserModel {
       config: map['config'] != null 
         ? UserConfigModel.fromMap(map['config'] as Map<String, dynamic>) 
         : null,
+      level: map['level'] != null 
+        ? UserLevelModel.fromMap(map['level'] as Map<String, dynamic>) 
+        : null,
       privacy: map['privacy'] != null
         ? Privacy.values.firstWhere((e) => e.name == map['privacy'])
         : null,
@@ -138,6 +153,13 @@ class UserModel {
           ),
         )
         : [],
+      achievements: map['achievements'] != null 
+        ? List<AchivmentModel>.from((map['achievements'] as List<dynamic>)
+          .map<AchivmentModel>(
+            (x) => AchivmentModel.fromMap(x),
+          ),
+        )
+        : [],
       createdAt: DateHelper.parseDate(map['createdAt']),
       updatedAt: DateHelper.parseDate(map['updatedAt']),
       deletedAt: DateHelper.parseDate(map['deletedAt']),
@@ -150,7 +172,7 @@ class UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, privacy: $privacy, photo: $photo, player: $player, manager: $manager, participants: $participants, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'UserModel(id: $id, uuid: $uuid, firstName: $firstName, lastName: $lastName, userName: $userName, email: $email, bornDate: $bornDate, phone: $phone, privacy: $privacy, photo: $photo, config: $config, level: $level, player: $player, manager: $manager, participants: $participants, achievements: $achievements, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -168,9 +190,12 @@ class UserModel {
       other.phone == phone &&
       other.privacy == privacy &&
       other.photo == photo &&
+      other.config == config &&
+      other.level == level &&
       other.player == player &&
       other.manager == manager &&
       other.participants == participants &&
+      other.achievements == achievements &&
       other.createdAt == createdAt &&
       other.updatedAt == updatedAt &&
       other.deletedAt == deletedAt;
@@ -189,9 +214,12 @@ class UserModel {
       phone.hashCode ^
       privacy.hashCode ^
       photo.hashCode ^
+      config.hashCode ^
+      level.hashCode ^
       player.hashCode ^
       manager.hashCode ^
       participants.hashCode ^
+      achievements.hashCode ^
       createdAt.hashCode ^
       updatedAt.hashCode ^
       deletedAt.hashCode;

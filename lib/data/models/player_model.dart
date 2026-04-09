@@ -7,6 +7,7 @@ class PlayerModel {
   final int? id;
   final String bestSide;
   final String? type;
+  final int? number;
   final Map<String, dynamic> mainPosition;
   final Map<String, dynamic> positions;
   final List<RatingModel>? ratings;
@@ -18,6 +19,7 @@ class PlayerModel {
     this.id,
     this.bestSide = "Right",
     this.type,
+    this.number,
     this.mainPosition = const {},
     this.positions = const {},
     this.ratings,
@@ -30,6 +32,7 @@ class PlayerModel {
     int? id,
     String? bestSide,
     String? type,
+    int? number,
     Map<String, dynamic>? mainPosition,
     Map<String, dynamic>? positions,
     List<RatingModel>? ratings,
@@ -41,6 +44,7 @@ class PlayerModel {
       id: id ?? this.id,
       bestSide: bestSide ?? this.bestSide,
       type: type ?? this.type,
+      number: number ?? this.number,
       mainPosition: mainPosition ?? this.mainPosition,
       positions: positions ?? this.positions,
       ratings: ratings ?? this.ratings,
@@ -55,6 +59,7 @@ class PlayerModel {
       'id': id,
       'bestSide': bestSide,
       'type': type,
+      'number': number,
       'mainPosition': mainPosition,
       'positions': positions,
       'ratings': ratings?.map((x) => x.toMap()).toList(),
@@ -69,6 +74,7 @@ class PlayerModel {
       id: map['id'] != null ? map['id'] as int : null,
       bestSide: map['bestSide'] as String,
       type: map['type'] != null ? map['type'] as String : null,
+      number: map['number'] != null ? map['number'] as int : null,
       mainPosition: map["mainPosition"] != null 
         ? map['mainPosition'] as Map<String, dynamic>
         : {},
@@ -94,7 +100,7 @@ class PlayerModel {
 
   @override
   String toString() {
-    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, mainPosition: $mainPosition, positions: $positions, ratings: $ratings, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'PlayerModel(id: $id, bestSide: $bestSide, type: $type, number: $number, mainPosition: $mainPosition, positions: $positions, ratings: $ratings, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -105,6 +111,7 @@ class PlayerModel {
       other.id == id &&
       other.bestSide == bestSide &&
       other.type == type &&
+      other.number == number &&
       other.mainPosition == mainPosition &&
       other.positions == positions &&
       other.ratings == ratings &&
@@ -118,6 +125,7 @@ class PlayerModel {
     return id.hashCode ^
       bestSide.hashCode ^
       type.hashCode ^
+      number.hashCode ^
       mainPosition.hashCode ^
       positions.hashCode ^
       ratings.hashCode ^
