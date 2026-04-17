@@ -1,3 +1,5 @@
+import 'package:futzada/data/models/task_model.dart';
+import 'package:futzada/data/services/task_service.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,6 +19,7 @@ class UserController extends GetxController {
   UserRepository userRepository = UserRepository();
   EventRepository eventRepository = EventRepository();
   AddressService addressService = AddressService();
+  TaskService taskService = TaskService();
   
   //ESTADOS - READY E PERMISSOES
   final RxBool isReady = false.obs;
@@ -29,23 +32,7 @@ class UserController extends GetxController {
   final RxMap<String, dynamic> currentLocation = <String, dynamic>{}.obs;
   final Rxn<Position> currentPosition = Rxn<Position>();
   final Rxn<LatLng> currentLatLog = Rxn<LatLng>();
-  final RxList<Map<String, dynamic>> tasks = [
-    {
-      'task' : 'Definições de Jogador',
-      'description' : "Defina suas informações de jogador.",
-      'value' : false
-    },
-    {
-      'task' : 'Definições de Técnico',
-      'description' : "Defina suas informações de Técnico do seu perfil",
-      'value' : false
-    },
-    {
-      'task' : 'Participe de um evento',
-      'description' : "Crie ou entre de um evento.",
-      'value' : false
-    },
-  ].obs;
+  late List<TaskModel?> tasks;
 
   @override
   void onReady() {
@@ -94,6 +81,7 @@ class UserController extends GetxController {
     }
   }
 
+  //FUNÇÃO DE INICIALIZAÇÃO DE USUARIO
   Future<void> _bootstrap() async {
     try {
       if(Get.isRegistered<UserModel>(tag: 'user')){
@@ -101,6 +89,7 @@ class UserController extends GetxController {
         await getCurrentLocation();
         await initFirebaseMessaging();
         await getUserEvents();
+        tasks = List.generate(3, (i) => taskService.generateTask());
         isReady.value = true;
       }
     } catch (e) {

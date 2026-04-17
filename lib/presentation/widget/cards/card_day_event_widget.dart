@@ -48,7 +48,7 @@ class CardDayEventWidget extends StatelessWidget {
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               modalityColor.withAlpha(200), 
-              BlendMode.srcATop,
+              BlendMode.multiply,
             )
           ),
         ),

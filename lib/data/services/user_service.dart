@@ -35,6 +35,8 @@ class UserService {
       "userName": "${faker.person.firstName()}_${faker.person.lastName()}",
       "photo": faker.image.loremPicsum(),
       "phone" : faker.phoneNumber.toString(),
+      "config": generateUserConfig(userId).toMap(),
+      "level": generateUserLevel(userId).toMap(),
       //DEFINIR ALEATORIAMENTE SE PARTICIPANTE ATUARÁ COMO JOGADOR
       "player": random.nextBool()
         ? playerService.generatePlayer(userId).toMap()
@@ -43,13 +45,12 @@ class UserService {
       "manager": random.nextBool()
         ? managerService.generateManager(userId).toMap()
         : null,
+      //DEFINIR PARTICIPANTES
       "participants": eventId != null
         ? [participantService.generateParticipant(eventId, userId).toMap()]
         : null,
-      "userLevel": generateUserLevel(userId, faker.randomGenerator.integer(10, min: 1)).toMap(),
+      //DEFINIR CONQUISTAS
       "achievements": generateUserAchivments(userId).map((a) => a.toMap()).toList(),
-      "config": generateUserConfig(userId).toMap(),
-      //DEFINIR ALEATORIAMENTE SE PARTICIPANTE ATUARÁ COMO TÉCNICO
       "privacy": Privacy.values[faker.randomGenerator.integer(2, min: 0)].name,
       "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
       "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
@@ -73,26 +74,26 @@ class UserService {
   }
 
   //FUNÇÃO DE GERAÇÃO DE NIVEIS
-  LevelModel generateLevel(int levelId){
+  LevelModel generateLevel(){
     return LevelModel.fromMap({
-      "id": levelId,
-      "number": levelId,
-      "title": "Level $levelId",
-      "points_min": (levelId - 1) * 100,
-      "points_max": levelId * 100,
+      "id": faker.randomGenerator.integer(100, min: 1),
+      "number": faker.randomGenerator.integer(100, min: 1),
+      "title": faker.sport.name(),
+      "points_min": 0,
+      "points_max": 100000,
       "image": faker.image.loremPicsum(),
       "color": 'green_300',
     });
   }
 
   //FUNÇÃO DE GERAÇÃO DE NIVEL DO USUARIO
-  UserLevelModel generateUserLevel(int userId, int levelId){
+  UserLevelModel generateUserLevel(int userId){
     return UserLevelModel.fromMap({
       "id": userId,
       "userId": userId,
-      "levelId": levelId,
-      "points": faker.randomGenerator.integer(100, min: 0),
-      "level": generateLevel(levelId).toMap(),
+      "levelId": faker.randomGenerator.integer(100, min: 1),
+      "points": faker.randomGenerator.integer(100000, min: 0),
+      "level": generateLevel().toMap(),
     });
   }
 

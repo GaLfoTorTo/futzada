@@ -4,6 +4,7 @@ import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_day_event_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_event_today_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
+import 'package:futzada/presentation/widget/cards/card_task_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_to_you_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_popular_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
@@ -43,6 +44,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   PageController setPageController(){
     switch (widget.title) {
       case "Acontece Hoje":
+      case "Tarefas":
         return PageController(viewportFraction: 0.8);
       case "Talvez você conheça":
         return PageController(viewportFraction: 0.45);
@@ -54,7 +56,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   //FUNÇÃO DE DEFINIÇÃO DE DIMENSOES DA SEÇÃO
   BoxConstraints setSectionDimensions(){
     switch (widget.title) {
-      case "Meus Eventos":
+      case "Ao Vivo":
         return  BoxConstraints(
           maxHeight: 300,
           maxWidth: Get.width
@@ -67,6 +69,11 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
       case "Mais Populares":
         return  BoxConstraints(
           maxHeight: 350,
+          maxWidth: Get.width
+        );
+      case "Tarefas":
+        return  BoxConstraints(
+          maxHeight: 120,
           maxWidth: Get.width
         );
       case "Acontece Hoje":
@@ -90,8 +97,10 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
   //FUNÇÃO DE DEFINIÇÃO DE CARD DA SEÇÃO
   Widget setCardSection(value){
     switch (widget.title) {
-      case "Meus Eventos":
+      case "Ao Vivo":
         return CardDayEventWidget(event: value);  
+      case "Tarefas":
+        return CardTaskWidget(task: value);  
       case "Perto de Você":
         return CardToYouWidget(event: value);
       case "Mais Populares":
@@ -152,7 +161,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
                 widget.title,
                 style: Theme.of(context).textTheme.headlineSmall
               ),
-              if(widget.title != 'Meus Eventos' )...[
+              if(widget.title != 'Ao Vivo' )...[
                 ButtonTextWidget(
                   text: "Ver Mais",
                   icon: Icons.add_rounded,

@@ -1,11 +1,11 @@
-import 'package:futzada/presentation/widget/cards/card_tasks_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_ads.dart';
+import 'package:futzada/presentation/widget/cards/card_level_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_presentation_widget.dart';
+import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
 import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
 import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
 import 'package:futzada/presentation/controllers/home_controller.dart';
@@ -72,15 +72,22 @@ class _HomePageState extends State<HomePage> {
         if(!userController.profileCompleted.value)...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: CardTasksWidget(
+            child: CardLevelWidget(
               user: user!
             ),
+          )
+        ],
+        //SEÇÃO - TAREFAS
+        if(userController.tasks.isNotEmpty)...[
+          SectionHomeWidget(
+            title: "Tarefas",
+            options: userController.tasks,
           )
         ],
         //SEÇÃO - EVENTO DO DIA
         if(homeController.events.isNotEmpty)...[
           SectionHomeWidget(
-            title: "Meus Eventos",
+            title: "Ao Vivo",
             options: homeController.events,
           )
         ],

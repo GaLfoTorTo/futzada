@@ -1,3 +1,8 @@
+import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
+import 'package:futzada/presentation/widget/cards/card_player_widget.dart';
+import 'package:futzada/presentation/widget/charts/chart_bars_widget.dart';
+import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/enum/enums.dart';
@@ -28,6 +33,7 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
   late List<Modality> modalities;
   late Modality mainModality;
   //LISTA DE EVENTOS QUE O USUARIO PARTICIPA
+  late UserModel user;
   late List<EventModel> events;
 
   @override
@@ -39,6 +45,8 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
     modalityTextColor = modalityInfo['textColor'];
     mainModality = profileController.user.config!.mainModality!;
     modalities = reorderModalities();
+    //RESGATAR USUARIO
+    user = profileController.user;
     //RESGATAR EVENTOS DO USUARIO
     events = profileController.events;
   }
@@ -58,6 +66,7 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    final achivment = user.achievements?.first;
 
     return SingleChildScrollView(
       child: Container(
@@ -67,68 +76,119 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
-            /* CardLevelWidget(
+            CardLevelWidget(
               user: profileController.user,
-            ), */
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: modalities.map((item){
-                //RESGATAR ICONE DE MODALIDADES
-                final isMainModality = mainModality.name == item.name;
-                final icon = ModalityHelper.getIconModality(item.name);
-                final itemColor = isMainModality ? modalityColor : AppColors.grey_500;
-                final itemSize = isMainModality ? 50.0 : 40.0;
-                
-                return Stack(
-                  alignment: AlignmentGeometry.topCenter,
-                  children: [
-                    Column(
-                      spacing: 5,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 25),
-                          padding: const EdgeInsets.all(10),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ChartBarsWidget(
+                  width: dimensions.width * 0.64,
+                  height: 300,
+                  values: [2,6,7,12,2,5,15],
+                  color: modalityColor,
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Card(
+                        child: Container(
+                          width: dimensions.width * 0.30,
+                          height: 150,
+                          padding: EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: itemColor.withAlpha(20),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: itemColor, width: 2)
+                            borderRadius: BorderRadius.circular(10)
                           ),
-                          child: Icon(
-                            icon['icon'],
-                            color: itemColor,
-                            size: itemSize,
-                          ),
-                        ),
-                        Text(
-                          item.name,
-                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: itemColor
-                          ),
-                        )
-                      ],
-                    ),
-                    if(isMainModality)...[
-                      Container(
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: const Icon(
-                          LineAwesomeIcons.crown_solid,
-                          color: AppColors.yellow_500,
-                          size: 25,
+                          child: Stack(
+                            alignment: AlignmentGeometry.topCenter,
+                            children: [
+                              Column(
+                                spacing: 5,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 10),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: modalityColor.withAlpha(20),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(color: modalityColor, width: 2)
+                                    ),
+                                    child: Icon(
+                                      ModalityHelper.getIconModality(mainModality.name)['icon'],
+                                      color: modalityColor,
+                                      size: 50.0,
+                                    ),
+                                  ),
+                                  Text(
+                                    mainModality.name,
+                                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                      color: modalityColor
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: const Icon(
+                                  LineAwesomeIcons.crown_solid,
+                                  color: AppColors.yellow_500,
+                                  size: 25,
+                                ),
+                              ),
+                            ],
+                          )
                         ),
                       ),
+                      Card(
+                        child: Container(
+                          width: dimensions.width * 0.30,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            spacing: 5,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.only(top: 10),
+                                padding: const EdgeInsets.all(10),
+                                child: Icon(
+                                  Icons.graphic_eq_outlined,
+                                  color: modalityColor,
+                                  size: 50.0,
+                                ),
+                              ),
+                              Text(
+                                achivment?.title ?? 'Conquista',
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                  color: modalityColor
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
                     ],
-                  ],
-                );
-              }).toList()
+                  ),
+                )
+              ],
             ),
-            Text(
-              "Peladas",
+            /* Text(
+              "Jogador",
               style: Theme.of(context).textTheme.titleMedium,
             ),
+            CardPlayerWidget(user: user),
+            Text(
+              "Técnico",
+              style: Theme.of(context).textTheme.titleMedium,
+            ), */
             Text(
               "Peladas",
               style: Theme.of(context).textTheme.titleMedium,
@@ -152,10 +212,6 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
               ),
             ),
             Center(child: IndicatorPageWidget(pageController: pageController, options: events.take(5).length)),
-            Text(
-              "Peladas",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
           ],
         ),
       )

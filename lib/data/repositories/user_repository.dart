@@ -1,3 +1,6 @@
+import 'package:futzada/core/theme/app_colors.dart';
+import 'package:futzada/data/models/level_model.dart';
+import 'package:futzada/data/models/user_level_model.dart';
 import 'package:get/get.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/user_config_model.dart';
@@ -52,6 +55,21 @@ class UserRepository {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
+        final level = UserLevelModel(
+          id: 1,
+          userId: 1,
+          levelId: 1,
+          points: 0,
+          level: LevelModel(
+            id: 1, 
+            number: 1, 
+            title: 'Varzea', 
+            pointsMin: 0, 
+            pointsMax: 1000, 
+            image: "", 
+            color: "bege_700"
+          )
+        );
         //CRIAR NOVA INSTANCIA DE USUARIO COM DADOS DO GOOGLE
         return UserModel(
           id: 1,
@@ -65,9 +83,11 @@ class UserRepository {
           photo: data.photoUrl,
           privacy: Privacy.Public,
           config: config,
+          level: level,
           player: PlayerService().generatePlayer(1),
           manager: ManagerService().generateManager(1),
           participants: List.generate(2, (i) => ParticipantService().generateParticipant(i + 1, 1)),
+          achievements: List.generate(5, (i) => remoteService.generateAchivment(1)),
         );
       }
       return null;

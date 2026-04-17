@@ -156,7 +156,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       //INDICADOR DE AO VIVO
-                      if (gameController.currentGame.status == GameStatus.In_progress)...[
+                      if (gameController.currentGame.status == GameStatus.InProgress)...[
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           decoration: BoxDecoration(

@@ -129,7 +129,7 @@ class GameService {
       case 0:
         return GameStatus.Scheduled;
       case 1:
-        return GameStatus.In_progress;
+        return GameStatus.InProgress;
       case 2:
         return GameStatus.Cancelled;
       case 3:

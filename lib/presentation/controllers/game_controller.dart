@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:futzada/presentation/controllers/mixin/game/game_stream_mixin.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:futzada/data/services/game_event_service.dart';
@@ -92,7 +93,7 @@ abstract class GameBase {
 }
 
 class GameController extends GetxController
-  with GameConfigMixin, GameDayEventMixin, GameScheduleMixin, GameMatchMixin, GameVotesMixin, GameStopwatchMixin{
+  with GameConfigMixin, GameDayEventMixin, GameScheduleMixin, GameMatchMixin, GameVotesMixin, GameStopwatchMixin, GameStreamMixin{
   //GETTER DE CONTROLLERS
   static GameController get instance => Get.find();
   

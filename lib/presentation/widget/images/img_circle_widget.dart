@@ -18,15 +18,17 @@ class ImgCircularWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ImageProvider getImg(){
+      if(element == "event") return ImgHelper.getEventImg(image);
+      return ImgHelper.getUserImg(image);
+    }
 
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: element == "event"
-            ? ImgHelper.getEventImg(image)
-            : ImgHelper.getUserImg(image),
+          image: getImg(),
           fit: BoxFit.cover
         ),
         color: AppColors.grey_300,

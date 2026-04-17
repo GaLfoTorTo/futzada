@@ -73,6 +73,10 @@ dependencies:
   flutter_dotenv: ^6.0.0
   flutter_local_notifications: ^21.0.0
   showcaseview: ^5.0.1
+  socket_io_client: ^3.1.0+2
+  laravel_echo_null: ^0.3.0
+  pusher_client_socket: ^0.0.7
+  pusher_channels_flutter: ^2.6.0
 
 dev_dependencies:
   faker: ^2.1.0

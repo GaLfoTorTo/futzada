@@ -235,7 +235,7 @@ class ModalityHelper {
       case "Volei":
         return {
           "color" : AppColors.yellow_500,
-          "textColor" : AppColors.blue_500,
+          "textColor" : AppColors.white,
           "image" : AppImages.cardVolleyball
           };
       case "Fut Volei":
@@ -249,12 +249,12 @@ class ModalityHelper {
       case "Basquete":
         return {
           "color" : AppColors.orange_500,
-          "textColor" : AppColors.blue_500,
+          "textColor" : AppColors.white,
           "image" : AppImages.cardBasketball
           };
       case "Streetball":
         return {
-          "color" : AppColors.grey_700,
+          "color" : AppColors.dark_300,
           "textColor" : AppColors.white,
           "image" : AppImages.cardBasketball
           };

@@ -21,9 +21,9 @@ mixin GameStopwatchMixin on GetxController implements GameBase{
     //RESGATAR CONTROLLER PRINCIPAL
     GameController gameController = GameController.instance;
     //VERIFICAR SE STAUS DA PARTIDA (SE JA FOI INICADA)
-    if (gameController.currentGame.status != GameStatus.In_progress) {
+    if (gameController.currentGame.status != GameStatus.InProgress) {
       ////ATUALIZAR STATUS PARA EM PROGRESSO
-      gameController.currentGame.status = GameStatus.In_progress;
+      gameController.currentGame.status = GameStatus.InProgress;
       //DEFINIR HORARIO DE INICIO PARA HORARIO ATUAL
       gameController.currentGame.startTime = DateTime.now();
     }
