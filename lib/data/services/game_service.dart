@@ -88,6 +88,7 @@ class GameService {
       ? faker.randomGenerator.integer(25, min: 10)
       : random.nextInt(100);
   }
+  
   //FUNÇÃO PARA GERAR PARTIDAS PRÉ PROGRAMADAS AUTOMATICAMENTE
   List<GameModel?>getListGames(EventModel event){
     //RESGATAR DURAÇÃO DA PARTIDA

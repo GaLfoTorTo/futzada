@@ -29,6 +29,8 @@ class GamesDayPage extends StatelessWidget {
     EventModel event = Get.arguments['event'];
     //RESGATAR CONTROLLER DE PARTIDAS
     GameController gameController = GameController.instance;
+    //ENTRAR NO CANAL DO EVENTO
+    gameController.connectChannel(uuid: "event-123");
     //ESTADO - ITEMS EVENTO
     Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //CONTROLLADOR DE BARRA DE ROLAGEM
@@ -118,7 +120,7 @@ class GamesDayPage extends StatelessWidget {
                     }).toList()
                   )
                 ),
-                IndicatorPageWidget(pageController: nextGamesController, options: gameController.nextGames.take(3).length),
+                IndicatorPageWidget(pageController: nextGamesController, options: /* gameController.nextGames.take(3).length */ 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,6 +178,8 @@ class GamesDayPage extends StatelessWidget {
                 Column(
                   spacing: 10,
                   children: highlightsPlayers.map((user){
+                    if(user.player == null) return SizedBox.shrink();
+
                     return Card(
                       child: Container(
                         padding: const EdgeInsets.all(10),

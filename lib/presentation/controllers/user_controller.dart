@@ -1,5 +1,3 @@
-import 'package:futzada/data/models/task_model.dart';
-import 'package:futzada/data/services/task_service.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -7,6 +5,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/data/models/task_model.dart';
+import 'package:futzada/data/services/task_service.dart';
 import 'package:futzada/data/services/address_service.dart';
 import 'package:futzada/data/services/firebase/firebase_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
@@ -20,6 +20,7 @@ class UserController extends GetxController {
   EventRepository eventRepository = EventRepository();
   AddressService addressService = AddressService();
   TaskService taskService = TaskService();
+  FirebaseService firebaseService = FirebaseService();
   
   //ESTADOS - READY E PERMISSOES
   final RxBool isReady = false.obs;
@@ -70,6 +71,8 @@ class UserController extends GetxController {
     List<EventModel> events = await eventRepository.getUserEvents(user.id);
     if(events.isNotEmpty){
       events[0].date = ["seg",'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+      //SUBSCRIÇÃO DE NOTIFICAÇÕES DO EVENTO
+      firebaseService.subscribe(events);
     }
     //ADICIONAR GLOBALMENT AO GET EVENTOS DO USUARIO
     if (!Get.isRegistered<List<EventModel>>(tag: 'events')) {
@@ -86,8 +89,8 @@ class UserController extends GetxController {
     try {
       if(Get.isRegistered<UserModel>(tag: 'user')){
         user = Get.find(tag: "user");
+        await firebaseService.initFirebaseMessaging();
         await getCurrentLocation();
-        await initFirebaseMessaging();
         await getUserEvents();
         tasks = List.generate(3, (i) => taskService.generateTask());
         isReady.value = true;

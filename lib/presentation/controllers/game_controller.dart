@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:futzada/data/services/game_stream_service.dart';
 import 'package:futzada/presentation/controllers/mixin/game/game_stream_mixin.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -105,6 +106,8 @@ class GameController extends GetxController
   @override
   GameService gameService = GameService();
   @override
+  GameStreamService streamService = GameStreamService();
+  @override
   GameEventService gameEventService = GameEventService();
   @override
   TimerService timerService = TimerService();
@@ -128,6 +131,8 @@ class GameController extends GetxController
     //eventDate = eventService.getNextEventDate(event);
     //VARAIVEIS PRA TESTE
     eventDate = DateFormat("dd/MM/yyyy").parse("${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}");
+    //INICIALIZAR CONEXAO DE REVERB
+    streamService.init();
   }
 
   @override
