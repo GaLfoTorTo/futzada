@@ -3,7 +3,6 @@ import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/presentation/widget/drawers/drawer_widget.dart';
 import 'package:futzada/presentation/widget/bars/navigation_bar_widget.dart';
 import 'package:futzada/presentation/controllers/showcase_controller.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
 
 class AppBase extends StatelessWidget {
   final Widget child;
@@ -19,14 +18,15 @@ class AppBase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //CONTROLLER - NAVEGAÇÃO
-    final NavigationController navigationController = sl<NavigationController>();
+    //ESTADO - SCAFFOLDKEY
+    final GlobalKey<ScaffoldState> scaffoldKey = sl<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey');;
+    //CONTROLLER - SHOWCASE
     final ShowcaseController showcaseController = sl<ShowcaseController>();
     //CONFIGURAR SHOWCASE
     showcaseController.setShowcase();
 
     return Scaffold(
-      key: navigationController.scaffoldKey,
+      key: scaffoldKey,
       drawer: const DrawerWidget(),
       body: child,
       bottomNavigationBar: NavigationBarWidget(

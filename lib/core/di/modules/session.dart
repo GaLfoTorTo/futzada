@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:futzada/core/di/service_locator.dart';
@@ -7,7 +9,6 @@ import 'package:futzada/data/repositories/event_repository.dart';
 import 'package:futzada/data/services/address_service.dart';
 import 'package:futzada/data/services/firebase/firebase_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/foundation.dart';
 
 
 //FUNÇÃO DE REGISTRO DO USUARIO NA SESSÃO — chamado após login ou ao recuperar usuário local
@@ -15,6 +16,8 @@ Future<void> registerSession(UserModel user) async {
   //RE-REGISTRO: permitir registrar novamente após logout
   if (sl.isRegistered<UserModel>()) sl.unregister<UserModel>();
   sl.registerSingleton<UserModel>(instanceName: 'user', user);
+  //REGISTRAR CHAVE DE SCAFFOLD
+  sl.registerSingleton<GlobalKey<ScaffoldState>>(GlobalKey<ScaffoldState>(), instanceName: 'scaffoldKey');
 }
 
 //FUNÇÃO DE BUSCA DE EVENTOS DO USUARIO

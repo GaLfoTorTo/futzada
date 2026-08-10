@@ -85,7 +85,7 @@ class CardEventTodayWidget extends StatelessWidget {
                           children: [
                             Text(
                               "${event.address?.street}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(
                                 color: AppColors.grey_500
                               )
                             ),

@@ -77,7 +77,7 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
         );
       case "Acontece Hoje":
         return  BoxConstraints(
-          maxHeight: 230,
+          maxHeight: 250,
           maxWidth: double.infinity
         );
       case "Talvez você conheça":

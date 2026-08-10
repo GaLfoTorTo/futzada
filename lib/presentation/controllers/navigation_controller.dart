@@ -6,8 +6,6 @@ import 'package:futzada/presentation/widget/dialogs/dialog_back_home.dart';
 class NavigationController {
   //CONTROLLER - NAVEGAÇÃO
   static NavigationController get instance => sl<NavigationController>();
-  //ESTADO - KEY DO SCAFFOLD GLOBAL
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   //OPÇÕES DE NAVEGAÇÃO DO BOTTOM NAV
   final List<Map<String, dynamic>> options = [
     {'label' : "Home",         'key' : 'home',          "icon" : Icons.home_filled},

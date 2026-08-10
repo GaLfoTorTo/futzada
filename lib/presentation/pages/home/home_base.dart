@@ -26,7 +26,7 @@ class HomeBase extends StatelessWidget {
           scaffoldKey.currentState?.openDrawer();
         },
         leftIcon: AppIcones.bars_solid,
-        rightAction: () => context.push('/profile'), // TODO: migrar args {id: user.id} quando Phase 2 migrar home
+        rightAction: () => context.push('/profile'),
         extraAction: () => context.push('/chats'),
         extraIcon: AppIcones.paper_plane_solid,
         home: true,
