@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 
 class PickerColorWidget extends StatelessWidget {
@@ -25,8 +24,10 @@ class PickerColorWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     void modalColors() {
-      Get.bottomSheet(
-        Container(
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (ctx) => Container(
           width: dimensions.width,
           height: dimensions.height / 2,
           padding: const EdgeInsets.all(10),
@@ -61,7 +62,7 @@ class PickerColorWidget extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             selectColor?.call(id, cor.value, tipo);
-                            Get.back(); // fecha o bottomSheet
+                            Navigator.of(ctx).pop(); // fecha o bottomSheet
                           },
                           child: Container(
                             width: 50,
@@ -88,7 +89,6 @@ class PickerColorWidget extends StatelessWidget {
             ),
           ),
         ),
-        isScrollControlled: true,
       );
     }
 

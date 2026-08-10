@@ -4,7 +4,6 @@ import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/event_helper.dart';
 import 'package:futzada/presentation/widget/buttons/button_player_widget.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 
 class ReserveBankWidget extends StatelessWidget {
   final String category;
@@ -45,7 +44,7 @@ class ReserveBankWidget extends StatelessWidget {
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10))
         ),
-        child: Obx((){      
+        child: ListenableBuilder(listenable: EscalationController.instance, builder: (_, __){      
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,

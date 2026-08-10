@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/snapshot_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:futzada/core/storage/app_storage.dart';
 import 'package:laravel_echo_null/laravel_echo_null.dart';
 import 'package:pusher_client_socket/pusher_client_socket.dart' as PUSHER;
-//temp
-import 'package:faker/faker.dart';
 
-class GameStreamService extends GetxService {
+class GameStreamService {
   //STREAM - MENSAGENS INTERNAS
   final streamController = StreamController<SnapshotModel>.broadcast();
   Stream<SnapshotModel> get messages => streamController.stream;
@@ -20,17 +17,16 @@ class GameStreamService extends GetxService {
   late Echo<PUSHER.PusherClient, PusherChannel> echo;
 
   //ESTADO - CONEXÃO
-  final String token = Faker().jwt.secret;//GetStorage().read('token');
-  final connectionState = Rx<ConnectionState>(ConnectionState.disconnected);
+  final String token = AppStorage.read<String>('token') ?? '1235abcd';
+  ConnectionState connectionState = ConnectionState.disconnected;
   String? channel;
   bool disposed = false;
   Timer? timer;
   int attempts = 0;
   int maxAttempts = 5;
-  
+
   //FUNÇÃO DE INICIALIZAÇÃO DO SERVIÇO
-  void init(){
-    //INICIALIZAR CONECTOR DE STREAM/WEBSOCKET
+  void init() {
     echo = Echo<PUSHER.PusherClient, PusherChannel>(PusherConnector(
       dotenv.env['REVERB_APP_KEY']!,
       authHeaders: () async => {
@@ -53,32 +49,22 @@ class GameStreamService extends GetxService {
     ));
   }
 
-  //FUNÇÃO DE CONEXÃO E INSCRIÇÃO NO CANAL DE STREAM 
+  //FUNÇÃO DE CONEXÃO E INSCRIÇÃO NO CANAL DE STREAM
   Future<void> connect({required String uuid}) async {
-    //DEFINIR CANAL DE CONEXÃO
-    final channelName = 'event.event-123';//'event.$uuid';
-    //VERIFICAR CONEXÃO DO USUARIO NO CANAL
-    if (channel == channelName && connectionState.value == ConnectionState.connected) return;
-    //LIMPAR CONEXÃO ANTES DE INICIAR
-    //await disconnect(); 
-    //ATUALIZAR STATUS DE CONEXÃO
-    connectionState.value = ConnectionState.connecting;
+    final channelName = 'event.event-123';
+    if (channel == channelName && connectionState == ConnectionState.connected) return;
+    connectionState = ConnectionState.connecting;
     try {
-      //CONEXTAR AO CANAL CONFIGURADO 
-      echo.channel/* private */(channelName)
+      echo.channel(channelName)
         ..listen('GameSnapshotEvent', parsePayload)
-        ..listen('GameActionEvent',   parsePayload)
-        ..listen('RoomEvent',         parsePayload)
+        ..listen('GameActionEvent', parsePayload)
+        ..listen('RoomEvent', parsePayload)
         ..error(onChannelError);
-      //ATUALIZAR ESTADOS DE CANAIS E CONEXÕES
       channel = channelName;
-      connectionState.value = ConnectionState.connected;
-      //LOG DE CONEXÃO
+      connectionState = ConnectionState.connected;
       debugPrint('[WS] Conectado ao canal: $channelName');
     } catch (e) {
-      //ATUALZIAR ESTADO DE CONEXÃO
-      connectionState.value = ConnectionState.error;
-      //LOG DE CONEXÃO
+      connectionState = ConnectionState.error;
       debugPrint('[WS] Erro ao conectar: $e');
       reconnect(uuid: uuid);
     }
@@ -90,7 +76,7 @@ class GameStreamService extends GetxService {
     echo.disconnect();
     channel = null;
     disposed = false;
-    connectionState.value = ConnectionState.disconnected;
+    connectionState = ConnectionState.disconnected;
   }
 
   //FUNÇÃO DE RECONEXÃO
@@ -100,7 +86,7 @@ class GameStreamService extends GetxService {
       return;
     }
     timer?.cancel();
-    final delay = Duration(seconds: (5 * (1 << attempts)).clamp(5, 300)); 
+    final delay = Duration(seconds: (5 * (1 << attempts)).clamp(5, 300));
     timer = Timer(delay, () {
       if (!disposed) {
         attempts++;
@@ -115,7 +101,6 @@ class GameStreamService extends GetxService {
       final map = payload is String
         ? json.decode(payload) as Map<String, dynamic>
         : Map<String, dynamic>.from(payload as Map);
-
       final message = SnapshotModel.fromMap(map);
       if (!streamController.isClosed) {
         streamController.add(message);
@@ -124,20 +109,18 @@ class GameStreamService extends GetxService {
       debugPrint('[WS] Erro ao parsear mensagem: $e');
     }
   }
-  
+
   //FUNÇÃO DE ERRO DE CONEXÃO
   void onChannelError(dynamic error) {
     debugPrint('[WS] Erro no canal: $error');
-    connectionState.value = ConnectionState.error;
+    connectionState = ConnectionState.error;
   }
 
   //FUNÇÃO DE FECHAMENTO DO SERVIÇO
-  @override
-  void onClose() {
+  void dispose() {
     disposed = true;
     timer?.cancel();
     streamController.close();
     echo.disconnect();
-    super.onClose();
   }
 }

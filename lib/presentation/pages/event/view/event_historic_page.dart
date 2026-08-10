@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -61,13 +61,13 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
     return Scaffold(
       appBar: HeaderWidget(
         title: "Histórico",
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
-        child: Obx(() {
+        child: ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
           //EXIBIR SKELETON DE CARREGAMENTO
-          if (!gameController.loadHistoricGames.value) {
+          if (!gameController.loadHistoricGames) {
             return const SkeletonGamesWidget();
           }
 

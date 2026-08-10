@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:get/get.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/data/services/rating_service.dart';
 import 'package:futzada/data/models/player_model.dart';
@@ -38,7 +37,7 @@ class PlayerService {
   }
 
   //FUNÇÃO PARA GERAR JOGADORES PARA MERCADO (TEMPORARIAMENTE)
-  RxList<PlayerModel> getPlayers() {
+  List<PlayerModel> getPlayers() {
     //JUNTAR MAPS
     final List<PlayerModel> arr = [];
     //GERAR LISTA DE JOGADORES
@@ -48,7 +47,7 @@ class PlayerService {
         generatePlayer(i)
       );
     });
-    return arr.obs;
+    return arr;
   }
 
   //FUNÇÃO PARA DEFINIR POSIÇÕES DO JOGADOR (TEMPORARIAMENTE)

@@ -1,10 +1,9 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
 
 class PresentationPageWidget extends StatelessWidget {
   final String image;
@@ -34,8 +33,6 @@ class PresentationPageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //INICIALIZAR CONTROLLER DE NAVEGACAO E DE ESCALAÇÃO
-    NavigationController navigationController = NavigationController.instance;
 
     //VERIFICAR ROTA PARA INICIALIZAÇÃO DE CONTROLLER
     switch (route) {
@@ -52,12 +49,14 @@ class PresentationPageWidget extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //DEFINIR COR APARTIR DO TEMA
-    final colorPage = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
+    final colorPage = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.dark_500
+        : AppColors.white;
 
     return Scaffold(
       appBar: HeaderWidget(
         title: route,
-        leftAction: () => navigationController.index.value = 0,
+        leftAction: () => context.go('/home'),
       ),
       backgroundColor: colorPage,
       body: SafeArea(

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/helpers/player_helper.dart';
@@ -23,7 +22,7 @@ class PlayersEscalationWidget extends StatelessWidget {
     EscalationController escalationController = EscalationController.instance;
     
     //RESGATAR FORMAÇÃO EM FORMATO DE LISTA
-    var listFormation = escalationController.escalationService.getFormationList(escalationController.formation.value);
+    var listFormation = escalationController.escalationService.getFormationList(escalationController.formation);
     //LISTA DE JOGADORES
     final players = <Row>[];
     int playerIndex = -1;
@@ -39,8 +38,8 @@ class PlayersEscalationWidget extends StatelessWidget {
             //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
             String position = escalationController.escalationService.getPositionName(
               sectorIndex, 
-              escalationController.category.value, 
-              escalationController.formation.value
+              escalationController.category, 
+              escalationController.formation
             );
             if(escalationController.starters[playerIndex] != null){
               user = EventHelper.getUserEvent(escalationController.event!, escalationController.starters[playerIndex]!);
@@ -50,7 +49,7 @@ class PlayersEscalationWidget extends StatelessWidget {
             //DEFINIR BORDA DE POSIÇÃO
             var borderColor = PlayerHelper.setColorPosition(positionAlias);
             //VERIFICAR SE JOGADOR E O CAPITÃO
-            if(escalationController.selectedPlayerCapitan.value == user?.id){
+            if(escalationController.selectedPlayerCapitan == user?.id){
               return Stack(
                 children: [
                   ButtonPlayerWidget(
@@ -103,7 +102,7 @@ class PlayersEscalationWidget extends StatelessWidget {
       width: width,
       height: height! + 60,
       padding: const EdgeInsets.all(10),
-      child: Obx((){
+      child: ListenableBuilder(listenable: EscalationController.instance, builder: (_, __){
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: _buildPlayers(),

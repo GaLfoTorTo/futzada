@@ -51,7 +51,7 @@ class ErroPermissionPage extends StatelessWidget {
                   width: dimensions.width,
                   icon: Icons.location_on,
                   iconSize: 30,
-                  action: () => userController.getCurrentLocation(),
+                  action: () => {}//userController.getCurrentLocation(),
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
               ],

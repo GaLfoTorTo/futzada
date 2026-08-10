@@ -1,18 +1,28 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/core/storage/app_storage.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class ShowcaseController extends GetxController {
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static ShowcaseController get instance => Get.find();
+class ShowcaseController extends ChangeNotifier {
+  //DEFINIR CONTROLLER UNICO NO GETIT
+  static ShowcaseController get instance => sl<ShowcaseController>();
   //CHAVE DE ENCERRAMETO
   final GlobalKey showcaseStartKey = GlobalKey();
   final GlobalKey showcaseEndKey = GlobalKey();
+
   //CONTROLLADOR DE SHOWCASE
-  final RxString currentShowcase = 'start'.obs;
-  final RxBool isReady = false.obs;
-  final RxBool isCompleted = false.obs;
+  String _currentShowcase = 'start';
+  String get currentShowcase => _currentShowcase;
+  set currentShowcase(String v) { _currentShowcase = v; notifyListeners(); }
+
+  bool _isReady = false;
+  bool get isReady => _isReady;
+  set isReady(bool v) { _isReady = v; notifyListeners(); }
+
+  bool _isCompleted = false;
+  bool get isCompleted => _isCompleted;
+  set isCompleted(bool v) { _isCompleted = v; notifyListeners(); }
 
   //CHAVES DE ELEMENTOS SHOWCASE
   final List<String> elementKeys = [
@@ -28,6 +38,7 @@ class ShowcaseController extends GetxController {
     'notifications',
     'end',
   ];
+
   //FUNÇÃO DE MAPEAMENTO DE ELEMENTOS DO SHOWCASE
   Map<String, dynamic> elements = {
     'start': {
@@ -101,8 +112,8 @@ class ShowcaseController extends GetxController {
   };
 
   //FUNÇÃO DE DEFINIÇÃO DE INDEX (NAVBAR)
-  int setIndexNavigation(){
-    switch(currentShowcase.value){
+  int setIndexNavigation() {
+    switch (currentShowcase) {
       case 'escalation':
         return 1;
       case 'events':
@@ -115,13 +126,13 @@ class ShowcaseController extends GetxController {
         return 0;
     }
   }
-  
+
   //FUNÇÃO DE CONFIGURAÇÃO DE SHOWCASE
-  void setShowCase() {
+  void setShowcase() {
     //RESGATAR SE USUARIO PASSOU POR ONBORADING (SHOWCASE)
-    final tutorial = GetStorage().read('tutorial') ?? false;
+    final tutorial = AppStorage.read<bool>('tutorial') ?? false;
     //VERIFICAR SE USUARIO JÁ PASSOU PELO SHOWCASE
-    if(!tutorial) {
+    if (!tutorial) {
       //CONFIGURAÇÕES DE SHOWCASE
       ShowcaseView.register(
         blurValue: 0,
@@ -130,35 +141,35 @@ class ShowcaseController extends GetxController {
       );
       //ESPERAR RENDERIZAÇÃO DOS WIDGETS ANTES DE INICIAR SHOWCASE
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        isReady.value = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) => startShowcases());
+        isReady = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) => startShowcase());
       });
     }
   }
 
-  //FUNÇÃO DE SHOWCASE - HOME 
-  void startShowcases() {
+  //FUNÇÃO DE SHOWCASE - HOME
+  void startShowcase() {
     //INICIALIZAR SHOWCASE
     ShowcaseView.get().startShowCase(
       elements.values
         .map((e) => e['key'] as GlobalKey)
         .toList()
-      );
+    );
   }
-  
+
   //FUNÇÃO PARA COMPLETAR SHOWCASE
   void completeShowcase() {
-    isCompleted.value = true;
+    isCompleted = true;
     //MARCAR SHOW CASE COMO TRUE
-    GetStorage().write('tutorial', true);
+    AppStorage.write('tutorial', true);
     ShowcaseView.get().unregister();
     ShowcaseView.get().dismiss();
   }
 
   //FUNÇÃO PARA REINICIAR SHOWCASES
-  void resetShowcases() {
+  void resetShowcase() {
     //MARCAR SHOW CASE COMO TRUE
-    GetStorage().write('tutorial', false);
-    startShowcases();
+    AppStorage.write('tutorial', false);
+    startShowcase();
   }
 }

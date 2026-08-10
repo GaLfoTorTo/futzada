@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -32,14 +31,13 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
   void selectFilter(String name, dynamic newValue){
     setState(() {
       escalationController.setFilter(name, newValue);
-      escalationController.update();
-    });
+          });
   }
 
   //FUNÇÃO PARA APLICAR CONFIGURAÇÕES DE FILTRO
   void applyFilter(){
     //FECHAR BOTTOM SHEET
-    Get.back();
+    Navigator.of(context).pop();
   }
   
   @override
@@ -271,7 +269,7 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
                   height: 30,
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                 ),
                 ButtonTextWidget(
                   text: "Aplicar",
@@ -279,7 +277,7 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
                   height: 30,
                   backgroundColor: AppColors.green_300,
                   textColor: AppColors.white,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                 ),
               ],
             ),

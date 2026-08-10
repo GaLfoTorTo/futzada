@@ -1,43 +1,55 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
 import 'package:futzada/data/repositories/user_repository.dart';
 
-class ProfileController extends GetxController {
+class ProfileController extends ChangeNotifier {
   ProfileController();
 
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static ProfileController get instance => Get.find();
+  //DEFINIR CONTROLLER UNICO NO GETIT
+  static ProfileController get instance => sl<ProfileController>();
   //INSTANCIAR SERVIÇO DE ENDEREÇOS
   UserRepository userRepository = UserRepository();
   EventRepository eventRepository = EventRepository();
-  
+
   //ESTADOS - READY E PERMISSOES
-  final RxBool isLoaded = false.obs;
-  final RxBool isReady = false.obs;
-  final RxBool hasError = false.obs;
-  final RxBool hasPermission = false.obs;
+  bool _isLoaded = false;
+  bool get isLoaded => _isLoaded;
+  set isLoaded(bool v) { _isLoaded = v; notifyListeners(); }
+
+  bool _isReady = false;
+  bool get isReady => _isReady;
+  set isReady(bool v) { _isReady = v; notifyListeners(); }
+
+  bool _hasError = false;
+  bool get hasError => _hasError;
+  set hasError(bool v) { _hasError = v; notifyListeners(); }
+
+  bool _hasPermission = false;
+  bool get hasPermission => _hasPermission;
+  set hasPermission(bool v) { _hasPermission = v; notifyListeners(); }
 
   //ESTADOS - POSIÇÃO, ZOOM E CARREGAMENTO DO MAPA
   late UserModel user;
   List<EventModel> events = [];
 
-  Future<void> getProfile(id) async{
+  Future<void> getProfile(id) async {
     Future.delayed(const Duration(milliseconds: 1000));
     await getUser(id);
     await getUserEvents();
-    isLoaded.value = true;
+    isLoaded = true;
   }
 
   //FUNÇÃO PARA BUSCAR DADOS DO USUARIO
-  Future<void> getUser(id) async{
+  Future<void> getUser(id) async {
     Future.delayed(const Duration(milliseconds: 1000));
     user = await userRepository.getUser(id);
   }
 
   //FUNÇÃO DE BUSCA DE EVENTOS DO USUARIO
-  Future<void> getUserEvents() async{
+  Future<void> getUserEvents() async {
     //BUSCAR EVENTOS DO USUARIO
     events.addAll(await eventRepository.getUserEvents(user.id));
   }

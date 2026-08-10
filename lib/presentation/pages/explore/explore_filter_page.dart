@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/icon_helper.dart';
 import 'package:futzada/core/helpers/form_helper.dart';
@@ -42,14 +42,14 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Filtros',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: Obx((){
+            child: ListenableBuilder(listenable: exploreController, builder: (_, __){
               return Column(
                 spacing: 10,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +72,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.symmetric(vertical: 20),
                     decoration: BoxDecoration(
-                      color: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                       borderRadius: BorderRadius.circular(5)
                     ),
                     child: Column(
@@ -98,7 +98,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                           label: exploreController.ratio.toInt().toString(),
                           activeColor: AppColors.green_300,
                           inactiveColor: AppColors.white,
-                          onChanged: (double newValue) => exploreController.ratio.value = newValue.toInt(),
+                          onChanged: (double newValue) => exploreController.ratio = newValue.toInt(),
                         ),
                       ],
                     )
@@ -223,8 +223,8 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                     ),
                   ),
                   SelectAvaliationWidget(
-                    value: exploreController.avaliation.value,
-                    onChanged: (value) => exploreController.avaliation.value = value,
+                    value: exploreController.avaliation,
+                    onChanged: (value) => exploreController.avaliation = value,
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 10),
@@ -237,7 +237,7 @@ class _ExploreFilterPageState extends State<ExploreFilterPage> {
                           textColor: AppColors.white,
                           backgroundColor: AppColors.red_300,
                           width: 100,
-                          action: () => Get.back(),
+                          action: () => context.pop(),
                         ),
                         ButtonTextWidget(
                           text: "Aplicar",

@@ -1,7 +1,8 @@
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/widget/dialogs/dialog_invite.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/extensions/string_extensions.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
@@ -28,7 +29,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
 
   //FUNÇÃO DE DEFINIÇÃO DE PREFERÊNCIAS DE CONVITE
   void openPreferencia(){
-    Get.dialog(DialogInvite(
+    showDialog(context: context, builder: (_) => DialogInvite(
       invite: eventController.invite,
     ));
   }
@@ -41,7 +42,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Participantes", 
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -111,18 +112,18 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                     ],
                   ),
                 ),
-                Obx((){
+                ListenableBuilder(listenable: eventController, builder: (_, __){
                   return Column(
                     children: eventController.friends.map((item){
                       //RESGATAR USUARIO TIPADO
                       final user = item['user'] as UserModel;
-                      final invite = item['invite'] as RxMap<String, bool>;
-                      final checked = item['checked'] as RxBool;
+                      final invite = item['invite'] as Map<String, bool>;
+                      final checked = item['checked'] as bool;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
                         child: TextButton(
-                          onPressed: () => checked.toggle(),
-                          onLongPress: () => Get.dialog(DialogInvite(
+                          onPressed: () => eventController.toggleFriend(item),
+                          onLongPress: () => showDialog(context: context, builder: (_) => DialogInvite(
                             invite: invite,
                           )),
                           style: const ButtonStyle(
@@ -160,8 +161,8 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                               Transform.scale(
                                 scale: 2,
                                 child: Checkbox(
-                                  value: checked.value,
-                                  onChanged: (value) => checked.toggle(),
+                                  value: checked,
+                                  onChanged: (value) => eventController.toggleFriend(item),
                                   activeColor: AppColors.green_300,
                                   side: const BorderSide(color: AppColors.grey_500, width: 1),
                                 ),
@@ -182,7 +183,7 @@ class _EventParticipantsStepState extends State<EventParticipantsStep> {
                       ButtonOutlineWidget(
                         text: "Pular",
                         width: 100,
-                        action: () => Get.back(),
+                        action: () => context.pop(),
                       ),
                       ButtonTextWidget(
                         text: "Convidar",

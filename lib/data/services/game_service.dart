@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/core/enum/enums.dart';
+import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/game_config_model.dart';
 import 'package:futzada/data/services/result_service.dart';
 import 'package:futzada/data/services/team_service.dart';

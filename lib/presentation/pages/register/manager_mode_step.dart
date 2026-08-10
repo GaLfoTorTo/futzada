@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -190,7 +190,7 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
     ){
       registerController.managerChecked = true;
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      Get.offNamed("/register");
+      context.go("/register");
     }else{
       AppHelper.feedbackMessage(context, "Complete o cadastro de infromações de tecnico para continuar.");
     }
@@ -222,7 +222,7 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Cadastro", 
-        leftAction: () => Get.back()
+        leftAction: () => context.pop()
       ),
       body: SafeArea(
         child: Form(
@@ -411,7 +411,7 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back()
+                        action: () => context.pop()
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

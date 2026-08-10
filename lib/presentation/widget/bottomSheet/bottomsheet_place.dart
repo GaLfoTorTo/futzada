@@ -2,7 +2,6 @@
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/controllers/address_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -26,7 +25,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlace> {
   //RESGATAR CONTROLLER DE ENDEREÇOS
   AddressController addressController = AddressController.instance;
   //CONTROLADOR DE CARREGAMENTO DE INFORMAÇÕES DO LOCAL
-  RxBool isLoaded = false.obs;
+  bool isLoaded = false;
   //ESTADO DE ENDEREÇO
   late AddressModel? location;
   IconData icon = AppIcones.modality_solid;
@@ -85,7 +84,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlace> {
         icon = AppIcones.volei_ball_solid;
     }
     //ATUALIZAR ESTADO DE CARREGAMENTO
-    isLoaded.value = true;
+    setState(() { isLoaded = true; });
   }
   
   @override
@@ -101,9 +100,9 @@ class BottomSheetPlayerState extends State<BottomSheetPlace> {
         color: Theme.of(context).dialogTheme.backgroundColor,
         borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
       ),
-      child: Obx((){
+      child: ListenableBuilder(listenable: Listenable.merge([addressController, eventController]), builder: (_, __){
         //EXIBIÇÃO DE LOADING DE CARREGAMENTO
-        if(!isLoaded.value){
+        if(!isLoaded){
           return const Center(
             child: CircularProgressIndicator(
               color: AppColors.green_300,

@@ -18,12 +18,12 @@ class CardLevelWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     //RESGATAR TEMA PERSONALIZADO PARA MODALIDADE PRINCIPAL DO USUARIO
-    final modalityInfo = ModalityHelper.getEventModalityColor(user.config!.mainModality!.name);
+    final modalityInfo = ModalityHelper.getEventModalityColor(user.config?.mainModality!.name ?? 'Football');
     final modalityColor = modalityInfo['color'];
     final modalityTextColor = modalityInfo['textColor'];
     final modalityImage = modalityInfo['image'];
     //CONTABILIZAR PROGRESSO DE NIVEL
-    double progress = (user.level!.points * 100) / user.level!.level!.pointsMax;
+    double progress = (user.level!.points * 100) / user.level!.pointsMax;
 
     return Card(
       child: Container(
@@ -51,7 +51,7 @@ class CardLevelWidget extends StatelessWidget {
                   child: ChartLevel(
                     value: progress,
                     color: modalityTextColor,
-                    level: user.level!.level!.number
+                    level: user.level!.number
                   ),
                 ),
                 Expanded(
@@ -71,7 +71,7 @@ class CardLevelWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 50.0),
                         child: Text(
-                          user.level!.level!.title,
+                          user.level!.tier,
                           style: Theme.of(context).textTheme.headlineLarge!.copyWith(
                             color: modalityTextColor
                           ),
@@ -102,7 +102,7 @@ class CardLevelWidget extends StatelessWidget {
                         value: progress / 100,
                       ),
                       Text(
-                        '${user.level!.points}/${user.level!.level!.pointsMax}',
+                        '${user.level!.points}/${user.level!.pointsMax}',
                         style: Theme.of(context).textTheme.displayMedium!.copyWith(
                           color: modalityTextColor
                         ),

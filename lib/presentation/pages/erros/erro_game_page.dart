@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
@@ -15,7 +14,7 @@ class ErroGamePage extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //DEFINIR COR APARTIR DO TEMA
-    final backgroundColor = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
+    final backgroundColor = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white;
 
     return  Container(
       width: dimensions.width,

@@ -5,7 +5,7 @@ import 'package:futzada/presentation/pages/register/modality_step.dart';
 import 'package:futzada/presentation/pages/register/modes_step.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/pages/register/user_step.dart';
 import 'package:futzada/presentation/controllers/register_controller.dart';
@@ -40,7 +40,7 @@ class _RegisterBasicStepState extends State<RegisterStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Cadastro", 
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
@@ -57,17 +57,17 @@ class _RegisterBasicStepState extends State<RegisterStep> {
             stepIconBuilder: (stepIndex, stepState) {
               return Icon(
                 iconsStep[stepIndex],
-                color: stepIndex == registerController.step.value ? AppColors.white : AppColors.blue_500,
+                color: stepIndex == registerController.step ? AppColors.white : AppColors.blue_500,
                 size: 25,
               );
             },
             controlsBuilder: (context, details) {
               return Row(
-                mainAxisAlignment: registerController.step.value != 0 
+                mainAxisAlignment: registerController.step != 0 
                   ? MainAxisAlignment.spaceBetween
                   : MainAxisAlignment.end,
                 children: [
-                  if(registerController.step.value != 0)...[
+                  if(registerController.step != 0)...[
                     ButtonOutlineWidget(
                       width: 100,
                       height: 35,
@@ -79,35 +79,35 @@ class _RegisterBasicStepState extends State<RegisterStep> {
                   ButtonTextWidget(
                     width: 100,
                     height: 35,
-                    iconAfter: registerController.step.value < 3,
-                    icon: registerController.step.value == 3 ? Icons.save : Icons.arrow_forward_rounded,
-                    text: registerController.step.value == 3 ? "Salvar" : "Continuar",
+                    iconAfter: registerController.step < 3,
+                    icon: registerController.step == 3 ? Icons.save : Icons.arrow_forward_rounded,
+                    text: registerController.step == 3 ? "Salvar" : "Continuar",
                     action: () => setState(() => registerController.nextStep())
                   )
                 ],
               );
             },
             connectorColor: WidgetStateColor.resolveWith((state) => state.contains(WidgetState.selected) ? AppColors.blue_500 : AppColors.white),
-            currentStep: registerController.step.value,
+            currentStep: registerController.step,
             steps: [
               Step(
                 title: const SizedBox.shrink(),
-                isActive: registerController.step.value == 0,
+                isActive: registerController.step == 0,
                 content: const UserStep()
               ),
               Step(
                 title: const SizedBox.shrink(),
-                isActive: registerController.step.value == 1,
+                isActive: registerController.step == 1,
                 content: const ModalityStep()
               ),
               Step(
                 title: const SizedBox.shrink(),
-                isActive: registerController.step.value == 2,
+                isActive: registerController.step == 2,
                 content: const ModesStep()
               ),
               Step(
                 title: const SizedBox.shrink(),
-                isActive: registerController.step.value == 3,
+                isActive: registerController.step == 3,
                 content: const ConclusionStep()
               )
             ]

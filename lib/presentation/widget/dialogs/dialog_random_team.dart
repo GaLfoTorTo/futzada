@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
@@ -55,14 +55,14 @@ class DialogRandomTeam extends StatelessWidget {
                   iconSize: 30,
                   action: () async {
                     //EXECUTAR FUNÇÃO RANDOMICA E EXIBIR OVERLAY
-                    await Get.showOverlay(
-                      asyncFunction: actionRandom,
+                    await LoadingOverlay.show(
+                      context,
+                      actionRandom,
                       loadingWidget: const Center(child: IndicatorLoadingWidget()),
-                      opacity: 0.7,
-                      opacityColor: AppColors.dark_700
+                      barrierColor: AppColors.dark_700.withAlpha(178),
                     );
                     //FECHAR DIALOG
-                    Get.back();
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                 ),
                 ButtonTextWidget(
@@ -72,14 +72,14 @@ class DialogRandomTeam extends StatelessWidget {
                   iconSize: 30,
                   action: () async {
                     //EXECUTAR FUNÇÃO RANDOMICA E EXIBIR OVERLAY
-                    await Get.showOverlay(
-                      asyncFunction: actionRandom,
+                    await LoadingOverlay.show(
+                      context,
+                      actionRandom,
                       loadingWidget: const Center(child: IndicatorLoadingWidget()),
-                      opacity: 0.7,
-                      opacityColor: AppColors.dark_700
+                      barrierColor: AppColors.dark_700.withAlpha(178),
                     );
                     //FECHAR DIALOG
-                    Get.back();
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                 ),
               ],

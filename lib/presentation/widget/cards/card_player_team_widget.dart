@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -56,13 +55,13 @@ class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
                     children: [
                       Text(
                         UserHelper.getFullName(widget.user),
-                        style: Theme.of(Get.context!).textTheme.titleSmall,
+                        style: Theme.of(context).textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis
                       ),
                       Text(
                         "@${widget.user.userName}",
-                        style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
                           color: AppColors.grey_300,
                           overflow: TextOverflow.ellipsis
                         ),

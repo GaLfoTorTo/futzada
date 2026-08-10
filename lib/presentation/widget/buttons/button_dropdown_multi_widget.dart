@@ -4,7 +4,6 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:get/get.dart';
 
 class ButtonDropdownMultiWidget extends StatefulWidget {
   final List<dynamic> selectedItems;
@@ -115,7 +114,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
             value: optionValue,
             child: StatefulBuilder(
               builder: (context, menuSetState) {
-                return Obx((){
+                return ListenableBuilder(listenable: escalationController, builder: (_, __){
                   //RESGATAR STATUS SELECIONADA
                   final isSelected = escalationController.filtrosMarket['status'].contains(optionValue);
 

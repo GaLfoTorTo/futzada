@@ -1,26 +1,29 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/core/extensions/string_extensions.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
+import 'package:futzada/core/providers/theme_provider.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/auth_controller.dart';
-import 'package:futzada/presentation/controllers/theme_controller.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
 
-class DrawerWidget extends StatefulWidget {
+class DrawerWidget extends ConsumerStatefulWidget {
   const DrawerWidget({super.key});
 
   @override
-  State<DrawerWidget> createState() => _DrawerWidgetState();
+  ConsumerState<DrawerWidget> createState() => _DrawerWidgetState();
 }
 
-class _DrawerWidgetState extends State<DrawerWidget> {
+class _DrawerWidgetState extends ConsumerState<DrawerWidget> {
   //CONTROLLERs
   AuthController authController = AuthController.instance;
-  ThemeController themeController = ThemeController.instance;
   //DADOS DO USUÁRIO
   late UserModel? user;
   //VARIAVEL DE MENSAGEM DE ERRO
@@ -29,7 +32,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void initState() {
     super.initState();
-    user = Get.find<UserModel>(tag: 'user');
+    user = sl<UserModel>(instanceName: 'user');
   }
 
   void completeLogout(statusLogout) async {
@@ -38,7 +41,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     //VERIRICAR SE HOUVE ERRO NO ENVIO DOS DADOS
     if(!statusLogout){
       //FECHAR MODAL
-      Get.back();
+      if (mounted) Navigator.of(context).pop();
       setState(() {});
     }
   }
@@ -50,9 +53,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     });
     //DELAY PARA EXIBIÇÃO DO OVERLAY
     Future.delayed(const Duration(milliseconds: 300), () async {
-      await Get.showOverlay(
-        asyncFunction: () async {
-          //FINALIZAR PARTIDA
+      if (!mounted) return;
+      await LoadingOverlay.show(
+        context,
+        () async {
+          //FINALIZAR SESSÃO
           await authController.logout();
         },
         loadingWidget: const Material(
@@ -61,8 +66,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: IndicatorLoadingWidget()
           ),
         ),
-        opacity: 0.7,
-        opacityColor: AppColors.dark_700,
+        barrierColor: AppColors.dark_700.withAlpha(178),
       );
     });
   }
@@ -77,60 +81,60 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         'icon' : null, 
         'action' : () => print(null)},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Minha Conta',
-        'icon': Icons.person, 
-        'action': () => Get.toNamed('/profile')},
+        'icon': Icons.person,
+        'action': () => context.go('/profile')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Favoritos',
-        'icon': Icons.bookmark, 
-        'action': () => Get.toNamed('/favorits')},
+        'icon': Icons.bookmark,
+        'action': () => context.go('/favorits')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Amigos',
-        'icon': Icons.people_alt_rounded, 
-        'action': () => Get.toNamed('/friends')},
+        'icon': Icons.people_alt_rounded,
+        'action': () => context.go('/friends')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Modalidades',
-        'icon': AppIcones.modality_solid, 
-        'action': () => Get.toNamed('/modalidades')},
+        'icon': AppIcones.modality_solid,
+        'action': () => context.go('/modalidades')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Minhas Peladas',
-        'icon': Icons.sports, 
-        'action': () => Get.toNamed('/event/list')},
+        'icon': Icons.sports,
+        'action': () => context.go('/event/list')},
       {
         'type': 'section',
         'title': 'Privacidade e Segurança',
         'icon' : null, 
         'action' : () => print(null)},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Tema',
-        'icon':  themeController.themeMode.value.name == "dark" ?  AppIcones.moon_solid : AppIcones.sun_solid, 
-        'action': () => themeController.alterTheme()},
+        'icon': ref.watch(themeProvider) == ThemeMode.dark ? AppIcones.moon_solid : AppIcones.sun_solid,
+        'action': () => ref.read(themeProvider.notifier).toggleTheme()},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Configurações',
-        'icon': Icons.settings, 
-        'action': () => Get.toNamed('/settings')},
+        'icon': Icons.settings,
+        'action': () => context.go('/settings')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Central de Ajuda',
-        'icon': AppIcones.question_circle_solid, 
-        'action': () => Get.toNamed('/help')},
+        'icon': AppIcones.question_circle_solid,
+        'action': () => context.go('/help')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Sobre',
-        'icon': AppIcones.exclamation_circle_solid, 
-        'action': () => Get.toNamed('/about')},
+        'icon': AppIcones.exclamation_circle_solid,
+        'action': () => context.go('/about')},
       {
-        'type': 'option', 
+        'type': 'option',
         'title': 'Termos e Políticas',
-        'icon': AppIcones.book_solid, 
-        'action': () => Get.toNamed('/terms')},
+        'icon': AppIcones.book_solid,
+        'action': () => context.go('/terms')},
       {
         'type': 'divider',
         'title': 'Divider',

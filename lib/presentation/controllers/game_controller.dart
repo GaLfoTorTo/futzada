@@ -1,18 +1,19 @@
 import 'dart:async';
-import 'package:futzada/data/services/game_stream_service.dart';
-import 'package:futzada/presentation/controllers/mixin/game/game_stream_mixin.dart';
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:futzada/data/services/game_event_service.dart';
-import 'package:futzada/data/services/team_service.dart';
-import 'package:futzada/data/services/game_service.dart';
-import 'package:futzada/data/services/timer_service.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/game_event_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_config_model.dart';
 import 'package:futzada/data/models/team_model.dart';
 import 'package:futzada/data/models/game_model.dart';
+import 'package:futzada/data/services/game_service.dart';
+import 'package:futzada/data/services/team_service.dart';
+import 'package:futzada/data/services/timer_service.dart';
+import 'package:futzada/data/services/game_stream_service.dart';
+import 'package:futzada/data/services/game_event_service.dart';
+import 'package:futzada/presentation/controllers/mixin/game/game_stream_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/game/game_config_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/game/game_day_event_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/game/game_match_mixin.dart';
@@ -22,7 +23,7 @@ import 'package:futzada/presentation/controllers/mixin/game/game_vote_mixin.dart
 
 //===DEPENDENCIAS BASE===
 abstract class GameBase {
-  //GETTER - SERVIÇOS PARTIDAS, EQUIPES, CRONOMETRO
+  //GETTER - SERVIÇOS
   GameService get gameService;
   GameEventService get gameEventService;
   TimerService get timerService;
@@ -35,55 +36,79 @@ abstract class GameBase {
   GameModel get currentGame;
 
   //===DIA DE PARTIDA===
-  List<UserModel>? get participantsClone;
-  RxList<UserModel>? get participantsPresent;
-  RxMap<String, double> get votesGame;
-  RxMap<String, int>? get votesMVP;
-  RxInt get votesGameCount;
-  RxInt get votesMVPCount;
-  
+  List<UserModel> get participantsClone;
+  List<UserModel> get participantsPresent;
+  Map<String, double> get votesGame;
+  Map<String, int>? get votesMVP;
+  int get votesGameCount;
+  int get votesMVPCount;
+
   //===PARTIDA===
   //ESTADO - EQUIPES DA PARTIDA
-  RxBool get isGameReady;
+  bool get isGameReady;
   TeamModel get teamA;
   TeamModel get teamB;
   //ESTADO - QUANTIDADE DE JOGADORES NAS EQUIPES NA PARTIDA
-  RxInt get teamAlength;
-  RxInt get teamBlength;
+  int get teamAlength;
+  set teamAlength(int v);
+  int get teamBlength;
+  set teamBlength(int v);
   //ESTADO - PLACAR EQUIPES NA PARTIDA
-  RxInt get teamAScore;
-  RxInt get teamBScore;
+  int get teamAScore;
+  set teamAScore(int v);
+  int get teamBScore;
+  set teamBScore(int v);
   //ESTADO - ESTATISTICAS DA PARTIDA
-  RxInt get teamACorners;
-  RxInt get teamBCorners;
-  RxInt get teamAFouls;
-  RxInt get teamBFouls;
-  RxInt get teamADefense;
-  RxInt get teamBDefense;
-  RxInt get teamAOffside;
-  RxInt get teamBOffside;
-  RxInt get teamAPasses;
-  RxInt get teamBPasses;
-  RxInt get teamAPossesion;
-  RxInt get teamBPossesion;
-  RxInt get teamAShots;
-  RxInt get teamBShots;
-  RxInt get teamAShotsGoal;
-  RxInt get teamBShotsGoal;
-  RxInt get teamAYellowCard;
-  RxInt get teamBYellowCard;
-  RxInt get teamARedCard;
-  RxInt get teamBRedCard;
+  int get teamACorners;
+  set teamACorners(int v);
+  int get teamBCorners;
+  set teamBCorners(int v);
+  int get teamAFouls;
+  set teamAFouls(int v);
+  int get teamBFouls;
+  set teamBFouls(int v);
+  int get teamADefense;
+  set teamADefense(int v);
+  int get teamBDefense;
+  set teamBDefense(int v);
+  int get teamAOffside;
+  set teamAOffside(int v);
+  int get teamBOffside;
+  set teamBOffside(int v);
+  int get teamAPasses;
+  set teamAPasses(int v);
+  int get teamBPasses;
+  set teamBPasses(int v);
+  int get teamAPossesion;
+  set teamAPossesion(int v);
+  int get teamBPossesion;
+  set teamBPossesion(int v);
+  int get teamAShots;
+  set teamAShots(int v);
+  int get teamBShots;
+  set teamBShots(int v);
+  int get teamAShotsGoal;
+  set teamAShotsGoal(int v);
+  int get teamBShotsGoal;
+  set teamBShotsGoal(int v);
+  int get teamAYellowCard;
+  set teamAYellowCard(int v);
+  int get teamBYellowCard;
+  set teamBYellowCard(int v);
+  int get teamARedCard;
+  set teamARedCard(int v);
+  int get teamBRedCard;
+  set teamBRedCard(int v);
   //ESTADO LISTA DE EVENTOS DA PARTIDA
-  RxList<GameEventModel> get gameEvents;
-
+  List<GameEventModel> get gameEvents;
 
   //===PARTIDA AO VIVO===
   //ESTADO - HORARIO DA PARTIDA, MINUTOS DA PARTIDA, MINUTOS DA FALTANTES, STATUS DA PARTIDA
-  RxString get currentTime;
-  RxInt get minutesElapsed;
-  RxInt get remainingElapsed;
-  RxBool get isGameRunning;
+  String get currentTime;
+  int get minutesElapsed;
+  int get remainingElapsed;
+  bool get isGameRunning;
+  set isGameRunning(bool v);
 
   //ESTADO - DIA DO EVENTO
   DateTime? get eventDate;
@@ -93,11 +118,11 @@ abstract class GameBase {
   StreamSubscription<dynamic> get timeSubscription;
 }
 
-class GameController extends GetxController
-  with GameConfigMixin, GameDayEventMixin, GameScheduleMixin, GameMatchMixin, GameVotesMixin, GameStopwatchMixin, GameStreamMixin{
+class GameController extends ChangeNotifier
+  with GameConfigMixin, GameDayEventMixin, GameScheduleMixin, GameMatchMixin, GameVotesMixin, GameStopwatchMixin, GameStreamMixin {
   //GETTER DE CONTROLLERS
-  static GameController get instance => Get.find();
-  
+  static GameController get instance => sl<GameController>();
+
   //STREAM - CRONOMETRO
   @override
   late StreamSubscription<dynamic> timeSubscription;
@@ -113,7 +138,7 @@ class GameController extends GetxController
   TimerService timerService = TimerService();
   @override
   TeamService teamService = TeamService();
-  
+
   //GETTER - ESTADOS
   @override
   late EventModel event;
@@ -124,33 +149,21 @@ class GameController extends GetxController
   @override
   late GameConfigModel? currentGameConfig;
 
-  @override
-  void onInit() {
-    super.onInit();
-    //RESGATAR DATA DO EVENTO
-    //eventDate = eventService.getNextEventDate(event);
-    //VARAIVEIS PRA TESTE
+  void init() {
     eventDate = DateFormat("dd/MM/yyyy").parse("${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}");
-    //INICIALIZAR CONEXAO DE REVERB
     streamService.init();
   }
 
   @override
-  void onClose() {
-    //LIMPAR SUBCRIBES DO STREAM
+  void dispose() {
     timeSubscription.cancel();
-    //FINALIZAR CONTROLLERS DE TEXTO
     disposeTextControllers();
-    //ENCERRAR CRONOMETRO DE TODAS AS PARTIDAS ATIVAS
-    inProgressGames.forEach((game) {
-      //VERIFICAR SE PARTIDA NÃO ESTA VAZIA
+    for (final game in inProgressGames) {
       if (game != null) {
         timerService.stopStopwatch(game.id);
       }
-    });
-    //ENCERRAR CRONOMETRO DA PARTIDA ATUAL
+    }
     timerService.stopStopwatch(currentGame.id);
-    //ENCERRAR CONTROLLER
-    super.onClose();
+    super.dispose();
   }
 }

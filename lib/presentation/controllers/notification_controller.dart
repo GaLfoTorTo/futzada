@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/services/notification_service.dart';
-import 'package:get/get.dart';
 
-class NotificationController extends GetxController {
+class NotificationController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETX
-  static NotificationController get instace => Get.find();
+  static NotificationController get instace => sl<NotificationController>();
   //INICIALIZAR SERVICE
   final NotificationService notificationService = NotificationService();
 

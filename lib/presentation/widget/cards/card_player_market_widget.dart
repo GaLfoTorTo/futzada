@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -43,7 +42,7 @@ class CardPlayerMarketWidget extends StatelessWidget {
     //FUNÇÃO PARA DEFINIR TIPO DE BOTÃO
     Map<String, dynamic> setButtonBuy(PlayerModel player){
       //VERIFICAR SE USUARIO TEM FUTCOIN O SUFICIENTE PARA COMPRAR JOGADOR, SE NÃO RETORNAR BOTÃO DESABILITADO
-      if(rating.price! > escalationController.managerPatrimony.value){
+      if(rating.price! > escalationController.managerPatrimony){
         return{
           'text':'Comprar',
           'color' : AppColors.grey_300,
@@ -71,9 +70,8 @@ class CardPlayerMarketWidget extends StatelessWidget {
     void setPlayerPosition(uuid){
       //SELECIONAR JOGADOR
       escalationController.setPlayerEscalation(uuid);
-      escalationController.update();
-      //NAVEGAR DE VOLTA PARA ESCALAÇÃO
-      Get.back();
+            //NAVEGAR DE VOLTA PARA ESCALAÇÃO
+      Navigator.of(context).pop();
     }
 
     //LISTA DE METRICAS DO CARD

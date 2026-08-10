@@ -1,7 +1,8 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/core/api/api_client.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/api_service.dart';
 import 'package:futzada/data/services/news_service.dart';
 import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
@@ -19,7 +20,7 @@ abstract class EventBase {
   EventRepository get eventRepository;
   //GETTER - SERVIÇOS
   AvaliationService get avaliationService;
-  ApiService get apiService;
+  ApiClient get apiClient;
   NewsService get newsService;
   //GETTER - USUARIO, EVENTOS, EVENTOS DO USUARIO
   UserModel get user;
@@ -32,54 +33,58 @@ abstract class EventBase {
   //GETTER - PARTICIPANTS
   Map<String, List<UserModel>?> get participants;
   //DEFINIR TRAVEL MODEL ATUAL SENDO MANIPULADO
-  RxString get travelMode;
+  String get travelMode;
+  set travelMode(String v);
 }
 
 //===CONTROLLER PRINCIPALS===
-class EventController extends GetxController 
-  with 
-    EventOverviewMixin, 
-    EventConfigMixin, 
-    EventRegisterMixin, 
-    EventRankMixin, 
-    EventParticipantsMixin, 
-    EventRulesMixin 
+class EventController extends ChangeNotifier
+  with
+    EventOverviewMixin,
+    EventConfigMixin,
+    EventRegisterMixin,
+    EventRankMixin,
+    EventParticipantsMixin,
+    EventRulesMixin
   implements EventBase {
-  
+
   //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS
-  static EventController get instance => Get.find();
+  static EventController get instance => sl<EventController>();
 
   //DEFINIR REPOSITORIES
   @override
   final EventRepository eventRepository = EventRepository();
-  
+
   //DEFINIR SERVIÇOs
   @override
   final AvaliationService avaliationService = AvaliationService();
   @override
-  final ApiService apiService = ApiService();
+  final ApiClient apiClient = ApiClient();
   @override
   final NewsService newsService = NewsService();
-  
+
   //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
   @override
-  final UserModel user = Get.find(tag: 'user');
-  
+  final UserModel user = sl<UserModel>();
+
   //DEFINIR EVENTOS DO USUARIO LOGADO - OBRIGATÓRIO
   @override
-  final List<EventModel> events = Get.find(tag: 'events');
-  
+  final List<EventModel> events = sl<List<EventModel>>(instanceName: 'events');
+
   //DEFINIR EVENTO ATUAL SENDO MANIPULADO - OBRIGATÓRIO
   @override
   late EventModel event;
-  
+
   //DEFINIR DE PARTICIPANTES
   @override
   late Map<String, List<UserModel>?> participants;
-  
-  //DEFINIR DE PARTICIPANTES
+
+  //DEFINIR MODO DE VIAGEM (travelMode)
+  String _travelMode = 'walking';
   @override
-  late RxString travelMode = 'walking'.obs;
+  String get travelMode => _travelMode;
+  @override
+  set travelMode(String v) { _travelMode = v; notifyListeners(); }
 
   //FUNÇÃO DE SELEÇÃO DE EVENTO
   void setSelectedEvent(EventModel event) {

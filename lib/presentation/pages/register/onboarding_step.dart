@@ -1,6 +1,6 @@
 import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/presentation/widget/bars/header_glass_widget.dart';
@@ -15,7 +15,7 @@ class OnboardingStep extends StatefulWidget {
 
 class _OnboardingStepState extends State<OnboardingStep> {
   //CONTROLADOR DOS INPUTS DO FORMULÁRIO
-  final RegisterController registerController = Get.put(RegisterController());
+  late final RegisterController registerController;
   //IMAGENS
   final List<String> imgs = [
     AppImages.football,
@@ -35,6 +35,8 @@ class _OnboardingStepState extends State<OnboardingStep> {
   @override
   void initState() {
     super.initState();
+    //INICIALIZAR CONTROLLER DE REGISTRO
+    registerController = RegisterController()..init();
     //INICIAR LOOP DE TROCA DE IMAGEM
     Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 3));
@@ -53,7 +55,7 @@ class _OnboardingStepState extends State<OnboardingStep> {
 
     return Scaffold(
       appBar: HeaderGlassWidget( 
-        leftAction: () => Get.toNamed('/login'),
+        leftAction: () => context.go('/login'),
         brightness: currentIndex == 0 ? true : false,
       ),
       backgroundColor: imgColors[currentIndex],
@@ -113,7 +115,7 @@ class _OnboardingStepState extends State<OnboardingStep> {
         color: AppColors.white,
         floatKey: "avanced_register",
         backgroundColor: AppColors.blue_500,
-        onPressed: () => Get.toNamed('/register/dados_basicos'),
+        onPressed: () => context.push('/register/dados_basicos'),
       ),
     );
   }

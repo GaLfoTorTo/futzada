@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_size.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:futzada/core/storage/app_storage.dart';
 
 class AppStyle {
   const AppStyle();
 
   //RESGATAR COR PRINCIPAL
-  static Color get primaryColor => AppColors.colors[GetStorage().read('modalityColor')] ?? AppColors.green_300;
+  static Color get primaryColor => AppColors.colors[AppStorage.read<String>('modalityColor')] ?? AppColors.green_300;
 
   //TEXT LIGHT THEME
   static TextTheme lightTextTheme = TextTheme(

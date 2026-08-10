@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:intl/intl.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -84,7 +84,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
           //DEFINIR PARTIDA ATUAL
           gameController.setCurrentGame(widget.game);
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-          Get.toNamed('/games/overview');
+          context.go('/games/overview');
         }
       },
       borderRadius: BorderRadius.circular(20),

@@ -1,7 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
 import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -25,12 +23,12 @@ class WizardWidget extends StatelessWidget {
     if (data == null) return child;
     
 
-    return Obx((){
+    return ListenableBuilder(listenable: showcaseController, builder: (_, __){
       //VERIFICAR SE JÁ FOI COMPLETADO
-      if (showcaseController.isCompleted.value) return child;
+      if (showcaseController.isCompleted) return child;
 
       //VERIFICAR SE SHOWCASE ESTÁ PRONTO PARA NAVEGAR
-      if(!showcaseController.isReady.value) return child;
+      if(!showcaseController.isReady) return child;
 
       //ARREDONDADR BORDAS DE ACORDO COM O ELEMENTO
       final borderCircular = elementKey == 'menu' || elementKey == 'profile' || elementKey == 'chat';
@@ -43,8 +41,7 @@ class WizardWidget extends StatelessWidget {
         targetPadding: const EdgeInsets.all(5),
         onBarrierClick: (){
           final currentIndex = index < 10 ? index + 1 : 10;
-          showcaseController.currentShowcase.value = showcaseController.elementKeys[currentIndex];
-          NavigationController.instance.index.value = showcaseController.setIndexNavigation();
+          showcaseController.currentShowcase = showcaseController.elementKeys[currentIndex];
         },
         container: Padding(
           padding: const EdgeInsets.all(10.0),

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:io' as io;
-import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -312,44 +311,6 @@ class AppHelper {
     );
     //EXIBIR ALERTA
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  //FUNÇÃO PARA TRATAMENTO DE ERROS
-  static Map<String, dynamic> tratamentoErros(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.cancel:
-        //RETORNO PARA CONEXÃO CANCELADA
-        return {
-          'status': 504,
-          'message':'Operação cancelada!'
-        };
-      case DioExceptionType.connectionTimeout || DioExceptionType.sendTimeout || DioExceptionType.receiveTimeout:
-        //RETORNO PARA TEMPO EXPIRADO
-        return {
-          'status': 408,
-          'message':'Conexão expirada!'
-        };
-      case DioExceptionType.badResponse:
-        //RESGATAR  MENSAGEM DE ERRO
-        var errorMessage = error.response?.data['message'];
-        //RETORNO PARA TEMPO EXPIRADO
-        return {
-          'status': 400,
-          'message': errorMessage
-        };
-      case DioExceptionType.unknown:
-        //RETORNO PARA ERRO DESCONHECIDO
-        return {
-          'status': 500,
-          'message':'Erro no servidor!'
-        };
-      default:
-        //RETORNO PARA ERRO DESCONHECIDO
-        return {
-          'status': 504,
-          'message':'Erro no servidor!'
-        };
-    }
   }
   
   //FUNÇÃO PARA ESCONDER O TECLADO

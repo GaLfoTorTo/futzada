@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/enum/enums.dart';
@@ -71,7 +70,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
       margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
@@ -141,12 +140,12 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                   ),
                 ),
                 //CRONOMETRO E PLACAR
-                Obx(() {
-                  final teamAScore = gameController.teamAScore.value;
-                  final teamBScore = gameController.teamBScore.value;
+                ListenableBuilder(listenable: gameController, builder: (_, __){
+                  final teamAScore = gameController.teamAScore;
+                  final teamBScore = gameController.teamBScore;
 
                   //RESGATAR TEMPO DA PARTIDA
-                  final currentTime = gameController.currentTime.value;
+                  final currentTime = gameController.currentTime;
                   final parts = currentTime.split(':');
                   final minutes = int.tryParse(parts[0]) ?? 0;
                   //VERIFICAR SE TEMPO ULTRAPAÇOU LIMITE DA PARTIDA
@@ -268,7 +267,7 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
             ),
           ),
           //REGISTRADOR DE EVENTOS DA PARTIDA
-          Obx((){
+          ListenableBuilder(listenable: gameController, builder: (_, __){
             final game = gameController.currentGame;
             final temAGameEvents = gameController.gameEvents.where((t) => t.teamId == game.teams!.first.id).toList();
             final temBGameEvents = gameController.gameEvents.where((t) => t.teamId == game.teams!.last.id).toList();

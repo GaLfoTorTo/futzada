@@ -1,7 +1,7 @@
 import 'package:futzada/presentation/controllers/showcase_controller.dart';
 import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -41,8 +41,7 @@ class EscalationPageState extends State<EscalationPage> {
       //SELECIONAR EVENTO
       escalationController.setEvent(id);
       //ATUALIZAR CONTROLLER
-      escalationController.update();
-    });
+          });
   }
   
   //FUNÇÃO PARA SELECIONAR TIPO DE VISUALIZAÇÃO
@@ -56,17 +55,15 @@ class EscalationPageState extends State<EscalationPage> {
   //FUNÇÃO PARA SELECIONAR FORMAÇÃO
   void selectFormation(newValue){
     setState(() {
-      escalationController.formation.value = newValue;
-      escalationController.update();
-    });
+      escalationController.formation = newValue;
+          });
   }
   
   //FUNÇÃO PARA DEFINIR FILTROS QUANDO NEVEGAÇÃO FOR DIRETO PARA MERCADO
-  void goToMarket(){
+  void goToMarket(BuildContext context){
     //RESETAR FILTRO
     escalationController.resetFilter();
-    escalationController.update();
-    Get.toNamed('/escalation/market');
+        context.push('/escalation/market');
   }
 
   @override
@@ -78,24 +75,25 @@ class EscalationPageState extends State<EscalationPage> {
       return {'id': event.id, 'title' : event.title, 'photo': event.photo};
     }).toList();
     //DEFINIR COR A PARTIR DO TEMA
-    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = isDark ? AppColors.dark_300 : AppColors.white;
 
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Escalação',
-        leftAction: () => Get.back(),
-        rightAction: () => goToMarket(),
+        leftAction: () => context.pop(),
+        rightAction: () => goToMarket(context),
         rightIcon: Icons.shopping_cart,
-        extraAction: () => Get.toNamed('/escalation/historic'),
+        extraAction: () => context.push('/escalation/historic'),
         extraIcon: Icons.history,
         shadow: false,
       ),
       body: SafeArea(
-        child: Obx((){
-          if(escalationController.isLoading.value){
+        child: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
+          if(escalationController.isLoading){
             return const Center(child: IndicatorLoadingWidget());
           }
-          if(escalationController.hasError.value){
+          if(escalationController.hasError){
             //EXIBIR DIALOG DE ERRO
             return const ErroEscalationPage();
           }
@@ -108,7 +106,7 @@ class EscalationPageState extends State<EscalationPage> {
                   height: 70,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                    color: isDark ? AppColors.dark_500 : AppColors.white,
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.dark_500.withAlpha(30),
@@ -118,14 +116,14 @@ class EscalationPageState extends State<EscalationPage> {
                       ),
                     ],
                   ),
-                  child: Obx((){
+                  child: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
                     //RESGATAR VALOR DE PATRIMONIO DO TECNICO
-                    var managerPatrimony = escalationController.managerPatrimony.value;
+                    var managerPatrimony = escalationController.managerPatrimony;
                     //RESGATAR PREÇO DA EQUIPE DO TECNICO
-                    var managerTeamPrice = escalationController.managerTeamPrice.value;
+                    var managerTeamPrice = escalationController.managerTeamPrice;
                     //RESGATAR VALORIZAÇÃO DO PATRIMONIO DO TECNICO
-                    var managerValuation = escalationController.managerValuation.value;
-                    if(!escalationController.isReady.value){
+                    var managerValuation = escalationController.managerValuation;
+                    if(!escalationController.isReady){
                       return SizedBox.shrink();
                     }
 
@@ -140,7 +138,7 @@ class EscalationPageState extends State<EscalationPage> {
                             items: userEvents,
                             onChange: selectEvent,
                             iconAfter: false,
-                            backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+                            backgroundColor: isDark ? AppColors.dark_300 : AppColors.white,
                           ),
                         ),
                         SizedBox(
@@ -180,7 +178,7 @@ class EscalationPageState extends State<EscalationPage> {
                       SizedBox(
                         width: ( dimensions.width / 2 ) -10,
                         child: ButtonFormationWidget(
-                          selectedFormation: escalationController.formation.value, 
+                          selectedFormation: escalationController.formation, 
                           onChange: selectFormation
                         ),
                       ),
@@ -220,8 +218,8 @@ class EscalationPageState extends State<EscalationPage> {
                   EscalationWidget(
                     width: dimensions.width - 80,
                     height: (dimensions.height / 2) + 50,
-                    category: escalationController.category.value,
-                    formation: escalationController.formation.value
+                    category: escalationController.category,
+                    formation: escalationController.formation
                   ),
                   const SizedBox(height: 50),
                   const Text(
@@ -229,7 +227,7 @@ class EscalationPageState extends State<EscalationPage> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   ReserveBankWidget(
-                    category: escalationController.category.value,
+                    category: escalationController.category,
                   ),
                 ] else ...[
                   const EscalationListWidget(
@@ -247,10 +245,10 @@ class EscalationPageState extends State<EscalationPage> {
           );
         })
       ),
-      floatingActionButton: Obx(() {
+      floatingActionButton: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
         //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
-        if(escalationController.isReady.value && !escalationController.starters.contains(null)) {
-          bool hasCapitan = escalationController.selectedPlayerCapitan.value != 0;
+        if(escalationController.isReady && !escalationController.starters.contains(null)) {
+          bool hasCapitan = escalationController.selectedPlayerCapitan != 0;
           return FloatButtonEscalationWidget(hasCapitan: hasCapitan);
         }
         return const SizedBox.shrink();

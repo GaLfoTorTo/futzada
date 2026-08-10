@@ -1,5 +1,11 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/providers/app_session_provider.dart';
+import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/pages/app_base.dart';
+import 'package:futzada/presentation/pages/home/home_base.dart';
+import 'package:futzada/presentation/pages/notification/notification_page.dart';
 import 'package:futzada/presentation/pages/splash_page.dart';
 import 'package:futzada/presentation/pages/auth/login_page.dart';
 import 'package:futzada/presentation/pages/register/onboarding_step.dart';
@@ -31,47 +37,231 @@ import 'package:futzada/presentation/pages/explore/map/map_explorer.dart';
 import 'package:futzada/presentation/pages/explore/explore_filter_page.dart';
 import 'package:futzada/presentation/pages/explore/explore_search_page.dart';
 
+class _SessionRefreshNotifier extends ChangeNotifier {
+  _SessionRefreshNotifier(ProviderContainer container) {
+    container.listen(appSessionProvider, (_, __) => notifyListeners());
+  }
+}
+
 class AppRoutes {
-  static final routes = [
-      GetPage(name: "/splash", page: () => const SplashPage()),
-      GetPage(name: "/onboarding", page: () => const OnboardingPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/login", page: () => const LoginPage(), transition: Transition.leftToRight),
-      //REGISTRO DE USUÁRIO
-      GetPage(name: "/register/onbording", page: () =>  const OnboardingStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/register", page: () =>  const RegisterStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/register/player", page: () =>  const PlayerModeStep(), transition: Transition.leftToRight),
-      GetPage(name: "/register/manager", page: () =>  const ManagerModeStep(), transition: Transition.leftToRight),
-      //HOME
-      GetPage(name: "/home", page: () => const AppBase()),
-      //CHAT
-      GetPage(name: "/profile", page: () => const ProfilePage(), transition: Transition.rightToLeft),
-      //CHAT
-      GetPage(name: "/chats", page: () => const ChatsPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/chat_private", page: () => const ChatPrivatePage(), transition: Transition.rightToLeft),
-      //ESCALAÇÃO
-      GetPage(name: "/escalation", page: () => const EscalationPage()),
-      GetPage(name: "/escalation/statistics", page: () => const StatisticsPage()),
-      GetPage(name: "/escalation/market", page: () => const MarketPage()),
-      GetPage(name: "/escalation/historic", page: () => const HistoricPage()),
-      //PARTIDAS
-      GetPage(name: "/games/day", page: () => const GamesDayPage()),
-      GetPage(name: "/games/config", page: () => const GameConfigPage()),
-      GetPage(name: "/games/teams", page: () => const GameRandomTeamsPage()),
-      GetPage(name: "/games/overview", page: () => const GameDetailPage()),
-      //EVENTS - CADASTRO 
-      GetPage(name: "/event/register/basic", page: () => const EventBasicStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/register/address", page: () => const EventAddressStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/register/config_games", page: () => const EventConfigGameStep(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/register/participants", page: () => const EventParticipantsStep(), transition: Transition.rightToLeft),
-      //EVENTS - VIEW GERAL
-      GetPage(name: "/event/geral", page: () => const EventPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/settings", page: () => const EventSettingsPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/historic", page: () => const EventHistoricPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/event/list", page: () => const EventListPage(), transition: Transition.rightToLeft),
-      //EXPLORE MAPA
-      GetPage(name: "/explore/map", page: () => const MapExplorePage(), transition: Transition.rightToLeft),
-      GetPage(name: "/explore/map/picker", page: () => const MapPickerPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/explore/search", page: () => const ExploreSearchPage(), transition: Transition.rightToLeft),
-      GetPage(name: "/explore/filter", page: () => const ExploreFilterPage(), transition: Transition.rightToLeft),
-  ];
+  static GoRouter createRouter(ProviderContainer container) {
+    final refreshNotifier = _SessionRefreshNotifier(container);
+    return GoRouter(
+    initialLocation: '/splash',
+    refreshListenable: refreshNotifier,
+    redirect: (context, state) {
+      final session = container.read(appSessionProvider);
+      final location = state.matchedLocation;
+      switch (session) {
+        case AppSession.loading:
+          return location == '/splash' ? null : '/splash';
+        case AppSession.unauthenticated:
+          return location == '/login' ? null : '/login';
+        case AppSession.firstLogin:
+          return location == '/onboarding' ? null : '/onboarding';
+        case AppSession.authenticated:
+          return (location == '/splash' || location == '/login') ? '/home' : null;
+      }
+    },
+    routes: [
+      GoRoute(
+        path: '/splash',
+        pageBuilder: (_, __) => const NoTransitionPage(child: SplashPage()),
+      ),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (_, __) => transitionToRight(const LoginPage()),
+      ),
+      GoRoute(
+        path: '/onboarding',
+        pageBuilder: (_, __) => transitionToLeft(const OnboardingPage()),
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => AppBase(
+          selectedIndex: navigationShell.currentIndex,
+          onDestinationSelected: (index) => navigationShell.goBranch(index),
+          child: navigationShell,
+        ),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/home',
+              pageBuilder: (_, __) => NoTransitionPage(child: HomeBase()),
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/escalation',
+              pageBuilder: (_, __) => const NoTransitionPage(child: EscalationPage()),
+              routes: [
+                GoRoute(
+                  path: '/statistics',
+                  pageBuilder: (_, __) => const NoTransitionPage(child: StatisticsPage()),
+                ),
+                GoRoute(
+                  path: '/market',
+                  pageBuilder: (_, __) => const NoTransitionPage(child: MarketPage()),
+                ),
+                GoRoute(
+                  path: '/historic',
+                  pageBuilder: (_, __) => const NoTransitionPage(child: HistoricPage()),
+                ),
+              ],
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/event',
+              pageBuilder: (_, __) => const NoTransitionPage(child: EventPage()),
+              routes: [
+                GoRoute(
+                  path: '/settings',
+                  pageBuilder: (_, __) => transitionToLeft(const EventSettingsPage()),
+                ),
+                GoRoute(
+                  path: '/historic',
+                  pageBuilder: (_, __) => transitionToLeft(const EventHistoricPage()),
+                ),
+                GoRoute(
+                  path: '/list',
+                  pageBuilder: (_, __) => transitionToLeft(const EventListPage()),
+                ),
+                GoRoute(
+                  path: '/register',
+                  redirect: (_, __) => '/event/register/basic',
+                  routes: [
+                    GoRoute(
+                      path: '/basic',
+                      pageBuilder: (_, __) => transitionToLeft(const EventBasicStep()),
+                    ),
+                    GoRoute(
+                      path: '/address',
+                      pageBuilder: (_, __) => transitionToLeft(const EventAddressStep()),
+                    ),
+                    GoRoute(
+                      path: '/config_games',
+                      pageBuilder: (_, __) => transitionToLeft(const EventConfigGameStep()),
+                    ),
+                    GoRoute(
+                      path: '/participants',
+                      pageBuilder: (_, __) => transitionToLeft(const EventParticipantsStep()),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/explore',
+              pageBuilder: (_, __) => const NoTransitionPage(child: MapExplorePage()),
+              routes: [
+                GoRoute(
+                  path: '/map',
+                  pageBuilder: (_, __) => transitionToLeft(const MapExplorePage()),
+                ),
+                GoRoute(
+                  path: '/picker',
+                  pageBuilder: (_, __) => transitionToLeft(const MapPickerPage()),
+                ),
+                GoRoute(
+                  path: '/search',
+                  pageBuilder: (_, __) => transitionToLeft(const ExploreSearchPage()),
+                ),
+                GoRoute(
+                  path: '/filter',
+                  pageBuilder: (_, __) => transitionToLeft(const ExploreFilterPage()),
+                ),
+              ],
+            ),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: '/notifications',
+              pageBuilder: (_, __) => const NoTransitionPage(child: NotificationPage()),
+            ),
+          ]),
+        ],
+      ),
+      GoRoute(
+        path: '/profile',
+        pageBuilder: (_, __) => transitionToLeft(const ProfilePage()),
+      ),
+      GoRoute(
+        path: '/chats',
+        pageBuilder: (_, __) => transitionToLeft(const ChatsPage()),
+        routes: [
+          GoRoute(
+            path: '/private',
+            pageBuilder: (context, state) => transitionToLeft(ChatPrivatePage(user: state.extra as UserModel)),
+          ),
+        ]
+      ),
+      GoRoute(
+        path: '/register',
+        pageBuilder: (_, __) => transitionToLeft(const RegisterStep()),
+        routes: [
+          GoRoute(
+            path: '/onboarding',
+            pageBuilder: (_, __) => transitionToRight(const OnboardingStep()),
+          ),
+          GoRoute(
+            path: '/player',
+            pageBuilder: (_, __) => transitionToRight(const PlayerModeStep()),
+          ),
+          GoRoute(
+            path: '/manager',
+            pageBuilder: (_, __) => transitionToRight(const ManagerModeStep()),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/games',
+        redirect: (_, __) => '/games/day',
+        routes: [
+          GoRoute(
+            path: '/day',
+            pageBuilder: (_, __) => const NoTransitionPage(child: GamesDayPage()),
+          ),
+          GoRoute(
+            path: '/config',
+            pageBuilder: (_, __) => const NoTransitionPage(child: GameConfigPage()),
+          ),
+          GoRoute(
+            path: '/teams',
+            pageBuilder: (_, __) => const NoTransitionPage(child: GameRandomTeamsPage()),
+          ),
+          GoRoute(
+            path: '/overview',
+            pageBuilder: (_, __) => const NoTransitionPage(child: GameDetailPage()),
+          ),
+        ],
+      ),
+    ],
+  ); // GoRouter
+  } // createRouter
+
+  static CustomTransitionPage transitionToLeft(Widget child) {
+    return CustomTransitionPage(
+      child: child,
+      transitionsBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static CustomTransitionPage transitionToRight(Widget child) {
+    return CustomTransitionPage(
+      child: child,
+      transitionsBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
 }

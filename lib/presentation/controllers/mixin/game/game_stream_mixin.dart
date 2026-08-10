@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/data/models/snapshot_model.dart';
@@ -7,14 +8,14 @@ import 'package:futzada/data/models/game_event_model.dart';
 import 'package:futzada/data/services/game_stream_service.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 
-mixin GameStreamMixin on GetxController implements GameBase{
-  //RESGATAR SERVIÇO DE STREAM 
-  GameStreamService get streamService => Get.find<GameStreamService>();
+mixin GameStreamMixin on ChangeNotifier implements GameBase {
+  //RESGATAR SERVIÇO DE STREAM
+  GameStreamService get streamService => sl<GameStreamService>();
 
   //ESTADO - CONEXÃO DE STREAM
-  ConnectionState get streamState => streamService.connectionState.value;
+  ConnectionState get streamState => streamService.connectionState;
   StreamSubscription<SnapshotModel>? streamSub;
-  
+
   //ACESSORES DE PARTIDA ATUAL
   set currentGame(GameModel game);
 
@@ -34,102 +35,84 @@ mixin GameStreamMixin on GetxController implements GameBase{
 
   //FUNÇÃO DE ROTEAMENTO DE MENSAGENS
   void handleStream(SnapshotModel message) {
-    //VERIFICAR TIPO DE MENSAGEM RECEBIDA
     if (message.type == SnapshotType.unknown) return;
-
-    //VERIFICAR SE SE MENSAGENS RECEBIDAS SÃO DA PARTIDA DO EVENTO
     if (message.gameId != currentGame.id) return;
-
-    //MAPEAMENTO DE MENSAGEMS
-    if(message.type == SnapshotType.action) updateAction(message.payload);
+    if (message.type == SnapshotType.action) updateAction(message.payload);
   }
 
   //FUNÇÃO DE MAPEAMENTO DE EVENTOS DA PARTIDA
   void updateAction(Map<String, dynamic> payload) {
-    //RESGATAR ACTION
     GameEvent actionType = GameEvent.values[payload['action']];
-    //MAPEAMENTO DE EVENTOS DA PARTIDA
     switch (actionType) {
-      //INICIAR PARTIDA/ INICIALIZAR PRORROGAÇÃO
       case GameEvent.StartGame:
       case GameEvent.ExtraTime:
       case GameEvent.ExtraTimeStart:
-        isGameRunning.value = true;
+        isGameRunning = true;
         currentGame = currentGame.copyWith(status: GameStatus.InProgress);
         break;
-      //FINALIZAR PARTIDA / FINALIZAR PRORROGAÇÃO
       case GameEvent.EndGame:
       case GameEvent.ExtraTimeEnd:
-        isGameRunning.value = false;
+        isGameRunning = false;
         currentGame = currentGame.copyWith(status: GameStatus.Completed);
         break;
-      //FIM PRIMEIRO TEMPO
       case GameEvent.HalfTimeEnd:
-        isGameRunning.value = false;
+        isGameRunning = false;
         break;
-      //PENALTIES
       case GameEvent.Penalties:
         currentGame = currentGame.copyWith(status: GameStatus.Completed);
         break;
-      //GOL
       case GameEvent.Goal:
         final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamAScore.value++;
+          teamAScore++;
         } else {
-          teamBScore.value++;
+          teamBScore++;
         }
         break;
-      //ESCANTEIOS
       case GameEvent.Corner:
         final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamACorners.value++;
+          teamACorners++;
         } else {
-          teamBCorners.value++;
+          teamBCorners++;
         }
         break;
-      //IMPEDIMENTOS
       case GameEvent.Offside:
-      final team = payload['team'] as String? ?? '';
+        final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamAOffside.value++;
+          teamAOffside++;
         } else {
-          teamBOffside.value++;
+          teamBOffside++;
         }
         break;
-      //FALTAS
       case GameEvent.Foul:
       case GameEvent.FoulTaken:
         final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamAFouls.value++;
+          teamAFouls++;
         } else {
-          teamBFouls.value++;
+          teamBFouls++;
         }
         break;
-      //CARTÃO AMARELO
       case GameEvent.YellowCard:
         final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamAYellowCard.value++;
+          teamAYellowCard++;
         } else {
-          teamBYellowCard.value++;
+          teamBYellowCard++;
         }
         break;
-      //CRTÃO VERMELHO
       case GameEvent.RedCard:
         final team = payload['team'] as String? ?? '';
         if (team == 'A') {
-          teamARedCard.value++;
+          teamARedCard++;
         } else {
-          teamBRedCard.value++;
+          teamBRedCard++;
         }
         break;
       default:
         break;
     }
-    //ADICIONAR EVENTO DA PARTIDA
     addGameEvent(payload, actionType);
   }
 
@@ -141,7 +124,8 @@ mixin GameStreamMixin on GetxController implements GameBase{
         'type': eventType,
         'timestamp': DateTime.now().toIso8601String(),
       });
-      gameEvents.insert(0, event); // mais recente no topo
+      gameEvents.insert(0, event);
+      notifyListeners();
     } catch (_) {}
   }
 }

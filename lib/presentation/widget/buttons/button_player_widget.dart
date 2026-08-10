@@ -1,7 +1,7 @@
 import 'package:futzada/data/models/rating_model.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/player_model.dart';
@@ -44,21 +44,19 @@ class ButtonPlayerWidget extends StatelessWidget {
     //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
     void selectPlayer(UserModel? user) {
       //ATUALIZAR INDEX DE JOGADOR SELECIONADO
-      escalationController.selectedPlayer.value = index;
-      escalationController.selectedOccupation.value = occupation;
+      escalationController.selectedPlayer = index;
+      escalationController.selectedOccupation = occupation;
       //VERIFICAR SE JOGADOR NÃO É NULO
       if(user != null){
         //CHAMAR DIALOG DO JOGADOR
-        Get.bottomSheet(BottomSheetPlayer(user: user), isScrollControlled: true);
+        showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetPlayer(user: user));
       }else{
         //AJUSTAR FILTRO PARA POSIÇÃO SELECIONADA
         escalationController.setFilter('positions', [position]);
-        escalationController.update();
-        //NAVEGAR PARA PAGINA DE MERCADO
-        Get.toNamed('/escalation/market');
+                //NAVEGAR PARA PAGINA DE MERCADO
+        context.push('/escalation/market');
       }
-      escalationController.update();
-    }
+          }
 
     //FUNÇÃO PARA DEFINIR BOTÃO DE JOGADOR
     List<Widget> setPlayerButton(UserModel? user){
@@ -69,7 +67,7 @@ class ButtonPlayerWidget extends StatelessWidget {
         //RESGATAR RATING DO EVENTO
         RatingModel rating = UserHelper.getRating(player, escalationController.event!.id!);
         //DEEFINIR COR A PARTIR DO TEMA
-        final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
+        final color = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white;
 
         return [
           if(rating.points != null)...[

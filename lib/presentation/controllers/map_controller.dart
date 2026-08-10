@@ -1,88 +1,109 @@
-import 'package:get/get.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/services/address_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
 
-class MapWidgetController extends GetxController {
-  //DEFINIR MODEL DE CHAMANDO DO CONTROLLER
-  late String model;
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static MapWidgetController get instance => Get.find();
+class MapWidgetController extends ChangeNotifier {
+  //DEFINIR MODEL DE CHAMANDA DO CONTROLLER (passado pelo chamador)
+  String model;
+  //DEFINIR CONTROLLER UNICO NO GETIT
+  static MapWidgetController get instance => sl<MapWidgetController>();
   //CONTROLLER DO MAPA
   final MapController mapController = MapController();
   //INSTANCIAR SERVIÇO DE ENDEREÇOS
   AddressService addressService = AddressService();
   //INSTANCIAR SERVIÇO DE EVENTOS
   EventRepository eventRepository = EventRepository();
-  
-  //ESTADOS - POSIÇÃO, ZOOM E CARREGAMENTO DO MAPA
-  final RxMap<String, dynamic> currentLocation = Get.find(tag: 'userLocation');
-  final Rxn<Position> currentPosition = Get.find(tag: 'userPosition');
-  final Rxn<LatLng> currentLatLog = Get.find(tag: 'userLatLog');
-  final RxDouble currentZoom = 17.0.obs;
-  //CARREGAMENTO
-  final RxDouble baseSize = 15.0.obs;
-  final RxBool isLoaded = false.obs;
-  final RxBool isMapReady = false.obs;
-  //LISTA DE ENDEREÇO DE QUADRAS/CAMPOS PUBLICOS E PRIVADOS
-  RxList<Map<String, dynamic>> sportPlaces = <Map<String, dynamic>>[].obs;
-  //LISTA DE EVENTOS REGISTRADOS
-  RxList<EventModel> events = <EventModel>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    //RESGATAR MODEL DE CHAMADA DO CONTROLLER DE MAPA
-    model = Get.currentRoute.contains('explore') ?  'Explorer' : 'Address';
-    //RESGATAR EVENTOS OU LOCAIS DE PRATICAS DE EXPORTE
+  MapWidgetController({this.model = 'Explorer'});
+
+  //ESTADOS - POSIÇÃO, ZOOM E CARREGAMENTO DO MAPA
+  Map<String, dynamic> _currentLocation = sl<Map<String, dynamic>>(instanceName: 'userLocation');
+  Map<String, dynamic> get currentLocation => _currentLocation;
+  set currentLocation(Map<String, dynamic> v) { _currentLocation = v; notifyListeners(); }
+
+  late Position _currentPosition;
+  Position get currentPosition => _currentPosition;
+  set currentPosition(Position v) { _currentPosition = v; notifyListeners(); }
+
+  late LatLng _currentLatLog;
+  LatLng get currentLatLog => _currentLatLog;
+  set currentLatLog(LatLng v) { _currentLatLog = v; notifyListeners(); }
+
+  void _initLocation() {
+    if (sl.isRegistered<Position>()) {
+      _currentPosition = sl<Position>();
+      _currentLatLog = LatLng(_currentPosition.latitude, _currentPosition.longitude);
+    } else {
+      _currentLatLog = LatLng(0, 0);
+    }
+  }
+
+  double _currentZoom = 17.0;
+  double get currentZoom => _currentZoom;
+  set currentZoom(double v) { _currentZoom = v; notifyListeners(); }
+
+  double _baseSize = 15.0;
+  double get baseSize => _baseSize;
+  set baseSize(double v) { _baseSize = v; notifyListeners(); }
+
+  bool _isLoaded = false;
+  bool get isLoaded => _isLoaded;
+  set isLoaded(bool v) { _isLoaded = v; notifyListeners(); }
+
+  bool _isMapReady = false;
+  bool get isMapReady => _isMapReady;
+  set isMapReady(bool v) { _isMapReady = v; notifyListeners(); }
+
+  //LISTA DE ENDEREÇO DE QUADRAS/CAMPOS PUBLICOS E PRIVADOS
+  final List<Map<String, dynamic>> _sportPlaces = [];
+  List<Map<String, dynamic>> get sportPlaces => _sportPlaces;
+
+  //LISTA DE EVENTOS REGISTRADOS
+  final List<EventModel> _events = [];
+  List<EventModel> get events => _events;
+
+  void init() {
+    _initLocation();
     loadSportPlaces();
   }
 
   //FUNÇÃO PARA BUSCAR LOCAIS DE PRATICA DE ESPORTES (QUADRAS CAMPOS)
-  Future<void> loadSportPlaces() async{
-    //VERIFICAR SE POSIÇÃO DO USUÁRIO FOI RESGATADA
-    if(currentPosition.value != null) {
-      //BUSCAR EVENTOS OU LOCAIS APARTIR DA MODEL DEFINIDA
-      switch (model) {
-        case 'Explorer':
-          await Future.delayed(const Duration(seconds: 2));
-          //BUSCAR QUADRAS E CAMPOS
-          events.assignAll(await eventRepository.getEvents() ?? []);
-          isLoaded.value = true;
-        case 'Address':
-          //BUSCAR QUADRAS E CAMPOS
-          sportPlaces.assignAll(await addressService.getSportPlaces(2));
-          isLoaded.value = true;
-          break;
-        default:
-      }
-    }else{
-      isLoaded.value = false;
-      //CASO PERMISSÃO SEJA NEGADA EXIBIR MENSAGEM DE NECESSIDADE DE PERMISSÃO
-      AppHelper.feedbackMessage(Get.context,'Não foi possível acessar a posição do usuário');
+  Future<void> loadSportPlaces() async {
+    switch (model) {
+      case 'Explorer':
+        await Future.delayed(const Duration(seconds: 2));
+        final loaded = await eventRepository.getEvents() ?? [];
+        _events.clear();
+        _events.addAll(loaded);
+        isLoaded = true;
+        break;
+      case 'Address':
+        final places = await addressService.getSportPlaces(2);
+        _sportPlaces.clear();
+        _sportPlaces.addAll(places);
+        isLoaded = true;
+        break;
+      default:
+        break;
     }
   }
 
   //FUNÇÃO PARA MOVER MAPA PARA POSIÇÃO DO USUARIO
-  void moveMapCurrentUser(LatLng latLong){
-    //MOVER MAPA PARA POSIÇÃO ATUAL DO USUÁRIO
-    mapController.move(
-      latLong,
-      15.0,
-    );
+  void moveMapCurrentUser(LatLng latLong) {
+    mapController.move(latLong, 15.0);
   }
 
-  //FUNÇÃO PARA CALCULAR TAMANHO DOS MARKERS 
-  double calculateBaseSize() { 
-    //AJUSTAR TAMANHO DO ICONE DE ACORDO COM ZOOM 
-    if (currentZoom.value > 18) return 40.0; 
-    if (currentZoom.value > 16) return 30.0; 
-    if (currentZoom.value > 14) return 25.0; 
-    if (currentZoom.value > 12) return 20.0; 
-    return 15.0; 
+  //FUNÇÃO PARA CALCULAR TAMANHO DOS MARKERS
+  double calculateBaseSize() {
+    if (currentZoom > 18) return 40.0;
+    if (currentZoom > 16) return 30.0;
+    if (currentZoom > 14) return 25.0;
+    if (currentZoom > 12) return 20.0;
+    return 15.0;
   }
 }

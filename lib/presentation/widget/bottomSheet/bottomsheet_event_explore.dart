@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/map_helper.dart';
@@ -71,7 +71,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                 //RESGATAR DATA DO EVENTO
                 String eventDate = event.date.toString().replaceAll('[', '').replaceAll(']', '').toString();
                 //RESGATAR POSIÇÕES DO USUARIO
-                final userLatLon = mapWidgetController.currentLatLog.value!;
+                final userLatLon = mapWidgetController.currentLatLog!;
                 //RESGATAR POSIÇÕES DO MARKER
                 final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
                 //RESGATAR DISTANCIA ATE O LOCAL
@@ -448,12 +448,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                           //DEFINIR EVENTO ATUAL NO CONTROLLER
                           eventController.setSelectedEvent(event),
                           //NAVEGAR PARA PAGINA DO EVENTO
-                          Get.toNamed(
-                            "/event/geral",
-                            arguments: {
-                              'event': event,
-                            }
-                          )
+                          context.go('/event')
                         },
                       )
                     ],

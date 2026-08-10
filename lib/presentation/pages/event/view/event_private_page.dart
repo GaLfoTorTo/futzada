@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -26,7 +25,7 @@ class EventPrivatePage extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
         padding: const EdgeInsets.all(10),
         child: Column(
           spacing: 10,

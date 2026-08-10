@@ -1,8 +1,7 @@
 import 'dart:math';
-import 'package:get/get.dart';
 import 'package:dio/dio.dart'as Dio;
 import 'package:faker/faker.dart';
-import 'package:futzada/core/api/api.dart';
+import 'package:futzada/core/api/api_routes.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/presentation/controllers/address_controller.dart';
@@ -45,7 +44,7 @@ class AddressService {
       final long = latLon.longitude;
       //BUSCAR CIDADE DO USUARIO
       final response = await dio.get(
-        AppApi.mapReverse,
+        ApiRoutes.mapReverse,
         queryParameters: {
           'lat': lat,
           'lon': long,
@@ -90,7 +89,7 @@ class AddressService {
       """;
       //BUSCAR CIDADE DO USUARIO
       final response = await dio.post(
-        AppApi.mapInterpreter,
+        ApiRoutes.mapInterpreter,
         data: query
       );
       //VERIFICAR SE CONSULTA FOI BEM SUCEDIDA
@@ -198,7 +197,7 @@ class AddressService {
     //RESGATAR CONTROLLER DE MAP
     MapWidgetController mapWidgetController = MapWidgetController.instance;
     //DEFINIR ESTADO DE PSEQUISA COMO TRUE
-    addressController.isSearching.value = true;
+    addressController.isSearching = true;
     //LIMPAR SUGESTÕES
     addressController.suggestions.clear();
     //RESGATAR CIDADE DO USUÁRIO
@@ -209,7 +208,7 @@ class AddressService {
       var dio = Dio.Dio();
       //INICIALIZAR REQUISIÇÃO
       var response = await dio.get(
-        AppApi.mapSearch, 
+        ApiRoutes.mapSearch, 
         queryParameters: {
           'q': '$address, $state',
           'format': 'json',
@@ -242,15 +241,14 @@ class AddressService {
           });
         });
         //ATUALIZAR A LISTA DE SUGESTÕES
-        addressController.suggestions.assignAll(resp);
-        addressController.update();
-      }
+        addressController.suggestions..clear()..addAll(resp);
+              }
     } catch (e) {
       //TRATAR ERROS
       print(e);
     }
     //DEFINIR ESTADO DE PSEQUISA COMO TRUE
-    addressController.isSearching.value = false;
+    addressController.isSearching = false;
     return;
   }
 //ARRAY DE COORDENADAS (TEMPORARIAMENTE)

@@ -1,7 +1,8 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -34,8 +35,8 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
   //LISTA DE PARTICIPANTES - TEMPORARIA
   List<UserModel> participantsPresentClone = [];
   //ESTADOS - EQUIPES
-  RxBool teamDefined = false.obs;
-  RxBool reorderList = false.obs;
+  bool teamDefined = false;
+  bool reorderList = false;
   late int qtdPlayers;
   
   @override
@@ -53,12 +54,12 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
       //VERIFICAR SE QUATIDADE DE PARTICIPANTES JÁ E SUFICIENTE PARA FORMAR AS EQUIPES
       if(gameController.participantsPresent.length < qtdPlayers * 2){
         //EXIBIR DIALOG DE FALTA DE PARTICIPANTES
-        Get.dialog(const DialogAlertTeam());
+        showDialog(context: context, builder: (_) => const DialogAlertTeam());
       }else{
         //VERIFICAR SE TIME JA ESTA DEFINIDO
         if(gameController.teamA.players.isNotEmpty && gameController.teamB.players.isNotEmpty){
           //ATUALIZAR VARIAVEL DE DEFINIÇÃO DE EQUIPE
-          teamDefined.value = true;
+          setState(() { teamDefined = true; });
         }
       }
     });
@@ -68,17 +69,15 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
   void setTeams(){
     //VERIIFCAR SE EQUIPES FORAM MONTADAS
     if(
-      gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam && 
-      gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam
+      gameController.teamA.players.length == gameController.currentGameConfig!.playersPerTeam &&
+      gameController.teamB.players.length == gameController.currentGameConfig!.playersPerTeam
     ){
       //DEIFNIR EQUIEPES E DISPENSAR CONTROLLERS DE EQUIPES
       gameController.disposeTeamsControllers();
-      gameController.isGameReady.value = true;
+      gameController.isGameReady = true;
       //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-      Get.offNamed('/games/overview', arguments: {
-        'game': gameController.currentGame,
-        'event': gameController.event,
-      });
+      // TODO: migrar passagem de args para GoRouter extra (game, event)
+      context.go('/games/overview');
     }else{
       AppHelper.feedbackMessage(context, "Os times não tem jogadores suficientes para continuar");
     }
@@ -93,17 +92,16 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
         break;
       case "cancel":
         //RESETAR LISTA PARA ESTADO INICIAL (AO CLICAR NO BOTÃO)
-        gameController.participantsPresent.value = participantsPresentClone.toList();
+        gameController.setParticipantsPresent(participantsPresentClone.toList());
         break;
       case "reset":
         //RESETAR LISTA PARA ESTADO INICIAL (AO DEFINIR ENTRADA DE PARTICIPANTES)
-        gameController.participantsPresent.value = gameController.participantsClone.toList();
+        gameController.setParticipantsPresent(gameController.participantsClone.toList());
         break;
     }
     participantsPresentClone = [];
-    gameController.update();
-    //ATUALIZAR ESTADO
-    reorderList.value = !reorderList.value;
+        //ATUALIZAR ESTADO
+    setState(() { reorderList = !reorderList; });
   }
   
   @override
@@ -114,13 +112,12 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
       appBar: HeaderWidget(
         title: "Definição de Equipes",
         backgroundColor: modalityColor,
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightIcon: AppIcones.cog_solid,
         rightAction: () {
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-          Get.toNamed('/games/config', arguments: {
-            'game': gameController.currentGame,
-          });
+          // TODO: migrar passagem de args para GoRouter extra (game)
+          context.push('/games/config');
         },
         shadow: false,
       ),
@@ -212,12 +209,13 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: () => Get.bottomSheet(
-                              BottomSheetEmblema(
+                            onTap: () => showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => BottomSheetEmblema(
                                 emblema: gameController.teamAEmblemaController.text,
                                 team: true,
-                              ), 
-                              isScrollControlled: true
+                              ),
                             ).whenComplete(() => setState(() {})),
                             child: Container(
                               width: dimensions.width * 0.37,
@@ -225,7 +223,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                               margin: const EdgeInsets.symmetric(vertical: 20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
+                                color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.dark_500.withAlpha(30),
@@ -255,19 +253,20 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                             )
                           ),
                           InkWell(
-                            onTap: () => Get.bottomSheet(
-                              BottomSheetEmblema(
+                            onTap: () => showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => BottomSheetEmblema(
                                 emblema: gameController.teamBEmblemaController.text,
                                 team: false,
-                              ), 
-                              isScrollControlled: true
+                              ),
                             ).whenComplete(() => setState(() {})),
                             child: Container(
                               width: dimensions.width * 0.37,
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
+                                color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                                 boxShadow: [
                                   BoxShadow(
                                     color: AppColors.dark_500.withAlpha(30),
@@ -298,11 +297,11 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                       spacing: 5,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: List.generate(2, (i){
-                        return Obx((){
+                        return ListenableBuilder(listenable: gameController, builder: (_, __){
                           //RESGATAR TAMANHO DAS EQUIPES (REATIVO)
                           final teamLength = i == 0 
-                            ? gameController.teamAlength.value
-                            : gameController.teamBlength.value;
+                            ? gameController.teamAlength
+                            : gameController.teamBlength;
                 
                           //RESGATAR TAMANHO DAS EQUIPES (ESTATICO)
                           final teamCount = i == 0 
@@ -347,14 +346,17 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                         icon: AppIcones.users_solid,
                                         iconSize: 15,
                                         iconAfter: i == 0,
-                                        action: () => Get.bottomSheet(
-                                          BottomSheetGamePlayers(
-                                            team: 0,
+                                        action: () => showModalBottomSheet(
+                                          context: context,
+                                          isScrollControlled: true,
+                                          builder: (_) => BottomSheetGamePlayers(
+                                            team: i,
                                             qtdPlayers: qtdPlayers
                                           ),
-                                          isScrollControlled: true
-                                        ).whenComplete(() {
-                                          setState(() => gameController.teamAlength.value = teamCount);
+                                        ).then((_) {
+                                          setState(() => i == 0
+                                            ? gameController.teamAlength = teamCount
+                                            : gameController.teamBlength = teamCount);
                                         }),
                                       )
                                     ),
@@ -403,7 +405,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                     return Container(
                                       padding: const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
+                                        color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                                       ),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
@@ -457,7 +459,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                         });
                       }).toList()
                     ),
-                    if(teamDefined.value)...[
+                    if(teamDefined)...[
                       ButtonTextWidget(
                         text: "Definir Equipes",
                         width: dimensions.width,
@@ -471,21 +473,21 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                         icon: Icons.restart_alt_rounded,
                         iconSize: 30,
                         action: () async{
-                          await Get.showOverlay(
-                            asyncFunction: (){
-                              teamDefined.value = false;
-                              return gameController.teamService.resetPlayersTeams();
+                          await LoadingOverlay.show(
+                            context,
+                            () async {
+                              setState(() { teamDefined = false; });
+                              await gameController.teamService.resetPlayersTeams();
                             },
                             loadingWidget: const Center(child: IndicatorLoadingWidget()),
-                            opacity: 0.7,
-                            opacityColor: AppColors.dark_700
+                            barrierColor: AppColors.dark_700.withAlpha(179),
                           );
                         }
                       ),
                     ],
                     const Divider(),
                     if(gameController.participantsPresent.isNotEmpty)...[
-                      Obx((){
+                      ListenableBuilder(listenable: gameController, builder: (_, __){
                         return Column(
                           spacing: 10,
                           children: [
@@ -497,7 +499,7 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                   style: Theme.of(context).textTheme.titleLarge,
                                   textAlign: TextAlign.start,
                                 ), 
-                                if(!reorderList.value)...[
+                                if(!reorderList)...[
                                   ButtonTextWidget(
                                     text: "Reordenar",
                                     icon: Icons.reorder_rounded,
@@ -507,13 +509,13 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
                                     backgroundColor: Colors.transparent,
                                     action: () => {
                                       participantsPresentClone = gameController.participantsPresent.toList(),
-                                      reorderList.value = !reorderList.value
+                                      setState(() { reorderList = !reorderList; })
                                     },
                                   )
                                 ]
                               ],
                             ),
-                            if(reorderList.value)...[
+                            if(reorderList)...[
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [ 
@@ -656,28 +658,25 @@ class _GameRandomTeamsPageState extends State<GameRandomTeamsPage> {
           ),
         )
       ),
-      floatingActionButton: Obx((){
-        if(!teamDefined.value && gameController.participantsPresent.length >= gameController.currentGameConfig!.playersPerTeam! * 2){
+      floatingActionButton: ListenableBuilder(listenable: gameController, builder: (_, __){
+        if(!teamDefined && gameController.participantsPresent.length >= gameController.currentGameConfig!.playersPerTeam! * 2){
           return FloatButtonWidget(
             floatKey: "escalation_game",
             icon: Icons.content_paste_go_rounded,
             backgroundColor: modalityColor,
-            onPressed: () => Get.dialog(
-              DialogRandomTeam(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (_) => DialogRandomTeam(
                 actionRandom: () async {
                   await gameController.teamService.setPlayersTeams(true);
-                  setState(() {
-                    teamDefined.value = true;
-                  });
+                  setState(() { teamDefined = true; });
                 },
                 actionOrder: () async {
                   await gameController.teamService.setPlayersTeams(false);
-                  setState(() {
-                    teamDefined.value = true;
-                  });
+                  setState(() { teamDefined = true; });
                 }
               ),
-            ), 
+            ),
           );
         }
         return const SizedBox.shrink();

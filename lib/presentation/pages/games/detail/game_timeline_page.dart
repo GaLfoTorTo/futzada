@@ -1,6 +1,5 @@
 import 'package:futzada/data/models/game_event_model.dart';
 import 'package:futzada/data/services/game_event_service.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:timeline_tile/timeline_tile.dart';
@@ -127,7 +126,7 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
       return Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
           border: Border.all(color: AppColors.grey_300),
           borderRadius: BorderRadius.circular(10)
         ),
@@ -158,7 +157,7 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-            color: Get.isDarkMode ?AppColors.dark_500 : AppColors.white,
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
             boxShadow: [
               BoxShadow(
                 color: AppColors.dark_500.withAlpha(30),
@@ -168,7 +167,7 @@ class _GameTimelinePageState extends State<GameTimelinePage> {
               ),
             ],
           ),
-          child: Obx((){
+          child: ListenableBuilder(listenable: gameController, builder: (_, __){
             if(gameController.gameEvents.isEmpty){
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 30.0),

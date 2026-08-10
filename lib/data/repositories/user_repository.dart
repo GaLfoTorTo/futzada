@@ -1,24 +1,15 @@
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/level_model.dart';
-import 'package:futzada/data/models/user_level_model.dart';
-import 'package:get/get.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/user_config_model.dart';
-import 'package:futzada/data/services/manager_service.dart';
-import 'package:futzada/data/services/participant_service.dart';
-import 'package:futzada/data/services/player_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/api/api_response.dart';
+import 'package:futzada/core/storage/app_storage.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/services/user_service.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class UserRepository {
-  //SERVIÇOS - USUARIO, LOCAL STORAGE
+  //SERVIÇOS - USUARIO, CACHE LOCAL
   final UserService remoteService = UserService();
-  final GetStorage localStorage =  GetStorage();
-  final List<UserModel>_cache = <UserModel>[].obs;
+  final List<UserModel> _cache = <UserModel>[];
   
-  @override
+  //CHAMADA - BUSCA DE USUARIO
   Future<UserModel> getUser(int id) async {
     //VERIFICAR SE CACHE ESTA VAZIO
     if (_cache.isNotEmpty) {
@@ -28,74 +19,19 @@ class UserRepository {
     
     try {
       //BUSCAR USUARIO
-      final user = await remoteService.fetchUser(id);
+      final user = await remoteService.userFetch(id);
       //ADICICONAR AO CACHE
       _cache.add(user);
       return user;
     } catch (e) {
       //BUSCAR USUARIOS NO STORAGE LOCAL
-      Get.log('API failed, using local data: $e');
-      return await localStorage.read("user");
+      debugPrint('API failed, using local data: $e');
+      return UserModel.fromJson(AppStorage.read<String>("user") ?? '{}');
     }
   }
   
-  //FUNÇÃO DE TESTE
-  @override
-  Future<UserModel?> getUserGoogle(GoogleSignInAccount? data) async {    
-    try {
-      if(data != null){
-        //RESGATAR DADOS DO USUÁRIO FORNECIDOS PELO GOOGLE
-        String? firstName = data.displayName?.split(' ')[0] ?? 'Usuario';
-        String? lastName = data.displayName?.split(' ').skip(1).join(' ') ?? 'Anônimo';
-        final config = UserConfigModel(
-          id: 1,
-          userId: 1,
-          mainModality: Modality.Football,
-          modalities: [Modality.Football, Modality.Volleyball, Modality.Basketball],
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
-        final level = UserLevelModel(
-          id: 1,
-          userId: 1,
-          levelId: 1,
-          points: 0,
-          level: LevelModel(
-            id: 1, 
-            number: 1, 
-            title: 'Varzea', 
-            pointsMin: 0, 
-            pointsMax: 1000, 
-            image: "", 
-            color: "bege_700"
-          )
-        );
-        //CRIAR NOVA INSTANCIA DE USUARIO COM DADOS DO GOOGLE
-        return UserModel(
-          id: 1,
-          uuid: "9813yty3h4nlang90g0jpsigoisjiod",
-          firstName: firstName,
-          lastName: lastName,
-          userName: "${firstName}_${lastName}",
-          email: data.email,
-          bornDate: "1998-06-12",
-          phone: "61982413358",
-          photo: data.photoUrl,
-          privacy: Privacy.Public,
-          config: config,
-          level: level,
-          player: PlayerService().generatePlayer(1),
-          manager: ManagerService().generateManager(1),
-          participants: List.generate(2, (i) => ParticipantService().generateParticipant(i + 1, 1)),
-          achievements: List.generate(5, (i) => remoteService.generateAchivment(1)),
-        );
-      }
-      return null;
-    } catch (e, stackTrace) {
-      //BUSCAR USUARIOS NO STORAGE LOCAL
-      Get.log('API failed, using local data: $e');
-      print('Stack trace: $stackTrace');
-      return await localStorage.read("user");
-    }
+  //CHAMADA - REGISTRO DE USUÁRIO
+  Future<ApiResponse> registerUser(Map<String, dynamic> form) async {
+    return await remoteService.userRegister(form);
   }
 }

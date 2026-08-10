@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class FormHelper {
   //FUNÇÃO PARA PICKER DE HORAS
@@ -16,6 +15,6 @@ class FormHelper {
         );
       },
     );
-    return timeSelected?.format(Get.context!);
+    return timeSelected?.format(context);
   }
 }

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -51,7 +50,7 @@ class DialogInvite extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.grey_500),
               textAlign: TextAlign.center,
             ),
-            Obx(() {
+            ListenableBuilder(listenable: eventController, builder: (_, __){
               return Column(
                 children: invite.entries.map((item) {
                   final icon = iconInvite(item.key);
@@ -86,7 +85,7 @@ class DialogInvite extends StatelessWidget {
                   text: "Cancelar",
                   width: 70,
                   height: 20,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                   backgroundColor: Colors.transparent,
                   textColor: AppColors.grey_500,
                 ),
@@ -94,7 +93,7 @@ class DialogInvite extends StatelessWidget {
                   text: "Definir",
                   width: 50,
                   height: 20,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                   backgroundColor: Colors.transparent,
                   textColor: AppColors.green_300,
                 ),

@@ -1,5 +1,4 @@
 import 'package:futzada/core/enum/enums.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -38,7 +37,7 @@ class TimerCounterWidget extends StatelessWidget {
       }
     }
 
-    return Obx(() {
+    return ListenableBuilder(listenable: gameController, builder: (_, __){
       return Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(5),
@@ -51,7 +50,7 @@ class TimerCounterWidget extends StatelessWidget {
           )
         ),
         child: Text(
-          timeElapsedText(gameController.minutesElapsed.value),
+          timeElapsedText(gameController.minutesElapsed),
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
             color: color,
           ),

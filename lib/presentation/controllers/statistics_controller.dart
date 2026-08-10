@@ -1,5 +1,6 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/services/manager_service.dart';
@@ -14,23 +15,23 @@ abstract class StatisticsBase {
   ParticipantService get participantService;
   MarketService get marketService;
   ManagerService get managerService;
-  
+
   //GETTER - USUÁRIO E EVENTOS
   UserModel get user;
   List<EventModel> get userEvents;
-  
+
   //GETTER - EVENTO SELECIONADO
   EventModel? get event;
-  
+
   //CONTROLADOR DE PESQUISA
   TextEditingController get pesquisaController;
 }
 
-class StatisticsController extends GetxController implements StatisticsBase {
-  
+class StatisticsController extends ChangeNotifier implements StatisticsBase {
+
   //GETTER DE CONTROLLERS
-  static StatisticsController get instance => Get.find();
-  
+  static StatisticsController get instance => sl<StatisticsController>();
+
   //GETTER DE SERVIÇOS
   @override
   final EscalationService escalationService = EscalationService();
@@ -42,28 +43,27 @@ class StatisticsController extends GetxController implements StatisticsBase {
   final ManagerService managerService = ManagerService();
   //ESTADOS
   @override
-  UserModel user = Get.find(tag: 'user');
+  UserModel user = sl<UserModel>();
   @override
-  List<EventModel> userEvents = Get.isRegistered<List<EventModel>>(tag: 'events') 
-    ? Get.find<List<EventModel>>(tag: 'events') 
+  List<EventModel> userEvents = sl.isRegistered<List<EventModel>>(instanceName: 'events')
+    ? sl<List<EventModel>>(instanceName: 'events')
     : [];
   //DADOS DO EVENTO
   @override
   late EventModel? event;
-  
+
   //CONTROLADOR DE PESQUISA
   @override
   final TextEditingController pesquisaController = TextEditingController();
 
-  @override
-  void onInit() {
-    super.onInit();
-    event = userEvents.first;
+  void init() {
+    event = userEvents.isEmpty ? null : userEvents.first;
   }
 
   //FUNÇÃO PARA SELECIONAR EVENTO E ATUALIZAR DADOS REFERNTES AO EVENTO
   void setEvent(id) {
     //ATUALIZAR EVENTO SELECIONADO
     event = userEvents.firstWhere((event) => event.id == id);
+    notifyListeners();
   }
 }

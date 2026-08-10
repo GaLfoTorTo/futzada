@@ -1,8 +1,8 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -42,8 +42,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    //ADICIONAR PARTIDA RECEBIDA POR ARGUMENTO COMO JOGO ATUAL NO CONTROLLER
-    gameController.currentGame = Get.arguments['game'];
+    //currentGame já é definido pelo caller antes de navegar para /games/config
     //INICIARLIZAR CONTROLLERS DE TEXTO
     gameController.initTextControllers();
     //REDEFINIR HORARIOS DE ACORDO COM DURAÇÃO
@@ -86,7 +85,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Configurações da Partida",
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
@@ -294,7 +293,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                         width: dimensions.width,
                         menuWidth: dimensions.width - 20, 
                         menuHeight: 200,
-                        backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                         iconAfter: false,
                         iconSize: 30,
                         textSize: AppSize.fontMd,
@@ -325,7 +324,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                     ButtonOutlineWidget(
                       text: "Voltar",
                       width: 100,
-                      action: () => Get.back()
+                      action: () => context.pop()
                     ),
                     ButtonTextWidget(
                       text: "Salvar",
@@ -334,7 +333,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                       action: () => {
                         gameController.setGameConfig(),
                         gameController.disposeTextControllers(),
-                        Get.previousRoute == "/games/overview" ? Get.offAndToNamed("/games/overview") : Get.offAndToNamed("/games/teams")
+                        context.go('/games/overview')
                       }
                     ),
                   ],

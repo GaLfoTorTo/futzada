@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/indicators/stats_game_widget.dart';
-import 'package:get/get.dart';
 
 class GameStatisticsPage extends StatefulWidget {
   const GameStatisticsPage({super.key});
@@ -29,7 +28,7 @@ class _GameStatisticsPageState extends State<GameStatisticsPage> {
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-          color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.dark_500.withAlpha(30),
@@ -39,7 +38,7 @@ class _GameStatisticsPageState extends State<GameStatisticsPage> {
             ),
           ],
         ),
-        child: Obx((){
+        child: ListenableBuilder(listenable: gameController, builder: (_, __){
           return Column(
             spacing: 15,
             children: [
@@ -84,38 +83,38 @@ class _GameStatisticsPageState extends State<GameStatisticsPage> {
               ),
               StatsGameWidget(
                 title: "Posse de Bola", 
-                teamAValue: gameController.teamAPossesion.value, 
-                teamBValue: gameController.teamBPossesion.value
+                teamAValue: gameController.teamAPossesion, 
+                teamBValue: gameController.teamBPossesion
               ),
               StatsGameWidget(
                 title: "Chutes", 
-                teamAValue: gameController.teamAShots.value, 
-                teamBValue: gameController.teamBShots.value
+                teamAValue: gameController.teamAShots, 
+                teamBValue: gameController.teamBShots
               ),
               StatsGameWidget(
                 title: "Chutes a Gol", 
-                teamAValue: gameController.teamAShotsGoal.value, 
-                teamBValue: gameController.teamBShotsGoal.value
+                teamAValue: gameController.teamAShotsGoal, 
+                teamBValue: gameController.teamBShotsGoal
               ),
               StatsGameWidget(
                 title: "Passes", 
-                teamAValue: gameController.teamAPasses.value, 
-                teamBValue: gameController.teamBPasses.value
+                teamAValue: gameController.teamAPasses, 
+                teamBValue: gameController.teamBPasses
               ),
               StatsGameWidget(
                 title: "Escanteios", 
-                teamAValue: gameController.teamACorners.value, 
-                teamBValue: gameController.teamBCorners.value
+                teamAValue: gameController.teamACorners, 
+                teamBValue: gameController.teamBCorners
               ),
               StatsGameWidget(
                 title: "Faltas", 
-                teamAValue: gameController.teamAFouls.value, 
-                teamBValue: gameController.teamBFouls.value
+                teamAValue: gameController.teamAFouls, 
+                teamBValue: gameController.teamBFouls
               ),
               StatsGameWidget(
                 title: "Defesas", 
-                teamAValue: gameController.teamADefense.value, 
-                teamBValue: gameController.teamBDefense.value
+                teamAValue: gameController.teamADefense, 
+                teamBValue: gameController.teamBDefense
               ),
             ]
           );

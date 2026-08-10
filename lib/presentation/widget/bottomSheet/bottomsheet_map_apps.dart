@@ -2,7 +2,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/services/integration_map_service.dart';
-import 'package:get/get.dart';
 import 'package:map_launcher/map_launcher.dart';
 
 class BottomSheetMapApps extends StatelessWidget {
@@ -49,7 +48,7 @@ class BottomSheetMapApps extends StatelessWidget {
                     mapType: app.mapType!,
                     destination: Coords(params.endLat, params.endLng),
                     destinationTitle: params.endName,
-                    directionsMode: DirectionsMode.values.firstWhereOrNull((t) => t.name == params.travelMode) ?? DirectionsMode.driving, 
+                    directionsMode: DirectionsMode.values.firstWhere((t) => t.name == params.travelMode, orElse: () => DirectionsMode.driving),
                     origin: Coords(params.startLat, params.startLng),
                     originTitle: params.startName,
                   )

@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/presentation/widget/overlays/form_overlay_widget.dart';
-import 'package:get/get.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/services/game_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,7 +41,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   //CONTROLADOR DE VALIDAÇÃO
   bool isValid = true;
   // VARIÁVEL PARA CONTROLAR O STATUS
-  RxInt overlayStatus = 0.obs;
+  final ValueNotifier<int> _overlayStatus = ValueNotifier<int>(0);
   //DEFINIR CATEGORIAS
   List<String> categories = [
     "Futebol",
@@ -66,12 +68,12 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     hasGoalLimit = bool.parse(eventController.hasGoalLimitController.text);
     hasExtraTime = bool.parse(eventController.hasExtraTimeController.text);
     //EXIBIR DIALOG DE CATEGORIA CASO TENHA SIDO DEFINIDA
-    if(eventController.category.value.isNotEmpty){
+    if(eventController.category.isNotEmpty){
       //DEFINIR VARIAVEIS DE CONTROLE DE PARTICIPANTES
       setCategory();
       //EXIBIR DIALOG INFORMATIVO DE CATEGORIA
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Get.dialog(const DialogCategory());
+        showDialog(context: context, builder: (_) => const DialogCategory());
       });
     }
   }
@@ -94,7 +96,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   void setCategory(){
     setState(() {
       //RESGATAR CATEGORIA
-      final category = eventController.category.value;
+      final category = eventController.category;
       //RESGATAR VALORES POR CATEGORIA
       final mapPlayers = ModalityHelper.getQtdPlayers(category);
       //ATUALIZAR ESTADOS
@@ -117,7 +119,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
   void validForm(){
     setState(() {
       //VERIFICAR SE CATEGORIA FOI SELECIONADA
-      if(eventController.category.value.isEmpty){
+      if(eventController.category.isEmpty){
         isValid = false;
       }
       //VERIFICAR SE QUANTIDADE DE JOGADORES POR EQUIPE FOI SELECIONADA
@@ -143,31 +145,31 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (isValid) {
       //EXIBIR OVERLAY
-      await Get.showOverlay(
-        asyncFunction: () async {
-          //ENVAR FORMULARIO 
+      await LoadingOverlay.show(
+        context,
+        () async {
+          //ENVAR FORMULARIO
           final response = await eventController.registerEvent();
           //ATUALIZA STATUS COM BASE NA RESPOSTA
-          overlayStatus.value = response['status']!;
+          _overlayStatus.value = response['status']!;
           //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
           await Future.delayed(const Duration(seconds: 5));
         },
         loadingWidget: Material(
           color: Colors.transparent,
-          child: Obx(() => FormOverlayWidget(
-            status: overlayStatus.value,
+          child: ValueListenableBuilder<int>(valueListenable: _overlayStatus, builder: (_, status, __) => FormOverlayWidget(
+            status: status,
             form: "event",
           )),
         ),
-        opacity: 0.7,
-        opacityColor: AppColors.dark_700,
+        barrierColor: AppColors.dark_700.withAlpha(179),
       );
       //PEQUENO DELAY
       await Future.delayed(const Duration(milliseconds: 100));
       //SE SUCESSO, FECHA O OVERLAY APÓS ANIMAÇÃO
-      if (overlayStatus.value == 200) {
+      if (_overlayStatus.value == 200) {
         //NAVEGAR PARA ADICÃO DE PARTICIPANTES
-        Get.toNamed('/event/register/participants');
+        context.push('/event/register/participants');
       }else{
         //EXIBIR MENSAGEM DE ERRO
         AppHelper.feedbackMessage(context, "Houve um erro ao enviar as informações, tente novamente.");
@@ -183,7 +185,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Registro", 
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightAction: () => navigationController.backHome(context),
       ),
       body: SafeArea(
@@ -238,10 +240,10 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                           icon: icone,
                           size: 110,
                           iconSize: 40,
-                          checked: eventController.category.value == key,
+                          checked: eventController.category == key,
                           onChanged: (value) {
                             //ATUALIZAR CATEGORIA
-                            eventController.category.value = key;
+                            eventController.category = key;
                             eventController.categoryController.text = key;
                             //DEFINIR QUANTIDADE DE EQUIPES POR TIME 
                             setCategory();
@@ -251,7 +253,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                     ),
                   ),
                   //VALIDAÇÃO DE CATEGORIA
-                  if(!isValid && eventController.category.value.isEmpty)...[
+                  if(!isValid && eventController.category.isEmpty)...[
                     const Padding(
                       padding: EdgeInsets.only(top: 10, left: 8.0),
                       child: Text(
@@ -260,7 +262,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       ),
                     ),
                   ],
-                  Obx((){
+                  ListenableBuilder(listenable: eventController, builder: (_, __){
                     if(eventController.category.isNotEmpty){
                       return Column(
                         children: [
@@ -292,7 +294,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                             },
                           ),
                           //VALIDAÇÃO DE CATEGORIA
-                          if(!isValid && eventController.category.value.isEmpty)...[
+                          if(!isValid && eventController.category.isEmpty)...[
                             const Padding(
                               padding: EdgeInsets.only(top: 10, left: 8.0),
                               child: Text(
@@ -304,7 +306,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                           Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 50),
                             child: CourtWidget(
-                              category: eventController.category.value,
+                              category: eventController.category,
                               players: qtdPlayers,
                             ),
                           ),
@@ -324,12 +326,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       textController: eventController.durationController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.durationController.text = value,
-                      onValidated: (value) => eventController.apiService.validateEmpty(
-                        value, 
-                        bool.parse(eventController.hasTwoHalvesController.text)
-                        ? "Duração (min. por tempo)" 
-                        : "Duração (min.)",
-                      ),
+                      onValidated: (value) => '',
                     ),
                   ),
                   Container(
@@ -400,7 +397,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       textController: eventController.extraTimeController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.extraTimeController.text = value,
-                      onValidated: (value) => hasExtraTime ? eventController.apiService.validateEmpty(value, 'Tempo Prorrogação') : null,
+                      onValidated: (value) => '',//hasExtraTime ? eventController.apiClient.validateEmpty(value, 'Tempo Prorrogação') : null,
                     ),
                   ],
                   Container(
@@ -471,7 +468,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       textController: eventController.goalLimitController,
                       type: TextInputType.number,
                       onChanged: (value) => eventController.goalLimitController.text = value,
-                      onValidated: (value) => hasGoalLimit ? eventController.apiService.validateEmpty(value, 'Qtd. Gols') : null,
+                      onValidated: (value) => '',//hasGoalLimit ? eventController.apiClient.validateEmpty(value, 'Qtd. Gols') : null,
                     ),
                   ],
                   Container(
@@ -509,7 +506,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back(),
+                        action: () => context.pop(),
                       ),
                       ButtonTextWidget(
                         text: "Salvar",

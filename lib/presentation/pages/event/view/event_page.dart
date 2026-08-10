@@ -1,5 +1,6 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -35,11 +36,11 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   EventController eventController = EventController.instance;
   GameController gameController = GameController.instance;
   //ESTADOS - USUARIO E EVENTO
-  UserModel user = Get.find(tag: "user");
-  EventModel event = Get.arguments['event'];
+  UserModel user = sl<UserModel>(instanceName: 'user');
+  late EventModel event;
   //CONTROLLER - TABS
   late final TabController tabController;
-  int tabIndex = Get.arguments['index'] ?? 0;
+  int tabIndex = 0;
   //ESTADOS - ITEMS DO EVENTO
   bool isParticipant = false;
   late ImageProvider modalityImage;
@@ -54,6 +55,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    //RESGATAR EVENTO SELECIONADO NO CONTROLLER (setado pelo chamador antes de navegar)
+    event = eventController.event;
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DO EVENTO ATUAL
     isParticipant = event.participants!.any((p) => p.id == user.id);
     //INICIALIZAR CONTROLLER DE TAB
@@ -79,12 +82,12 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     if(index == 0){
       return HeaderGlassWidget(
         title: "Pelada",
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightIcon: eventPrivacy == 'Public' 
           ? AppIcones.cog_solid 
           : null,
         rightAction: () => eventPrivacy == 'Public' 
-          ? Get.toNamed('/event/settings') 
+          ? context.push('/event/settings') 
           : null,
         brightness: brightness,
       ); 
@@ -93,18 +96,18 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
     return HeaderWidget(
       title: "Pelada",
       backgroundColor: modalityColor,
-      leftAction: () => Get.back(),
+      leftAction: () => context.pop(),
       rightIcon: eventPrivacy == 'Public' 
         ? AppIcones.cog_solid 
         : null,
       rightAction: () => eventPrivacy == 'Public' 
-        ? Get.toNamed('/event/settings') 
+        ? context.push('/event/settings') 
         : null,
       extraIcon: tabController.index == 1 
         ? Icons.history 
         : null,
       extraAction: () => tabController.index == 1 
-        ? Get.toNamed('/event/historic') 
+        ? context.push('/event/historic') 
         : null,
       shadow: false,
     );
@@ -217,7 +220,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ],
             if(isParticipant || eventPrivacy == "Public")...[
               Container(
-                color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
                 child: TabBar(
                   controller: tabController,
                   onTap: (i) => setState(() {
@@ -293,25 +296,25 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ]
           ]
       ),
-      floatingActionButton: Obx(() {
+      floatingActionButton: ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
         //FLOAT ACTION BUTTON DE PARTIDAS
-        if (gameController.hasGames.value && tabIndex == 1 && gameController.isToday()) {
+        if (gameController.hasGames && tabIndex == 1 && gameController.isToday()) {
           return FloatButtonWidget(
             floatKey: "game_event",
             icon: Icons.play_arrow_rounded,
             backgroundColor: modalityColor,
             color: modalityTextColor,
-            onPressed:  () => Get.bottomSheet(const BottomSheetEventGames())
+            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const BottomSheetEventGames())
           );
         }
         //FLOAT ACTION BUTTON DE REGRAS
-        if (gameController.hasGames.value && tabIndex == 4) {
+        if (gameController.hasGames && tabIndex == 4) {
           return FloatButtonWidget(
             floatKey: "rules_event",
             icon: Icons.add_rounded,
             backgroundColor: modalityColor,
             color: modalityTextColor,
-            onPressed: () => Get.bottomSheet(const BottomSheetRule(), isScrollControlled: true),
+            onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => const BottomSheetRule()),
           );
         }
         return const SizedBox.shrink();

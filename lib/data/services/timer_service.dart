@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:get/get.dart';
+import 'package:futzada/core/di/service_locator.dart';
 
 /// SERVIÇO PARA GERENCIAMENTO DE CRONOMETROS DE PARTIDAS (CADA PARTIDA COM SEU CRONOMETRO INDIVIDUAL)
-class TimerService extends GetxService {
+class TimerService {
   //GETTER DE SERVIÇO DE TIMER
-  static TimerService get instance => Get.find();
+  static TimerService get instance => sl<TimerService>();
   //MAPA DE ARMAZENAMENTO DE CRONOEMTROS POR PARTIDA
   final Map<int, _GameStopwatch> _gameTimers = {};
 
@@ -50,13 +50,11 @@ class TimerService extends GetxService {
   /// [gameId]: IDENTIFICADOR DA PARTIDA
   bool isRunning(int gameId) => _gameTimers[gameId]?.isRunning ?? false;
 
-  @override
-  void onClose() {
+  void dispose() {
     //ENCERRAR TODOS OS TIMERS E CRONOMETROS ABERTOS QUANDO O SERVIÇO FOR DESTRUÍDO
     for (var timer in _gameTimers.values) {
       timer.dispose();
     }
-    super.onClose();
   }
 }
 

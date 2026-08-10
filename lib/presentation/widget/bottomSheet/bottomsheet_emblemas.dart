@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -49,7 +48,7 @@ class BottomSheetEmblema extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
               'Escolha um emblema para a equipe e personalize ainda mais a partida.',
-              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: AppColors.grey_500,
               ),
               textAlign: TextAlign.center
@@ -68,14 +67,14 @@ class BottomSheetEmblema extends StatelessWidget {
                       gameController.teamBEmblemaController.text = "emblema_${key + 1}";
                     }
                     print(gameController.teamBEmblemaController.text);
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     margin: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
+                      color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                       boxShadow: [
                         if(emblema == emblemas[key])...[
                             BoxShadow(

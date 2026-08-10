@@ -46,8 +46,8 @@ class SportClusterWidget extends StatelessWidget {
 
           return Marker(
             point: point,
-            width: mapWidgetController.baseSize.value,
-            height: mapWidgetController.baseSize.value,
+            width: mapWidgetController.baseSize,
+            height: mapWidgetController.baseSize,
             key: ValueKey("${marker['id']}"),
             child: setSportPlaceMarkerWidget(marker),
           );

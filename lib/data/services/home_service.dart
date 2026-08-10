@@ -1,61 +1,25 @@
-import 'dart:math';
-import 'package:faker/faker.dart' as fakerData;
+import 'package:futzada/core/api/api_client.dart';
+import 'package:futzada/core/api/api_routes.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/event_service.dart';
+import 'package:futzada/data/models/user_model.dart';
 
 class HomeService {
-  //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
-  static var faker = fakerData.Faker();
-  static var random = Random();
-  //INSTANCIAR SERVIÇO DE EVENTOS
-  EventService eventService = EventService();
-  
-  //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
-  Future<List<EventModel>> fetchToYou() async {
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(const Duration(seconds: 2));
-    //ARRAY DE EVENTOS
-    List<EventModel> arr = [];
-    //GERAR EVENTOS (TEMPORAREAMENTE)
-    List.generate(random.nextInt(5), (i){
-      //INICIALIZAR PELADAS
-      arr.add(eventService.generateEvent(i));
-    });
-    //RETORNAR ARRAY DE EVENTOS
-    return arr;
-  }
-  //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
-  Future<List<EventModel>> fetchFakeEvent() async {
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(const Duration(seconds: 2));
-    //ARRAY DE EVENTOS
-    List<EventModel> arr = [];
-    //GERAR EVENTOS (TEMPORAREAMENTE)
-    List.generate(random.nextInt(5), (i){
-      //INICIALIZAR PELADAS
-      arr.add(eventService.generateEvent(i));
-    });
-    //RETORNAR ARRAY DE EVENTOS
-    return arr;
-  }
 
-  //FUNÇÃO PARA SIMULAR BUSCA DE PELADAS MAIS POPULARES
-  Future<void>fecthPopular() async {
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(const Duration(seconds: 2));
-  }
+  //CLIENTE HTTP
+  ApiClient apiClient = ApiClient();
   
-  //FUNÇÃO PARA SIMULAR BUSCA DE TOP PELADAS
-  Future<void>fecthTopRanking() async {
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(const Duration(seconds: 2));
-    //INICIALIZAR TOP RANKING
-  }
-  
-  //FUNÇÃO PARA SIMULAR BUSCA DE ULTIMOS JOGOS DO USUARIO
-  Future<void>fecthUltimosJogos() async {
-    //DELAY DE 2 SEGUNDOS
-    await Future.delayed(const Duration(seconds: 2));
-    
+  //FUNÇÃO PARA SIMNULAR BUSCA DE PELADAS RECOMENDADAS
+  Future<Map<String, dynamic>> fetchHome() async {
+    final resp = await apiClient.get(ApiRoutes.home);
+    return Map.fromEntries(
+      (resp.data as Map<String, dynamic>).entries.map((entry) {
+        return MapEntry(
+          entry.key,
+          entry.key != "friends"
+            ? List<EventModel>.from(entry.value['items']?.map((e) => EventModel.fromMap(e as Map<String, dynamic>)) ?? [])
+            : List<UserModel>.from(entry.value['items']?.map((e) => UserModel.fromMap(e as Map<String, dynamic>)) ?? [])
+        );
+      }),
+    );
   }
 }

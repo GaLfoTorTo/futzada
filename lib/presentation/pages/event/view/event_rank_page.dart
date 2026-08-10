@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/controllers/rank_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_podium_widget.dart';
@@ -34,18 +33,18 @@ class EventRankPage extends StatelessWidget {
               ],
             ),
           ),
-          Obx((){
+          ListenableBuilder(listenable: rankController, builder: (_, __){
             return CardPodiumWidget(
               rank: rankController.topRanking.take(3).toList(),
-              title: rankController.type.value,
+              title: rankController.type,
               event: rankController.eventController.event,
             );
           }),
-          Obx((){
+          ListenableBuilder(listenable: rankController, builder: (_, __){
             if(rankController.topRanking.isNotEmpty){
               return CardRankPositionWidget(
                 rank: rankController.topRanking.skip(3).take(7).toList(),
-                type: rankController.type.value,
+                type: rankController.type,
                 event: rankController.eventController.event,
               );
             }

@@ -1,6 +1,6 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -115,7 +115,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
     if(registerController.bestSideController.text.isNotEmpty && registerController.positions.isNotEmpty && registerController.mainPositions.isNotEmpty){
       registerController.playerChecked = true;
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      Get.offNamed("/register");
+      context.go("/register");
     }else{
       AppHelper.feedbackMessage(context, "Informe o seu melhor lado e escolha as posições que você atua em cada modalidade.");
     }
@@ -127,7 +127,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Cadastro", 
-        leftAction: () => Get.back()
+        leftAction: () => context.pop()
       ),
       body: SafeArea(
         child: Form(
@@ -334,7 +334,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back()
+                        action: () => context.pop()
                       ),
                       ButtonTextWidget(
                         text: "Definir",

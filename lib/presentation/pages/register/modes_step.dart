@@ -1,6 +1,6 @@
 import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/presentation/controllers/register_controller.dart';
@@ -69,7 +69,7 @@ class ModesStep extends StatelessWidget {
                       color: checked ? Theme.of(context).primaryColor : AppColors.grey_300,
                       checked: checked,
                       size: 120,
-                      action: () => Get.toNamed(item['route']),
+                      action: () => context.push(item['route']),
                     ),
                   ),
                   SizedBox(

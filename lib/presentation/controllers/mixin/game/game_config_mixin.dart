@@ -1,6 +1,8 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/game_config_model.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -8,7 +10,7 @@ import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 
 //===MIXIN - CONFIGURAÇÕES DAS PARTIDAS===
-mixin GameConfigMixin on GetxController implements GameBase{
+mixin GameConfigMixin on ChangeNotifier implements GameBase {
   //CONTROLLERS DE CAMPOS DE CONFIGURAÇÕES
   late TextEditingController numberController;
   late TextEditingController categoryController;
@@ -108,7 +110,8 @@ mixin GameConfigMixin on GetxController implements GameBase{
     //SALVAR CONFIGURAÇÕES DO EVENTO
     event!.gameConfig = gameController.currentGameConfig;
     //EXIBIR MENSAGEM DE SUCESSO
-    AppHelper.feedbackMessage(Get.context, "Configurações Salvas com sucesso", type: "Success");
+    final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+    if (ctx != null) AppHelper.feedbackMessage(ctx, "Configurações Salvas com sucesso", type: "Success");
   }
 
   //FUNÇÃO PARA VERIFICAR SE PARTIDA ESTA CONFIGURADA PARA INICIAR

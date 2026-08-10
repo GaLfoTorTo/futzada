@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:futzada/core/di/service_locator.dart';
 
 class MapHelper {
 
@@ -99,16 +99,20 @@ class MapHelper {
 
   //FUNÇÃO PARA RESGATAR ENDEREÇO DO USUARIO
   static String getLocation() {
-    //RESGATAR LOCALIZACAO DO USUARUI
-    final RxMap<String, dynamic> currentLocation = Get.find(tag: 'userLocation');
-    //VERIFICAR SE LOCALIZACAO DO USUARIO CONTEM CHAVE ESPECIFICA
-    if (currentLocation.containsKey('ISO3166-2-lvl4')) {
-      final iso = currentLocation['ISO3166-2-lvl4'] as String?;
-      if (iso != null && iso.contains('-')) {
-        return "${currentLocation['city']}/${iso.split('-').last}";
+    try {
+      //RESGATAR LOCALIZACAO DO USUARUI
+      final Map<String, dynamic> currentLocation = sl<Map<String, dynamic>>(instanceName: 'userLocation');
+      //VERIFICAR SE LOCALIZACAO DO USUARIO CONTEM CHAVE ESPECIFICA
+      if (currentLocation.isNotEmpty && currentLocation.containsKey('ISO3166-2-lvl4')) {
+        final iso = currentLocation['ISO3166-2-lvl4'] as String?;
+        if (iso != null && iso.contains('-')) {
+          return "${currentLocation['city']}/${iso.split('-').last}";
+        }
       }
+      //RETORNAR STRING VAZIA
+      return 'Não encontrado';
+    } catch (_) {
+      return 'Não encontrado';
     }
-    //RETORNAR STRING VAZIA
-    return 'Não encontrado';
   }
 }

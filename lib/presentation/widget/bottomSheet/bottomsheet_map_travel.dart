@@ -50,7 +50,7 @@ class BottomSheetMapTravel extends StatelessWidget {
                   item['label'],
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                onTap: () => eventController.travelMode.value = item['type']
+                onTap: () => eventController.travelMode = item['type']
               );
             })
           ],

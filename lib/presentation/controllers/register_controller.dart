@@ -1,26 +1,33 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/api/api.dart';
+import 'package:flutter/foundation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/player_model.dart';
 import 'package:futzada/data/models/manager_model.dart';
-import 'package:futzada/data/services/api_service.dart';
+import 'package:futzada/data/repositories/user_repository.dart';
 import 'package:futzada/presentation/widget/overlays/form_overlay_widget.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
-class RegisterController extends GetxController {
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static RegisterController get instance => Get.find();
+class RegisterController extends ChangeNotifier {
+  //DEFINIR CONTROLLER UNICO NO GETIT
+  static RegisterController get instance => sl<RegisterController>();
+  UserRepository userRepository = UserRepository();
   //DEFINIR FORMDATA
   Map<String, dynamic> formData = {};
   //DEFINIÇÃO EXTRAS DO USUARIO
   ManagerModel manager = ManagerModel();
   PlayerModel player = PlayerModel();
   //CONTROLE DE STEP
-  RxInt step = 0.obs;
+  int _step = 0;
+  int get step => _step;
+  set step(int v) { _step = v; notifyListeners(); }
   // VARIÁVEL PARA CONTROLAR O STATUS
-  RxInt submitStatus = 0.obs;
+  int _submitStatus = 0;
+  int get submitStatus => _submitStatus;
+  set submitStatus(int v) { _submitStatus = v; notifyListeners(); }
   //CONTROLADORES DE ATUAÇÃO - PLAYER, MANAGER
   bool playerChecked = false;
   bool managerChecked = false;
@@ -55,22 +62,26 @@ class RegisterController extends GetxController {
   late TextEditingController emblemController;
   late TextEditingController uniformController;
   //ESTADOS - PLAYER
-  RxList<String> modalities = <String>[].obs;
-  RxList<String> positions = <String>[].obs;
-  RxMap<String, String> mainPositions = <String, String>{
+  final List<String> _modalities = [];
+  List<String> get modalities => _modalities;
+  void setModalities(List<String> v) { _modalities.clear(); _modalities.addAll(v); notifyListeners(); }
+
+  final List<String> _positions = [];
+  List<String> get positions => _positions;
+  void setPositions(List<String> v) { _positions.clear(); _positions.addAll(v); notifyListeners(); }
+
+  Map<String, String> mainPositions = {
     "Football": "",
     "Volleyball": "",
     "Basketball": "",
-  }.obs;
+  };
   //ESTADOS - MANAGER
   String emblem = "emblema_1";
   Map<String, Map<String, dynamic>>? configEmblem;
   Map<String, Map<String, dynamic>>? configUniform;
 
   //FUNÇÃO PARA INICIALIZAR CONTROLLERS DE TEXTO
-  @override
-  void onInit(){
-    super.onInit();
+  void init(){
     //INICIALIZAR CONTROLLERS DE TEXTO
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
@@ -99,7 +110,7 @@ class RegisterController extends GetxController {
 
   //FUNÇÃO PARA FINALIZAR CONTROLLERS DE TEXTO
   @override
-  void onClose(){
+  void dispose(){
     firstNameController.dispose();
     lastNameController.dispose();
     userNameController.dispose();
@@ -118,15 +129,15 @@ class RegisterController extends GetxController {
     emblemController.dispose();
     uniformController.dispose();
     //ENCERRAR CONTROLLER
-    super.onClose();
+    super.dispose();
   }
-  
+
   //FUNÇÃO DE PROXIMO STEP
   void nextStep() {
-    if(step.value < 3){
-      step.value = step.value + 1;
+    if(step < 3){
+      step = step + 1;
     }
-    switch (step.value) {
+    switch (step) {
       case 0:
         //formKeyStep1.currentState!.validate();
         break;
@@ -142,10 +153,10 @@ class RegisterController extends GetxController {
       default:
     }
   }
-  
+
   //FUNÇÃO DE ANTERIOR STEP
   void previousStep() {
-    step.value = step.value - 1;
+    step = step - 1;
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE DADOS PARA ENVIO
@@ -154,7 +165,7 @@ class RegisterController extends GetxController {
   }
 
   //FUNÇÃO DE PRE-ENVIO DE FORMULARIO
-  void submitForm()async {
+  void submitForm() async {
     //VERIFICAR SE TERMOS DE USO E POLITICAS FORAM SELECIONADAS
     if(termosUsoChecked && politicasChecked){
       //HABILITAR BOTÃO DE SALVAMENTO
@@ -168,34 +179,39 @@ class RegisterController extends GetxController {
       //AJUSTAR FORMDATA PARA ENVIO
       setFormData();
       //EXIBIR OVERLAY
-      await Get.showOverlay(
-        asyncFunction: () async {
-          //ENVAR FORMULARIO 
-          submitStatus.value = await registerUser();
-        },
-        loadingWidget: Material(
-          color: Colors.transparent,
-          child: Obx(() => FormOverlayWidget(
-            status: submitStatus.value,
-            form: "user",
-          )),
-        ),
-        opacity: 0.7,
-        opacityColor: AppColors.dark_700,
-      );
-      //FECHAR OVERLAY
-      Get.back();
-      //SE SUCESSO, FECHA O OVERLAY APÓS ANIMAÇÃO
-      if (submitStatus.value == 200) {
-        //NAVEGAR PARA ADICÃO DE PARTICIPANTES
-        Get.offAllNamed('/login');
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) {
+        await LoadingOverlay.show(
+          ctx,
+          () async {
+            //ENVAR FORMULARIO
+            submitStatus = await registerUser();
+          },
+          loadingWidget: Material(
+            color: Colors.transparent,
+            child: ListenableBuilder(
+              listenable: this,
+              builder: (_, __) => FormOverlayWidget(
+                status: submitStatus,
+                form: "user",
+              ),
+            ),
+          ),
+          barrierColor: AppColors.dark_700.withAlpha(178),
+        );
+      }
+      //SE SUCESSO, NAVEGA PARA LOGIN
+      if (submitStatus == 200) {
+        sl<GoRouter>().go('/login');
       }else{
         //EXIBIR MENSAGEM DE ERRO
-        AppHelper.feedbackMessage(Get.context, "Houve um erro ao enviar as informações, tente novamente.");
+        final errCtx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+        if (errCtx != null) AppHelper.feedbackMessage(errCtx, "Houve um erro ao enviar as informações, tente novamente.");
       }
     }else{
       //EXIBIR MENSAGEM DE ERRO
-      AppHelper.feedbackMessage(Get.context, 'Aceite os termos de uso e políticas para finalizar o cadastro');
+      final errCtx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (errCtx != null) AppHelper.feedbackMessage(errCtx, 'Aceite os termos de uso e políticas para finalizar o cadastro');
     }
   }
 
@@ -209,10 +225,8 @@ class RegisterController extends GetxController {
 
   //FUNÇÃO DE ENVIO DE FORMULÁRIO
   Future<int> registerUser() async {
-    //BUSCAR URL BASICA
-    var url = AppApi.url+AppApi.createUser;
     //ENVIAR FORMULÁRIO
-    var response = await ApiService.post(formData, url);
-    return response["status"];
+    var resp = await userRepository.registerUser(formData);
+    return resp.status;
   }
 }

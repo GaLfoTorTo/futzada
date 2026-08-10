@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
@@ -26,9 +26,9 @@ class _MapPickerPageState extends State<MapPickerPage> {
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE EXPLORER
-    addressController = Get.put(AddressController());
+    addressController = AddressController()..init();
     //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
-    mapWidgetController = Get.put(MapWidgetController());
+    mapWidgetController = MapWidgetController()..init();
   }
 
   @override
@@ -53,14 +53,14 @@ class _MapPickerPageState extends State<MapPickerPage> {
             backgroundColor: AppColors.green_300,
             child: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, color: AppColors.blue_500),
-              onPressed: () => Get.back(),
+              onPressed: () => context.pop(),
             ),
           ),
         ),
       ),
-      body: Obx(() {
+      body: ListenableBuilder(listenable: Listenable.merge([mapWidgetController, addressController]), builder: (_, __){
         //EXIBIR LOADING DE CARREGAMENTO DO MAPA
-        if (!mapWidgetController.isLoaded.value) {
+        if (!mapWidgetController.isLoaded) {
           return const Center(child: IndicatorLoadingWidget());
         }else{
           return const MapWidget();
@@ -71,19 +71,19 @@ class _MapPickerPageState extends State<MapPickerPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         spacing: 20,
         children: [
-          if (!mapWidgetController.isMapReady.value)...[
+          if (!mapWidgetController.isMapReady)...[
             FloatButtonWidget(
               floatKey: "search_map",
               icon: Icons.search_rounded,
-              onPressed: () => Get.bottomSheet(BottomSheetAddress(), isScrollControlled: true),
+              onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetAddress()),
             ),
             FloatButtonWidget(
               floatKey: "position_map",
               icon: Icons.my_location_rounded,
               onPressed: () => mapWidgetController.moveMapCurrentUser(
                 LatLng(
-                  mapWidgetController.currentPosition.value!.latitude, 
-                  mapWidgetController.currentPosition.value!.longitude
+                  mapWidgetController.currentPosition!.latitude, 
+                  mapWidgetController.currentPosition!.longitude
                 ),
               ),
             ),

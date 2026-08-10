@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -23,7 +22,7 @@ class DialogEscalationConfirm extends StatelessWidget {
     //RESGATAR INSTÂNCIA DO CONTROLLER DE ESCALAÇÃO
     EscalationController escalationController = EscalationController.instance;
     //RESGATAR CAPITÃO
-    int i = escalationController.starters.firstWhere((p) => p == escalationController.selectedPlayerCapitan.value)!;
+    int i = escalationController.starters.firstWhere((p) => p == escalationController.selectedPlayerCapitan)!;
     UserModel capitan = EventHelper.getUserEvent(escalationController.event!, i)!;
 
     return Dialog(
@@ -63,7 +62,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.all(5),
                         child: Text(
-                          '${escalationController.formation.value}',
+                          '${escalationController.formation}',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
@@ -166,7 +165,7 @@ class DialogEscalationConfirm extends StatelessWidget {
               icon: AppIcones.save_solid,
               width: dimensions.width,
               height: 30,
-              action: () => Get.back(),
+              action: () => Navigator.of(context).pop(),
               backgroundColor: AppColors.green_300,
               textColor: AppColors.blue_500,
             ),

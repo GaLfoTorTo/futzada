@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:futzada/data/models/rule_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_rule.dart';
-import 'package:get/get.dart';
 
 class CardRule extends StatelessWidget {
   final RuleModel rule;
@@ -17,7 +16,7 @@ class CardRule extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     return TextButton(
-      onPressed: () => Get.bottomSheet(BottomSheetRule(rule: rule), isScrollControlled: true),
+      onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetRule(rule: rule)),
       child: Container(
         width: dimensions.width,
         padding: const EdgeInsets.all(10),

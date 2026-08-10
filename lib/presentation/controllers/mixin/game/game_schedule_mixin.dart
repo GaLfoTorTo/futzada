@@ -1,126 +1,123 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 
 //===MIXIN - PARTIDAS===
-mixin GameScheduleMixin on GetxController implements GameBase{
+mixin GameScheduleMixin on ChangeNotifier implements GameBase {
   //RESGATAR DATA DO DIA
   final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
   //ESTADOS - PARTIDAS
-  final loadGames = false.obs;
-  final hasGames = true.obs;
-  final loadHistoricGames = false.obs;
+  bool _loadGames = false;
+  bool get loadGames => _loadGames;
+  set loadGames(bool v) { _loadGames = v; notifyListeners(); }
+
+  bool _hasGames = true;
+  bool get hasGames => _hasGames;
+  set hasGames(bool v) { _hasGames = v; notifyListeners(); }
+
+  bool _loadHistoricGames = false;
+  bool get loadHistoricGames => _loadHistoricGames;
+  set loadHistoricGames(bool v) { _loadHistoricGames = v; notifyListeners(); }
+
   //ESTADO - QTD CARDS VISIVEIS
-  var qtdView = 3.obs; 
+  int _qtdView = 3;
+  int get qtdView => _qtdView;
+  set qtdView(int v) { _qtdView = v; notifyListeners(); }
+
   //ESTADO - PARTIDAS (EM CURSO, PROXIMAS, AGENDADAS, FINALIZADAS)
-  final RxList<GameModel?> inProgressGames = <GameModel?>[].obs;
-  final RxList<GameModel?> nextGames = <GameModel?>[].obs;
-  final RxList<GameModel?> scheduledGames = <GameModel?>[].obs;
-  final RxMap<String, List<GameModel>?> finishedGames = <String, List<GameModel>?>{}.obs;
+  final List<GameModel?> _inProgressGames = [];
+  List<GameModel?> get inProgressGames => _inProgressGames;
+
+  final List<GameModel?> _nextGames = [];
+  List<GameModel?> get nextGames => _nextGames;
+
+  final List<GameModel?> _scheduledGames = [];
+  List<GameModel?> get scheduledGames => _scheduledGames;
+
+  final Map<String, List<GameModel>?> _finishedGames = {};
+  Map<String, List<GameModel>?> get finishedGames => _finishedGames;
 
   //FUNÇÃO PARA VERIFICAR SE EVENTO É HOJE
-  bool isToday(){
+  bool isToday() {
     return today.isAtSameMomentAs(eventDate!);
   }
 
   //FUNÇÃO DE BUSCA DE HISTÓRICO
   Future<bool> getHistoricGames() async {
-    // RESETAR ESTADO DE CARREGAMENTO
-    loadHistoricGames.value = false;
-    //DEFINIR MAPA DE PARTIDAS DO HISTÓRICO
+    loadHistoricGames = false;
     Map<String, List<GameModel>> mapGames = {};
     try {
-      //DELAY DE SIMULAÇÃO
       await Future.delayed(const Duration(seconds: 3));
-      //REMOVER ITENS DO HISTÓRICO
-      finishedGames.value = mapGames;
-      //BUSCAR PARTIDAS DO EVENTO (SIMULAÇÃO)
+      _finishedGames.clear();
       final games = gameService.getListGames(event!);
-      //VERIFICAR SE EXISTEM PARTIDAS FINALIZADAS
       if (games.isNotEmpty) {
-        //LOOP NAS PARTIDAS
         for (var item in games) {
-          //RESGATAR DIA E MÊS DA PARTIDA
           final dateKey = DateFormat('d/MM').format(item!.createdAt!);
-          //ADICIONAR PARTIDA AO MAPA
           mapGames.putIfAbsent(dateKey, () => []).add(item);
         }
-        //RESGATAR PARTIDAS FINALIZADAS (HISTÓRICO)
-        finishedGames.assignAll(mapGames);
+        _finishedGames.addAll(mapGames);
       }
-      //RETORNAR VALOR PARA ESTADO DE CARREGAMENTO
+      notifyListeners();
       return true;
     } catch (e) {
       print('Erro ao buscar partidas: $e');
       return false;
     }
   }
-  
-  //FUNÇÃO PARA ADICIONAR PARTIDA AO ARRAY DE PARTIDSA FINALIZADAS
+
+  //FUNÇÃO PARA ADICIONAR PARTIDA AO ARRAY DE PARTIDAS FINALIZADAS
   void addGameHistoric(GameModel game) {
-    //RESGATAR DATA DE CRIAÇÃO DA PARTIDA
     String data = DateFormat('d/MM').format(game.createdAt!);
-    //VERIFICAR SE OUTRA PARTIDA FOI FINALIZADA NO MESMO DIA
-    if (finishedGames.containsKey(data)) {
-      //ADICIONAR A CHAVE EXISTENTE
-      finishedGames[data]!.add(game);
-      finishedGames[data] = List.from(finishedGames[data]!);
+    if (_finishedGames.containsKey(data)) {
+      _finishedGames[data]!.add(game);
+      _finishedGames[data] = List.from(_finishedGames[data]!);
     } else {
-      //CRIAR NOVA CHAVE E ADICIONAR
-      finishedGames[data] = [game];
+      _finishedGames[data] = [game];
     }
-}
-  
+    notifyListeners();
+  }
+
   //FUNÇÃO DE BUSCA DE PARTIDAS DO EVENTO
-  Future<bool> setGamesEvent(EventModel event) async{
-    //RESETAR ESTADO DE CARREGAMENTO
-    loadGames.value = false;
+  Future<bool> setGamesEvent(EventModel event) async {
+    loadGames = false;
     try {
       await Future.delayed(const Duration(seconds: 3));
-      //BUSCAR PARTIDAS DO EVENTO (SIMULAÇÃO)
       final games = gameService.getListGames(event);
-      //VERIFICAR SE EVENTO ESTA ACONTECENDO HOJE
-      if(today.isAtSameMomentAs(eventDate!)){
-        //VERIFICAR SE EXISTEM PARTIDAS FINALIZADAS
-        if(games.isNotEmpty){
-          //GERAR PROXIMAS PARTIDAS DO DIA 
-          nextGames.assignAll(games.toList());
-          //ATUALIZAR ESTADO DE PARTIDAS
-          hasGames.value = true;
+      if (today.isAtSameMomentAs(eventDate!)) {
+        if (games.isNotEmpty) {
+          _nextGames.clear();
+          _nextGames.addAll(games);
+          hasGames = true;
         }
-      }else{
-        //GERAR PARTIDAS PROGRAMADAS AUTOMATICAMENTE
-        if(games.isNotEmpty){
-          //GERAR PROXIMAS PARTIDAS DO DIA 
-          scheduledGames.assignAll(games.toList());
-          //ATUALIZAR ESTADO DE PARTIDAS
-          hasGames.value = true;
+      } else {
+        if (games.isNotEmpty) {
+          _scheduledGames.clear();
+          _scheduledGames.addAll(games);
+          hasGames = true;
         }
       }
-      //RETORNAR VALOR PARA ESTADO DE CARREGAMENTO
+      notifyListeners();
       return true;
     } catch (e, stackTrace) {
       print('=== ERRO COMPLETO ===');
       print('Erro: $e');
       print('Stack trace: $stackTrace');
       print('=====================');
-      //ATUALIZAR ESTADO DE CARREGAMENTO
-      hasGames.value = false;
-      //RETORNAR VALOR PARA ESTADO DE CARREGAMENTO
+      hasGames = false;
       return true;
     }
   }
 
   //FUNÇÃO PARA DEFINIR QUANTIDADE DE ITENS VISIVEIS
-  void setView(bool view, int qtdGames){
-    //VERIFICAR SE PRECISA EXIBIR OU ESCONDER PARTIDAS
-    if(view){
-      int increment = qtdGames - qtdView.value;
-      qtdView.value = increment > 3 ? qtdView.value + 3 : qtdView.value + increment;
-    }else{
-      qtdView.value = qtdView.value - 3 > 3 ? qtdView.value - 3 : 3;
+  void setView(bool view, int qtdGamesList) {
+    if (view) {
+      int increment = qtdGamesList - qtdView;
+      qtdView = increment > 3 ? qtdView + 3 : qtdView + increment;
+    } else {
+      qtdView = qtdView - 3 > 3 ? qtdView - 3 : 3;
     }
   }
 }

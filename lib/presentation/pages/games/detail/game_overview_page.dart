@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -74,7 +73,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-              color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+              color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
               boxShadow: [
                 BoxShadow(
                   color: AppColors.dark_500.withAlpha(30),
@@ -84,7 +83,7 @@ class _GameOverviewPageState extends State<GameOverviewPage> {
                 ),
               ],
             ),
-            child: Obx((){
+            child: ListenableBuilder(listenable: gameController, builder: (_, __){
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 15,

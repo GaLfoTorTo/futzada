@@ -1,6 +1,7 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
@@ -24,16 +25,15 @@ class _MapExplorePageState extends State<MapExplorePage> {
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR CONTROLLER DE EXPLORER
-    exploreController = Get.put(ExplorerController());
+    //INICIALIZAR CONTROLLER DE EXPLORER (singleton compartilhado via GetIt)
+    exploreController = sl<ExplorerController>();
     //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
-    mapWidgetController = Get.put(MapWidgetController());
+    mapWidgetController = MapWidgetController()..init();
   }
 
   @override
   void dispose() {
-    //FINALIZAR CONTROLLER DE ENDEREÇOS
-    exploreController.dispose();
+    //NÃO dispõe exploreController — é singleton gerenciado pelo GetIt
     //REMOVER CONTROLLER DE MAP (CUSTOM)
     mapWidgetController.dispose();
     super.dispose();
@@ -52,14 +52,14 @@ class _MapExplorePageState extends State<MapExplorePage> {
             backgroundColor: AppColors.green_300,
             child: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, color: AppColors.blue_500),
-              onPressed: () => Get.back(),
+              onPressed: () => context.pop(),
             ),
           ),
         ),
       ),
-      body: Obx(() {
+      body: ListenableBuilder(listenable: mapWidgetController, builder: (_, __){
         //EXIBIR LOADING DE CARREGAMENTO DO MAPA
-        if (!mapWidgetController.isLoaded.value) {
+        if (!mapWidgetController.isLoaded) {
           return const Center(child: IndicatorLoadingWidget());
         }else{
           return const MapWidget();
@@ -70,24 +70,24 @@ class _MapExplorePageState extends State<MapExplorePage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         spacing: 20,
         children: [
-          if (!mapWidgetController.isMapReady.value)...[
+          if (!mapWidgetController.isMapReady)...[
             FloatButtonWidget(
               floatKey: "list_map",
               icon: Icons.list_rounded,
-              onPressed: () => Get.offNamed('/explore/search'),
+              onPressed: () => context.go('/explore/search'),
             ),
             FloatButtonWidget(
               floatKey: "filter_map",
               icon: Icons.filter_alt,
-              onPressed: () => Get.toNamed('/explore/filter'),
+              onPressed: () => context.push('/explore/filter'),
             ),
             FloatButtonWidget(
               floatKey: "position_map",
               icon: Icons.my_location_rounded,
               onPressed: () => mapWidgetController.moveMapCurrentUser(
                 LatLng(
-                  mapWidgetController.currentPosition.value!.latitude, 
-                  mapWidgetController.currentPosition.value!.longitude
+                  mapWidgetController.currentPosition!.latitude, 
+                  mapWidgetController.currentPosition!.longitude
                 ),
               ),
             ),

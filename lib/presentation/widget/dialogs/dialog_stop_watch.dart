@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/overlays/stopwatch_overlay_widget.dart';
@@ -20,26 +20,28 @@ class _StopWatchDialogState extends State<StopWatchDialog> {
     final gameController = GameController.instance;
 
     //FUNÇÃO DE EXIBIÇÃO DE OVERLAY
-    void showOverlay(function, action){
+    void showOverlay(BuildContext ctx, function, action){
       //DELAY PARA EXIBIÇÃO DO OVERLAY
       Future.delayed(const Duration(milliseconds: 300), () async {
-        await Get.showOverlay(
-          asyncFunction: () async {
-            //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
-            await Future.delayed(const Duration(seconds: 5));
-            //FINALIZAR PARTIDA
-            function();
-          },
-          loadingWidget:  Material(
-            color: Colors.transparent,
-            child: StopWatchOverlayWidget(
-              seconds: 5,
-              action: action
+        if (ctx.mounted) {
+          await LoadingOverlay.show(
+            ctx,
+            () async {
+              //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
+              await Future.delayed(const Duration(seconds: 5));
+              //FINALIZAR PARTIDA
+              function();
+            },
+            loadingWidget: Material(
+              color: Colors.transparent,
+              child: StopWatchOverlayWidget(
+                seconds: 5,
+                action: action
+              ),
             ),
-          ),
-          opacity: 0.7,
-          opacityColor: AppColors.dark_700,
-        );
+            barrierColor: AppColors.dark_700.withAlpha(178),
+          );
+        }
       });
     }
 
@@ -51,22 +53,26 @@ class _StopWatchDialogState extends State<StopWatchDialog> {
           gameController.pauseGame();  
           break;
         case "start":
+          //CAPTURAR CONTEXTO RAIZ ANTES DE FECHAR O DIALOG
+          final rootCtx = Navigator.of(context, rootNavigator: true).context;
           //FECHAR DIALOG
-          Get.back();
+          Navigator.of(context).pop();
           //EXIBIR OVERLAY
-          showOverlay(gameController.startGame, action);
+          showOverlay(rootCtx, gameController.startGame, action);
           break;
         case "stop":
+          final rootCtxStop = Navigator.of(context, rootNavigator: true).context;
           //FECHAR DIALOG
-          Get.back();
+          Navigator.of(context).pop();
           //EXIBIR OVERLAY
-          showOverlay(gameController.stopGame, action);
+          showOverlay(rootCtxStop, gameController.stopGame, action);
           break;
         case "reset":
+          final rootCtxReset = Navigator.of(context, rootNavigator: true).context;
           //FECHAR DIALOG
-          Get.back();
+          Navigator.of(context).pop();
           //EXIBIR OVERLAY
-          showOverlay(gameController.resetGame, action);
+          showOverlay(rootCtxReset, gameController.resetGame, action);
           break;
       }
       //VERIFICAR SE PARTIDA ESTA ROLANDO
@@ -95,7 +101,7 @@ class _StopWatchDialogState extends State<StopWatchDialog> {
         borderRadius: BorderRadius.circular(20),
       ),
       shadowColor: AppColors.dark_300,
-      child: Obx((){
+      child: ListenableBuilder(listenable: gameController, builder: (_, __){
         //RESGATAR DURAÇÃO DA PARTIDA
         final duration = getDuration();
         final minutesDuration = duration.inMinutes.toString().padLeft(2, '0');;

@@ -1,5 +1,7 @@
-import 'package:get/get.dart';
+
 import 'package:flutter/material.dart';
+import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
@@ -25,8 +27,8 @@ class GamesDayPage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTO
-    EventModel event = Get.arguments['event'];
+    //RESGATAR EVENTO DO CONTROLLER (setado pelo chamador antes de navegar)
+    EventModel event = EventController.instance.event;
     //RESGATAR CONTROLLER DE PARTIDAS
     GameController gameController = GameController.instance;
     //ENTRAR NO CANAL DO EVENTO
@@ -42,9 +44,9 @@ class GamesDayPage extends StatelessWidget {
       appBar: HeaderWidget(
         title: 'Dia de Jogo',
         backgroundColor: modalityColor,
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightIcon: Icons.history,
-        rightAction: () => Get.toNamed('/games/historic'),
+        rightAction: () => context.push('/games/historic'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -71,7 +73,7 @@ class GamesDayPage extends StatelessWidget {
                   ],
                 ),
                 if(gameController.inProgressGames.isNotEmpty)...[
-                  Obx((){
+                  ListenableBuilder(listenable: gameController, builder: (_, __){
                     var game = gameController.inProgressGames.first;
                     return CardGameLiveWidget(
                       event: event,
@@ -164,7 +166,7 @@ class GamesDayPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const CardMvpWidget(),
+                CardMvpWidget(event: event),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,

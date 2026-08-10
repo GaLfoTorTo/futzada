@@ -112,7 +112,9 @@ class AddressModel {
       zipCode: map['zipCode'] != null ? map['zipCode'] as String : null,
       latitude: map['latitude'] != null ? map['latitude'] as double : null,
       longitude: map['longitude'] != null ? map['longitude'] as double : null,
-      photos: map['photos'] != null ? map['photos'] as List<String> : null,
+      photos: map['photos'] != null
+        ? List<String>.from(map['photos'] as List<dynamic>) 
+        : null,
       createdAt: DateHelper.parseDate(map['createdAt']),
       updatedAt:  DateHelper.parseDate(map['updatedAt']),
       deletedAt: map['deletedAt'] != null ? map['deletedAt'] as DateTime : null,

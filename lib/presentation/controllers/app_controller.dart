@@ -1,105 +1,54 @@
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:futzada/data/services/timer_service.dart';
-import 'package:futzada/presentation/controllers/auth_controller.dart';
-import 'package:futzada/presentation/controllers/explorer_controller.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futzada/core/storage/app_storage.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/core/di/modules/session.dart';
+import 'package:futzada/core/providers/app_session_provider.dart';
+import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/user_controller.dart';
 import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/controllers/rank_controller.dart';
-import 'package:futzada/presentation/controllers/chat_controller.dart';
-import 'package:futzada/presentation/controllers/notification_controller.dart';
-import 'package:futzada/presentation/controllers/statistics_controller.dart';
-import 'package:futzada/presentation/controllers/showcase_controller.dart';
 
-class AppController extends GetxController {
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static AppController get instance => Get.find();
-  //RESGATAR CONTROLLER DE AUTENTICAÇÃO
-  final AuthController authController = Get.find();
+
+class AppController extends ChangeNotifier {
   //INICIALIZAÇÃO - CONTROLLERS (USER, HOME)
-  late UserController userController;
-  late HomeController homeController;
+  UserController userController = sl<UserController>();
+  HomeController homeController = sl<HomeController>();
+  
   //ESTADOs - CONTROLE DE INICIALIZAÇÃO
-  RxBool isReady = false.obs;
-  RxBool homeReady = false.obs;
-  RxBool isLoading = false.obs;
-  RxBool hasError = false.obs;
+  bool _isReady = false;
+  bool get isReady => _isReady;
+  set isReady(bool v) { _isReady = v; notifyListeners(); }
 
-  late Worker userWorker;
-  late Worker homeWorker;
+  bool _homeReady = false;
+  bool get homeReady => _homeReady;
+  set homeReady(bool v) { _homeReady = v; notifyListeners(); }
 
-  @override
-  void onReady() {
-    super.onReady();
-    isLoading.value = true;
-    //INICIALIZAR CONTROLLER DE USUARIO
-    userController = Get.put(UserController(), permanent: true);
-    //OBSERVER - USUARIO LOGADO
-    userWorker = ever<bool>(userController.isReady, (isReady) async {
-      if(!isReady)return;
-      //INICIALIZAR CONTROLLER DE HOME
-      homeController = Get.put(HomeController(), permanent: true);
-      //OBSERVER - HOME PAGE
-      homeWorker = ever<bool>(homeController.isReady, (homeReady) async {
-        if (!homeReady) return;
-        navigateUser();
-        //INICIALIZAR SERVIÇO DE NOTIFICAÇÕES - FIREBASE MESSAGING
-        await initControllers();
-        //ENCERRAR WORKERS
-        userWorker.dispose();
-        homeWorker.dispose();
-      });
-    });
-  }
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  set isLoading(bool v) { _isLoading = v; notifyListeners(); }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
+  bool _hasError = false;
+  bool get hasError => _hasError;
+  set hasError(bool v) { _hasError = v; notifyListeners(); }
 
-  //FUNÇÃO DE INICIALIZAÇÃO DE DADOS DE USUARIO
-  Future<void> initControllers() async {
+  //FUNÇÃO DE INICIALIZAÇÃO DE APP GERAL
+  Future<void> init(UserModel user) async {
+    isLoading = true;
     try {
-      //INICIALIZAÇÃO - CONTROLLERS (EVENTO, PARTIDAS, ESCALAÇÃO, STATISTICA, GAME, RANK, EXPLORER, CHAT, NOTIFICATION)
-      Get.lazyPut(() => ShowcaseController(), fenix: true);
-      Get.lazyPut(() => EventController(), fenix: true);
-      Get.lazyPut(() => GameController(), fenix: true);
-      Get.lazyPut(() => EscalationController(), fenix: true);
-      Get.lazyPut(() => StatisticsController(), fenix: true);
-      Get.lazyPut(() => RankController(), fenix: true);
-      Get.lazyPut(() => ExplorerController(), fenix: true);
-      Get.lazyPut(() => ChatController(), fenix: true);
-      Get.lazyPut(() => NotificationController(), fenix: true);
-      //ATUALIZAR ESTADOS DE INICIALIZAÇÃO
-      isLoading.value = false;
-      isReady.value = true;
-    } catch (e) {
-      //ATUALUZAR ESTADOS DE INICIALIZAÇÃO
-      hasError.value = true;
-      isLoading.value = false;
+      await registerSession(user);
+      await registerEvents(user);
+      registerLocation();
+      userController.init();
+      homeController.init();
+      final session = sl<ProviderContainer>().read(appSessionProvider.notifier);
+      if (!AppStorage.hasData('firstLogin')) {
+        session.setFirstLogin();
+      } else {
+        session.setAuthenticated();
+      }
+    } finally {
+      isLoading = false;
     }
   }
 
-  //FUNÇÃO DE INICIALIZAÇÃO DE SERVIÇOS
-  void initServices(){
-    //INICIALIZAR SERVIÇO DE CRONOMETRO
-    Get.put(TimerService());
-  }
-
-  //FUNÇÃO DE NAVEGAÇÃO APOS LOGIN 
-  void navigateUser(){
-    //VERIFICAR SE É O PRIMEIRO LOGIN
-    if(!GetStorage().hasData('firstLogin')){
-      //NAVEGAR PARA APRESENTAÇÃO PAGE
-      Get.offAllNamed('/onboarding');
-      return;
-    }else{
-      //NAVEGAR PARA APRESENTAÇÃO PAGE
-      Get.offAllNamed('/home');
-      return;
-    } 
-  }
 }

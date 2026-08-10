@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
@@ -28,7 +27,7 @@ class CardEscalationListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
+    return ListenableBuilder(listenable: EscalationController.instance, builder: (_, __){
       //RESGATAR CONTROLLER
       EscalationController escalationController = EscalationController.instance;
       //RESGATAR JOGADOR NA ESCALAÇÃO
@@ -47,7 +46,7 @@ class CardEscalationListWidget extends StatelessWidget {
             children: [
               if(user != null)...[
                 InkWell(
-                  onTap: () => Get.bottomSheet(BottomSheetPlayer(user: user), isScrollControlled: true),
+                  onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetPlayer(user: user)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 10,

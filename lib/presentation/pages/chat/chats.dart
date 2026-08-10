@@ -4,7 +4,7 @@ import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -70,7 +70,7 @@ class _ChatsPageState extends State<ChatsPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "@${user.userName}",
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
@@ -114,7 +114,7 @@ class _ChatsPageState extends State<ChatsPage> {
                     ],
                   ),
                 ),
-                Obx(() {
+                ListenableBuilder(listenable: chatController, builder: (_, __){
                   //RESGTATAR CHATS
                   var chats = chatController.chats;
                   //VERIFICAR SE CHATS NÃO ESTÃO VAZIOS
@@ -132,10 +132,7 @@ class _ChatsPageState extends State<ChatsPage> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0),
                         child: ElevatedButton(
-                          onPressed: () => Get.toNamed(
-                            "/chat_private",
-                            arguments: userChat,
-                          ),
+                          onPressed: () => context.go('/chats/private', extra: userChat),
                           child: Row(
                             children: [
                               Padding(

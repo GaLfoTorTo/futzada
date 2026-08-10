@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
@@ -26,7 +25,7 @@ class SilderPlayersWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       margin: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        color: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
         borderRadius: BorderRadius.circular(5)
       ),
       child: Column(

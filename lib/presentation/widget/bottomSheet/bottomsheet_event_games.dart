@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class BottomSheetEventGames extends StatelessWidget {
@@ -43,14 +43,14 @@ class BottomSheetEventGames extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 20),
             child: Text(
               'Escolha a partida que vc deseja iniciar agora',
-              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: AppColors.grey_500,
               ),
               textAlign: TextAlign.center
             ),
           ),
           const Divider(color: AppColors.grey_300),
-          Obx(() {
+          ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
             return Expanded(
               child: ListView(
                 children: gameController.nextGames.map((game) {
@@ -63,8 +63,9 @@ class BottomSheetEventGames extends StatelessWidget {
                       onPressed: (){
                         //DEFINIR PARTIDA ATUAL
                         gameController.setCurrentGame(game);
-                        //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                        Get.offAndToNamed('/games/overview');
+                        //FECHAR BOTTOMSHEET E NAVEGAR PARA PAGINA DE DETALHES DO JOGO
+                        Navigator.of(context).pop();
+                        context.go('/games/overview');
                       },
                       child: Column(
                         children: [
@@ -83,7 +84,7 @@ class BottomSheetEventGames extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Partida #${game.number}",
-                                    style: Theme.of(Get.context!).textTheme.titleSmall!.copyWith(
+                                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                       overflow: TextOverflow.ellipsis
                                     ),
                                   ),
@@ -101,7 +102,7 @@ class BottomSheetEventGames extends StatelessWidget {
                                         ),
                                         Text(
                                           "${eventController.event.address!.state}",
-                                          style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
+                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                             color: AppColors.grey_500,
                                             overflow: TextOverflow.ellipsis
                                           ),
@@ -121,7 +122,7 @@ class BottomSheetEventGames extends StatelessWidget {
                                         ),
                                       Text(
                                         "Hoje: $gameTime",
-                                        style: Theme.of(Get.context!).textTheme.bodySmall!.copyWith(
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                           color: AppColors.grey_500,
                                           overflow: TextOverflow.ellipsis
                                         ),

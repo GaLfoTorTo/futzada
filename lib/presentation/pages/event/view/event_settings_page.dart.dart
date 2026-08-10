@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -151,7 +151,7 @@ class _EventSettingsPageState extends State<EventSettingsPage> {
                         name: 'horaInicio',
                         label: 'Hora de Início',
                         textController: eventController.startTimeController,
-                        onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Início'),
+                        onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'Hora de Início'),
                         showModal: () => FormHelper.selectTime(context, 'horaInicio'),
                       ),
                     ),
@@ -161,7 +161,7 @@ class _EventSettingsPageState extends State<EventSettingsPage> {
                         name: 'horaFim',
                         label: 'Hora de Fim',
                         textController: eventController.endTimeController,
-                        onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Fim'),
+                        onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'Hora de Fim'),
                         showModal: () => FormHelper.selectTime(context, 'horaFim'),
                       ),
                     ),
@@ -316,7 +316,7 @@ class _EventSettingsPageState extends State<EventSettingsPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Configurações',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

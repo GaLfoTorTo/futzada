@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 
@@ -40,12 +40,12 @@ class DialogAlertStart extends StatelessWidget {
                   text: "Escalar equipes",
                   width: dimensions.width,
                   icon: Icons.people_rounded,
-                  action: () => Get.offAndToNamed('/games/teams')
+                  action: () => context.go('/games/teams')
                 ),
                 ButtonOutlineWidget(
                   text: "Escalar depois",
                   width: dimensions.width,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                 )
               ],
             )

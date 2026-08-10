@@ -1,5 +1,5 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:futzada/data/models/event_model.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:futzada/data/services/notification_service.dart';
 
 class FirebaseService {
@@ -38,8 +38,6 @@ class FirebaseService {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       print('Notificação clicada');
 
-      // Exemplo com GetX
-      // Get.toNamed(message.data['route']);
     });
   }
 

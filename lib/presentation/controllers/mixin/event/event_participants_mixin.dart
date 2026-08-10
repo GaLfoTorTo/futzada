@@ -1,10 +1,10 @@
 //===MIXIN - PARTICIPANTS===
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:get/get.dart';
 
-mixin EventParticipantsMixin on GetxController{
+mixin EventParticipantsMixin on ChangeNotifier {
   //FUNÇÃO DE CATEGORIZAÇÃO DE PARTICIPANTS
   Map<String, List<UserModel>?> setParticipants(List<UserModel>? participants){
     Map<String, List<UserModel>?> map = {

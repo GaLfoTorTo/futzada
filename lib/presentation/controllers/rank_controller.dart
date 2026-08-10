@@ -1,6 +1,5 @@
-
-//===DEPENDENCIAS BASE===
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/data/services/rank_service.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
@@ -9,28 +8,40 @@ abstract class RankBase {
   //GETTER - SERVIÇO DE PARTIDAS
   RankService get rankService;
   //ESTADO - RANKING
-  RxString get type;
+  String get type;
+  set type(String v);
   //ESTADO - LISTA DE RANKINGS
-  RxList<UserModel?> get topRanking;
+  List<UserModel?> get topRanking;
 }
 
-class RankController extends GetxController implements RankBase{
+class RankController extends ChangeNotifier implements RankBase {
   //GETTER DE CONTROLLERS
-  static RankController get instance => Get.find();
+  static RankController get instance => sl<RankController>();
   final EventController eventController = EventController.instance;
 
   //GETTER DE SERVIÇOS
   @override
   RankService rankService = RankService();
-  //GETTER DE TYPE
-  @override
-  RxString type = 'Artilheiros'.obs;
-  @override
-  late RxList<UserModel> topRanking = <UserModel>[].obs;
 
+  //ESTADO - RANKING TYPE
+  String _type = 'Artilheiros';
   @override
-  void onInit() {
-    super.onInit();
-    //topRanking.value = eventController.event.participants!.take(10).toList();
+  String get type => _type;
+  @override
+  set type(String v) { _type = v; notifyListeners(); }
+
+  //ESTADO - LISTA DE RANKINGS
+  final List<UserModel> _topRanking = [];
+  @override
+  List<UserModel> get topRanking => _topRanking;
+
+  void init() {
+    //topRanking..addAll(eventController.event.participants!.take(10));
+  }
+
+  void setTopRanking(List<UserModel> list) {
+    _topRanking.clear();
+    _topRanking.addAll(list);
+    notifyListeners();
   }
 }

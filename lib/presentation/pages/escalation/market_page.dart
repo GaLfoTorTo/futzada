@@ -9,7 +9,7 @@ import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_player_market_widget.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_market.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 
 class MarketPage extends StatefulWidget {
@@ -22,26 +22,27 @@ class MarketPage extends StatefulWidget {
 class MarketPageState extends State<MarketPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   EscalationController escalationController = EscalationController.instance;
-  //DEFINIR COR A PARTIR DO TEMA
-  final color = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
+  //DEFINIR COR A PARTIR DO TEMA (calculado no build via context)
+  Color get _color => AppColors.white; // sobrescrito no build
 
   //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
   void selectFilter(String name, dynamic newValue){
     setState(() {
       escalationController.setFilter(name, newValue);
-      escalationController.update();
-    });
+          });
   }
   
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = isDark ? AppColors.dark_500 : AppColors.white;
+
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Mercado',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
@@ -71,7 +72,7 @@ class MarketPageState extends State<MarketPage> {
                       textController: escalationController.pesquisaController,
                       type: TextInputType.text,
                     ),
-                    Obx(() {
+                    ListenableBuilder(listenable: escalationController, builder: (_, __){
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -108,13 +109,17 @@ class MarketPageState extends State<MarketPage> {
                           ),
                           ButtonTextWidget(
                             text: "Filtros",
-                            backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
-                            textColor: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
+                            backgroundColor: isDark ? AppColors.dark_500 : AppColors.white,
+                            textColor: isDark ? AppColors.white : AppColors.blue_500,
                             textSize: AppSize.fontSm,
                             icon: AppIcones.filter_solid,
                             iconAfter: true,
                             width: ( dimensions.width / 3 ) - 50,
-                            action: () => Get.bottomSheet(const BottomSheetMarket(), isScrollControlled: true)
+                            action: () => showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => const BottomSheetMarket(),
+                            )
                           ),
                         ],
                       );

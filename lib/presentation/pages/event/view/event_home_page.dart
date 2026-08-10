@@ -1,11 +1,11 @@
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/core/helpers/event_helper.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/api/api.dart';
+import 'package:futzada/core/api/api_routes.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/map_helper.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -50,8 +50,8 @@ class _EventHomePageState extends State<EventHomePage> {
   late String eventCategory;
   late Color modalityColor;
   //ESTADOS - MAPA/VIAGEM
-  Rxn<LatLng> userLatLon = Get.find(tag: 'userLatLog');
-  RxBool isMapLoaded = false.obs;
+  ValueNotifier<LatLng?> userLatLon = sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog');
+  bool isMapLoaded = false;
   late Map<String, dynamic> travelMode;
   late double distance;
   late Duration timeTravelMode;
@@ -69,7 +69,7 @@ class _EventHomePageState extends State<EventHomePage> {
     eventDate = DateHelper.getEventDate(event.date!);
     modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //VERIFICAR SE MAPA ESTA PRONTO PARA INICIAR
-    isMapLoaded.value = true;
+    setState(() { isMapLoaded = true; });
     //DEFINIR TEMPO E METODO DE VIAGEM
     setTravelModel();
   }
@@ -84,7 +84,7 @@ class _EventHomePageState extends State<EventHomePage> {
     timeTravelMode = MapHelper.getTravelTime(distance, travelMode['speed']);
     timeTravel = MapHelper.setTimeTravel(timeTravelMode);
     //ATUALIZAR METODO DE VIAGEM DO CONTROLLER
-    eventController.travelMode.value = travelMode['type'];
+    eventController.travelMode = travelMode['type'];
   }
     
   @override
@@ -97,7 +97,7 @@ class _EventHomePageState extends State<EventHomePage> {
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(10),
-        color: Get.isDarkMode ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
         width: dimensions.width,
         child: Column(
           children: [
@@ -489,9 +489,9 @@ class _EventHomePageState extends State<EventHomePage> {
               height: dimensions.height * 0.25,
               margin: const EdgeInsets.symmetric(vertical: 20.0),
               color: AppColors.grey_300,
-              child: Obx(() {
+              child: ListenableBuilder(listenable: Listenable.merge([eventController, gameController]), builder: (_, __){
                 //EXIBIR LOADING DE CARREGAMENTO DO MAPA
-                if (!isMapLoaded.value) {
+                if (!isMapLoaded) {
                   return Center(
                     child: CircularProgressIndicator(
                       color: modalityColor,
@@ -509,7 +509,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: AppApi.map,
+                      urlTemplate: ApiRoutes.map,
                       userAgentPackageName: 'com.example.futzada',
                       subdomains: const ['a', 'b', 'c', 'd'],
                     ),
@@ -578,16 +578,16 @@ class _EventHomePageState extends State<EventHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               spacing: 20,
               children: [
-                Obx((){
+                ListenableBuilder(listenable: Listenable.merge([eventController, gameController]), builder: (_, __){
                 return Column(
                     children: [
                       ButtonIconWidget(
-                        icon: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['icon'],
+                        icon: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode)['icon'],
                         iconSize: 30,
                         padding: 15,
                         iconColor: modalityColor,
                         backgroundColor: modalityColor.withAlpha(50),
-                        action: () => Get.bottomSheet(const BottomSheetMapTravel())
+                        action: () => showModalBottomSheet(context: context, builder: (_) => const BottomSheetMapTravel())
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
@@ -615,7 +615,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       backgroundColor: modalityColor.withAlpha(50),
                       action: () => IntegrationRouteService.openDialogApps(
                         event.address!,
-                        travelModel: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode.value)['type']
+                        travelModel: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode)['type']
                       ),
                     ),
                     Padding(

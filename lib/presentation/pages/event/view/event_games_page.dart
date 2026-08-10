@@ -1,5 +1,4 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
@@ -54,10 +53,10 @@ class _EventGamesPageState extends State<EventGamesPage> {
       //VERIFICAR SE PARTIDAS JÁ FORAM CARREGADAS
       if(gameController.nextGames.isEmpty && gameController.finishedGames.isEmpty){
         //CARREGAR PARTIDAS DO EVENTO
-        gameController.loadGames.value = false;
-        gameController.loadGames.value = await gameController.setGamesEvent(event);
+        gameController.loadGames = false;
+        gameController.loadGames = await gameController.setGamesEvent(event);
         //BUSCAR HISTORICO
-        gameController.loadHistoricGames.value = await gameController.getHistoricGames();
+        gameController.loadHistoricGames = await gameController.getHistoricGames();
       } 
     });
   }
@@ -85,18 +84,18 @@ class _EventGamesPageState extends State<EventGamesPage> {
               textAlign: TextAlign.center,
             ),
             //PARTIDAS DO DIA DE EVENTO
-            Obx((){
+            ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
               //LISTA DE CARDS DE PARTIDAS
               List<Widget> listGames = [];
               //EXIBIR SKELETON NO CARREGAMENTO DAS PARTIDAS
-              if(!gameController.loadGames.value) {
+              if(!gameController.loadGames) {
                 return const SkeletonGamesWidget();
               }
               //EXIBIR PAGINA DE ERRO DE PARTIDA NÃO ENCONTRADA
-              if(!gameController.hasGames.value){
+              if(!gameController.hasGames){
                 return ErroGamePage(
                   function: () async {
-                    gameController.loadGames.value = await gameController.setGamesEvent(event);
+                    gameController.loadGames = await gameController.setGamesEvent(event);
                   } 
                 );
               }

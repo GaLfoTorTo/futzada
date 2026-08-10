@@ -1,83 +1,120 @@
+import 'package:flutter/foundation.dart';
 import 'package:futzada/data/models/escalation_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:get/get.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
+import 'package:futzada/presentation/controllers/mixin/escalation/escalation_market_mixin.dart';
 
 //===MIXIN - GERENCIAMENTO DE ESCALAÇÃO===
-mixin EscalationManagerMixin on GetxController implements EscalationBase {
+mixin EscalationManagerMixin on ChangeNotifier, EscalationMarketMixin implements EscalationBase {
   @override
   bool canManager = false;
+
+  String _category = '';
   @override
-  final RxString category = ''.obs;
+  String get category => _category;
   @override
-  final RxString formation = ''.obs;
+  set category(String v) { _category = v; notifyListeners(); }
+
+  String _formation = '';
   @override
-  final RxInt selectedPlayer = 0.obs;
+  String get formation => _formation;
   @override
-  final RxString selectedOccupation = ''.obs;
+  set formation(String v) { _formation = v; notifyListeners(); }
+
+  int _selectedPlayer = 0;
   @override
-  final RxInt selectedPlayerCapitan = 0.obs;
+  int get selectedPlayer => _selectedPlayer;
   @override
-  final RxDouble managerPatrimony = 100.0.obs;
+  set selectedPlayer(int v) { _selectedPlayer = v; notifyListeners(); }
+
+  String _selectedOccupation = '';
   @override
-  final RxDouble managerTeamPrice = 0.0.obs;
+  String get selectedOccupation => _selectedOccupation;
   @override
-  final RxDouble managerValuation = 0.0.obs;
+  set selectedOccupation(String v) { _selectedOccupation = v; notifyListeners(); }
+
+  int _selectedPlayerCapitan = 0;
+  @override
+  int get selectedPlayerCapitan => _selectedPlayerCapitan;
+  @override
+  set selectedPlayerCapitan(int v) { _selectedPlayerCapitan = v; notifyListeners(); }
+
+  double _managerPatrimony = 100.0;
+  @override
+  double get managerPatrimony => _managerPatrimony;
+  @override
+  set managerPatrimony(double v) { _managerPatrimony = v; notifyListeners(); }
+
+  double _managerTeamPrice = 0.0;
+  @override
+  double get managerTeamPrice => _managerTeamPrice;
+  @override
+  set managerTeamPrice(double v) { _managerTeamPrice = v; notifyListeners(); }
+
+  double _managerValuation = 0.0;
+  @override
+  double get managerValuation => _managerValuation;
+  @override
+  set managerValuation(double v) { _managerValuation = v; notifyListeners(); }
+
   @override
   List<String> formations = [];
-  
+
   //DADOS DO EVENTO
   @override
   late EventModel? event;
+
+  final List<Map<String, dynamic>> _myEscalations = [];
   @override
-  late RxList<Map<String, dynamic>> myEscalations;
+  List<Map<String, dynamic>> get myEscalations => _myEscalations;
+
   //ESTADOS
+  final Map<String, Map<int, UserModel?>> _escalation = {};
   @override
-  late RxMap<String, RxMap<int, UserModel?>> escalation;
+  Map<String, Map<int, UserModel?>> get escalation => _escalation;
+
+  final List<int?> _starters = [];
   @override
-  late RxList<int?> starters = <int?>[].obs;
+  List<int?> get starters => _starters;
+
+  final List<int?> _reserves = [];
   @override
-  late RxList<int?> reserves = <int?>[].obs;
-  
+  List<int?> get reserves => _reserves;
+
   //FUNÇÃO PARA SELECIONAR EVENTO E ATUALIZAR DADOS REFERNTES AO EVENTO
-  void setEvent(id) async{
-    isLoading.value = true;
-    try {  
-      //ATUALIZAR EVENTO SELECIONADO
+  void setEvent(id) async {
+    isLoading = true;
+    try {
       event = events.firstWhere((event) => event.id == id);
-      //CARREGAR JOGADORES DO MERCADO
-      playersMarket.value = await userService.fecthSuggestionFriends();
-      //APLICAR FILTRO INICIAL NOS JOGADORES DO MERCADO
-      filteredPlayersMarket.value = [];//filterMarketPlayers();
-      //ATUALIZAR CATEGORIA DO EVENTO SELECIONADOS
-      category.value = events.firstWhere((event) => event.id == event.id).gameConfig!.category;
-      //DEFINIR FORMAÇÕES APARTIR DE CATEGORIA SELECIONADA
-      formations = escalationService.getFormations(category.value);
+      setPlayersMarket(await userService.usersSuggestionFetch());
+      setFilteredPlayersMarket([]);
+      category = events.firstWhere((e) => e.id == id).gameConfig!.category;
+      formations = escalationService.getFormations(category);
     } catch (e) {
-      hasError.value = true;
+      hasError = true;
     }
-    isLoading.value = false;
+    isLoading = false;
   }
 
   //FUNÇÃO QUE RESGATAR DADOS DE ESCALAÇÃO DO USUARIO NO EVENTO SELECIONADO
   void setUserInfo() {
-    isLoading.value = true;
-    try {  
-      //RESGATAR ESCALAÇÃO DO USUARIO PARA EVENTO SELECIONADO
-      EscalationModel userEscalation = escalationService.generateEscalation(category.value);
-      //RESGATAR FORMAÇÃO DA ESCALAÇÃO
-      formation.value = userEscalation.formation!;
-      //RESGATAR ESCALAÇÃO (TITULARES E RESERVAS)
-      starters.value = userEscalation.starters ?? escalationService.setEscalation(category.value, 'starters');
-      reserves.value = userEscalation.reserves ?? escalationService.setEscalation(category.value, 'reserves');
-      //RESGATR ECONOMIA DO MANAGER
-      managerPatrimony.value = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).patrimony!;
-      managerTeamPrice.value = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).price!;
-      managerValuation.value = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).valuation!;
+    isLoading = true;
+    try {
+      EscalationModel userEscalation = escalationService.generateEscalation(category);
+      formation = userEscalation.formation!;
+      final startersList = userEscalation.starters ?? escalationService.setEscalation(category, 'starters');
+      final reservesList = userEscalation.reserves ?? escalationService.setEscalation(category, 'reserves');
+      _starters.clear();
+      _starters.addAll(startersList);
+      _reserves.clear();
+      _reserves.addAll(reservesList);
+      managerPatrimony = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).patrimony!;
+      managerTeamPrice = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).price!;
+      managerValuation = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).valuation!;
     } catch (e) {
-      hasError.value = true;
+      hasError = true;
     }
-    isLoading.value = false;
+    isLoading = false;
   }
 }

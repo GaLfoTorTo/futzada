@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:get/get.dart';
 import 'package:faker/faker.dart';
 import 'package:futzada/data/models/escalation_model.dart';
 import 'package:futzada/data/models/participant_model.dart';
@@ -26,19 +25,6 @@ class EscalationService {
     });
   }
 
-  //FUNÇÃO PARA CONVERTER ESCALAÇÃO EM RXMAP
-  RxMap<int, ParticipantModel?> convertToRxMap(
-    Map<int, ParticipantModel?> escalation,
-  ) {
-    return escalation.obs;
-  }
-  
-  //FUNÇÃO PARA CONVERTER ESCALÇAI EM MAP
-  Map<int, ParticipantModel?> convertToMap(
-    RxMap<int, ParticipantModel?> escalation,
-  ) {
-    return Map<int, ParticipantModel?>.from(escalation);
-  }
 
   //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
   List<int?> setEscalation(String category, String occupation) {
@@ -65,10 +51,10 @@ class EscalationService {
     //RETORNAR ESCALAÇÃO
     if(occupation == 'starters'){
       //INICIALIZAR TITULARES COM VALORES NULOS
-      return RxList<int?>.filled(numSta, null);
+      return List<int?>.filled(numSta, null);
     } else {
       //INICIALIZAR RESERVAS COM VALORES NULOS
-      return RxList<int?>.filled(numRes, null);
+      return List<int?>.filled(numRes, null);
     }
   }
 

@@ -1,4 +1,6 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_map_apps.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
@@ -71,10 +73,8 @@ class IntegrationRouteService {
     final apps = await _getMapApps(params);
     if(apps.isNotEmpty){
       //EXIBIR DIALOG DE APPS
-      Get.bottomSheet(BottomSheetMapApps(
-        params: params,
-        apps: apps
-      ));
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) showModalBottomSheet(context: ctx, builder: (_) => BottomSheetMapApps(params: params, apps: apps));
     }else{
       //REDIRECIONAR PARA LOJA
       _handleFallback();
@@ -102,7 +102,7 @@ class IntegrationRouteService {
     for (final app in appsMapIcons.entries) {
       //RESGATAR CHAVE, ICONE, TIPO E NOME DO APP NO ARRAY
       final appKey = app.key;
-      final appMapType = MapType.values.firstWhereOrNull((a) => a.toString() == 'MapType.$appKey');
+      final appMapType = MapType.values.where((a) => a.toString() == 'MapType.$appKey').firstOrNull;
       //VERIFICAÇÃO DE PLATAFORMA (IOS/ANDROID)
       if(appKey == 'apple' && devicePlatform != 'Ios'){
         continue;
@@ -110,7 +110,7 @@ class IntegrationRouteService {
       final appName = _getAppDisplayName(appKey);
       final appIcon = app.value;
       final appType = IntegrationApps.values.firstWhere((a) => a.toString() == 'IntegrationApps.$appKey');
-      final appMapLauncer = installedMaps.firstWhereOrNull((e) => e.mapType.toString() == "MapType.$appKey");
+      final appMapLauncer = installedMaps.where((e) => e.mapType.toString() == "MapType.$appKey").firstOrNull;
       //VERIFICAR SE APP DE MAP ESTA NA LISTA DE APPS DO USUARIO
       if(appMapType != null && appMapLauncer == null){
         continue;

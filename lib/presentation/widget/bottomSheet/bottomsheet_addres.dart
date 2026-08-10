@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -23,9 +22,9 @@ class BottomSheetAddress extends StatelessWidget {
         addressController.setEventAddress(suggestion);
       }else{
         //FECHAR DIALOG
-        Get.back();
+        Navigator.of(context).pop();
         //EXIBIR DIALOG DE ERRO
-        Get.dialog(DialogAlertAddress(suggestion: suggestion));
+        showDialog(context: context, builder: (_) => DialogAlertAddress(suggestion: suggestion));
       }
     }
 
@@ -70,15 +69,15 @@ class BottomSheetAddress extends StatelessWidget {
                     icon: const Icon(Icons.location_on),
                     suffixIcon: const Icon(Icons.search),
                   ),
-                  onChanged: (value) => addressController.searchText.value = value,
+                  onChanged: (value) => addressController.searchText = value,
                 ),
                 const Divider(color: AppColors.grey_300),
               ],
             ),
           ),
-          Obx(() {
+          ListenableBuilder(listenable: addressController, builder: (_, __){
             final suggestions = addressController.suggestions;
-            if (addressController.isSearching.value) {
+            if (addressController.isSearching) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.green_300),
               );

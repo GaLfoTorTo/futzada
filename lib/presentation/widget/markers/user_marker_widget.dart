@@ -16,8 +16,8 @@ class UserMarkerWidget extends StatelessWidget {
       markers: [
         Marker(
           point: LatLng(
-            mapWidgetController.currentPosition.value!.latitude, 
-            mapWidgetController.currentPosition.value!.longitude
+            mapWidgetController.currentPosition!.latitude, 
+            mapWidgetController.currentPosition!.longitude
           ),
           width: 50,
           height: 50,

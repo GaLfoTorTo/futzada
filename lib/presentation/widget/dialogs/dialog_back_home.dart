@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:get/get.dart';
 
 class DialogBackHome extends StatelessWidget {
   const DialogBackHome({super.key});
 
   @override
   Widget build(BuildContext context) {
-    NavigationController navigationController = NavigationController.instance;
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -40,7 +38,7 @@ class DialogBackHome extends StatelessWidget {
                   text: "Não",
                   width: 50,
                   height: 20,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                   backgroundColor: AppColors.red_300,
                   textColor: AppColors.white,
                 ),
@@ -49,8 +47,8 @@ class DialogBackHome extends StatelessWidget {
                   width: 50,
                   height: 20,
                   action: () {
-                    navigationController.index.value = 0;
-                    Get.offAllNamed('/home');
+                    Navigator.of(context).pop();
+                    context.go('/home');
                   },
                   backgroundColor: AppColors.green_300,
                   textColor: AppColors.white,

@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/achivment_model.dart';
+import 'package:futzada/data/models/achievement_model.dart';
+import 'package:futzada/data/models/level_model.dart';
 import 'package:futzada/data/models/manager_model.dart';
 import 'package:futzada/data/models/participant_model.dart';
 import 'package:futzada/data/models/player_model.dart';
 import 'package:futzada/data/models/user_config_model.dart';
-import 'package:futzada/data/models/user_level_model.dart';
 
 class UserModel {
   int? id;
@@ -21,11 +21,11 @@ class UserModel {
   String? photo;
   Privacy? privacy;
   UserConfigModel? config;
-  UserLevelModel? level;
+  LevelModel? level;
   PlayerModel? player;
   ManagerModel? manager;
   List<ParticipantModel>? participants;
-  List<AchivmentModel>? achievements;
+  List<AchievementModel>? achievements;
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
@@ -64,11 +64,11 @@ class UserModel {
     String? photo,
     Privacy? privacy,
     UserConfigModel? config,
-    UserLevelModel? level,
+    LevelModel? level,
     PlayerModel? player,
     ManagerModel? manager,
     List<ParticipantModel>? participants,
-    List<AchivmentModel>? achievements,
+    List<AchievementModel>? achievements,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt
@@ -133,9 +133,7 @@ class UserModel {
       config: map['config'] != null 
         ? UserConfigModel.fromMap(map['config'] as Map<String, dynamic>) 
         : null,
-      level: map['level'] != null 
-        ? UserLevelModel.fromMap(map['level'] as Map<String, dynamic>) 
-        : null,
+      level: map['level'] != null ? LevelModel.fromMap(map['level'] as Map<String, dynamic>) : null,
       privacy: map['privacy'] != null
         ? Privacy.values.firstWhere((e) => e.name == map['privacy'])
         : null,
@@ -154,9 +152,9 @@ class UserModel {
         )
         : [],
       achievements: map['achievements'] != null 
-        ? List<AchivmentModel>.from((map['achievements'] as List<dynamic>)
-          .map<AchivmentModel>(
-            (x) => AchivmentModel.fromMap(x),
+        ? List<AchievementModel>.from((map['achievements'] as List<dynamic>)
+          .map<AchievementModel>(
+            (x) => AchievementModel?.fromMap(x),
           ),
         )
         : [],

@@ -16,7 +16,7 @@ class ChatService {
     //DEFINIR LISTA DE CHATS
     List<Map<String, dynamic>> arr = [];
     //LOOP PARA TITULARES
-    List.generate(50, (i){
+    /* List.generate(50, (i){
       //ADICIONAR CHAT A LISTA
       arr.add({
         'user': userService.generateUser(i),
@@ -28,7 +28,7 @@ class ChatService {
         }),
         'date': DateFormat('dd/MM/yyyy').format(faker.date.dateTime(minYear: 2024, maxYear: 2026)),
       });
-    });
+    }); */
     //RETORNAR LISTA DE NOTIFICAÇÕES
     return arr;
   }

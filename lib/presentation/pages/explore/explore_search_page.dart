@@ -1,6 +1,7 @@
 import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/presentation/controllers/explorer_controller.dart';
@@ -27,10 +28,10 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR CONTROLLER DE EXPLORER
-    exploreController = Get.put(ExplorerController());
+    //INICIALIZAR CONTROLLER DE EXPLORER (singleton compartilhado via GetIt)
+    exploreController = sl<ExplorerController>();
     //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
-    mapWidgetController = Get.put(MapWidgetController());
+    mapWidgetController = MapWidgetController()..init();
   }
 
   @override
@@ -41,16 +42,16 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Pesquisar',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            Obx(() {
+            ListenableBuilder(listenable: Listenable.merge([exploreController, mapWidgetController]), builder: (_, __){
               return Container(
                 padding: const EdgeInsets.all(10),
-                color: Get.isDarkMode ? AppColors.dark_700 : AppColors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_700 : AppColors.white,
                 child: Column(
                   spacing: 5,
                   children: [
@@ -58,7 +59,7 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
                       name: 'search',
                       hint: 'Pesquisa',
                       prefixIcon: AppIcones.search_solid,
-                      backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
                       textController: exploreController.pesquisaController,
                       type: TextInputType.text,
                     ),
@@ -67,9 +68,9 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ButtonDropdownWidget(
-                          selectedItem: exploreController.order.value,
+                          selectedItem: exploreController.order,
                           items: ['A - Z', 'Z - A'],
-                          onChange: (v) => exploreController.order.value = v,
+                          onChange: (v) => exploreController.order = v,
                           width: dimensions.width * 0.25,
                           hint: "Ordenação",
                         ),
@@ -77,16 +78,16 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
                           text: "Filtros",
                           icon: Icons.filter_alt,
                           width: dimensions.width * 0.25,
-                          textColor: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
-                          backgroundColor: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
-                          action: () => Get.toNamed("explore/filter"),
+                          textColor: Theme.of(context).brightness == Brightness.dark ? AppColors.white : AppColors.blue_500,
+                          backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
+                          action: () => context.push('/explore/filter'),
                         ),
                         ButtonTextWidget(
                           text: "Mapa",
                           icon: Icons.map_rounded,
                           width: dimensions.width * 0.25,
                           backgroundColor: AppColors.green_300,
-                          action: () => Get.offNamed("explore/map"),
+                          action: () => context.go('/explore/map'),
                         ),
                       ],
                     ),
@@ -100,8 +101,8 @@ class _ExploreSearchPageState extends State<ExploreSearchPage> {
                 ),
               );
             }),
-            Obx((){
-              if(!mapWidgetController.isLoaded.value){
+            ListenableBuilder(listenable: Listenable.merge([exploreController, mapWidgetController]), builder: (_, __){
+              if(!mapWidgetController.isLoaded){
                 return const IndicatorLoadingWidget();
               }
               if(mapWidgetController.events.isEmpty){

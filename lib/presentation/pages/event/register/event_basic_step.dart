@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -145,7 +145,7 @@ class EventBasicStepState extends State<EventBasicStep> {
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (isValid) {
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/address');
+      context.push('/event/register/address');
     }
   }
 
@@ -177,7 +177,7 @@ class EventBasicStepState extends State<EventBasicStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Registro ", 
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightAction: () => navigationController.backHome(context),
       ),
       body: SafeArea(
@@ -238,7 +238,7 @@ class EventBasicStepState extends State<EventBasicStep> {
                     name: 'title',
                     label: 'Titulo',
                     textController: eventController.titleController,
-                    onValidated: (value) => eventController.apiService.validateEmpty(value, 'titulo'),
+                    onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'titulo'),
                     type: TextInputType.text,
                   ),
                   InputTextWidget(
@@ -247,7 +247,7 @@ class EventBasicStepState extends State<EventBasicStep> {
                     hint: 'Ex: Melhor Pelada do Brasil',
                     textController: eventController.bioController,
                     textArea: true,
-                    onValidated: (value) => eventController.apiService.validateEmpty(value, 'titulo'),
+                    onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'titulo'),
                     type: TextInputType.text,
                   ),
                   Padding(

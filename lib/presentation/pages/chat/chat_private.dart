@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/controllers/chat_controller.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -9,7 +9,8 @@ import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ChatPrivatePage extends StatefulWidget {
-  const ChatPrivatePage({super.key});
+  final UserModel user;
+  const ChatPrivatePage({super.key, required this.user});
 
   @override
   State<ChatPrivatePage> createState() => _ChatPrivatePageState();
@@ -18,8 +19,6 @@ class ChatPrivatePage extends StatefulWidget {
 class _ChatPrivatePageState extends State<ChatPrivatePage> {
   //CONTROLLER DE BARRA NAVEGAÇÃO
   final controller = ChatController.instance;
-  //RESGATAR USUARIO RECEBIDO POR PARAMETRO
-  final UserModel user = Get.arguments;
   //CONTROLADOR DE SCROLL
   final scrollController = ScrollController();
 
@@ -31,7 +30,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
       scrollToBottom();
     });
     //RESGATAR MENSAGENS DO CHAT ESPECIFICO
-    controller.getMessages(user);
+    controller.getMessages(widget.user);
   }
 
   //FUNÇÃO PARA ROLAGEM DE PAGINA AO ADICIONAR MENSAGEM
@@ -50,8 +49,8 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
     
     return Scaffold(
       appBar: HeaderWidget(
-        title: "@${user.userName}",
-        leftAction: () => Get.back(),
+        title: "@${widget.user.userName}",
+        leftAction: () => context.pop(),
       ),
       body: SafeArea(
         child: Column(
@@ -59,7 +58,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Obx(() {
+                child: ListenableBuilder(listenable: controller, builder: (_, __){
                   //RESGATAR MENSAGENS DO CHAT ESPECIFICO
                   var messages = controller.chatMessages;
                   //TRIGGER DE ROLAGEM DA PAGINA
@@ -88,15 +87,15 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: ImgCircularWidget(
                             size: 120,
-                            image: user.photo,
+                            image: widget.user.photo,
                           ),
                         ),
                         Text(
-                          "${user.firstName} ${user.lastName}",
+                          "${widget.user.firstName} ${widget.user.lastName}",
                           style: Theme.of(context).textTheme.titleLarge!
                         ),
                         Text(
-                          "@${user.userName}",
+                          "@${widget.user.userName}",
                           style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.grey_300)
                         ),
                         Padding(
@@ -116,7 +115,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
               ),
               child: Row(
                 children: [
@@ -129,7 +128,7 @@ class _ChatPrivatePageState extends State<ChatPrivatePage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => controller.sendMessage(user),
+                    onPressed: () => controller.sendMessage(widget.user),
                     color: AppColors.green_300,
                     highlightColor: AppColors.green_100,
                     icon: const Icon(
@@ -164,8 +163,9 @@ class ChatBubble extends StatelessWidget {
     //DEFINIR ALINHAMENTO DE MENSAGEM
     final alignment = autor ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     //DEFINIR GRADIENTE DE COR
-    final color = Get.isDarkMode ? AppColors.dark_500 : AppColors.white;
-    final textColorTheme = Get.isDarkMode ? AppColors.white : AppColors.dark_500;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final color = isDark ? AppColors.dark_500 : AppColors.white;
+    final textColorTheme = isDark ? AppColors.white : AppColors.dark_500;
     final gradient = autor
         ? [AppColors.green_300, AppColors.green_500.withGreen(160)]
         : [color, color];

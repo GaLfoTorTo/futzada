@@ -1,8 +1,9 @@
 import 'package:futzada/presentation/controllers/profile_controller.dart';
 import 'package:futzada/presentation/pages/profile/profile_overview_page.dart';
 import 'package:futzada/presentation/widget/skeletons/skeleton_profile_widget.dart';
-import 'package:get/get.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
@@ -22,14 +23,13 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   //CONTROLLER
-  ProfileController profileController = Get.put(ProfileController());
+  ProfileController profileController = ProfileController();
 
   //ESTADO - USUARIO
-  UserModel authUser = Get.find<UserModel>(tag: 'user');
+  UserModel authUser = sl<UserModel>(instanceName: 'user');
   late UserModel user;
   late bool isUserProfile;
 
-  late Worker userWorker;
   //ESTADO - ITEMS EVENTO
   late Color modalityColor;
   late Color modalityTextColor;
@@ -47,10 +47,10 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
   void initState() {
     super.initState();
     //INICIALIZAR CONTROLLER DE PERFIL
-    profileController.getProfile(Get.arguments['id']);
+    profileController.getProfile(1);
     //ESPERAR BUSCA DOS DADOS DO USUARIO
-    userWorker = ever<bool>(profileController.isLoaded, (userReady) async {
-      if (!userReady) return;
+    profileController.addListener(() {
+      if (!profileController.isLoaded) return;
       user = profileController.user;
       //VERIFICAR SE É O PERFIL DO USUARIO LOGADO
       isUserProfile = user.id == authUser.id;
@@ -59,9 +59,8 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
       modalityTextColor = ModalityHelper.getEventModalityColor(profileController.user.config!.mainModality!.name)['textColor'];
       modalityImage = ModalityHelper.getEventModalityColor(profileController.user.config!.mainModality!.name)['image'];
       //ATUALIZAR FLAG DE PRONTO
-      profileController.isReady.value = true;
+      profileController.isReady = true;
       //ENCERRAR WORKERS
-      userWorker.dispose();
     });
     //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 3, vsync: this);
@@ -118,8 +117,8 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
     var dimensions = MediaQuery.of(context).size;
     
     return Scaffold(
-      body:  Obx((){
-        if(!profileController.isReady.value){
+      body:  ListenableBuilder(listenable: profileController, builder: (_, __){
+        if(!profileController.isReady){
           return const SkeletonProfileWidget();
         }
         return NestedScrollView(
@@ -134,7 +133,7 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
                 title: const Text("Perfil"),
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Get.back(),
+                  onPressed: () => context.pop(),
                 ),
                 actions: [
                   if(isUserProfile)...[
@@ -298,7 +297,7 @@ class ProfilePageState extends State<ProfilePage> with SingleTickerProviderState
                 pinned: true,
                 delegate: _SliverAppBarDelegate(
                   child: Container(
-                    color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
                     child: TabBar(
                       controller: tabController,
                       onTap: (i) => setState(() => tabIndex = i),

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -27,7 +26,7 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
   //OBSERVAR PARTICIPANTES SELECIONADOS
   late List<UserModel>? participants;
   //DEFINIR ARRAY DE SELECIONADOS
-  late RxList<UserModel?> selectedPlayers = <UserModel?>[].obs;
+  List<UserModel?> selectedPlayers = [];
 
   @override
   void initState() {
@@ -40,10 +39,9 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
       .where((p) =>
         !gameController.teamA.players.contains(p) &&
         !gameController.teamB.players.contains(p))
-      .toList()
-      .obs;
+      .toList();
     //RESGATAR JOGADOR DO TIME RECEBIDO
-    selectedPlayers.value = widget.team == 0 
+    selectedPlayers = widget.team == 0 
       ? gameController.teamA.players
       : gameController.teamB.players; 
   }
@@ -57,13 +55,13 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
         //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
         if (!selectedPlayers.contains(participant)) {
           //ADICIONAR JOGADOR AO ARRAY DO TIME
-          selectedPlayers.add(participant);
+          setState(() { selectedPlayers.add(participant); });
           //REMOVER PARTICIPANTE DA LISA
-          participants!.remove(participant);
+          setState(() { participants!.remove(participant); });
         }
       }else{
         //FECHAR DIALOG
-        Get.back();
+        Navigator.of(context).pop();
         //MENSAGEM DE ERRO DE LIMITE DE JOGADORES
         AppHelper.feedbackMessage(context, "A equipe ja atingiu o número de jogadores!", type: "danger");
       }
@@ -71,9 +69,9 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
       //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
       if (selectedPlayers.contains(participant)) {
         //REMOVER JOGADOR DO ARRAY DO TIME
-        selectedPlayers.remove(participant);
+        setState(() { selectedPlayers.remove(participant); });
         //ADICIONAR PARTICIPANTE DA LISA
-        participants!.insert(0, participant);
+        setState(() { participants!.insert(0, participant); });
       }
     }
   }
@@ -114,13 +112,13 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: Text(
               'Escolha os jogadores que iram compor as equipes da partida',
-              style: Theme.of(Get.context!).textTheme.bodyMedium!.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: AppColors.grey_500,
               ),
               textAlign: TextAlign.center
             ),
           ),
-          Obx((){
+          ListenableBuilder(listenable: gameController, builder: (_, __){
             if(selectedPlayers.isNotEmpty){
               return Container(
                 alignment: Alignment.centerLeft,
@@ -164,7 +162,7 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
             }
           }),
           Expanded(
-            child: Obx(() => Padding(
+            child: ListenableBuilder(listenable: gameController, builder: (_, __) => Padding(
               padding: const EdgeInsets.all(10.0),
               child: ListView(
                 children: participants!.map((user) {

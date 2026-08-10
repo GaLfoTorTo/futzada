@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/data/models/event_model.dart';
@@ -7,7 +7,7 @@ import 'package:futzada/presentation/controllers/event_controller.dart';
 
 
 //===MIXIN - CONFIGURAÇÕES DO EVENTO===
-mixin EventConfigMixin on GetxController{
+mixin EventConfigMixin on ChangeNotifier {
   //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
   late TextEditingController titleController;
   late TextEditingController bioController;
@@ -169,13 +169,13 @@ mixin EventConfigMixin on GetxController{
   Future<Map<String, dynamic>> sendConfigEvent() async {
     try {  
       /* //BUSCAR URL BASICA
-      String url = AppApi.url + AppApi.createEvent;
+      String url = ApiRoutes.url + ApiRoutes.createEvent;
       //RESGATAR USUARIO LOGADO
-      UserModel user = Get.find(tag: 'user');
+      UserModel user = sl<UserModel>();
       //RESGATAR OPTIONS
-      var options = await ApiService.setOption(user);
+      var options = await ApiClient.setOption(user);
       //ENVIAR FORMULÁRIO
-      var response = await ApiService.sendForm(event, options, url);
+      var response = await ApiClient.sendForm(event, options, url);
       return response; */
       return {'status': 200};
     } catch (e) {

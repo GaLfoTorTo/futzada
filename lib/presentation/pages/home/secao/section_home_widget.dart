@@ -8,7 +8,6 @@ import 'package:futzada/presentation/widget/cards/card_task_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_to_you_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_popular_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
-import 'package:get/get.dart';
 
 class SectionHomeWidget extends StatefulWidget {
   final dynamic options;
@@ -59,37 +58,37 @@ class _SectionHomeWidgetState extends State<SectionHomeWidget> {
       case "Ao Vivo":
         return  BoxConstraints(
           maxHeight: 300,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       case "Perto de Você":
         return  BoxConstraints(
           maxHeight: 500,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       case "Mais Populares":
         return  BoxConstraints(
           maxHeight: 350,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       case "Tarefas":
         return  BoxConstraints(
           maxHeight: 120,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       case "Acontece Hoje":
         return  BoxConstraints(
           maxHeight: 230,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       case "Talvez você conheça":
         return  BoxConstraints(
           maxHeight: 250,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
       default:
         return  BoxConstraints(
           maxHeight: 300,
-          maxWidth: Get.width
+          maxWidth: double.infinity
         );
     }
   }

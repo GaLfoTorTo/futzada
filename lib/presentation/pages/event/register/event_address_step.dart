@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:futzada/core/helpers/form_helper.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/inputs/input_date_widget.dart';
@@ -90,7 +90,7 @@ class EventAddressStepState extends State<EventAddressStep> {
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
     if (isValid) {
       //NAVEGAR PARA CADASTRO DE ENDEREÇO
-      Get.toNamed('/event/register/config_games');
+      context.push('/event/register/config_games');
     }
   }
 
@@ -102,7 +102,7 @@ class EventAddressStepState extends State<EventAddressStep> {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Registro", 
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         rightAction: () => navigationController.backHome(context),
       ),
       body: SafeArea(
@@ -158,7 +158,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                           ),
                         ),
                         TextButton(
-                          onPressed: () => Get.toNamed('/explore/map/picker'), 
+                          onPressed: () => context.push('/explore/map/picker'), 
                           style: TextButton.styleFrom(
                             backgroundColor: AppColors.white,
                             padding: const EdgeInsets.all(15),
@@ -208,7 +208,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                           ),
                         ],
                         Text(
-                          eventController.labelDate.value,
+                          eventController.labelDate,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         SelectDaysWeekWidget(
@@ -245,7 +245,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 name: 'horaInicio',
                                 label: 'Hora de Início',
                                 textController: eventController.startTimeController,
-                                onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Início'),
+                                onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'Hora de Início'),
                                 showModal: () => FormHelper.selectTime(context, 'horaInicio'),
                               ),
                             ),
@@ -255,7 +255,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                                 name: 'horaFim',
                                 label: 'Hora de Fim',
                                 textController: eventController.endTimeController,
-                                onValidated: (value) => eventController.apiService.validateEmpty(value, 'Hora de Fim'),
+                                onValidated: (value) => '',//eventController.apiClient.validateEmpty(value, 'Hora de Fim'),
                                 showModal: () => FormHelper.selectTime(context, 'horaFim'),
                               ),
                             ),
@@ -271,7 +271,7 @@ class EventAddressStepState extends State<EventAddressStep> {
                       ButtonOutlineWidget(
                         text: "Voltar",
                         width: 100,
-                        action: () => Get.back(),
+                        action: () => context.pop(),
                       ),
                       ButtonTextWidget(
                         text: "Próximo",

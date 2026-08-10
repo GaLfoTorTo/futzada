@@ -1,6 +1,6 @@
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/controllers/notification_controller.dart';
 import 'package:futzada/presentation/pages/notification/notification_view.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
@@ -36,7 +36,7 @@ class NotificationPageState extends State<NotificationPage> with SingleTickerPro
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Notificações',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(

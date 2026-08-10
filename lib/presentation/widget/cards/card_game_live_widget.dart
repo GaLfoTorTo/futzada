@@ -1,6 +1,6 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/data/models/team_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
@@ -58,7 +58,7 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
         //DEFINIR PARTIDA ATUAL
         gameController.setCurrentGame(widget.game);
         //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-        Get.toNamed('/games/overview');
+        context.go('/games/overview');
       },
       borderRadius: BorderRadius.circular(20),
       child: Container(
@@ -84,10 +84,10 @@ class _CardGameLiveWidgetState extends State<CardGameLiveWidget> {
             ),
           ],
         ),
-        child: Obx(() {
+        child: ListenableBuilder(listenable: gameController, builder: (_, __){
           //RESGATAR PLACAR DA PARTIDA
-          final teamAScore = gameController.teamAScore.value;
-          final teamBScore = gameController.teamBScore.value;
+          final teamAScore = gameController.teamAScore;
+          final teamBScore = gameController.teamBScore;
 
           return Column(
             children: [

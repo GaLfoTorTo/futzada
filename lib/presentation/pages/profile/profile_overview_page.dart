@@ -3,7 +3,6 @@ import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_player_widget.dart';
 import 'package:futzada/presentation/widget/charts/chart_bars_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/event_model.dart';
@@ -71,7 +70,7 @@ class _ProfileOverviewPageState extends State<ProfileOverviewPage> {
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(10),
-        color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+        color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
         child: Column(
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start, 

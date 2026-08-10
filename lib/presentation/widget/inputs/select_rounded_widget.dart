@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
-import 'package:get/get.dart';
 
 class SelectRoundedWidget extends StatelessWidget {
   final String? label;
@@ -42,7 +41,7 @@ class SelectRoundedWidget extends StatelessWidget {
       Icons.back_hand_rounded,
     ];
     //COR DO COMPONENTE DESATIVADO
-    final defaultColor = Get.isDarkMode ? AppColors.dark_300 : AppColors.grey_300;
+    final defaultColor = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.grey_300;
 
     return Column(
       children: [

@@ -1,40 +1,41 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
 
 //===MIXIN - VOTES===
-mixin GameVotesMixin on GetxController implements GameBase{
+mixin GameVotesMixin on ChangeNotifier implements GameBase {
   //ESTADOS - VOTOS
+  int _votesGameCount = 25;
   @override
-  RxInt votesGameCount = 25.obs;
+  int get votesGameCount => _votesGameCount;
+  set votesGameCount(int v) { _votesGameCount = v; notifyListeners(); }
+
+  int _votesMVPCount = 25;
   @override
-  RxInt votesMVPCount = 25.obs;
+  int get votesMVPCount => _votesMVPCount;
+  set votesMVPCount(int v) { _votesMVPCount = v; notifyListeners(); }
+
+  final Map<String, double> _votesGame = {};
   @override
-  RxMap<String, double> votesGame = <String, double>{}.obs;
+  Map<String, double> get votesGame => _votesGame;
+
+  final Map<String, int> _votesMVP = {};
   @override
-  RxMap<String, int> votesMVP = <String, int>{}.obs;
+  Map<String, int> get votesMVP => _votesMVP;
 
   //FUNÇÃO DE DEFINIÇÃO DE OPÇÕES DE VOTO
   void setVotesGame() {
-    //LIMPAR LISTA
-    votesGame.clear();
-    //ADICIONAR JOGADORES DA EQUIPE A
-    votesGame.value = {
+    _votesGame.clear();
+    _votesGame.addAll({
       "team1": 70,
       "draw": 20,
       "team2": 10,
-    };
-  }
-  //FUNÇÃO DE DEFINIÇÃO DE OPÇÕES DE VOTO
-  void setVotesMVP() {
-    //LIMPAR LISTA
-    votesMVP.clear();
-    //ADICIONAR JOGADORES DA EQUIPE A
-    /* votesMVP.addAll({
-      for (final p in teamA.players) event.participants.firstWhere((u) => u.id == p.userId).participants[0]!: 0,
     });
-    //ADICIONAR JOGADORES DA EQUIPE B
-    votesMVP.addAll({
-      for (final p in teamB.players) event.participants.firstWhere((u) => u.id == p.userId).participants[0]!: 0,
-    }); */
+    notifyListeners();
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE OPÇÕES DE VOTO MVP
+  void setVotesMVP() {
+    _votesMVP.clear();
+    notifyListeners();
   }
 }

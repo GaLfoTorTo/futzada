@@ -1,7 +1,8 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_images.dart';
@@ -195,7 +196,10 @@ class CardDayEventWidget extends StatelessWidget {
                   ),
                 ),
                 ButtonTextWidget(
-                  action: () => Get.toNamed('/games/day', arguments: {'event': event}),
+                  action: () {
+                    EventController.instance.setSelectedEvent(event);
+                    context.go('/games/day');
+                  },
                   width: 80,
                   height: 30,
                   text: "Entrar",

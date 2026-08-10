@@ -139,7 +139,9 @@ class EventModel {
       uuid: map['uuid'] != null ? map['uuid'] as String : null,
       title: map['title'] != null ? map['title'] as String : null,
       bio: map['bio'] != null ? map['bio'] as String : null,
-      date: map['date'] != null ? map['date'] as List<String> : null,
+      date: map['date'] != null 
+        ? List<String>.from(map['date'] as List<dynamic>) 
+        : null,
       startTime: map['startTime'] != null ? map['startTime'] as String : null,
       endTime: map['endTime'] != null ? map['endTime'] as String : null,
       modality: map['modality'] != null 
@@ -154,19 +156,19 @@ class EventModel {
         ? GameConfigModel.fromMap(map['gameConfig'] as Map<String,dynamic>) 
         : null,
       avaliations: map['avaliations'] != null 
-        ? List<AvaliationModel>.from((map['avaliations'] as List<Map<String, dynamic>>).map<AvaliationModel?>((x) => AvaliationModel.fromMap(x),),) 
+        ? List<AvaliationModel>.from((map['avaliations'] as List<dynamic>).map<AvaliationModel?>((x) => AvaliationModel.fromMap(x),),) 
         : null,
       participants: map['participants'] != null 
-        ? List<UserModel>.from((map['participants'] as List<Map<String, dynamic>>).map<UserModel?>((x) => UserModel.fromMap(x),),) 
+        ? List<UserModel>.from((map['participants'] as List<dynamic>).map<UserModel?>((x) => UserModel.fromMap(x),),) 
         : null,
       rules: map['rules'] != null 
-        ? List<RuleModel>.from((map['rules'] as List<Map<String, dynamic>>).map<RuleModel?>((x) => RuleModel.fromMap(x),),) 
+        ? List<RuleModel>.from((map['rules'] as List<dynamic>).map<RuleModel?>((x) => RuleModel.fromMap(x),),) 
         : null,
       news: map['news'] != null 
-        ? List<NewsModel>.from((map['news'] as List<Map<String, dynamic>>).map<NewsModel?>((x) => NewsModel.fromMap(x),),) 
+        ? List<NewsModel>.from((map['news'] as List<dynamic>).map<NewsModel?>((x) => NewsModel.fromMap(x),),) 
         : null,
       games: map['games'] != null 
-        ? List<GameModel>.from((map['games'] as List<Map<String, dynamic>>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
+        ? List<GameModel>.from((map['games'] as List<dynamic>).map<GameModel?>((x) => GameModel.fromMap(x),),) 
         : null,
       privacy: map['privacy'] != null
         ? Privacy.values.firstWhere((e) => e.name == map['privacy'])

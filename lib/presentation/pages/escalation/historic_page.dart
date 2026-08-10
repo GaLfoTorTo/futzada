@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/presentation/controllers/escalation_controller.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 
@@ -19,7 +19,7 @@ class _HistoricPageState extends State<HistoricPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Histórico',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -27,7 +27,7 @@ class _HistoricPageState extends State<HistoricPage> {
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               children: [
-                Obx(() {
+                ListenableBuilder(listenable: controller, builder: (_, __){
                   
                   return Column(
                     children: controller.myEscalations.map((entry) {

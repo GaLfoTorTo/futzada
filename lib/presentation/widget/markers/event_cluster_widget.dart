@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+import 'package:futzada/core/extensions/string_extensions.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter/material.dart';
@@ -155,7 +155,7 @@ class EventClusterWidget extends StatelessWidget {
             key: ValueKey("${marker.id}"),
             rotate: true,
             child: InkWell(
-              onTap: () => Get.bottomSheet(BottomSheetEventExplore(events: eventsAtSamePlace), isScrollControlled: true),
+              onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetEventExplore(events: eventsAtSamePlace)),
               child: setEventWidget(marker, imgs: imgs, totalEvents: eventsAtSamePlace.length),
             )
           );

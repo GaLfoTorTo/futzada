@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/widget/cards/card_ads.dart';
@@ -24,24 +24,17 @@ class _HomePageState extends State<HomePage> {
   HomeController homeController = HomeController.instance;
   UserController userController = UserController.instance;
   ShowcaseController showcaseController = ShowcaseController.instance;
-  //DEFINIR USUARIO LOGADO
-  late UserModel? user;
-
-  @override
-  void initState() {
-    super.initState();
-    //RESGATAR USUARIO
-    user = userController.user;
-  }
+  //RESGATAR USUARIO LOGADO
+  final UserModel user = sl<UserModel>(instanceName: 'user');
   
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx((){
+        ListenableBuilder(listenable: Listenable.merge([homeController, userController, showcaseController]), builder: (_, __){
           //SHOWCASE TUTORIAL (START)
           return WizardWidget(
-            elementKey: showcaseController.currentShowcase.value == 'start' ? 'start' : 'end',
+            elementKey: showcaseController.currentShowcase == 'start' ? 'start' : 'end',
             child: const SizedBox.shrink()
           );
         }),
@@ -69,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         //SEÇÃO - CATEGORIAS
         const SectionCategoriesWidget(),
         //SEÇÃO - TASKS
-        if(!userController.profileCompleted.value)...[
+        if(!userController.profileCompleted)...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: CardLevelWidget(

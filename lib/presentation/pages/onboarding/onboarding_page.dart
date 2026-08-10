@@ -5,8 +5,8 @@ import 'package:futzada/core/theme/app_animations.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:futzada/core/storage/app_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -32,19 +32,13 @@ class OnboardingPageState extends State<OnboardingPage> {
 
   //FUNÇÃO PARA ALTERAÇÃO DE PÁGINAS
   void alterPage(context, String action) {
+    if(action == "home" || currentPage == 4){
+      //DEFINIR FIRST LOGIN PARA FALSE
+      AppStorage.writeIfNull('firstLogin', false);
+      context.go('/home');
+      return;
+    }
     setState(() {
-      if(action == "home"){
-        Get.toNamed('/home');
-        //DEFINIR FIRST LOGIN PARA FALSE
-        GetStorage().writeIfNull('firstLogin', false);
-      }
-      if(currentPage == 4){
-        //NAVEGAR PARA HOME PAGE
-        Get.offNamed("/home");
-        //DEFINIR FIRST LOGIN PARA FALSE
-        GetStorage().writeIfNull('firstLogin', false);
-      }
-      //ADICIONAR TITULO
       currentPage = action == "Proximo" ? currentPage + 1 : currentPage - 1;
     });
     //ALTERAR PAGINA
@@ -65,8 +59,8 @@ class OnboardingPageState extends State<OnboardingPage> {
         'animation':AppAnimations.introductionPhone
       },
       {
-        'title':"Ta afim de um Fut ?",
-        'descricao':"Encontre peladas rolando na sua redondeza em tempo real ou marcadas para acontecer em alguma data ou local especifico.",
+        'title':"Onde vamos jogar ?",
+        'descricao':"Encontre peladas na sua redondeza e acompanhe em tempo real o que esta rolando por ai ou veja os jogos que esta marcado para contecer em breve.",
         'animation':AppAnimations.introductionEscalation
       },
       {

@@ -1,29 +1,29 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/app_binding.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futzada/core/providers/theme_provider.dart';
 import 'package:futzada/core/theme/app_themes.dart';
-import 'package:futzada/core/routes/app_routes.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/presentation/controllers/auth_controller.dart';
 
-class AppWidget extends StatelessWidget {
+final _appBootProvider = FutureProvider<void>((ref) async {
+  await AuthController.instance.boot();
+});
+
+class AppWidget extends ConsumerWidget {
   const AppWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(_appBootProvider);
+    final themeMode = ref.watch(themeProvider);
 
-    return GetMaterialApp(
+    return MaterialApp.router(
       title: 'Futzada',
-      initialBinding: AppBinding(),
-      themeMode: ThemeMode.light,
+      routerConfig: sl<GoRouter>(),
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      initialRoute: '/splash',
-      smartManagement: SmartManagement.keepFactory,
-      debugShowCheckedModeBanner: false,
-      getPages: AppRoutes.routes,
-      localizationsDelegates: const [
-        FlutterQuillLocalizations.delegate,
-      ],
+      themeMode: themeMode,
     );
   }
 }

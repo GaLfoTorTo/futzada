@@ -50,8 +50,8 @@ class TeamService {
     gameController.teamA.players.addAll(players.take(gameController.currentGameConfig!.playersPerTeam!));
     gameController.teamB.players.addAll(players.skip(gameController.currentGameConfig!.playersPerTeam!).take(gameController.currentGameConfig!.playersPerTeam!));
     //ATUALIZAR ESTADO DE QTD DE JOGADORES POR EQUIEPE
-    gameController.teamAlength.value = gameController.teamA.players.length;
-    gameController.teamBlength.value = gameController.teamB.players.length;
+    gameController.teamAlength = gameController.teamA.players.length;
+    gameController.teamBlength = gameController.teamB.players.length;
   }
   
   //FUNÇÃO DE DEFINIÇÃO DE EQUIPES (ORDEM ALEATORIA OU ORDENADA)
@@ -69,7 +69,7 @@ class TeamService {
       gameController.participantsPresent.removeRange(0, gameController.currentGameConfig!.playersPerTeam!);
       //ATUALIZAR JOGADORES DA EQUIPE A
       gameController.teamA.players.addAll(players.take(gameController.currentGameConfig!.playersPerTeam!));
-      gameController.teamAlength.value = gameController.teamA.players.length;
+      gameController.teamAlength = gameController.teamA.players.length;
     }else{
       //RETORNAR JOGADORES PARA A LISTA
       gameController.participantsPresent.addAll(gameController.teamB.players);
@@ -79,7 +79,7 @@ class TeamService {
       gameController.participantsPresent.removeRange(0, gameController.currentGameConfig!.playersPerTeam!);
       //ATUALIZAR JOGADORES DA EQUIPE A
       gameController.teamB.players.addAll(players.take(gameController.currentGameConfig!.playersPerTeam!));
-      gameController.teamBlength.value = gameController.teamB.players.length;
+      gameController.teamBlength = gameController.teamB.players.length;
     }
   }
 
@@ -95,8 +95,8 @@ class TeamService {
     gameController.teamA.players.clear();
     gameController.teamB.players.clear();
     //ATUALIZAR ESTADO DE QTD DE JOGADORES POR EQUIEPE
-    gameController.teamAlength.value = gameController.teamA.players.length;
-    gameController.teamBlength.value = gameController.teamB.players.length;
+    gameController.teamAlength = gameController.teamA.players.length;
+    gameController.teamBlength = gameController.teamB.players.length;
     //RETURN PARA VERIFICAR SE TODOS JOGADORES FORAM ALOCADOS
     return true;
   }

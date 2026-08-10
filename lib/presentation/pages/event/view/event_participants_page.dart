@@ -9,7 +9,7 @@ import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class EventParticipantsPage extends StatelessWidget {
   const EventParticipantsPage({super.key});
@@ -52,7 +52,7 @@ class EventParticipantsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Get.isDarkMode ? AppColors.dark_700 : AppColors.white,
+              color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_700 : AppColors.white,
               padding: const EdgeInsets.all(10),
               child: InputTextWidget(
                 name: 'search',
@@ -88,12 +88,12 @@ class EventParticipantsPage extends StatelessWidget {
                       var iconRole = setRole(UserHelper.getParticipant(user.participants, eventController.event.id!)?.role);
                       return TextButton(
                         style: TextButton.styleFrom(
-                          backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
-                          foregroundColor: Get.isDarkMode ? AppColors.dark_700 : AppColors.grey_300,
+                          backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
+                          foregroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_700 : AppColors.grey_300,
                           padding: const EdgeInsets.all(15),
                           elevation: 3
                         ),
-                        onPressed: () => Get.toNamed('/profile', arguments: {'id': user.id}),
+                        onPressed: () => context.push('/profile', extra: {'id': user.id}),
                         child: Row(
                           children: [
                             ImgCircularWidget(
@@ -147,7 +147,7 @@ class EventParticipantsPage extends StatelessWidget {
                                 padding: const EdgeInsets.all(10),
                                 child: Icon(
                                   iconRole,
-                                  color: Get.isDarkMode ? AppColors.white : AppColors.blue_500,
+                                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.white : AppColors.blue_500,
                                   size: iconRole == AppIcones.foot_futebol_solid ? 15 : 20,
                                 ),
                               )

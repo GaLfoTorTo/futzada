@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:get/get.dart';
 import 'package:faker/faker.dart' as fakerData;
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/data/models/participant_model.dart';
@@ -38,7 +37,7 @@ class ParticipantService {
   }
   
   //FUNÇÃO PARA GERAR JOGADORES PARA MERCADO (TEMPORARIAMENTE)
-  RxList<ParticipantModel> getParticipants() {
+  List<ParticipantModel> getParticipants() {
     //JUNTAR MAPS
     final List<ParticipantModel> arr = [];
     //GERAR LISTA DE JOGADORES
@@ -48,7 +47,7 @@ class ParticipantService {
         generateParticipant(i, i)
       );
     });
-    return arr.obs;
+    return arr;
   }
   
   //FUNÇÃO PARA GERAR STATUS DE PARTICIPANTE DA PELADA

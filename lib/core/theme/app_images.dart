@@ -1,11 +1,11 @@
-import 'package:get/get.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/presentation/controllers/theme_controller.dart';
 
 class AppImages {
   //RESGATAR COR PRINCIPAL
   static String get primaryColor {
     try {
-      final mainModality = Get.find<Rx<String>>(tag: 'mainModality');
-      return mainModality.value;
+      return sl<ThemeController>().mainModality;
     } catch (e) {
       return cardFootball;
     }

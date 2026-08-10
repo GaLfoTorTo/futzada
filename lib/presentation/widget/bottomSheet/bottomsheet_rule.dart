@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/rule_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -59,7 +58,7 @@ class _BottomSheetRuleState extends State<BottomSheetRule> {
               name: 'title',
               label: 'Titulo',
               textController: eventController.ruleTitleController,
-              backgroundColor: Get.isDarkMode ? AppColors.dark_500.withAlpha(60) : AppColors.grey_300.withAlpha(60),
+              backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500.withAlpha(60) : AppColors.grey_300.withAlpha(60),
               type: TextInputType.text,
             ),
             InputTextEditorWidget(
@@ -77,7 +76,7 @@ class _BottomSheetRuleState extends State<BottomSheetRule> {
                   textColor: AppColors.white,
                   backgroundColor: AppColors.red_300,
                   width: 100,
-                  action: () => Get.back(),
+                  action: () => Navigator.of(context).pop(),
                 ),
                 ButtonTextWidget(
                   text: "Salvar",

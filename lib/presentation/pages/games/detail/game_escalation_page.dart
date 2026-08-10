@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -27,7 +26,7 @@ class GameEscalationPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-          color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+          color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
           boxShadow: [
             BoxShadow(
               color: AppColors.dark_500.withAlpha(30),
@@ -37,8 +36,8 @@ class GameEscalationPage extends StatelessWidget {
             ),
           ],
         ),
-        child: Obx((){
-          if(!gameController.isGameReady.value){
+        child: ListenableBuilder(listenable: gameController, builder: (_, __){
+          if(!gameController.isGameReady){
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
               child: Column(
@@ -117,11 +116,11 @@ class GameEscalationPage extends StatelessWidget {
                 spacing: 2,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(2, (i){
-                  return Obx((){
+                  return ListenableBuilder(listenable: gameController, builder: (_, __){
                     //RESGATAR TAMANHO DAS EQUIPES (REATIVO)
                     final teamLength = i == 0 
-                      ? gameController.teamAlength.value
-                      : gameController.teamBlength.value;
+                      ? gameController.teamAlength
+                      : gameController.teamBlength;
           
                     return Expanded(
                       child: Column(
@@ -145,7 +144,7 @@ class GameEscalationPage extends StatelessWidget {
                           return Container(
                             width: dimensions.width * 0.45,
                             decoration: BoxDecoration(
-                              color: Get.isDarkMode ?AppColors.dark_300 : AppColors.white,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                               border: const Border(
                                 bottom: BorderSide(width: 1, color: AppColors.grey_300)
                               )

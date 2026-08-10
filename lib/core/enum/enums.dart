@@ -12,6 +12,8 @@ enum Roles { Organizator, Colaborator, Refereer, Player, Manager }
 enum GameStatus { Scheduled, InProgress, Completed, Cancelled }
 //STATUS DE PARTICIPANTES DO EVENTO
 enum PlayerStatus { Avaliable, Out, Doubt, None }
+//TIPO DE ACHIVMENT
+enum AchievementType { Single, Progressive }
 //TIPOS DE SNAPSHOT
 enum SnapshotType { snapshot, action, unknown }
 //STATUS DE CONEXÃO DO WEBSOCKET

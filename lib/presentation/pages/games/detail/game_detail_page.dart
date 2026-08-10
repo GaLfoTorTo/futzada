@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -35,7 +35,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
   //CONTROLLER DE SCROLL
   final ScrollController scrollController = ScrollController();
   //ESTADOS -INDEX, TABS, SCROLL
-  RxDouble tabMargin = 10.0.obs;
+  double tabMargin = 10.0;
   int tabIndex = 0;
 
   @override
@@ -55,8 +55,8 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     gameController.addParticipantsPresents();
     //VERIFICAR SE CONFIGURAÇÕES E EQUIPES DA PARTIDA ESTÃO PRONTOS 
     WidgetsBinding.instance.addPostFrameCallback((_){
-      if (!gameController.isGameReady.value && !Get.isDialogOpen!) {
-        Get.dialog(const DialogAlertStart());
+      if (!gameController.isGameReady) {
+        showDialog(context: context, builder: (_) => const DialogAlertStart());
       }
     });
   }
@@ -75,10 +75,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     //VERIFICAR SE POSIÇÃO DA PAGINA  LEVOU SCROLL PARA O TOPO
     if (scrollPosition >= 300) {
       //ATUALIZAR CONTROLADOR DE TAB FIXA
-      tabMargin.value = 0;
+      setState(() { tabMargin = 0; });
       //ATUALIZAR CONTROLLADOR DE TAB FIXA
     } else {
-      tabMargin.value = 10;
+      setState(() { tabMargin = 10; });
     }
   }
     
@@ -102,13 +102,11 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
             HeaderScrollWidget(
               title: "Partida #${gameController.currentGame.number}",
               backgroundColor: modalityColor,
-              leftAction: () => Get.back(),
+              leftAction: () => context.pop(),
               rightIcon: AppIcones.cog_solid,
               rightAction: () {
-                //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
-                Get.toNamed('/games/config', arguments: {
-                  'game': gameController.currentGame,
-                });
+                // TODO: migrar passagem de args para GoRouter extra
+                context.push('/games/config');
               },
             ),
             //CARD DE MONITORAMENTO DA PARTIDA
@@ -124,10 +122,10 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(
-                child: Obx((){
+                child: ListenableBuilder(listenable: gameController, builder: (_, __){
                   return Container(
-                    color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
-                    margin: EdgeInsets.symmetric(horizontal: tabMargin.value),
+                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
+                    margin: EdgeInsets.symmetric(horizontal: tabMargin),
                     child: TabBar(
                       controller: tabController,
                       onTap: (i) => setState(() => tabIndex = i),
@@ -170,8 +168,8 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           ],
         ),
       ),
-      floatingActionButton: Obx((){
-        if(gameController.isGameReady.value && tabIndex == 0){
+      floatingActionButton: ListenableBuilder(listenable: gameController, builder: (_, __){
+        if(gameController.isGameReady && tabIndex == 0){
           return FloatButtonWidget(
             floatKey: "control_games",
             icon: Icons.play_arrow,
@@ -180,13 +178,13 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
             onPressed: (){}
           );
         }
-        if(!gameController.isGameReady.value){
+        if(!gameController.isGameReady){
           return FloatButtonWidget(
             floatKey: "teams_games",
             icon: AppIcones.escalacao_outline,
             backgroundColor: modalityColor,
             color: modalityTextColor,
-            onPressed: () => Get.toNamed("/games/teams"),
+            onPressed: () => context.push("/games/teams"),
           );
         }
         return const SizedBox.shrink();

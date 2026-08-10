@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/player_helper.dart';
@@ -23,8 +22,8 @@ class DialogCapitan extends StatelessWidget {
 
     //FUNÇÃO DE DEFINIÇÃO DO CAPITÃO
     void setCapitan(int? id) {
-      escalationController.selectedPlayerCapitan.value = id ?? 0;
-      Get.back();
+      escalationController.selectedPlayerCapitan = id ?? 0;
+      Navigator.of(context).pop();
     }
     
     return Dialog(
@@ -55,8 +54,8 @@ class DialogCapitan extends StatelessWidget {
                   //RESGATAR O NOME DA POSIÇÃO APARTIR DO SETOR DA FORMAÇÃO
                   String position = escalationController.escalationService.getPositionEscalation(
                     index, 
-                    escalationController.category.value, 
-                    escalationController.formation.value
+                    escalationController.category, 
+                    escalationController.formation
                   );
                   //RESGATAR ABREVIAÇÃO DA POSIÇÃO
                   String positionAlias = position.characters.getRange(0,3).toLowerCase().toString();
@@ -70,7 +69,7 @@ class DialogCapitan extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Checkbox(
-                              value: user.id == escalationController.selectedPlayerCapitan.value,
+                              value: user.id == escalationController.selectedPlayerCapitan,
                               onChanged: (bool? selected) => setCapitan(user.id),
                             ),
                             ImgCircularWidget(

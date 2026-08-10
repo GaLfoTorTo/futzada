@@ -1,9 +1,9 @@
 //===MIXIN - RULES===
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:get/get.dart';
 
-mixin EventRulesMixin on GetxController{
+mixin EventRulesMixin on ChangeNotifier {
   //CONTROLLERS DE INFORMAÇÕES BASICAS DO EVENTO
   late TextEditingController ruleTitleController;
   late QuillController ruleDescriptionController;

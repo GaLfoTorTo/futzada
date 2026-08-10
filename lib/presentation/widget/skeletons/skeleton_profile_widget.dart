@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class SkeletonProfileWidget extends StatelessWidget {
@@ -32,7 +31,7 @@ class SkeletonProfileWidget extends StatelessWidget {
                         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
                       ),
                       child: IconButton(
-                        onPressed: () => Get.back(), 
+                        onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(
                           Icons.arrow_back,
                           color: AppColors.blue_500,

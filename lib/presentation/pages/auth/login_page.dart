@@ -1,10 +1,10 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_images.dart';
+import 'package:futzada/core/helpers/loading_overlay.dart';
 import 'package:futzada/presentation/widget/buttons/button_svg_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
@@ -33,37 +33,22 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  //ENVIAR INFORMAÇÕES DE LOGIN
-  void submitForm(){
+  //FUNÇÃO DE CHAMADA DE OVERLAY E LOGIN
+  void logar(type){
     //RESGATAR O FORMULÁRIO
     var formData = formKey.currentState;
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
-    if (formData?.validate() ?? false) {
-      formData?.save();
-      //EXIBIR OVERLAY DE CARREGAMENTO
-      Get.showOverlay(
-        asyncFunction: () async {
-          //TENTAR EFETUAR LOGIN
-          final response = await authController.login();
-          //ESPERAR 5 SEGUNDOS ANTES DE EXECUTAR FUNÇÃO DE CRONOMETRO
-          if (response['status'] != 200) {
-            //EXIBIR MENSAGEM DE ERRO
-            AppHelper.feedbackMessage(context, "Houve um erro ao enviar as informações, tente novamente.");
-          }
-        },
-        loadingWidget: const Material(
-          color: Colors.transparent,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: AppColors.green_300,
-
-            ),
-          ),
-        ),
-        opacity: 0.7,
-        opacityColor: AppColors.dark_700,
-      );
+    if (type == 'platform') {
+      if (formData?.validate() ?? false) {
+        formData?.save();
+      }
     }
+    //EXIBIR OVERLAY DE CARREGAMENTO
+    LoadingOverlay.show(
+      context,
+      () async => await authController.login(type: type),
+      barrierColor: AppColors.dark_700.withAlpha(179),
+    );
   }
 
   //FUNÇÃO DE VALIDAÇÃO DE CAMPOS 
@@ -165,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                           prefixIcon: input['prefixIcon'],
                           sufixIcon: input['sufixIcon'],
                           textController: input['controller'],
-                          onValidated: (value) => authController.apiService.validateEmpty(value, input['name']),
+                          onValidated: (value) => input['validator'],
                           type: input['type'],
                         );
                       }),
@@ -174,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                         textColor: AppColors.white,
                         backgroundColor: AppColors.blue_500,
                         width: double.infinity,
-                        action: submitForm,
+                        action: () => logar('plataform'),
                       )
                     ],
                   ),
@@ -219,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       onPressed: (){
-                        Get.toNamed('/register/onbording');
+                        context.push('/register/onboarding');
                       },
                     ),
                   ],
@@ -236,18 +221,13 @@ class _LoginPageState extends State<LoginPage> {
                       icon: AppIcones.google,
                       width: 60,
                       height: 60,
-                      action: (){
-                        //authController.loginGoogle(context);
-                        authController.googleLogin(context);
-                      }
+                      action: () => logar('google')
                     ),
                     ButtonSvgWidget(
                       icon: AppIcones.facebook,
                       width: 60,
                       height: 60,
-                      action: (){
-                        //controller.googleLogin(context);
-                      }
+                      action: () => logar('facebook')
                     ),
                   ],
                 ),

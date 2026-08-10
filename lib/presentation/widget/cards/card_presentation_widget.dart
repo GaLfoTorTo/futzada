@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -6,6 +5,8 @@ import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/map_helper.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
+import 'package:futzada/core/extensions/string_extensions.dart';
+
 
 class CardPresentationWidget extends StatelessWidget {
   final UserModel? user;
@@ -20,7 +21,7 @@ class CardPresentationWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
     //CONTROLADOR DE INPUT DE PESQUISA
     final TextEditingController pesquisaController = TextEditingController();
-
+    
     return Container(
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(bottom: 10),

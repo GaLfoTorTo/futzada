@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -46,7 +45,7 @@ class DialogCategory extends StatelessWidget {
             ButtonTextWidget(
               text: "Entendi",
               width: dimensions.width,
-              action: () => Get.back(),
+              action: () => Navigator.of(context).pop(),
             ),
           ],
         ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:get/get.dart';
 
 class SelectAvaliationWidget extends StatelessWidget {
   final int value;
@@ -15,7 +14,7 @@ class SelectAvaliationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Get.isDarkMode ? AppColors.dark_300 : AppColors.white;
+    final color = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white;
 
     return Container(
       padding: const EdgeInsets.all(10),

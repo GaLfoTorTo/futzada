@@ -1,6 +1,6 @@
 import 'package:futzada/presentation/pages/erros/erro_event_page.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_event_list_widget.dart';
@@ -19,7 +19,7 @@ class EventListPage extends StatelessWidget {
     return Scaffold(
       appBar: HeaderWidget(
         title: "Minhas Peladas",
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

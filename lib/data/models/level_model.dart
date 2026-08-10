@@ -4,7 +4,8 @@ import 'dart:convert';
 class LevelModel {
   final int id;
   final int number;
-  final String title;
+  final String tier;
+  final int points;
   final int pointsMin;
   final int pointsMax;
   final String image;
@@ -13,7 +14,8 @@ class LevelModel {
   LevelModel({
     required this.id,
     required this.number,
-    required this.title,
+    required this.tier,
+    required this.points,
     required this.pointsMin,
     required this.pointsMax,
     required this.image,
@@ -23,7 +25,8 @@ class LevelModel {
   LevelModel copyWith({
     int? id,
     int? number,
-    String? title,
+    String? tier,
+    int? points,
     int? pointsMin,
     int? pointsMax,
     String? image,
@@ -32,7 +35,8 @@ class LevelModel {
     return LevelModel(
       id: id ?? this.id,
       number: number ?? this.number,
-      title: title ?? this.title,
+      tier: tier ?? this.tier,
+      points: points ?? this.points,
       pointsMin: pointsMin ?? this.pointsMin,
       pointsMax: pointsMax ?? this.pointsMax,
       image: image ?? this.image,
@@ -44,7 +48,8 @@ class LevelModel {
     return <String, dynamic>{
       'id': id,
       'number': number,
-      'title': title,
+      'tier': tier,
+      'points': points,
       'points_min': pointsMin,
       'points_max': pointsMax,
       'image': image,
@@ -56,7 +61,8 @@ class LevelModel {
     return LevelModel(
       id: map['id'] as int,
       number: map['number'] as int,
-      title: map['title'] as String,
+      tier: map['tier'] as String,
+      points: map['points'] as int,
       pointsMin: map['points_min'] as int,
       pointsMax: map['points_max'] as int,
       image: map['image'] as String,
@@ -70,7 +76,7 @@ class LevelModel {
 
   @override
   String toString() {
-    return 'LevelModel(id: $id, number: $number, title: $title, pointsMin: $pointsMin, pointsMax: $pointsMax, image: $image, color: $color)';
+    return 'LevelModel(id: $id, number: $number, tier: $tier, points: $points, pointsMin: $pointsMin, pointsMax: $pointsMax, image: $image, color: $color)';
   }
 
   @override
@@ -80,7 +86,8 @@ class LevelModel {
     return 
       other.id == id &&
       other.number == number &&
-      other.title == title &&
+      other.tier == tier &&
+      other.points == points &&
       other.pointsMin == pointsMin &&
       other.pointsMax == pointsMax &&
       other.image == image &&
@@ -91,7 +98,8 @@ class LevelModel {
   int get hashCode {
     return id.hashCode ^
       number.hashCode ^
-      title.hashCode ^
+      tier.hashCode ^
+      points.hashCode ^
       pointsMin.hashCode ^
       pointsMax.hashCode ^
       image.hashCode ^

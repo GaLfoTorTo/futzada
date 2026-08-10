@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/user_model.dart';
 import 'package:futzada/presentation/controllers/statistics_controller.dart';
@@ -28,8 +28,7 @@ class StatisticsPageState extends State<StatisticsPage> {
       //SELECIONAR EVENTO
       statisticsController.setEvent(id);
       //ATUALIZAR CONTROLLER
-      statisticsController.update();
-    });
+          });
   }
 
   @override
@@ -46,7 +45,7 @@ class StatisticsPageState extends State<StatisticsPage> {
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Estatisticas',
-        leftAction: () => Get.back(),
+        leftAction: () => context.pop(),
         shadow: false,
       ),
       body: SafeArea(
@@ -60,7 +59,7 @@ class StatisticsPageState extends State<StatisticsPage> {
                 height: 70,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Get.isDarkMode ? AppColors.dark_500 : AppColors.white,
+                  color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.dark_500.withAlpha(30),
@@ -80,7 +79,7 @@ class StatisticsPageState extends State<StatisticsPage> {
                         items: userEvents,
                         menuWidth: dimensions.width * 0.4,
                         iconAfter: false,
-                        backgroundColor: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                         onChange: selectEvent,
                       ),
                     ),

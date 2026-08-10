@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
@@ -7,14 +6,13 @@ import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
 
 class CardMvpWidget extends StatelessWidget {
-  const CardMvpWidget({super.key});
+  final EventModel event;
+  const CardMvpWidget({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTO
-    EventModel event = Get.arguments['event'];
     //ESTADO - ITEMS EVENTO
     Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     //Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];

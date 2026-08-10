@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/core/theme/app_colors.dart';
@@ -16,7 +16,7 @@ class CardToYouWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR POSIÇÕES DO USUARIO
-    Rxn<LatLng> userLatLog = Get.find(tag: 'userLatLog');
+    ValueNotifier<LatLng?> userLatLog = sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog');
     //RESGATAR POSIÇÕES DO MARKER
     final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     //RESGATAR DISTANCIA ATE O LOCAL

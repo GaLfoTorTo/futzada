@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:get/get.dart';
 
 class InputSwitchWidget extends StatefulWidget {
   final String name;
@@ -55,7 +54,7 @@ class _InputTextWidgetState extends State<InputSwitchWidget> {
         Container(
           margin: const EdgeInsets.symmetric(vertical: 13),
           decoration: BoxDecoration(
-            color: Get.isDarkMode ? AppColors.dark_300 : AppColors.white,
+            color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
             borderRadius: BorderRadius.circular(5)
           ),
           child: SwitchListTile(
@@ -66,7 +65,7 @@ class _InputTextWidgetState extends State<InputSwitchWidget> {
             inactiveThumbColor: AppColors.grey_500,
             secondary: Icon(
               widget.prefixIcon,
-              color: Get.isDarkMode ? AppColors.white : AppColors.grey_500,
+              color: Theme.of(context).brightness == Brightness.dark ? AppColors.white : AppColors.grey_500,
               size: 25,
             ),
             title: widget.labelPosition == 'center'

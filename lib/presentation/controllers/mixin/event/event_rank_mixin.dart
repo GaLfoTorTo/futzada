@@ -1,5 +1,5 @@
-import 'package:get/get.dart';
+import 'package:flutter/foundation.dart';
 
 //===MIXIN - RANKING===
-mixin EventRankMixin on GetxController{
+mixin EventRankMixin on ChangeNotifier {
 }

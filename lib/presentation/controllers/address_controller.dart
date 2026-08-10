@@ -1,12 +1,15 @@
-import 'package:get/get.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/data/models/address_model.dart';
 import 'package:futzada/data/services/address_service.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 
-class AddressController extends GetxController{
-  //DEFINIR CONTROLLER UNICO NO GETX
-  static AddressController get instance => Get.find();
+class AddressController extends ChangeNotifier {
+  //DEFINIR CONTROLLER UNICO NO GETIT
+  static AddressController get instance => sl<AddressController>();
   //RESGATAR CONTROLLER DE EVENTO
   EventController eventController = EventController.instance;
   //INSTANCIAR SERVIÇO DE ENDEREÇOS
@@ -14,38 +17,59 @@ class AddressController extends GetxController{
 
   //CONTROLADOR DE PESQUISA
   final TextEditingController searchController = TextEditingController();
+  //DEBOUNCE TIMER
+  Timer? _debounceTimer;
+
   //CONTROLLADOR DE PESQUISA DE ENDEREÇOS
-  RxBool isSearching = false.obs;
+  bool _isSearching = false;
+  bool get isSearching => _isSearching;
+  set isSearching(bool v) { _isSearching = v; notifyListeners(); }
+
   //DEFINIR TEXTO DE PESQUISA
-  RxString searchText = ''.obs;
+  String _searchText = '';
+  String get searchText => _searchText;
+  set searchText(String v) {
+    _searchText = v;
+    notifyListeners();
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      addressService.searchAddress(v);
+    });
+  }
+
   //DEFINIR CATEGORIA
-  RxString category = ''.obs;
-  //DEFINIR BOUNCE DE CAMPO DE PESQUISA
-  late Worker debounceWorker;
+  String _category = '';
+  String get category => _category;
+  set category(String v) { _category = v; notifyListeners(); }
+
   //LISTA DE SUGESTÕES DE ENDEREÇO
-  RxList<AddressModel> suggestions = <AddressModel>[].obs;
+  final List<AddressModel> _suggestions = [];
+  List<AddressModel> get suggestions => _suggestions;
+
+  void setSuggestions(List<AddressModel> list) {
+    _suggestions.clear();
+    _suggestions.addAll(list);
+    notifyListeners();
+  }
+
   //LISTA DE ENDEREÇO DE QUADRAS/CAMPOS PUBLICOS E PRIVADOS
-  RxList<Map<String, dynamic>> sportPlaces = <Map<String, dynamic>>[].obs;
+  final List<Map<String, dynamic>> _sportPlaces = [];
+  List<Map<String, dynamic>> get sportPlaces => _sportPlaces;
+
+  void init() {}
 
   @override
-  void onInit() {
-    super.onInit();
-    //INICIALIZAR O DEBOUNCE
-    debounceWorker = debounce(
-      searchText,
-      (value) => addressService.searchAddress(value),
-      time: const Duration(milliseconds: 500),
-    );
+  void dispose() {
+    _debounceTimer?.cancel();
+    searchController.dispose();
+    super.dispose();
   }
 
   //FUNÇÃO PARA BUSCAR MARKER NO ARRAY
   bool getMarkerByArray(AddressModel suggestion) {
-    //TENTAR ENCONTRAR MARKER CORRESPONDETE A SUGESTÃO SELECIONADA
-    return sportPlaces.any((item) {
-      //VERIFICAR SE ITEM CONTEM ENDEREÇO DEFINIDO
+    return _sportPlaces.any((item) {
       if (item['address'] != null) {
         final address = item['address'] as AddressModel;
-        //VERIFICAR COMPATIBILIDADE DE ENDEREÇO
         return suggestion.street!.contains(address.street!) && suggestion.city!.contains(address.city!);
       }
       return false;
@@ -53,43 +77,44 @@ class AddressController extends GetxController{
   }
 
   //FUNÇÃO PARA DEFINIR ENDEREÇO DO EVENTO
-  void setEventAddress(AddressModel? suggestion){
+  void setEventAddress(AddressModel? suggestion) {
     //FECHAR DIALOG
-    Get.back();
+    sl<GoRouter>().pop();
     //VERIFICAR SE SUGESTÃO NÃO ESTA VAZIA
-    if(suggestion != null){
+    if (suggestion != null) {
       //DEFINIR TEXTO DO INPUT DE ENDEREÇO
-      eventController.addressText.value = "${suggestion.street ?? ''} ${suggestion.borough ?? ''}, ${suggestion.number ?? ''} - ${suggestion.borough ?? ''} - ${suggestion.city}/${suggestion.state}";
+      eventController.addressText = "${suggestion.street ?? ''} ${suggestion.borough ?? ''}, ${suggestion.number ?? ''} - ${suggestion.borough ?? ''} - ${suggestion.city}/${suggestion.state}";
       //ATUALIZAR ENDEREÇO DA PELADA
       eventController.addressEvent = suggestion;
       //ATUALIZAR CATEGORIA APARTIR DO ENDEREÇO
       eventController.category = category;
       //LIMPAR SUGESTÕES E CAMPO DE PESQUISA
-      suggestions.clear();
+      _suggestions.clear();
       searchController.clear();
+      notifyListeners();
       //NAVEGAR DE VOLTA PARA TELA DE REGISTRO DE ENDEREÇOS
-      Get.offNamed('/event/register/address');
+      sl<GoRouter>().go('/event/register/address');
     }
   }
 
   //FUNÇÃO PARA DEFINIR A CATEGORIA A PARTIR DA SUPERFICIE
-  void setCategory(marker){
+  void setCategory(marker) {
     //VERIFICAR ESPORTE
-    if(marker['sport'] == "soccer" || marker['sport'] == "football" || marker['sport'] == "futebol"){
+    if (marker['sport'] == "soccer" || marker['sport'] == "football" || marker['sport'] == "futebol") {
       switch (marker['surface']) {
         case "grass":
         case "sand":
-          category.value = "Futebol";
+          category = "Futebol";
           break;
         case "artificial_turf":
-          category.value = "Fut7";
+          category = "Fut7";
           break;
         default:
-          category.value = "Futsal";
+          category = "Futsal";
           break;
       }
-    }else{
-      category.value = "Futsal";
+    } else {
+      category = "Futsal";
     }
   }
 }

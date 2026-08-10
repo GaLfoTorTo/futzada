@@ -1,5 +1,4 @@
 import 'package:futzada/core/helpers/player_helper.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
@@ -33,7 +32,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
   void initState() {
     super.initState();
     //RESGATAR CAPITÃO
-    isCapitan = escalationController.selectedPlayerCapitan.value == widget.user.id;
+    isCapitan = escalationController.selectedPlayerCapitan == widget.user.id;
   }
   
   //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
@@ -47,7 +46,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
       escalationController.setPlayerCapitan(id);
     }
     //FECHAR BOTTOM SHEET
-    Get.back();
+    Navigator.of(context).pop();
   }
   
   @override

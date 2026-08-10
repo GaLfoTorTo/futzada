@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -21,9 +20,9 @@ class FloatButtonEscalationWidget extends StatelessWidget {
       height: 70,
       child: FloatingActionButton(
         key: const ValueKey('fab-escalation'),
-        onPressed: () => Get.dialog(hasCapitan
-          ? const DialogEscalationConfirm()
-          : const DialogCapitan(),
+        onPressed: () => showDialog(
+          context: context,
+          builder: (_) => hasCapitan ? const DialogEscalationConfirm() : const DialogCapitan(),
         ),
         enableFeedback: true,
         tooltip: hasCapitan ? 'Confirmar escalação' : 'Selecionar capitão',

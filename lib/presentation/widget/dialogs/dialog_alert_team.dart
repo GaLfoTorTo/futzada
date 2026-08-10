@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 
@@ -43,7 +42,7 @@ class DialogAlertTeam extends StatelessWidget {
             ButtonTextWidget(
               text: "Entendi",
               width: dimensions.width,
-              action: () => Get.back(),
+              action: () => Navigator.of(context).pop(),
             ),
           ],
         ),
