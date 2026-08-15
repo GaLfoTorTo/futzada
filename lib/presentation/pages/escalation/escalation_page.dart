@@ -35,6 +35,12 @@ class EscalationPageState extends State<EscalationPage> {
   EscalationController escalationController = EscalationController.instance;
   ShowcaseController showcaseController = ShowcaseController.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    escalationController.init();
+  }
+
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(id){
     setState(() {

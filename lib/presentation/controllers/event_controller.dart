@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/di/service_locator.dart';
 import 'package:futzada/core/api/api_client.dart';
 import 'package:futzada/data/models/user_model.dart';
@@ -7,6 +8,7 @@ import 'package:futzada/data/services/news_service.dart';
 import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/data/repositories/event_repository.dart';
 import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
 import 'package:futzada/presentation/controllers/mixin/event/event_config_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/event/event_overview_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/event/event_participants_mixin.dart';
@@ -14,30 +16,21 @@ import 'package:futzada/presentation/controllers/mixin/event/event_rank_mixin.da
 import 'package:futzada/presentation/controllers/mixin/event/event_register_mixin.dart';
 import 'package:futzada/presentation/controllers/mixin/event/event_rule_mixin.dart';
 
-//===EVENT BASE===
 abstract class EventBase {
-  //GETTER - REPOSITORIES
   EventRepository get eventRepository;
-  //GETTER - SERVIÇOS
   AvaliationService get avaliationService;
   ApiClient get apiClient;
   NewsService get newsService;
-  //GETTER - USUARIO, EVENTOS, EVENTOS DO USUARIO
   UserModel get user;
-  //GETTER - EVENTOS DO USUARIO
   List<EventModel> get events;
-  //GETTER - EVENTO
   EventModel get event;
-  //SETTER - EVENTO
   set event(EventModel event);
-  //GETTER - PARTICIPANTS
+  bool get hasEvent;
   Map<String, List<UserModel>?> get participants;
-  //DEFINIR TRAVEL MODEL ATUAL SENDO MANIPULADO
   String get travelMode;
   set travelMode(String v);
 }
 
-//===CONTROLLER PRINCIPALS===
 class EventController extends ChangeNotifier
   with
     EventOverviewMixin,
@@ -48,51 +41,52 @@ class EventController extends ChangeNotifier
     EventRulesMixin
   implements EventBase {
 
-  //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS
   static EventController get instance => sl<EventController>();
 
-  //DEFINIR REPOSITORIES
   @override
   final EventRepository eventRepository = EventRepository();
-
-  //DEFINIR SERVIÇOs
   @override
   final AvaliationService avaliationService = AvaliationService();
   @override
   final ApiClient apiClient = ApiClient();
   @override
   final NewsService newsService = NewsService();
-
-  //DEFINIR USUARIO LOGADO - OBRIGATÓRIO
   @override
-  final UserModel user = sl<UserModel>();
-
-  //DEFINIR EVENTOS DO USUARIO LOGADO - OBRIGATÓRIO
+  final UserModel user = sl<UserModel>(instanceName: 'user');
   @override
   final List<EventModel> events = sl<List<EventModel>>(instanceName: 'events');
 
-  //DEFINIR EVENTO ATUAL SENDO MANIPULADO - OBRIGATÓRIO
+  EventModel? _event;
   @override
-  late EventModel event;
+  EventModel get event => _event!;
+  @override
+  set event(EventModel e) { _event = e; notifyListeners(); }
+  @override
+  bool get hasEvent => _event != null;
 
-  //DEFINIR DE PARTICIPANTES
   @override
   late Map<String, List<UserModel>?> participants;
 
-  //DEFINIR MODO DE VIAGEM (travelMode)
   String _travelMode = 'walking';
   @override
   String get travelMode => _travelMode;
   @override
   set travelMode(String v) { _travelMode = v; notifyListeners(); }
 
-  //FUNÇÃO DE SELEÇÃO DE EVENTO
+  void init() {
+    if (!hasEvent && events.isNotEmpty) {
+      setSelectedEvent(events.first);
+    }
+  }
+
   void setSelectedEvent(EventModel event) {
-    //RESGATAR E DEFINIR EVENTO NOS CONTROLLERS
     this.event = event;
-    //ATUALIZAR EVENTO NO CONTROLLER DE PARTIDAS
+    // Atualiza GameSessionProvider (Riverpod) — páginas migradas
+    sl<ProviderContainer>()
+        .read(gameSessionProvider.notifier)
+        .setEvent(event);
+    // Atualiza GameController (GetIt) — páginas ainda não migradas
     GameController.instance.event = event;
-    //ATUALIZAR CONFIGURAÇÕES DE PARTIDA NO CONTROLLER DE PARTIDAS
     GameController.instance.currentGameConfig = event.gameConfig;
   }
 }

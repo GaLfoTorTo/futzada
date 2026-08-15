@@ -1,9 +1,10 @@
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_game_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_game_live_widget.dart';
@@ -13,25 +14,17 @@ import 'package:futzada/presentation/widget/skeletons/skeleton_games_widget.dart
 import 'package:futzada/presentation/pages/erros/erro_game_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class EventGamesPage extends StatefulWidget {
-  const EventGamesPage({
-    super.key,
-  });
+class EventGamesPage extends ConsumerStatefulWidget {
+  const EventGamesPage({super.key});
 
   @override
-  State<EventGamesPage> createState() => _EventGamesPageState();
+  ConsumerState<EventGamesPage> createState() => _EventGamesPageState();
 }
 
-class _EventGamesPageState extends State<EventGamesPage> {
-  //RESGATAR CONTROLLER DO EVENTO
+class _EventGamesPageState extends ConsumerState<EventGamesPage> {
   EventController eventController = EventController.instance;
-  //DEFINIR CONTROLLER DE PARTIDA
-  GameController gameController = GameController.instance;
-  //CONTROLLADOR DE DESTAQUES
   late PageController inProgressController;
-  //ESTADO - EVENTO
   late EventModel event;
-  //ESTADO - ITEMS EVENTO
   late String eventDate;
   late Color modalityColor;
   late Color modalityTextColor;
@@ -39,33 +32,25 @@ class _EventGamesPageState extends State<EventGamesPage> {
   @override
   void initState() {
     super.initState();
-    //RESGATAR EVENT
     event = eventController.event;
-    //RESGATAR CORES E DATAS DA MODALIDADE DA PARTIDA
     modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    //INICIALIZAR CONTROLLER DE PARTIDAS AO VIVO
     inProgressController = PageController();
-    //RESGATAR DATA DO PROXIMO DIA DO EVENTO
-    eventDate = DateHelper.getDateLabel(gameController.eventDate!);
-    //BINDING DE CARREGAMENTO DA PAGINA
-    WidgetsBinding.instance.addPostFrameCallback((_) async{  
-      //VERIFICAR SE PARTIDAS JÁ FORAM CARREGADAS
-      if(gameController.nextGames.isEmpty && gameController.finishedGames.isEmpty){
-        //CARREGAR PARTIDAS DO EVENTO
-        gameController.loadGames = false;
-        gameController.loadGames = await gameController.setGamesEvent(event);
-        //BUSCAR HISTORICO
-        gameController.loadHistoricGames = await gameController.getHistoricGames();
-      } 
+    eventDate = DateHelper.getDateLabel(ref.read(gameScheduleProvider).eventDate!);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final schedule = ref.read(gameScheduleProvider);
+      if (schedule.nextGames.isEmpty && schedule.finishedGames.isEmpty) {
+        await ref.read(gameScheduleProvider.notifier).setGamesEvent(event);
+        await ref.read(gameScheduleProvider.notifier).getHistoricGames(event);
+      }
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    final schedule = ref.watch(gameScheduleProvider);
+    final isToday = ref.read(gameScheduleProvider.notifier).isToday();
 
     return SingleChildScrollView(
       child: Container(
@@ -76,34 +61,30 @@ class _EventGamesPageState extends State<EventGamesPage> {
           children: [
             Text(
               "Agenda",
-              style: Theme.of(context).textTheme.titleMedium
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             Text(
               "Explore a agenda completa das partidas da pelada. A quantidade de partidas e calculada a partir das informações de duração e horários de início e fim da pelada definidos pelo organizador.",
               style: Theme.of(context).textTheme.bodySmall,
               textAlign: TextAlign.center,
             ),
-            //PARTIDAS DO DIA DE EVENTO
-            ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
-              //LISTA DE CARDS DE PARTIDAS
+            Builder(builder: (_) {
               List<Widget> listGames = [];
-              //EXIBIR SKELETON NO CARREGAMENTO DAS PARTIDAS
-              if(!gameController.loadGames) {
+
+              if (!schedule.loadGames) {
                 return const SkeletonGamesWidget();
               }
-              //EXIBIR PAGINA DE ERRO DE PARTIDA NÃO ENCONTRADA
-              if(!gameController.hasGames){
+
+              if (!schedule.hasGames) {
                 return ErroGamePage(
                   function: () async {
-                    gameController.loadGames = await gameController.setGamesEvent(event);
-                  } 
+                    await ref.read(gameScheduleProvider.notifier).setGamesEvent(event);
+                  },
                 );
               }
-              //VERIFICAR SE HOJÉ É UM DIA DE EVENTO
-              if(gameController.eventDate != null && gameController.today.isAtSameMomentAs(gameController.eventDate!)){
-                //EXIBIR CARD DE PARTIDA AO VIVO 
-                if(gameController.inProgressGames.isNotEmpty){
-                  //ADICIONAR CARD DE PARTIDAS AO VIVO NA LISTA
+
+              if (schedule.eventDate != null && isToday) {
+                if (schedule.inProgressGames.isNotEmpty) {
                   listGames.addAll([
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -116,10 +97,7 @@ class _EventGamesPageState extends State<EventGamesPage> {
                               borderRadius: BorderRadius.circular(20),
                               color: AppColors.red_300,
                             ),
-                            child: const IndicatorLiveWidget(
-                              size: 15,
-                              color: AppColors.white,
-                            ),
+                            child: const IndicatorLiveWidget(size: 15, color: AppColors.white),
                           ),
                         ],
                       ),
@@ -129,22 +107,18 @@ class _EventGamesPageState extends State<EventGamesPage> {
                       child: PageView(
                         controller: inProgressController,
                         children: [
-                          ...gameController.inProgressGames.take(3).map((game){
-
-                            return CardGameLiveWidget(
-                              event: event,
-                              game: game!,
-                            );
-                          })
+                          ...schedule.inProgressGames.take(3).map((game) {
+                            return CardGameLiveWidget(event: event, game: game!);
+                          }),
                         ],
-                      )
+                      ),
                     ),
-                    if(gameController.inProgressGames.length > 1)...[
+                    if (schedule.inProgressGames.length > 1) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: SmoothPageIndicator(
                           controller: inProgressController,
-                          count: gameController.inProgressGames.length < 3 ? gameController.inProgressGames.length : 3,
+                          count: schedule.inProgressGames.length < 3 ? schedule.inProgressGames.length : 3,
                           effect: const ExpandingDotsEffect(
                             dotHeight: 8,
                             dotWidth: 8,
@@ -154,12 +128,11 @@ class _EventGamesPageState extends State<EventGamesPage> {
                           ),
                         ),
                       ),
-                    ]
+                    ],
                   ]);
                 }
-                //VERIFICAR SE EXISTE PARTIDAS PROGRAMADAS                
-                if (gameController.nextGames.isNotEmpty) {
-                  //ADICIONAR CARD DE PARTIDAS AO VIVO NA LISTA
+
+                if (schedule.nextGames.isNotEmpty) {
                   listGames.addAll([
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -176,24 +149,21 @@ class _EventGamesPageState extends State<EventGamesPage> {
                     ),
                     Column(
                       spacing: 20,
-                      children: gameController.nextGames.asMap().entries.take(5).map((item){
-                        //RESGATAR CHAVE E VALOR DO MAPA
-                        var key = item.key;
-                        //RESGATAR PARTIDA
-                        var game = item.value;
-
+                      children: schedule.nextGames.asMap().entries.take(5).map((item) {
+                        final key = item.key;
+                        final game = item.value;
                         return CardGameWidget(
                           width: dimensions.width - 10,
                           event: event,
                           game: game!,
                           gameDate: eventDate,
-                          navigate: key < 1 ? true : false,
-                          active: key < 1 ? true : false,
+                          navigate: key < 1,
+                          active: key < 1,
                         );
                       }).toList(),
                     ),
                     ButtonTextWidget(
-                      text: "Ver Mais ${gameController.nextGames.length}",
+                      text: "Ver Mais ${schedule.nextGames.length}",
                       width: 120,
                       height: 20,
                       textColor: modalityColor,
@@ -203,13 +173,10 @@ class _EventGamesPageState extends State<EventGamesPage> {
                   ]);
                 }
               }
-              if(gameController.scheduledGames.isNotEmpty && gameController.scheduledGames.length < 4){
-                //VERIFICAR SE EXISTE PARTIDAS PROGRAMADAS                
-                if (gameController.scheduledGames.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-                //RESGATAR DATA DO PROXIMO DIA DO EVENTO
-                eventDate = DateHelper.getDateLabel(gameController.scheduledGames.first!.startTime!);
+
+              if (schedule.scheduledGames.isNotEmpty && schedule.scheduledGames.length < 4) {
+                if (schedule.scheduledGames.isEmpty) return const SizedBox.shrink();
+                eventDate = DateHelper.getDateLabel(schedule.scheduledGames.first!.startTime!);
                 listGames.addAll([
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -227,19 +194,19 @@ class _EventGamesPageState extends State<EventGamesPage> {
                   Column(
                     spacing: 20,
                     children: [
-                      ...gameController.scheduledGames.take(10).map((game){
+                      ...schedule.scheduledGames.take(10).map((game) {
                         return CardGameWidget(
                           width: dimensions.width - 10,
                           event: event,
                           game: game!,
                           gameDate: eventDate,
-                          active: false
+                          active: false,
                         );
-                      })
-                    ]
+                      }),
+                    ],
                   ),
                   ButtonTextWidget(
-                    text: "Ver Mais ${gameController.scheduledGames.length}",
+                    text: "Ver Mais ${schedule.scheduledGames.length}",
                     width: 100,
                     height: 20,
                     textColor: AppColors.green_300,
@@ -248,11 +215,12 @@ class _EventGamesPageState extends State<EventGamesPage> {
                   ),
                 ]);
               }
-              return listGames.isNotEmpty 
-                ? Column(children: listGames)
-                : const SizedBox.shrink();
+
+              return listGames.isNotEmpty
+                  ? Column(children: listGames)
+                  : const SizedBox.shrink();
             }),
-          ]
+          ],
         ),
       ),
     );

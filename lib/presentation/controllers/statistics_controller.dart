@@ -43,7 +43,7 @@ class StatisticsController extends ChangeNotifier implements StatisticsBase {
   final ManagerService managerService = ManagerService();
   //ESTADOS
   @override
-  UserModel user = sl<UserModel>();
+  UserModel user = sl<UserModel>(instanceName: 'user');
   @override
   List<EventModel> userEvents = sl.isRegistered<List<EventModel>>(instanceName: 'events')
     ? sl<List<EventModel>>(instanceName: 'events')

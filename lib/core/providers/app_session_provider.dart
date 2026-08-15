@@ -17,6 +17,4 @@ class AppSessionNotifier extends Notifier<AppSession> {
   }
 }
 
-final appSessionProvider = NotifierProvider<AppSessionNotifier, AppSession>(
-  AppSessionNotifier.new,
-);
+final appSessionProvider = NotifierProvider<AppSessionNotifier, AppSession>(AppSessionNotifier.new);

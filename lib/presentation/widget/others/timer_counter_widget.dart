@@ -1,10 +1,12 @@
 import 'package:futzada/core/enum/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:futzada/core/providers/game/game_stopwatch_provider.dart';
 
-class TimerCounterWidget extends StatelessWidget {
+class TimerCounterWidget extends ConsumerWidget {
   final GameModel game;
   final Color? color;
 
@@ -15,47 +17,39 @@ class TimerCounterWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE PARTIDA
-    GameController gameController = GameController.instance;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentGame = ref.watch(gameSessionProvider.select((s) => s.currentGame));
+    final minutesElapsed = ref.watch(gameStopwatchProvider.select((s) => s.minutesElapsed));
 
-    //FUNÇÃO PARA RETORNAR TEXTO DE MINUTOS PASSADOS OU INICIADOS
-    String timeElapsedText(minutesElapsed){
-      //VERIFICAR MINUTOS RESTANTES
-      if (minutesElapsed >= gameController.currentGame.duration) {
-        //EXIBIÇÃO QUANDO 
+    String timeElapsedText(int elapsed) {
+      if (elapsed >= (currentGame?.duration ?? 0)) {
         return "Tempo Extra";
       } else if (DateTime.now().isBefore(game.startTime!)) {
-        //EXIBIÇÃO ANTERIOR AO INICIO DA PARTIDA
         return "Aguardando Inicio";
-      } else if(gameController.currentGame.status == GameStatus.Completed || gameController.currentGame.status == GameStatus.Cancelled){
-        //EXIBIÇÃO DE MENSAGEM DE FINALIZAÇÃO
+      } else if (currentGame?.status == GameStatus.Completed || currentGame?.status == GameStatus.Cancelled) {
         return "Finalizado";
       } else {
-        //EXIBIÇÃO DURANTE O DECORRER DA PARTIDA
-        return "$minutesElapsed'";
+        return "$elapsed'";
       }
     }
 
-    return ListenableBuilder(listenable: gameController, builder: (_, __){
-      return Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: AppColors.white.withAlpha(100),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: color!,
-            width: 2            
-          )
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: AppColors.white.withAlpha(100),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(
+          color: color!,
+          width: 2
+        )
+      ),
+      child: Text(
+        timeElapsedText(minutesElapsed),
+        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+          color: color,
         ),
-        child: Text(
-          timeElapsedText(gameController.minutesElapsed),
-          style: Theme.of(context).textTheme.titleSmall!.copyWith(
-            color: color,
-          ),
-        ),
-      );
-    });
+      ),
+    );
   }
 }

@@ -19,7 +19,6 @@ import 'package:futzada/data/services/integration_map_service.dart';
 import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_map_travel.dart';
 import 'package:futzada/presentation/widget/text/expandable_text_widget.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 
 class EventHomePage extends StatefulWidget {
@@ -35,7 +34,6 @@ class EventHomePage extends StatefulWidget {
 class _EventHomePageState extends State<EventHomePage> {
   //DEFINIR CONTROLLERS
   EventController eventController = EventController.instance;
-  GameController gameController = GameController.instance;
   MapController mapController = MapController();
   late PageController highligtsController;
   //DEFINIR SERVIÇO DE CAMPO/QUADRA
@@ -489,7 +487,7 @@ class _EventHomePageState extends State<EventHomePage> {
               height: dimensions.height * 0.25,
               margin: const EdgeInsets.symmetric(vertical: 20.0),
               color: AppColors.grey_300,
-              child: ListenableBuilder(listenable: Listenable.merge([eventController, gameController]), builder: (_, __){
+              child: ListenableBuilder(listenable: eventController, builder: (_, __){
                 //EXIBIR LOADING DE CARREGAMENTO DO MAPA
                 if (!isMapLoaded) {
                   return Center(
@@ -578,7 +576,7 @@ class _EventHomePageState extends State<EventHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               spacing: 20,
               children: [
-                ListenableBuilder(listenable: Listenable.merge([eventController, gameController]), builder: (_, __){
+                ListenableBuilder(listenable: eventController, builder: (_, __){
                 return Column(
                     children: [
                       ButtonIconWidget(

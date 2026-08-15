@@ -1,94 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:futzada/core/providers/game/game_match_provider.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/widget/cards/card_player_team_widget.dart';
 
-class BottomSheetGamePlayers extends StatefulWidget {
+class BottomSheetGamePlayers extends ConsumerStatefulWidget {
   final int team;
   final int qtdPlayers;
   const BottomSheetGamePlayers({
     super.key,
     required this.team,
-    required this.qtdPlayers
+    required this.qtdPlayers,
   });
 
   @override
-  State<BottomSheetGamePlayers> createState() => _BottomSheetGamePlayersState();
+  ConsumerState<BottomSheetGamePlayers> createState() => _BottomSheetGamePlayersState();
 }
 
-class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
-  //CONTROLLER DE REGISTRO DA PELADA
-  final gameController = GameController.instance;
-  //OBSERVAR PARTICIPANTES SELECIONADOS
-  late List<UserModel>? participants;
-  //DEFINIR ARRAY DE SELECIONADOS
-  List<UserModel?> selectedPlayers = [];
+class _BottomSheetGamePlayersState extends ConsumerState<BottomSheetGamePlayers> {
+  late List<UserModel> participants;
+  List<UserModel> selectedPlayers = [];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // RESGATAR PARTICIPANTES DO EVENTO
-    final allParticipants = gameController.event.participants!;
-    // FILTRAR SOMENTE OS PARTICIPANTES QUE NÃO ESTÃO EM NENHUM TIME
+    final session = ref.read(gameSessionProvider);
+    final match = ref.read(gameMatchProvider);
+    final allParticipants = session.event?.participants ?? [];
+    selectedPlayers = List<UserModel>.from(
+      widget.team == 0 ? match.teamA.players : match.teamB.players,
+    );
     participants = allParticipants
-      .where((p) =>
-        !gameController.teamA.players.contains(p) &&
-        !gameController.teamB.players.contains(p))
+      .where((p) => !match.teamA.players.contains(p) && !match.teamB.players.contains(p))
       .toList();
-    //RESGATAR JOGADOR DO TIME RECEBIDO
-    selectedPlayers = widget.team == 0 
-      ? gameController.teamA.players
-      : gameController.teamB.players; 
   }
 
-  //FUNÇÃO PARA DEFINIR PARTICIPANTE NA EQUIPE
-  void setPlayerTeam(UserModel participant, String action){
-    //VERIFICAR AÇÃO 
-    if(action == 'add'){
-      //VERIFICAR SE TIME JA ATINGIO O LIMITE DE JOGADORES POR EQUIPE
-      if(selectedPlayers.length < widget.qtdPlayers){
-        //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
+  void setPlayerTeam(UserModel participant, String action) {
+    if (action == 'add') {
+      if (selectedPlayers.length < widget.qtdPlayers) {
         if (!selectedPlayers.contains(participant)) {
-          //ADICIONAR JOGADOR AO ARRAY DO TIME
-          setState(() { selectedPlayers.add(participant); });
-          //REMOVER PARTICIPANTE DA LISA
-          setState(() { participants!.remove(participant); });
+          setState(() {
+            selectedPlayers.add(participant);
+            participants.remove(participant);
+          });
+          ref.read(gameMatchProvider.notifier).setTeamPlayers(widget.team, List.from(selectedPlayers));
         }
-      }else{
-        //FECHAR DIALOG
+      } else {
         Navigator.of(context).pop();
-        //MENSAGEM DE ERRO DE LIMITE DE JOGADORES
         AppHelper.feedbackMessage(context, "A equipe ja atingiu o número de jogadores!", type: "danger");
       }
-    }else{
-      //VERIFICAR SE PARTICIPANT JA FOI ADICIONADO AO TIME
+    } else {
       if (selectedPlayers.contains(participant)) {
-        //REMOVER JOGADOR DO ARRAY DO TIME
-        setState(() { selectedPlayers.remove(participant); });
-        //ADICIONAR PARTICIPANTE DA LISA
-        setState(() { participants!.insert(0, participant); });
+        setState(() {
+          selectedPlayers.remove(participant);
+          participants.insert(0, participant);
+        });
+        ref.read(gameMatchProvider.notifier).setTeamPlayers(widget.team, List.from(selectedPlayers));
       }
     }
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final modality = ref.read(gameSessionProvider).event?.modality?.name ?? '';
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
       ),
       child: Column(
         children: [
@@ -112,72 +96,57 @@ class _BottomSheetGamePlayersState extends State<BottomSheetGamePlayers> {
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: Text(
               'Escolha os jogadores que iram compor as equipes da partida',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: AppColors.grey_500,
-              ),
-              textAlign: TextAlign.center
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.grey_500),
+              textAlign: TextAlign.center,
             ),
           ),
-          ListenableBuilder(listenable: gameController, builder: (_, __){
-            if(selectedPlayers.isNotEmpty){
-              return Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: SingleChildScrollView(
+          if (selectedPlayers.isNotEmpty)
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                        ...selectedPlayers.map((participant){
-                          return InkWell(
-                            onTap: () => setPlayerTeam(participant, 'remove'),
-                            child: Stack(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: ImgCircularWidget(
-                                    size: 50,
-                                    image: participant!.photo,
-                                  ),
-                                ),
-                                const Positioned(
-                                  right: 5,
-                                  bottom: 0,
-                                  child: Icon(
-                                    AppIcones.times_circle_solid,
-                                    color: AppColors.grey_300,
-                                    size: 15,
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
-                        }),
-                    ]
-                  ),
-                )
-              );
-            }else{
-              return SizedBox.shrink();
-            }
-          }),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: selectedPlayers.map((participant) {
+                    return InkWell(
+                      onTap: () => setPlayerTeam(participant, 'remove'),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: ImgCircularWidget(size: 50, image: participant.photo),
+                          ),
+                          const Positioned(
+                            right: 5,
+                            bottom: 0,
+                            child: Icon(AppIcones.times_circle_solid, color: AppColors.grey_300, size: 15),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            )
+          else
+            const SizedBox.shrink(),
           Expanded(
-            child: ListenableBuilder(listenable: gameController, builder: (_, __) => Padding(
+            child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ListView(
-                children: participants!.map((user) {
-                  //VERIFICAR SE PARTICIPANTE ESTA HABILITADO COMO JOGADOR
-                  if(user.player != null){
+                children: participants.map((user) {
+                  if (user.player != null) {
                     return CardPlayerTeamWidget(
                       user: user,
-                      modality: gameController.event.modality!.name,
+                      modality: modality,
                       onPressed: () => setPlayerTeam(user, 'add'),
                     );
                   }
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }).toList(),
               ),
-            )),
+            ),
           ),
         ],
       ),

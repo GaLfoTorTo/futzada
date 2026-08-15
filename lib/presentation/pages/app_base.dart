@@ -4,7 +4,7 @@ import 'package:futzada/presentation/widget/drawers/drawer_widget.dart';
 import 'package:futzada/presentation/widget/bars/navigation_bar_widget.dart';
 import 'package:futzada/presentation/controllers/showcase_controller.dart';
 
-class AppBase extends StatelessWidget {
+class AppBase extends StatefulWidget {
   final Widget child;
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
@@ -17,21 +17,27 @@ class AppBase extends StatelessWidget {
   });
 
   @override
+  State<AppBase> createState() => _AppBaseState();
+}
+
+class _AppBaseState extends State<AppBase> {
+  @override
+  void initState() {
+    super.initState();
+    sl<ShowcaseController>().setShowcase();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //ESTADO - SCAFFOLDKEY
-    final GlobalKey<ScaffoldState> scaffoldKey = sl<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey');;
-    //CONTROLLER - SHOWCASE
-    final ShowcaseController showcaseController = sl<ShowcaseController>();
-    //CONFIGURAR SHOWCASE
-    showcaseController.setShowcase();
+    final GlobalKey<ScaffoldState> scaffoldKey = sl<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey');
 
     return Scaffold(
       key: scaffoldKey,
       drawer: const DrawerWidget(),
-      body: child,
+      body: widget.child,
       bottomNavigationBar: NavigationBarWidget(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
+        selectedIndex: widget.selectedIndex,
+        onDestinationSelected: widget.onDestinationSelected,
       ),
     );
   }

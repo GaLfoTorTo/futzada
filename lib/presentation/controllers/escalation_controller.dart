@@ -91,7 +91,7 @@ class EscalationController extends ChangeNotifier
 
   //ESTADOS - USUARIO E EVENTOS
   @override
-  UserModel user = sl<UserModel>();
+  UserModel user = sl<UserModel>(instanceName: 'user');
   @override
   late List<EventModel> events = [];
 

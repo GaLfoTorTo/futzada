@@ -105,7 +105,7 @@ class AuthController{
       
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE
       await saveUser(resp.data);
-    } catch (_) {
+    } catch (e) {
       await googleSignIn.signOut();
       await removeUser();
     }

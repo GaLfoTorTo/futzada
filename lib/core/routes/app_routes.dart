@@ -16,6 +16,7 @@ import 'package:futzada/presentation/pages/onboarding/onboarding_page.dart';
 import 'package:futzada/presentation/pages/profile/profile_page.dart';
 import 'package:futzada/presentation/pages/chat/chats.dart';
 import 'package:futzada/presentation/pages/chat/chat_private.dart';
+import 'package:futzada/presentation/pages/escalation/escalation_landing_page.dart';
 import 'package:futzada/presentation/pages/escalation/escalation_page.dart';
 import 'package:futzada/presentation/pages/escalation/historic_page.dart';
 import 'package:futzada/presentation/pages/escalation/market_page.dart';
@@ -24,6 +25,7 @@ import 'package:futzada/presentation/pages/games/detail/game_detail_page.dart';
 import 'package:futzada/presentation/pages/games/detail/games_day_page%20.dart';
 import 'package:futzada/presentation/pages/games/config/game_config_page.dart';
 import 'package:futzada/presentation/pages/games/config/game_random_teams_page.dart';
+import 'package:futzada/presentation/pages/event/event_landing_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_list_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_settings_page.dart.dart';
@@ -32,6 +34,7 @@ import 'package:futzada/presentation/pages/event/register/event_config_game_step
 import 'package:futzada/presentation/pages/event/register/event_basic_step.dart';
 import 'package:futzada/presentation/pages/event/register/event_address_step.dart';
 import 'package:futzada/presentation/pages/event/register/event_participants_step.dart';
+import 'package:futzada/presentation/pages/explore/explore_landing_page.dart';
 import 'package:futzada/presentation/pages/explore/map/map_picker.dart';
 import 'package:futzada/presentation/pages/explore/map/map_explorer.dart';
 import 'package:futzada/presentation/pages/explore/explore_filter_page.dart';
@@ -92,19 +95,23 @@ class AppRoutes {
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/escalation',
-              pageBuilder: (_, __) => const NoTransitionPage(child: EscalationPage()),
+              pageBuilder: (_, __) => const NoTransitionPage(child: EscalationLandingPage()),
               routes: [
                 GoRoute(
-                  path: '/statistics',
-                  pageBuilder: (_, __) => const NoTransitionPage(child: StatisticsPage()),
+                  path: 'team',
+                  pageBuilder: (_, __) => transitionToLeft(const EscalationPage()),
                 ),
                 GoRoute(
-                  path: '/market',
-                  pageBuilder: (_, __) => const NoTransitionPage(child: MarketPage()),
+                  path: 'statistics',
+                  pageBuilder: (_, __) => transitionToLeft(const StatisticsPage()),
                 ),
                 GoRoute(
-                  path: '/historic',
-                  pageBuilder: (_, __) => const NoTransitionPage(child: HistoricPage()),
+                  path: 'market',
+                  pageBuilder: (_, __) => transitionToLeft(const MarketPage()),
+                ),
+                GoRoute(
+                  path: 'historic',
+                  pageBuilder: (_, __) => transitionToLeft(const HistoricPage()),
                 ),
               ],
             ),
@@ -112,38 +119,44 @@ class AppRoutes {
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/event',
-              pageBuilder: (_, __) => const NoTransitionPage(child: EventPage()),
+              pageBuilder: (_, __) => const NoTransitionPage(child: EventLandingPage()),
               routes: [
                 GoRoute(
-                  path: '/settings',
-                  pageBuilder: (_, __) => transitionToLeft(const EventSettingsPage()),
+                  path: 'view',
+                  pageBuilder: (_, __) => transitionToLeft(const EventPage()),
+                  routes: [
+                    GoRoute(
+                      path: 'settings',
+                      pageBuilder: (_, __) => transitionToLeft(const EventSettingsPage()),
+                    ),
+                    GoRoute(
+                      path: 'historic',
+                      pageBuilder: (_, __) => transitionToLeft(const EventHistoricPage()),
+                    ),
+                  ],
                 ),
                 GoRoute(
-                  path: '/historic',
-                  pageBuilder: (_, __) => transitionToLeft(const EventHistoricPage()),
-                ),
-                GoRoute(
-                  path: '/list',
+                  path: 'list',
                   pageBuilder: (_, __) => transitionToLeft(const EventListPage()),
                 ),
                 GoRoute(
-                  path: '/register',
+                  path: 'register',
                   redirect: (_, __) => '/event/register/basic',
                   routes: [
                     GoRoute(
-                      path: '/basic',
+                      path: 'basic',
                       pageBuilder: (_, __) => transitionToLeft(const EventBasicStep()),
                     ),
                     GoRoute(
-                      path: '/address',
+                      path: 'address',
                       pageBuilder: (_, __) => transitionToLeft(const EventAddressStep()),
                     ),
                     GoRoute(
-                      path: '/config_games',
+                      path: 'config_games',
                       pageBuilder: (_, __) => transitionToLeft(const EventConfigGameStep()),
                     ),
                     GoRoute(
-                      path: '/participants',
+                      path: 'participants',
                       pageBuilder: (_, __) => transitionToLeft(const EventParticipantsStep()),
                     ),
                   ],
@@ -154,22 +167,22 @@ class AppRoutes {
           StatefulShellBranch(routes: [
             GoRoute(
               path: '/explore',
-              pageBuilder: (_, __) => const NoTransitionPage(child: MapExplorePage()),
+              pageBuilder: (_, __) => const NoTransitionPage(child: ExploreLandingPage()),
               routes: [
                 GoRoute(
-                  path: '/map',
+                  path: 'map',
                   pageBuilder: (_, __) => transitionToLeft(const MapExplorePage()),
                 ),
                 GoRoute(
-                  path: '/picker',
+                  path: 'picker',
                   pageBuilder: (_, __) => transitionToLeft(const MapPickerPage()),
                 ),
                 GoRoute(
-                  path: '/search',
+                  path: 'search',
                   pageBuilder: (_, __) => transitionToLeft(const ExploreSearchPage()),
                 ),
                 GoRoute(
-                  path: '/filter',
+                  path: 'filter',
                   pageBuilder: (_, __) => transitionToLeft(const ExploreFilterPage()),
                 ),
               ],

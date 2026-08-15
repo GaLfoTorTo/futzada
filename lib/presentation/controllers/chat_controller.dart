@@ -10,7 +10,7 @@ class ChatController extends ChangeNotifier {
   //INICIALIZAR SERVICE
   final ChatService chatService = sl<ChatService>();
   //RESGATAR USUARIO LOGADO
-  UserModel user = sl<UserModel>();
+  UserModel user = sl<UserModel>(instanceName: 'user');
   //CONTROLADOR DE INPUT DE PESQUISA
   final TextEditingController pesquisaController = TextEditingController();
   //CONTROLADOR DE INPUT DE MENSAGEM

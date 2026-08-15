@@ -6,6 +6,9 @@ import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/core/storage/app_storage.dart';
+import 'package:futzada/core/di/service_locator.dart';
+import 'package:futzada/core/providers/app_session_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -31,10 +34,10 @@ class OnboardingPageState extends State<OnboardingPage> {
   }
 
   //FUNÇÃO PARA ALTERAÇÃO DE PÁGINAS
-  void alterPage(context, String action) {
+  void alterPage(String action) {
     if(action == "home" || currentPage == 4){
-      //DEFINIR FIRST LOGIN PARA FALSE
       AppStorage.writeIfNull('firstLogin', false);
+      sl<ProviderContainer>().read(appSessionProvider.notifier).setAuthenticated();
       context.go('/home');
       return;
     }
@@ -90,7 +93,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                 textColor: AppColors.blue_500,
                 backgroundColor: AppColors.white,
                 width: 100,
-                action: () => alterPage(context, "home")
+                action: () => alterPage("home")
               ),
               SmoothPageIndicator(
                 controller: pageController,
@@ -111,7 +114,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                 iconAfter: true,
                 backgroundColor: AppColors.blue_500,
                 width: currentPage == 4 ? 100 : null,
-                action: () => alterPage(context, "Proximo")
+                action: () => alterPage("Proximo")
               ),
             ],
           ),
@@ -132,7 +135,7 @@ class OnboardingPageState extends State<OnboardingPage> {
           },
           children: [
             WelcomePage(
-              action: () => alterPage(context, "Proximo")
+              action: () => alterPage("Proximo")
             ),
             ...pages.map((item){
               return
@@ -140,7 +143,7 @@ class OnboardingPageState extends State<OnboardingPage> {
                   item: item,
                   pageController: pageController,
                   pageIndex: currentPage,
-                  action: () => alterPage(context, "Proximo")
+                  action: () => alterPage("Proximo")
                 );
             }).toList()
           ],

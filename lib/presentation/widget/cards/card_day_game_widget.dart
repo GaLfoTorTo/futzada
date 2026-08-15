@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 
 class CardDayGameWidget extends StatefulWidget {
   final EventModel event;
@@ -35,8 +34,6 @@ class _CardGameLiveWidgetState extends State<CardDayGameWidget> {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE PARTIDA
-    GameController gameController = GameController.instance;
 
     return Card(
       child: Container(

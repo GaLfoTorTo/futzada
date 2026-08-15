@@ -1,48 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/pages/erros/erro_historic_game_page.dart';
 import 'package:futzada/presentation/widget/skeletons/skeleton_games_widget.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/cards/card_game_widget.dart';
 
-class EventHistoricPage extends StatefulWidget {
+class EventHistoricPage extends ConsumerStatefulWidget {
   const EventHistoricPage({super.key});
 
   @override
-  State<EventHistoricPage> createState() => _EventHistoricPageState();
+  ConsumerState<EventHistoricPage> createState() => _EventHistoricPageState();
 }
 
-class _EventHistoricPageState extends State<EventHistoricPage> with SingleTickerProviderStateMixin {
-  //CONTROLLER DE BARRA NAVEGAÇÃO
+class _EventHistoricPageState extends ConsumerState<EventHistoricPage> with SingleTickerProviderStateMixin {
   EventController eventController = EventController.instance;
-  //DEFINIR CONTROLLER DE PARTIDA
-  GameController gameController = GameController.instance;
-  //ESTADO - EVENTO
   late EventModel event;
-  //CONTROLLER DE TABS
   late TabController _tabController;
-  //LISTA DE TABS
   List<String?> tabs = [];
-  //CONTROLADOR DE EXIBIÇÃO
-  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    //RESGATAR EVENT
     event = eventController.event;
-    //VERIFICAR SE PARTIDAS FORAM CARREGADAS
-    if(gameController.finishedGames.isNotEmpty){
-      tabs = gameController.finishedGames.keys.toList();
-      //INICIALIZAR CONTROLLER DE TABS
+    final finishedGames = ref.read(gameScheduleProvider).finishedGames;
+    if (finishedGames.isNotEmpty) {
+      tabs = finishedGames.keys.toList();
       _tabController = TabController(length: tabs.length, vsync: this);
-    }else{
-      //INICIALIZAR CONTROLLER DE TABS VAZIO
+    } else {
       _tabController = TabController(length: 1, vsync: this);
     }
   }
@@ -55,8 +45,8 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    // RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    final schedule = ref.watch(gameScheduleProvider);
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -65,19 +55,16 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
         shadow: false,
       ),
       body: SafeArea(
-        child: ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
-          //EXIBIR SKELETON DE CARREGAMENTO
-          if (!gameController.loadHistoricGames) {
+        child: Builder(builder: (_) {
+          if (!schedule.loadHistoricGames) {
             return const SkeletonGamesWidget();
           }
 
-          //EXIBIR MENSAGEM DE ERRO CASO NÃO EXISTAM PARTIDAS
-          if (gameController.finishedGames.isEmpty && tabs.isEmpty) {
+          if (schedule.finishedGames.isEmpty && tabs.isEmpty) {
             return const ErroHistoricGamePage();
           }
-          //EXIBIR MENSAGEM DE ERRO CASO NÃO EXISTAM PARTIDAS
-          if (gameController.finishedGames.isNotEmpty && tabs.isNotEmpty) {
-            // CONTEÚDO COM TABS
+
+          if (schedule.finishedGames.isNotEmpty && tabs.isNotEmpty) {
             return Column(
               children: [
                 TabBar(
@@ -92,13 +79,11 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
                     );
                   }).toList(),
                 ),
-                // USAR EXPANDED PARA OCUPAR O RESTO DA TELA
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
-                    children: gameController.finishedGames.entries.map((entry) {
+                    children: schedule.finishedGames.entries.map((entry) {
                       final List<GameModel>? listGames = entry.value;
-
                       return ListView(
                         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                         children: listGames!.map((game) {
@@ -122,7 +107,8 @@ class _EventHistoricPageState extends State<EventHistoricPage> with SingleTicker
               ],
             );
           }
-          return SizedBox.shrink();
+
+          return const SizedBox.shrink();
         }),
       ),
     );

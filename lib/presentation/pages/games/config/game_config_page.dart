@@ -2,11 +2,14 @@ import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:futzada/core/theme/app_size.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/data/models/user_model.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:futzada/core/providers/game/game_match_provider.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
 import 'package:futzada/presentation/widget/inputs/input_switch_widget.dart';
@@ -15,22 +18,30 @@ import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_dropdown_icon_widget.dart';
 
-class GameConfigPage extends StatefulWidget {
+class GameConfigPage extends ConsumerStatefulWidget {
   final GameModel? game;
-  const GameConfigPage({
-    super.key,
-    this.game
-  });
+  const GameConfigPage({super.key, this.game});
 
   @override
-  State<GameConfigPage> createState() => _GameConfigPageState();
+  ConsumerState<GameConfigPage> createState() => _GameConfigPageState();
 }
 
-class _GameConfigPageState extends State<GameConfigPage> {
-  //CONTROLLER - PARTIDA
-  GameController gameController = GameController.instance;
-  //ESTADOS - CONFIGURAÇÕES DE CAMPOS
-  bool hasRefereer = false;
+class _GameConfigPageState extends ConsumerState<GameConfigPage> {
+  late TextEditingController numberController;
+  late TextEditingController categoryController;
+  late TextEditingController startTimeController;
+  late TextEditingController endTimeController;
+  late TextEditingController durationController;
+  late TextEditingController hasTwoHalvesController;
+  late TextEditingController hasExtraTimeController;
+  late TextEditingController hasPenaltyController;
+  late TextEditingController hasGoalLimitController;
+  late TextEditingController hasRefereerController;
+  late TextEditingController playersPerTeamController;
+  late TextEditingController extraTimeController;
+  late TextEditingController goalLimitController;
+  UserModel? refereer;
+  bool hasRefereerSwitch = false;
   bool hasGoalLimit = false;
   bool hasExtraTime = false;
   late int qtdPlayers;
@@ -40,48 +51,83 @@ class _GameConfigPageState extends State<GameConfigPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //currentGame já é definido pelo caller antes de navegar para /games/config
-    //INICIARLIZAR CONTROLLERS DE TEXTO
-    gameController.initTextControllers();
-    //REDEFINIR HORARIOS DE ACORDO COM DURAÇÃO
-    setDuration(gameController.durationController.text);
-    //RESGATAR VALORES DEFINIDOS NAS CONFIGURAÇÕES
-    hasRefereer = bool.parse(gameController.hasRefereerController.text);
-    hasGoalLimit = bool.parse(gameController.hasGoalLimitController.text);
-    hasExtraTime = bool.parse(gameController.hasExtraTimeController.text);
-    //INICIALIZAR VALORES DE SLIDER (QTD DE JOGADORES)
-    qtdPlayers = gameController.playersPerTeamController.text.isNotEmpty 
-      ? int.parse(gameController.playersPerTeamController.text) 
-      : ModalityHelper.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
-    minPlayers = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['minPlayers']!;
-    maxPlayers = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['maxPlayers']!;
-    divisions = ModalityHelper.getQtdPlayers(gameController.categoryController.text)['divisions']!;
+    final session = ref.read(gameSessionProvider);
+    final config = session.currentGameConfig!;
+    final game = session.currentGame!;
+    final event = session.event!;
+
+    numberController = TextEditingController(text: game.number.toString());
+    categoryController = TextEditingController(text: event.gameConfig!.category);
+    startTimeController = TextEditingController(text: DateFormat.Hm().format(game.startTime!));
+    endTimeController = TextEditingController(text: DateFormat.Hm().format(game.endTime!));
+    durationController = TextEditingController(text: event.gameConfig?.duration.toString() ?? '');
+    playersPerTeamController = TextEditingController(text: config.playersPerTeam.toString());
+    hasTwoHalvesController = TextEditingController(text: config.config!['hasTwoHalves'].toString());
+    hasExtraTimeController = TextEditingController(text: config.config!['hasExtraTime'].toString());
+    hasPenaltyController = TextEditingController(text: config.config!['hasPenalty'].toString());
+    hasGoalLimitController = TextEditingController(text: config.config!['hasGoalLimit'].toString());
+    hasRefereerController = TextEditingController(text: config.config!['hasRefereer'].toString());
+    extraTimeController = TextEditingController(text: (config.config!['extraTime'] ?? '').toString());
+    goalLimitController = TextEditingController(text: (config.config!['goalLimit'] ?? '').toString());
+
+    refereer = game.refereeId != null
+        ? event.participants?.firstWhere(
+            (u) => u.id == game.refereeId,
+            orElse: () => event.participants!.first,
+          )
+        : null;
+
+    setDuration(durationController.text);
+    hasRefereerSwitch = bool.tryParse(hasRefereerController.text) ?? false;
+    hasGoalLimit = bool.tryParse(hasGoalLimitController.text) ?? false;
+    hasExtraTime = bool.tryParse(hasExtraTimeController.text) ?? false;
+
+    qtdPlayers = playersPerTeamController.text.isNotEmpty
+        ? int.parse(playersPerTeamController.text)
+        : ModalityHelper.getQtdPlayers(categoryController.text)['minPlayers']!;
+    minPlayers = ModalityHelper.getQtdPlayers(categoryController.text)['minPlayers']!;
+    maxPlayers = ModalityHelper.getQtdPlayers(categoryController.text)['maxPlayers']!;
+    divisions = ModalityHelper.getQtdPlayers(categoryController.text)['divisions']!;
   }
 
-  //FUNÇÃO PARA AJUSTAR DATA DE INICIO, FIM E DURAÇÃO DE PARTIDA
-  void setDuration(String? duration){
-    //VERIFICAR SE DURAÇÃO NÃO ESTA VAZIA
-    if(duration != null){
+  @override
+  void dispose() {
+    numberController.dispose();
+    categoryController.dispose();
+    startTimeController.dispose();
+    endTimeController.dispose();
+    durationController.dispose();
+    hasTwoHalvesController.dispose();
+    hasExtraTimeController.dispose();
+    hasPenaltyController.dispose();
+    hasGoalLimitController.dispose();
+    hasRefereerController.dispose();
+    playersPerTeamController.dispose();
+    extraTimeController.dispose();
+    goalLimitController.dispose();
+    super.dispose();
+  }
+
+  void setDuration(String? duration) {
+    if (duration != null && duration.isNotEmpty) {
+      final startTime = ref.read(gameSessionProvider).currentGame?.startTime;
+      if (startTime == null) return;
       setState(() {
-        //RESGATAR CONFIGURAÇÃO DE 2 TEMPOS
-        var totalDuration = bool.parse(gameController.hasTwoHalvesController.text) ? int.parse(duration) * 2 : int.parse(duration);
-        //REDEFINIR DATA DE INICIO E FIM DA PARTIDA
-        var endTime = gameController.currentGame.startTime!.add(Duration(minutes: totalDuration));
-        //ATUALIZAR HORARIO DE FIM DA PARTIDA
-        gameController.currentGame.endTime = endTime;
-        //ATUALIZAR TEXTO DO INPUT
-        gameController.endTimeController.text = DateFormat.Hm().format(endTime).toString();
+        final hasTwoHalves = bool.tryParse(hasTwoHalvesController.text) ?? false;
+        final totalDuration = hasTwoHalves ? int.parse(duration) * 2 : int.parse(duration);
+        final endTime = startTime.add(Duration(minutes: totalDuration));
+        endTimeController.text = DateFormat.Hm().format(endTime);
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    
+    final event = ref.read(gameSessionProvider).event;
+    final match = ref.read(gameMatchProvider);
+
     return Scaffold(
       appBar: HeaderWidget(
         title: "Configurações da Partida",
@@ -100,8 +146,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.dark_500.withAlpha(50),
-                      spreadRadius: 0.5,
-                      blurRadius: 5,
+                      spreadRadius: 0.5, blurRadius: 5,
                       offset: const Offset(2, 5),
                     ),
                   ],
@@ -112,9 +157,7 @@ class _GameConfigPageState extends State<GameConfigPage> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: Text(
                         "As configurações da partida determinam como as partidas da pelada funcionam, duração de tempos, limites de gols, arbitragem, dentre outros. Essas configurações podem ser ajustadas antes do início de uma nova partida.",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: AppColors.blue_500,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.blue_500),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -132,22 +175,12 @@ class _GameConfigPageState extends State<GameConfigPage> {
                           flex: 1,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 10),
-                            child: InputTextWidget(
-                              name: 'number',
-                              label: 'Nº',
-                              textController: gameController.numberController,
-                              enable: false,
-                            ),
+                            child: InputTextWidget(name: 'number', label: 'Nº', textController: numberController, enable: false),
                           ),
                         ),
                         Expanded(
                           flex: 3,
-                          child: InputTextWidget(
-                            name: 'category',
-                            label: 'Categoria',
-                            textController: gameController.categoryController,
-                            enable: false,
-                          ),
+                          child: InputTextWidget(name: 'category', label: 'Categoria', textController: categoryController, enable: false),
                         ),
                       ],
                     ),
@@ -158,107 +191,89 @@ class _GameConfigPageState extends State<GameConfigPage> {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: InputTextWidget(
-                              name: 'startTime',
-                              label: 'Início',
+                              name: 'startTime', label: 'Início',
                               prefixIcon: Icons.access_time_rounded,
-                              textController: gameController.startTimeController,
-                              enable: false,
+                              textController: startTimeController, enable: false,
                             ),
                           ),
                         ),
                         Expanded(
                           flex: 2,
                           child: InputTextWidget(
-                            name: 'endTime',
-                            label: 'Fim',
+                            name: 'endTime', label: 'Fim',
                             prefixIcon: Icons.access_time_rounded,
-                            textController: gameController.endTimeController,
-                            type: TextInputType.text,
-                            enable: false,
+                            textController: endTimeController,
+                            type: TextInputType.text, enable: false,
                           ),
                         ),
                       ],
                     ),
                     InputTextWidget(
                       name: 'duration',
-                      label: bool.parse(gameController.hasTwoHalvesController.text)
-                        ? "Duração (min. por tempo)" 
-                        : "Duração (min.)",
+                      label: bool.tryParse(hasTwoHalvesController.text) == true
+                          ? "Duração (min. por tempo)"
+                          : "Duração (min.)",
                       prefixIcon: Icons.timer_outlined,
-                      textController: gameController.durationController,
+                      textController: durationController,
                       type: TextInputType.number,
                       onChanged: (value) => setDuration(value),
                     ),
                     InputSwitchWidget(
-                      name: "dois_tempos", 
-                      label: "Dois Tempos", 
+                      name: "dois_tempos", label: "Dois Tempos",
                       prefixIcon: Icons.safety_divider_rounded,
-                      value: bool.parse(gameController.hasTwoHalvesController.text), 
-                      textController: gameController.hasTwoHalvesController,
-                      onChanged: (value){
-                        setState(() {
-                          gameController.hasTwoHalvesController.text = value.toString();
-                        });
+                      value: bool.tryParse(hasTwoHalvesController.text) ?? false,
+                      textController: hasTwoHalvesController,
+                      onChanged: (value) {
+                        setState(() { hasTwoHalvesController.text = value.toString(); });
                       },
                     ),
                     InputSwitchWidget(
-                      name: "prorrogacao", 
-                      label: "Prorrogação", 
+                      name: "prorrogacao", label: "Prorrogação",
                       prefixIcon: Icons.more_time_rounded,
-                      value: bool.parse(gameController.hasExtraTimeController.text), 
-                      textController: gameController.hasExtraTimeController,
-                      onChanged: (value){
+                      value: bool.tryParse(hasExtraTimeController.text) ?? false,
+                      textController: hasExtraTimeController,
+                      onChanged: (value) {
                         setState(() {
-                          //ATUALIZAR VALOR 
                           hasExtraTime = value;
-                          gameController.hasExtraTimeController.text = value.toString();
+                          hasExtraTimeController.text = value.toString();
                         });
                       },
                     ),
-                    if(hasExtraTime)...[
+                    if (hasExtraTime) ...[
                       InputTextWidget(
-                        name: 'extra_time',
-                        label: 'Tempo Prorrogação',
+                        name: 'extra_time', label: 'Tempo Prorrogação',
                         prefixIcon: Icons.timer_outlined,
-                        textController: gameController.extraTimeController,
+                        textController: extraTimeController,
                         type: TextInputType.number,
-                        onChanged: (value) => gameController.event.gameConfig!.config!["extraTime"] = int.parse(value),
                       ),
                     ],
                     InputSwitchWidget(
-                      name: "penaltis", 
-                      label: "Pênaltis", 
+                      name: "penaltis", label: "Pênaltis",
                       prefixIcon: Icons.sports,
-                      value: bool.parse(gameController.hasPenaltyController.text), 
-                      textController: gameController.hasPenaltyController,
-                      onChanged: (value){
-                        setState(() {
-                          gameController.hasPenaltyController.text = value.toString();
-                        });
+                      value: bool.tryParse(hasPenaltyController.text) ?? false,
+                      textController: hasPenaltyController,
+                      onChanged: (value) {
+                        setState(() { hasPenaltyController.text = value.toString(); });
                       },
                     ),
                     InputSwitchWidget(
-                      name: "limit_goals", 
-                      label: "Limite de Gols", 
+                      name: "limit_goals", label: "Limite de Gols",
                       prefixIcon: Icons.scoreboard_outlined,
-                      value: bool.parse(gameController.hasGoalLimitController.text), 
-                      textController: gameController.hasGoalLimitController,
-                      onChanged: (value){
+                      value: bool.tryParse(hasGoalLimitController.text) ?? false,
+                      textController: hasGoalLimitController,
+                      onChanged: (value) {
                         setState(() {
-                          //ATUALIZAR VALOR 
                           hasGoalLimit = value;
-                          gameController.hasGoalLimitController.text = value.toString();
+                          hasGoalLimitController.text = value.toString();
                         });
                       },
                     ),
-                    if(hasGoalLimit)...[
+                    if (hasGoalLimit) ...[
                       InputTextWidget(
-                        name: 'limitGols',
-                        label: 'Qtd. Gols',
+                        name: 'limitGols', label: 'Qtd. Gols',
                         prefixIcon: Icons.sports_soccer_rounded,
-                        textController: gameController.goalLimitController,
+                        textController: goalLimitController,
                         type: TextInputType.number,
-                        onChanged: (value) => gameController.event.gameConfig!.config!["goalLimit"] = int.parse(value),
                       ),
                     ],
                     SilderPlayersWidget(
@@ -266,54 +281,55 @@ class _GameConfigPageState extends State<GameConfigPage> {
                       minPlayers: minPlayers.toDouble(),
                       maxPlayers: maxPlayers.toDouble(),
                       divisions: divisions,
-                      onChange: (value){
+                      onChange: (value) {
                         setState(() {
-                          //ATUALIZAR VALOR 
                           qtdPlayers = value.floor();
-                          gameController.playersPerTeamController.text = value.floor().toString();
+                          playersPerTeamController.text = value.floor().toString();
                         });
                       },
                     ),
                     InputSwitchWidget(
-                      name: "refeer", 
-                      label: "Árbitro", 
+                      name: "refeer", label: "Árbitro",
                       prefixIcon: Icons.sports,
-                      value: bool.parse(gameController.hasRefereerController.text), 
-                      textController: gameController.hasRefereerController,
-                      onChanged: (value){
+                      value: bool.tryParse(hasRefereerController.text) ?? false,
+                      textController: hasRefereerController,
+                      onChanged: (value) {
                         setState(() {
-                          //ATUALIZAR VALOR 
-                          hasRefereer = value;
-                          gameController.hasRefereerController.text = value.toString();
+                          hasRefereerSwitch = value;
+                          hasRefereerController.text = value.toString();
                         });
                       },
                     ),
-                    if(hasRefereer)...[
+                    if (hasRefereerSwitch && event != null) ...[
                       ButtonDropdownIconWidget(
                         width: dimensions.width,
-                        menuWidth: dimensions.width - 20, 
+                        menuWidth: dimensions.width - 20,
                         menuHeight: 200,
-                        backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.dark_300
+                            : AppColors.white,
                         iconAfter: false,
                         iconSize: 30,
                         textSize: AppSize.fontMd,
                         onChange: (newValue) {
                           setState(() {
-                            //DEFINIR ARBITRO DA PARTIDA
-                            gameController.refereerController = newValue;
+                            refereer = event.participants?.firstWhere(
+                              (u) => u.id == newValue,
+                              orElse: () => event.participants!.first,
+                            );
                           });
                         },
-                        selectedItem: gameController.refereerController!.id,
-                        items: List.generate(gameController.event.participants!.length, (i){
+                        selectedItem: refereer?.id,
+                        items: List.generate(event.participants!.length, (i) {
                           return {
-                            'id': gameController.event.participants![i].id,
-                            'title': UserHelper.getFullName(gameController.event.participants![i]),
-                            'photo': gameController.event.participants![i].photo,
+                            'id': event.participants![i].id,
+                            'title': UserHelper.getFullName(event.participants![i]),
+                            'photo': event.participants![i].photo,
                           };
                         }),
                       ),
                     ],
-                  ]
+                  ],
                 ),
               ),
               Padding(
@@ -321,25 +337,37 @@ class _GameConfigPageState extends State<GameConfigPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ButtonOutlineWidget(
-                      text: "Voltar",
-                      width: 100,
-                      action: () => context.pop()
-                    ),
+                    ButtonOutlineWidget(text: "Voltar", width: 100, action: () => context.pop()),
                     ButtonTextWidget(
                       text: "Salvar",
                       icon: Icons.save,
                       width: 100,
-                      action: () => {
-                        gameController.setGameConfig(),
-                        gameController.disposeTextControllers(),
-                        context.go('/games/overview')
-                      }
+                      action: () {
+                        ref.read(gameSessionProvider.notifier).applyGameConfig(
+                          categoryText: categoryController.text,
+                          durationText: durationController.text,
+                          playersPerTeamText: playersPerTeamController.text,
+                          hasTwoHalvesText: hasTwoHalvesController.text,
+                          hasExtraTimeText: hasExtraTimeController.text,
+                          hasPenaltyText: hasPenaltyController.text,
+                          hasGoalLimitText: hasGoalLimitController.text,
+                          hasRefereerText: hasRefereerController.text,
+                          extraTimeText: extraTimeController.text,
+                          goalLimitText: goalLimitController.text,
+                          teamAName: match.teamA.name ?? 'Time 1',
+                          teamAEmblem: match.teamA.emblem ?? 'emblema_1',
+                          teamBName: match.teamB.name ?? 'Time 2',
+                          teamBEmblem: match.teamB.emblem ?? 'emblema_2',
+                          startTimeMinutes: 0,
+                          refereer: refereer,
+                        );
+                        context.go('/games/overview');
+                      },
                     ),
                   ],
                 ),
-              )
-            ]
+              ),
+            ],
           ),
         ),
       ),

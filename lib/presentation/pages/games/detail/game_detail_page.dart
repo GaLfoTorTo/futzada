@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:futzada/core/providers/game/game_match_provider.dart';
+import 'package:futzada/core/providers/game/game_day_event_provider.dart';
 import 'package:futzada/presentation/pages/games/detail/game_escalation_page.dart';
 import 'package:futzada/presentation/pages/games/detail/game_overview_page.dart';
 import 'package:futzada/presentation/pages/games/detail/game_statistics_page.dart';
@@ -14,48 +17,46 @@ import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
 import 'package:futzada/presentation/widget/dialogs/dialog_alert_start.dart';
 import 'package:futzada/presentation/widget/cards/card_game_detail_widget.dart';
 
-class GameDetailPage extends StatefulWidget {
+class GameDetailPage extends ConsumerStatefulWidget {
   const GameDetailPage({super.key});
 
   @override
-  State<GameDetailPage> createState() => GameDetailPageState();
+  ConsumerState<GameDetailPage> createState() => GameDetailPageState();
 }
 
-class GameDetailPageState extends State<GameDetailPage> with SingleTickerProviderStateMixin {
-  //RESGATAR CONTROLLER DE PARTIDAS
-  GameController gameController = GameController.instance;
-  //DEFINIR EVENTO
+class GameDetailPageState extends ConsumerState<GameDetailPage>
+    with SingleTickerProviderStateMixin {
   late EventModel event;
-  //ESTADO - ITEMS EVENTO
   late Color modalityColor;
   late Color modalityTextColor;
   late String modalityImage;
-  //CONTROLLER DE TABS
   late TabController tabController;
-  //CONTROLLER DE SCROLL
   final ScrollController scrollController = ScrollController();
-  //ESTADOS -INDEX, TABS, SCROLL
   double tabMargin = 10.0;
   int tabIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    //INICIALIZAR CONTROLLER DE TAB
     tabController = TabController(length: 4, vsync: this);
-    //RESGATAR EVENTO 
-    event = gameController.event;
-    //ESTADO - ITEMS EVENTO
-    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
-    //INICIAR LISTENER DE SCROLL DA PAGINA
     scrollController.addListener(handleScroll);
-    //SIMULAR JOGADORES PRESENTES
-    gameController.addParticipantsPresents();
-    //VERIFICAR SE CONFIGURAÇÕES E EQUIPES DA PARTIDA ESTÃO PRONTOS 
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if (!gameController.isGameReady) {
+
+    final session = ref.read(gameSessionProvider);
+    event = session.event!;
+    modalityColor = ModalityHelper.getEventModalityColor(
+      event.gameConfig?.category ?? event.modality!.name,
+    )['color'];
+    modalityTextColor = ModalityHelper.getEventModalityColor(
+      event.gameConfig?.category ?? event.modality!.name,
+    )['textColor'];
+    modalityImage = ModalityHelper.getEventModalityColor(
+      event.gameConfig?.category ?? event.modality!.name,
+    )['image'];
+
+    ref.read(gameDayEventProvider.notifier).addParticipantsPresents();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!ref.read(gameMatchProvider).isGameReady) {
         showDialog(context: context, builder: (_) => const DialogAlertStart());
       }
     });
@@ -68,92 +69,74 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
     super.dispose();
   }
 
-  //FUNÇÃO PARA CONTROLE DE SCROLL
-  void handleScroll(){
-    //RESGATAR POSIÇÃO DA PAGINA 
-    final double scrollPosition = scrollController.position.pixels;
-    //VERIFICAR SE POSIÇÃO DA PAGINA  LEVOU SCROLL PARA O TOPO
-    if (scrollPosition >= 300) {
-      //ATUALIZAR CONTROLADOR DE TAB FIXA
-      setState(() { tabMargin = 0; });
-      //ATUALIZAR CONTROLLADOR DE TAB FIXA
-    } else {
-      setState(() { tabMargin = 10; });
-    }
+  void handleScroll() {
+    final double pos = scrollController.position.pixels;
+    setState(() { tabMargin = pos >= 300 ? 0 : 10; });
   }
-    
+
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //LISTA DE TABS
-    List<String> tabs = [
-      'Resumo',
-      'Escalações',
-      'Estatísticas',
-      'Timeline',
-    ];
-    
+    final dimensions = MediaQuery.of(context).size;
+    final session = ref.watch(gameSessionProvider);
+    final match = ref.watch(gameMatchProvider);
+
+    const List<String> tabs = ['Resumo', 'Escalações', 'Estatísticas', 'Timeline'];
+
     return Scaffold(
       body: NestedScrollView(
         controller: scrollController,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             HeaderScrollWidget(
-              title: "Partida #${gameController.currentGame.number}",
+              title: "Partida #${session.currentGame?.number}",
               backgroundColor: modalityColor,
               leftAction: () => context.pop(),
               rightIcon: AppIcones.cog_solid,
-              rightAction: () {
-                // TODO: migrar passagem de args para GoRouter extra
-                context.push('/games/config');
-              },
+              rightAction: () => context.push('/games/config'),
             ),
-            //CARD DE MONITORAMENTO DA PARTIDA
             SliverList(
               delegate: SliverChildListDelegate([
-                CardGameDetailWidget(
-                  event: event,
-                  game: gameController.currentGame
-                )
+                if (session.currentGame != null)
+                  CardGameDetailWidget(
+                    event: event,
+                    game: session.currentGame!,
+                  ),
               ]),
             ),
-            //TABS DE INFORMAÇÕES DA PARTIDA
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverAppBarDelegate(
-                child: ListenableBuilder(listenable: gameController, builder: (_, __){
-                  return Container(
-                    color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_500 : AppColors.white,
-                    margin: EdgeInsets.symmetric(horizontal: tabMargin),
-                    child: TabBar(
-                      controller: tabController,
-                      onTap: (i) => setState(() => tabIndex = i),
-                      indicator: UnderlineTabIndicator(
-                        borderSide: BorderSide(
-                          width: 5,
-                          color: modalityColor,
-                        ),
-                        insets: EdgeInsets.symmetric(horizontal: dimensions.width / 5)
+                child: Container(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.dark_500
+                      : AppColors.white,
+                  margin: EdgeInsets.symmetric(horizontal: tabMargin),
+                  child: TabBar(
+                    controller: tabController,
+                    onTap: (i) => setState(() => tabIndex = i),
+                    indicator: UnderlineTabIndicator(
+                      borderSide: BorderSide(width: 5, color: modalityColor),
+                      insets: EdgeInsets.symmetric(
+                        horizontal: dimensions.width / 5,
                       ),
-                      labelColor: modalityColor,
-                      labelStyle: const TextStyle(
-                        color: AppColors.grey_500,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      unselectedLabelColor: AppColors.grey_500,
-                      isScrollable: true,
-                      tabAlignment: TabAlignment.start,
-                      tabs: tabs.map((tab){
-                        return SizedBox(
-                          width: 100,
-                          height: 50,
-                          child: Tab(text: tab)
-                        );
-                      }).toList()
                     ),
-                  );
-                })
+                    labelColor: modalityColor,
+                    labelStyle: const TextStyle(
+                      color: AppColors.grey_500,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    unselectedLabelColor: AppColors.grey_500,
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.start,
+                    tabs: tabs
+                        .map((tab) => SizedBox(
+                              width: 100,
+                              height: 50,
+                              child: Tab(text: tab),
+                            ))
+                        .toList(),
+                  ),
+                ),
               ),
             ),
           ];
@@ -168,27 +151,23 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
           ],
         ),
       ),
-      floatingActionButton: ListenableBuilder(listenable: gameController, builder: (_, __){
-        if(gameController.isGameReady && tabIndex == 0){
-          return FloatButtonWidget(
-            floatKey: "control_games",
-            icon: Icons.play_arrow,
-            backgroundColor: modalityColor,
-            color: modalityTextColor,
-            onPressed: (){}
-          );
-        }
-        if(!gameController.isGameReady){
-          return FloatButtonWidget(
-            floatKey: "teams_games",
-            icon: AppIcones.escalacao_outline,
-            backgroundColor: modalityColor,
-            color: modalityTextColor,
-            onPressed: () => context.push("/games/teams"),
-          );
-        }
-        return const SizedBox.shrink();
-      }),
+      floatingActionButton: match.isGameReady && tabIndex == 0
+          ? FloatButtonWidget(
+              floatKey: "control_games",
+              icon: Icons.play_arrow,
+              backgroundColor: modalityColor,
+              color: modalityTextColor,
+              onPressed: () {},
+            )
+          : !match.isGameReady
+              ? FloatButtonWidget(
+                  floatKey: "teams_games",
+                  icon: AppIcones.escalacao_outline,
+                  backgroundColor: modalityColor,
+                  color: modalityTextColor,
+                  onPressed: () => context.push("/games/teams"),
+                )
+              : const SizedBox.shrink(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
@@ -196,8 +175,7 @@ class GameDetailPageState extends State<GameDetailPage> with SingleTickerProvide
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
-
-  _SliverAppBarDelegate({required this.child});
+  const _SliverAppBarDelegate({required this.child});
 
   @override
   double get minExtent => 50;
@@ -205,12 +183,13 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 50;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => child;
 
   @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return child != oldDelegate.child;
-  }
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) =>
+      child != oldDelegate.child;
 }

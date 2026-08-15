@@ -106,7 +106,7 @@ class MapHelper {
       if (currentLocation.isNotEmpty && currentLocation.containsKey('ISO3166-2-lvl4')) {
         final iso = currentLocation['ISO3166-2-lvl4'] as String?;
         if (iso != null && iso.contains('-')) {
-          return "${currentLocation['city']}/${iso.split('-').last}";
+          return "${currentLocation['city'] ?? currentLocation['town']}/${iso.split('-').last}";
         }
       }
       //RETORNAR STRING VAZIA

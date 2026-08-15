@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/app_helper.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 
-class CardPlayerTeamWidget extends StatefulWidget {
+class CardPlayerTeamWidget extends ConsumerStatefulWidget {
   final UserModel user;
   final String modality;
   final VoidCallback? onPressed;
@@ -19,11 +20,10 @@ class CardPlayerTeamWidget extends StatefulWidget {
   });
 
   @override
-  State<CardPlayerTeamWidget> createState() => _CardPlayerTeamWidgetState();
+  ConsumerState<CardPlayerTeamWidget> createState() => _CardPlayerTeamWidgetState();
 }
 
-class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
-  GameController gameController = GameController.instance;
+class _CardPlayerTeamWidgetState extends ConsumerState<CardPlayerTeamWidget> {
   //CONTROLADOR DE POSICAO PRINCIPAL
   String? position;
 
@@ -72,8 +72,8 @@ class _CardPlayerTeamWidgetState extends State<CardPlayerTeamWidget> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Icon(
-                    AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, gameController.event.id!)!.status)['icon'],
-                    color: AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, gameController.event.id!)!.status)['color'],
+                    AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, ref.read(gameSessionProvider).event?.id ?? 0)!.status)['icon'],
+                    color: AppHelper.setStatusPlayer(UserHelper.getParticipant(widget.user.participants, ref.read(gameSessionProvider).event?.id ?? 0)!.status)['color'],
                     size: 20,
                   ),
                 ),

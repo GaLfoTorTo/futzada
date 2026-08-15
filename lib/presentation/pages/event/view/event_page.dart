@@ -8,8 +8,9 @@ import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
 import 'package:futzada/presentation/pages/event/view/event_home_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_private_page.dart';
 import 'package:futzada/presentation/pages/event/view/event_games_page.dart';
@@ -24,17 +25,16 @@ import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_event_games.dart';
 import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_rule.dart';
 
-class EventPage extends StatefulWidget {
+class EventPage extends ConsumerStatefulWidget {
   const EventPage({super.key});
 
   @override
-  State<EventPage> createState() => _EventPageState();
+  ConsumerState<EventPage> createState() => _EventPageState();
 }
 
-class _EventPageState extends State<EventPage> with SingleTickerProviderStateMixin {
+class _EventPageState extends ConsumerState<EventPage> with SingleTickerProviderStateMixin {
   //CONTROLLERS
   EventController eventController = EventController.instance;
-  GameController gameController = GameController.instance;
   //ESTADOS - USUARIO E EVENTO
   UserModel user = sl<UserModel>(instanceName: 'user');
   late EventModel event;
@@ -55,7 +55,9 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    //RESGATAR EVENTO SELECIONADO NO CONTROLLER (setado pelo chamador antes de navegar)
+    //GARANTIR QUE EXISTE UM EVENTO SELECIONADO (auto-seleciona o primeiro se necessário)
+    eventController.init();
+    if (!eventController.hasEvent) return;
     event = eventController.event;
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DO EVENTO ATUAL
     isParticipant = event.participants!.any((p) => p.id == user.id);
@@ -87,7 +89,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
           ? AppIcones.cog_solid 
           : null,
         rightAction: () => eventPrivacy == 'Public' 
-          ? context.push('/event/settings') 
+          ? context.push('/event/view/settings') 
           : null,
         brightness: brightness,
       ); 
@@ -101,13 +103,13 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
         ? AppIcones.cog_solid 
         : null,
       rightAction: () => eventPrivacy == 'Public' 
-        ? context.push('/event/settings') 
+        ? context.push('/event/view/settings') 
         : null,
       extraIcon: tabController.index == 1 
         ? Icons.history 
         : null,
       extraAction: () => tabController.index == 1 
-        ? context.push('/event/historic') 
+        ? context.push('/event/view/historic') 
         : null,
       shadow: false,
     );
@@ -127,10 +129,13 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
       'Notícias'
     ];
 
+    final inProgressNotEmpty = ref.watch(gameScheduleProvider.select((s) => s.inProgressGames.isNotEmpty));
+    final hasGames = ref.watch(gameScheduleProvider.select((s) => s.hasGames));
+
     return Scaffold(
       appBar: setHeaderBar(tabController.index),
       extendBodyBehindAppBar: tabController.index == 0,
-      body: 
+      body:
         Column(
           children:[ 
             if(tabController.index == 0)...[
@@ -250,7 +255,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
                           alignment: Alignment.center,
                           children:[
                             Tab(text: tab),
-                            if(gameController.inProgressGames.isNotEmpty)...[
+                            if(inProgressNotEmpty)...[
                               Positioned(
                                 right: 0,
                                 top: 0,
@@ -296,9 +301,8 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             ]
           ]
       ),
-      floatingActionButton: ListenableBuilder(listenable: Listenable.merge([gameController, eventController]), builder: (_, __){
-        //FLOAT ACTION BUTTON DE PARTIDAS
-        if (gameController.hasGames && tabIndex == 1 && gameController.isToday()) {
+      floatingActionButton: Builder(builder: (_) {
+        if (hasGames && tabIndex == 1 && ref.read(gameScheduleProvider.notifier).isToday()) {
           return FloatButtonWidget(
             floatKey: "game_event",
             icon: Icons.play_arrow_rounded,
@@ -307,8 +311,7 @@ class _EventPageState extends State<EventPage> with SingleTickerProviderStateMix
             onPressed: () => showModalBottomSheet(context: context, builder: (_) => const BottomSheetEventGames())
           );
         }
-        //FLOAT ACTION BUTTON DE REGRAS
-        if (gameController.hasGames && tabIndex == 4) {
+        if (hasGames && tabIndex == 4) {
           return FloatButtonWidget(
             floatKey: "rules_event",
             icon: Icons.add_rounded,

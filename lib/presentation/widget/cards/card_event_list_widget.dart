@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/helpers/img_helper.dart';
 import 'package:futzada/core/helpers/date_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/services/avaliation_service.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 
-class CardEventListWidget extends StatelessWidget {
+class CardEventListWidget extends ConsumerWidget {
   final EventModel event;
 
   const CardEventListWidget({
@@ -19,13 +20,13 @@ class CardEventListWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //DEFINIR CONTROLLER DE EVENTO 
+    //DEFINIR CONTROLLER DE EVENTO
     AvaliationService avaliationService = AvaliationService();
-    //DEFINIR CONTROLLER DE PARTIDA
-    GameController gameController = GameController.instance;
+    //VERIFICAR SE HÁ PARTIDAS EM ANDAMENTO
+    final hasInProgress = ref.watch(gameScheduleProvider.select((s) => s.inProgressGames.isNotEmpty));
     //RESGATAR AVALIAÇÃO DO EVENTO
     double avaliations = avaliationService.getRatingAvaliation(event.avaliations);
     //RESGATAR DATA DO EVENTO
@@ -35,7 +36,7 @@ class CardEventListWidget extends StatelessWidget {
       onTap: () {
         //DEFINIR EVENTO ATUAL NO CONTROLLER E NAVEGAR
         EventController.instance.setSelectedEvent(event);
-        context.go('/event');
+        context.go('/event/view');
       },
       child: Card(
         child: Column(
@@ -95,7 +96,7 @@ class CardEventListWidget extends StatelessWidget {
                         "${event.address!.city}/${event.address!.state}",
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
-                      if(gameController.inProgressGames.isNotEmpty)...[
+                      if(hasInProgress)...[
                         const IndicatorLiveWidget(
                           size: 15,
                           color: AppColors.red_300,

@@ -3,14 +3,15 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
 
-class CardGameWidget extends StatefulWidget {
+class CardGameWidget extends ConsumerStatefulWidget {
   final double? width;
   final EventModel event;
   final GameModel game;
@@ -31,12 +32,10 @@ class CardGameWidget extends StatefulWidget {
   });
 
   @override
-  State<CardGameWidget> createState() => _CardGameWidgetState();
+  ConsumerState<CardGameWidget> createState() => _CardGameWidgetState();
 }
 
-class _CardGameWidgetState extends State<CardGameWidget> {
-  //RESGATAR CONTROLLER DE PARTIDA
-  GameController gameController = GameController.instance;
+class _CardGameWidgetState extends ConsumerState<CardGameWidget> {
   //ESTADO - ITEMS EVENTO
   late Color modalityColor;
   late Color modalityTextColor;
@@ -82,7 +81,7 @@ class _CardGameWidgetState extends State<CardGameWidget> {
         //VERIFICAR SE CLICK ESTA HABILITADO
         if(propNavigate) {
           //DEFINIR PARTIDA ATUAL
-          gameController.setCurrentGame(widget.game);
+          ref.read(gameSessionProvider.notifier).setCurrentGame(widget.game);
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
           context.go('/games/overview');
         }

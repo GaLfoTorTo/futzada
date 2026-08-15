@@ -2,29 +2,30 @@ import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
 import 'package:futzada/core/theme/app_images.dart';
 import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
 
-class CardDayEventWidget extends StatelessWidget {
+class CardDayEventWidget extends ConsumerWidget {
   final EventModel event;
-  
+
   const CardDayEventWidget({
-    super.key, 
+    super.key,
     required this.event,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     //RESGATAR DIMENSOES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE PARTIDAS
-    GameController gameController = GameController.instance;
+    //VERIFICAR SE HÁ PARTIDAS EM ANDAMENTO PARA ESTE EVENTO
+    final inProgressGames = ref.watch(gameScheduleProvider.select((s) => s.inProgressGames));
     //ESTADO - ITEMS EVENTO
     Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
@@ -36,7 +37,7 @@ class CardDayEventWidget extends StatelessWidget {
     //RESGATAR IMAGENS DOS USUARIOS
     List<String> userImages = event.participants!.take(3).map((user) => user.photo ?? AppImages.userDefault).toList();
     //VERIFICAR SE TEM PARTIDA EM ANDAMENTO
-    bool hasGame = gameController.inProgressGames.any((gameEvent) => gameEvent?.id == event.id);
+    bool hasGame = inProgressGames.any((gameEvent) => gameEvent?.id == event.id);
             
     return Card(
       child: Container(

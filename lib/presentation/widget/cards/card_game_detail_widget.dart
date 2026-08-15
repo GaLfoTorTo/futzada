@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/enum/enums.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/core/theme/app_icones.dart';
@@ -9,13 +10,15 @@ import 'package:futzada/core/helpers/user_helper.dart';
 import 'package:futzada/data/models/game_event_model.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:futzada/core/providers/game/game_match_provider.dart';
+import 'package:futzada/core/providers/game/game_stopwatch_provider.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
 
-class CardGameDetailWidget extends StatefulWidget {
+class CardGameDetailWidget extends ConsumerStatefulWidget {
   final EventModel event;
   final GameModel game;
-  
+
   const CardGameDetailWidget({
     super.key,
     required this.event,
@@ -23,48 +26,47 @@ class CardGameDetailWidget extends StatefulWidget {
   });
 
   @override
-  State<CardGameDetailWidget> createState() => _CardGameDetailWidgetState();
+  ConsumerState<CardGameDetailWidget> createState() => _CardGameDetailWidgetState();
 }
 
-class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
-  //RESGATAR CONTROLLER DE PARTIDA
-  GameController gameController = GameController.instance;
-  //ESTADO - ITEMS EVENTO
+class _CardGameDetailWidgetState extends ConsumerState<CardGameDetailWidget> {
   late Color modalityColor;
   late Color modalityTextColor;
   late String modalityImage;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //ESTADO - ITEMS EVENTO
     modalityColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['color'];
     modalityTextColor = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['textColor'];
     modalityImage = ModalityHelper.getEventModalityColor(widget.event.gameConfig?.category ?? widget.event.modality!.name)['image'];
   }
 
-  //FUNÇÃO DE AGRUPAMENTO DE EVENTOS DE GOL DO JOGADOR
-  Map<int, List<int>> groupGoalsByPlayer(List<GameEventModel> gameEvents) {
-    //
+  Map<int, List<int>> groupGoalsByPlayer(List<GameEventModel> gameEvents, EventModel event) {
     final Map<int, List<int>> grouped = {};
-
     for (final gameEvent in gameEvents) {
-      final user = EventHelper.getUserEvent(gameController.event, gameEvent.userId!);
+      final user = EventHelper.getUserEvent(event, gameEvent.userId!);
       if (user == null) continue;
-      //ADICIONAR JOGADOR
       grouped.putIfAbsent(user.id!, () => []);
       grouped[user.id]?.add(gameEvent.minute ?? 0);
     }
-
     return grouped;
   }
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-        
+    final currentGame = ref.watch(gameSessionProvider.select((s) => s.currentGame));
+    final teamAScore = ref.watch(gameMatchProvider.select((s) => s.teamAScore));
+    final teamBScore = ref.watch(gameMatchProvider.select((s) => s.teamBScore));
+    final gameEvents = ref.watch(gameMatchProvider.select((s) => s.gameEvents));
+    final currentTime = ref.watch(gameStopwatchProvider.select((s) => s.currentTime));
+    final session = ref.read(gameSessionProvider);
+
+    final parts = currentTime.split(':');
+    final minutes = int.tryParse(parts[0]) ?? 0;
+    final isExtraTime = minutes > (widget.game.duration ?? 0);
+
     return Container(
       width: dimensions.width,
       margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
@@ -87,14 +89,10 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
       child: Column(
         spacing: 10,
         children: [
-          //NOME EVENTO
           Text(
             "${widget.event.title}",
-            style: Theme.of(context).textTheme.displayMedium!.copyWith(
-              color: AppColors.grey_500,
-            ),
+            style: Theme.of(context).textTheme.displayMedium!.copyWith(color: AppColors.grey_500),
           ),
-          //PLACAR
           Container(
             padding: const EdgeInsets.symmetric(vertical: 15),
             decoration: BoxDecoration(
@@ -103,162 +101,110 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
               image: DecorationImage(
                 image: AssetImage(modalityImage) as ImageProvider,
                 fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  modalityColor.withAlpha(200), 
-                  BlendMode.srcATop,
-                )
+                colorFilter: ColorFilter.mode(modalityColor.withAlpha(200), BlendMode.srcATop),
               ),
             ),
             child: Row(
               children: [
-                //TIME A
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        gameController.currentGame.teams!.first.name!,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: modalityTextColor
-                        )
+                        currentGame?.teams?.first.name ?? '',
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: modalityTextColor),
                       ),
                       SvgPicture.asset(
-                        AppIcones.emblemas[gameController.currentGame.teams!.first.emblem]!,
+                        AppIcones.emblemas[currentGame?.teams?.first.emblem] ?? AppIcones.emblemas['emblema_1']!,
                         width: 100,
                         height: 100,
-                        colorFilter: ColorFilter.mode(
-                          modalityTextColor,
-                          BlendMode.srcIn,
-                        ),
+                        colorFilter: ColorFilter.mode(modalityTextColor, BlendMode.srcIn),
                       ),
                       Text(
                         'Home',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: modalityTextColor
-                        )
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: modalityTextColor),
                       ),
                     ],
                   ),
                 ),
-                //CRONOMETRO E PLACAR
-                ListenableBuilder(listenable: gameController, builder: (_, __){
-                  final teamAScore = gameController.teamAScore;
-                  final teamBScore = gameController.teamBScore;
-
-                  //RESGATAR TEMPO DA PARTIDA
-                  final currentTime = gameController.currentTime;
-                  final parts = currentTime.split(':');
-                  final minutes = int.tryParse(parts[0]) ?? 0;
-                  //VERIFICAR SE TEMPO ULTRAPAÇOU LIMITE DA PARTIDA
-                  final isExtraTime = minutes > (widget.game.duration ?? 0);
-                  //PLACAR
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      //INDICADOR DE AO VIVO
-                      if (gameController.currentGame.status == GameStatus.InProgress)...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.red_300,
-                          ),
-                          child: const IndicatorLiveWidget(
-                            size: 15,
-                            color: AppColors.white,
-                          ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (currentGame?.status == GameStatus.InProgress) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColors.red_300,
                         ),
-                      ],
-                      //PLACAR
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Row(
-                          children: [
-                            Text(
-                              "$teamAScore",
-                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: modalityTextColor,
-                                fontSize: 60
-                              )
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
-                              child: Text(
-                                'X', 
-                                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                                  color: modalityTextColor
-                                )
-                              ),
-                            ),
-                            Text(
-                              "$teamBScore",
-                              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                                color: modalityTextColor,
-                                fontSize: 60
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
-                      //TEMPORIZADOR
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                            decoration: const BoxDecoration(
-                              color: AppColors.dark_300,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                            ),
-                            child: Text(
-                              currentTime,
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'DS-DIGITAL',
-                                color: isExtraTime ? AppColors.red_300 : AppColors.green_300,
-                              ),
-                            ),
-                          ),
-                          
-                          if(isExtraTime) ...[
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                "Tempo Extra",
-                                style: TextStyle(
-                                  color: AppColors.red_300,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                        child: const IndicatorLiveWidget(size: 15, color: AppColors.white),
                       ),
                     ],
-                  );
-                }),
-                //TEAM B
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            "$teamAScore",
+                            style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: modalityTextColor, fontSize: 60),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Text(
+                              'X',
+                              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: modalityTextColor),
+                            ),
+                          ),
+                          Text(
+                            "$teamBScore",
+                            style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: modalityTextColor, fontSize: 60),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          decoration: const BoxDecoration(
+                            color: AppColors.dark_300,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Text(
+                            currentTime,
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'DS-DIGITAL',
+                              color: isExtraTime ? AppColors.red_300 : AppColors.green_300,
+                            ),
+                          ),
+                        ),
+                        if (isExtraTime) ...[
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Text("Tempo Extra", style: TextStyle(color: AppColors.red_300)),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: Column(
                     children: [
                       Text(
-                        gameController.currentGame.teams!.last.name!,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: modalityTextColor
-                        )
+                        currentGame?.teams?.last.name ?? '',
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: modalityTextColor),
                       ),
                       SvgPicture.asset(
-                        AppIcones.emblemas[gameController.currentGame.teams!.last.emblem!]!,
+                        AppIcones.emblemas[currentGame?.teams?.last.emblem] ?? AppIcones.emblemas['emblema_2']!,
                         width: 100,
                         height: 100,
-                        colorFilter: ColorFilter.mode(
-                          modalityTextColor,
-                          BlendMode.srcIn,
-                        ),
+                        colorFilter: ColorFilter.mode(modalityTextColor, BlendMode.srcIn),
                       ),
                       Text(
                         'Away',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: modalityTextColor
-                        )
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: modalityTextColor),
                       ),
                     ],
                   ),
@@ -266,20 +212,20 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
               ],
             ),
           ),
-          //REGISTRADOR DE EVENTOS DA PARTIDA
-          ListenableBuilder(listenable: gameController, builder: (_, __){
-            final game = gameController.currentGame;
-            final temAGameEvents = gameController.gameEvents.where((t) => t.teamId == game.teams!.first.id).toList();
-            final temBGameEvents = gameController.gameEvents.where((t) => t.teamId == game.teams!.last.id).toList();
-            return  Row(
+          Builder(builder: (_) {
+            final game = currentGame;
+            if (game == null) return const SizedBox.shrink();
+            final temAGameEvents = gameEvents.where((t) => t.teamId == game.teams?.first.id).toList();
+            final temBGameEvents = gameEvents.where((t) => t.teamId == game.teams?.last.id).toList();
+            return Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(2, (i){
-                //RESGATAR EVENTOS PRA CADA TIME
+              children: List.generate(2, (i) {
                 final teamGameEvents = i == 0 ? temAGameEvents : temBGameEvents;
-                if(teamGameEvents.isEmpty) return Container();
-                //AGRUPAR GOLS POR JOGADOR
-                final groupedGoals = groupGoalsByPlayer(teamGameEvents.where((e) => e.type?.name == 'Goal').toList());
-
+                if (teamGameEvents.isEmpty) return Container();
+                final groupedGoals = groupGoalsByPlayer(
+                  teamGameEvents.where((e) => e.type?.name == 'Goal').toList(),
+                  session.event ?? widget.event,
+                );
                 return SizedBox(
                   width: dimensions.width * 0.37,
                   child: Column(
@@ -287,67 +233,50 @@ class _CardGameDetailWidgetState extends State<CardGameDetailWidget> {
                     spacing: 5,
                     children: groupedGoals.entries.map((entry) {
                       final playerId = entry.key;
-                      final minutes = entry.value..sort();
+                      final goalMinutes = entry.value..sort();
                       final event = teamGameEvents.firstWhere(
-                        (e) => EventHelper.getUserEvent(gameController.event, e.userId!)!.id == playerId,
+                        (e) => EventHelper.getUserEvent(session.event ?? widget.event, e.userId!)?.id == playerId,
                       );
-                  
-                      final user = EventHelper.getUserEvent(gameController.event, event.userId!)!;
+                      final user = EventHelper.getUserEvent(session.event ?? widget.event, event.userId!)!;
                       return Row(
                         spacing: 5,
                         children: [
-                          if(i == 0)...[
-                            const Icon(
-                              AppIcones.futebol_ball_solid,
-                              size: 12,
-                              color: AppColors.grey_500,
-                            ),
+                          if (i == 0) ...[
+                            const Icon(AppIcones.futebol_ball_solid, size: 12, color: AppColors.grey_500),
                             Text(
                               UserHelper.getFullName(user),
-                              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                                color: AppColors.grey_500
-                              ),
+                              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: AppColors.grey_500),
                             ),
                             Flexible(
                               child: Text(
-                                minutes.map((m) => "$m'").join(', '),
-                                style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                                  color: AppColors.grey_500
-                                ),
+                                goalMinutes.map((m) => "$m'").join(', '),
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: AppColors.grey_500),
                                 softWrap: true,
                                 textAlign: TextAlign.left,
                               ),
                             ),
                           ],
-                          if(i == 1)...[
+                          if (i == 1) ...[
                             Flexible(
                               child: Text(
-                                minutes.map((m) => "$m'").join(', '),
-                                style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                                  color: AppColors.grey_500
-                                ),
+                                goalMinutes.map((m) => "$m'").join(', '),
+                                style: Theme.of(context).textTheme.displaySmall!.copyWith(color: AppColors.grey_500),
                                 softWrap: true,
                                 textAlign: TextAlign.right,
                               ),
                             ),
                             Text(
                               "${user.firstName} ${user.lastName}",
-                              style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                                color: AppColors.grey_500
-                              ),
+                              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: AppColors.grey_500),
                             ),
-                            const Icon(
-                              AppIcones.futebol_ball_solid,
-                              size: 12,
-                              color: AppColors.grey_500,
-                            )
-                          ]
+                            const Icon(AppIcones.futebol_ball_solid, size: 12, color: AppColors.grey_500),
+                          ],
                         ],
                       );
                     }).toList(),
                   ),
                 );
-              })
+              }),
             );
           }),
         ],

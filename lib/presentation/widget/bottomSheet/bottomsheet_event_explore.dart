@@ -448,7 +448,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                           //DEFINIR EVENTO ATUAL NO CONTROLLER
                           eventController.setSelectedEvent(event),
                           //NAVEGAR PARA PAGINA DO EVENTO
-                          context.go('/event')
+                          context.go('/event/view')
                         },
                       )
                     ],

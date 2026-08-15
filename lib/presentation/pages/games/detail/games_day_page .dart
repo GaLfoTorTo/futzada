@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/presentation/controllers/event_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:futzada/core/helpers/user_helper.dart';
@@ -8,7 +8,8 @@ import 'package:futzada/core/helpers/modality_helper.dart';
 import 'package:futzada/core/theme/app_colors.dart';
 import 'package:futzada/data/models/event_model.dart';
 import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_schedule_provider.dart';
+import 'package:futzada/core/providers/game/game_stream_provider.dart';
 import 'package:futzada/presentation/widget/bars/header_widget.dart';
 import 'package:futzada/presentation/widget/badges/position_widget.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
@@ -20,26 +21,43 @@ import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
 import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
 import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
 
-class GamesDayPage extends StatelessWidget {
+class GamesDayPage extends ConsumerStatefulWidget {
   const GamesDayPage({super.key});
 
   @override
+  ConsumerState<GamesDayPage> createState() => _GamesDayPageState();
+}
+
+class _GamesDayPageState extends ConsumerState<GamesDayPage> {
+  late final PageController nextGamesController;
+
+  @override
+  void initState() {
+    super.initState();
+    nextGamesController = PageController();
+    ref.read(gameStreamProvider.notifier).connectChannel(uuid: "event-123");
+  }
+
+  @override
+  void dispose() {
+    nextGamesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTO DO CONTROLLER (setado pelo chamador antes de navegar)
-    EventModel event = EventController.instance.event;
-    //RESGATAR CONTROLLER DE PARTIDAS
-    GameController gameController = GameController.instance;
-    //ENTRAR NO CANAL DO EVENTO
-    gameController.connectChannel(uuid: "event-123");
-    //ESTADO - ITEMS EVENTO
-    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    //CONTROLLADOR DE BARRA DE ROLAGEM
-    PageController nextGamesController = PageController();
-    //JOGADORES DESTAQUE
-    final highlightsPlayers = event.participants!.take(3).where((u) => u.participants!.any((p) => p.role!.contains("Player")));
-    
+    final dimensions = MediaQuery.of(context).size;
+    final schedule = ref.watch(gameScheduleProvider);
+    final EventModel event = EventController.instance.event;
+
+    Color modalityColor = ModalityHelper.getEventModalityColor(
+      event.gameConfig?.category ?? event.modality!.name,
+    )['color'];
+
+    final highlightsPlayers = event.participants!
+        .take(3)
+        .where((u) => u.participants!.any((p) => p.role!.contains("Player")));
+
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Dia de Jogo',
@@ -58,48 +76,28 @@ class GamesDayPage extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ImgCircularWidget(
-                      size: 30,
-                      image: event.photo,
-                      element: "event",
-                    ),
+                    ImgCircularWidget(size: 30, image: event.photo, element: "event"),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "${event.title}",
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                      child: Text("${event.title}", style: Theme.of(context).textTheme.titleSmall),
                     ),
                   ],
                 ),
-                if(gameController.inProgressGames.isNotEmpty)...[
-                  ListenableBuilder(listenable: gameController, builder: (_, __){
-                    var game = gameController.inProgressGames.first;
-                    return CardGameLiveWidget(
-                      event: event,
-                      game: game!,
-                    );
-                  }),
-                ]else...[
+                if (schedule.inProgressGames.isNotEmpty) ...[
+                  CardGameLiveWidget(event: event, game: schedule.inProgressGames.first!),
+                ] else ...[
                   CardDayGameWidget(event: event),
                 ],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Próximas partidas',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                    Text('Próximas partidas', style: Theme.of(context).textTheme.titleSmall),
                     ButtonTextWidget(
-                      text: "Ver Mais",
-                      icon: Icons.add_rounded,
-                      width: 100,
-                      height: 20,
-                      textColor: modalityColor,
-                      backgroundColor: Colors.transparent,
+                      text: "Ver Mais", icon: Icons.add_rounded,
+                      width: 100, height: 20,
+                      textColor: modalityColor, backgroundColor: Colors.transparent,
                       action: () {},
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -107,39 +105,29 @@ class GamesDayPage extends StatelessWidget {
                   height: 150,
                   child: PageView(
                     controller: nextGamesController,
-                    children: gameController.nextGames.take(3).map((game){                      
+                    children: schedule.nextGames.take(3).map((g) {
                       return Padding(
                         padding: const EdgeInsets.only(right: 10, bottom: 10),
                         child: CardGameWidget(
                           width: dimensions.width - 10,
-                          event: event,
-                          game: game!,
-                          gameDate: "Hoje",
-                          navigate: false,
-                          active: true,
+                          event: event, game: g!,
+                          gameDate: "Hoje", navigate: false, active: true,
                         ),
                       );
-                    }).toList()
-                  )
+                    }).toList(),
+                  ),
                 ),
-                IndicatorPageWidget(pageController: nextGamesController, options: /* gameController.nextGames.take(3).length */ 1),
+                IndicatorPageWidget(pageController: nextGamesController, options: 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Jogadores Presentes',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
+                    Text('Jogadores Presentes', style: Theme.of(context).textTheme.titleSmall),
                     ButtonTextWidget(
-                      text: "Ver Mais",
-                      icon: Icons.add_rounded,
-                      width: 100,
-                      height: 20,
-                      textColor: modalityColor,
-                      backgroundColor: Colors.transparent,
+                      text: "Ver Mais", icon: Icons.add_rounded,
+                      width: 100, height: 20,
+                      textColor: modalityColor, backgroundColor: Colors.transparent,
                       action: () {},
-                    )
+                    ),
                   ],
                 ),
                 SizedBox(
@@ -148,135 +136,68 @@ class GamesDayPage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       spacing: 15,
-                      children: event.participants!.take(5).map((item){
-                        //RESGATAR PARTICIPANT
-                        UserModel user = item;
+                      children: event.participants!.take(5).map((UserModel user) {
                         return CardPlayerGameWidget(user: user);
                       }).toList(),
-                    )
-                  )
+                    ),
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'MVP',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ],
+                  children: [Text('MVP', style: Theme.of(context).textTheme.titleSmall)],
                 ),
                 CardMvpWidget(event: event),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Destaques',
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ],
+                  children: [Text('Destaques', style: Theme.of(context).textTheme.titleSmall)],
                 ),
                 Column(
                   spacing: 10,
-                  children: highlightsPlayers.map((user){
-                    if(user.player == null) return SizedBox.shrink();
-
+                  children: highlightsPlayers.map((user) {
+                    if (user.player == null) return const SizedBox.shrink();
                     return Card(
                       child: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.dark_500.withAlpha(30),
-                              spreadRadius: 0.5,
-                              blurRadius: 5,
-                              offset: Offset(2, 5),
-                            ),
-                          ],
+                          boxShadow: [BoxShadow(color: AppColors.dark_500.withAlpha(30), spreadRadius: 0.5, blurRadius: 5, offset: const Offset(2, 5))],
                         ),
-                        child: Column(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      height: 80,
-                                      child: CircleAvatar(
-                                        backgroundImage: ImgHelper.getUserImg(user.photo)
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            UserHelper.getFullName(user),
-                                            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                          ),
-                                          Text(
-                                            "@${user.userName}",
-                                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                              color: AppColors.grey_300,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                          ),
-                                          PositionWidget(
-                                            position: user.player!.mainPosition[event.modality!.name]!,
-                                            mainPosition: true,
-                                            width: 35,
-                                            height: 25,
-                                            textSide: 10,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: modalityColor.withAlpha(50),
-                                    borderRadius: BorderRadius.circular(10)
-                                  ),
+                                SizedBox(width: 80, height: 80, child: CircleAvatar(backgroundImage: ImgHelper.getUserImg(user.photo))),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "3 Gols",
-                                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                          color: modalityColor,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Icon(
-                                        Icons.sports_soccer,
-                                        size: 30,
-                                        color: modalityColor,
-                                      ),
+                                      Text(UserHelper.getFullName(user), style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                      Text("@${user.userName}", style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColors.grey_300), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                      PositionWidget(position: user.player!.mainPosition[event.modality!.name]!, mainPosition: true, width: 35, height: 25, textSide: 10),
                                     ],
                                   ),
-                                )
+                                ),
                               ],
-                            )
-                          ]
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(color: modalityColor.withAlpha(50), borderRadius: BorderRadius.circular(10)),
+                              child: Column(
+                                children: [
+                                  Text("3 Gols", style: Theme.of(context).textTheme.titleSmall!.copyWith(color: modalityColor)),
+                                  Icon(Icons.sports_soccer, size: 30, color: modalityColor),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
                   }).toList(),
                 ),
-              ]
+              ],
             ),
           ),
         ),

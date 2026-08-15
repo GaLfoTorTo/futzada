@@ -1,44 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:futzada/core/providers/game/game_session_provider.dart';
 import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
 import 'package:futzada/presentation/widget/others/lineup_widget.dart';
 
-class BottomSheetEscalation extends StatefulWidget {
+class BottomSheetEscalation extends ConsumerStatefulWidget {
   final bool team;
-  const BottomSheetEscalation({
-    super.key,
-    required this.team
-  });
+  const BottomSheetEscalation({super.key, required this.team});
 
   @override
-  State<BottomSheetEscalation> createState() => _BottomSheetEscalationState();
+  ConsumerState<BottomSheetEscalation> createState() => _BottomSheetEscalationState();
 }
 
-class _BottomSheetEscalationState extends State<BottomSheetEscalation> {
-  //RESGATAR CONTROLLER DE PARTIDAS
-  GameController gameController = GameController.instance;
-  //INDEX DE TIME ATIVO
+class _BottomSheetEscalationState extends ConsumerState<BottomSheetEscalation> {
   bool activeTeam = true;
 
-  //FUNÇÃO DE ALTERAÇÃO DE EQUIPE
-  void alterTeamView(){
-    setState(() {
-      activeTeam = !activeTeam;
-    });
+  void alterTeamView() {
+    setState(() { activeTeam = !activeTeam; });
   }
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSOES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    final category = ref.watch(gameSessionProvider.select((s) => s.currentGameConfig?.category ?? ''));
 
     return Container(
       height: dimensions.height * 0.75,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20))
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -53,7 +45,7 @@ class _BottomSheetEscalationState extends State<BottomSheetEscalation> {
                 textSize: 12,
                 textColor: AppColors.blue_500,
                 iconSize: 20,
-                action: () => alterTeamView()
+                action: () => alterTeamView(),
               ),
               ButtonTextWidget(
                 width: dimensions.width * 0.42,
@@ -63,14 +55,12 @@ class _BottomSheetEscalationState extends State<BottomSheetEscalation> {
                 textSize: 12,
                 textColor: AppColors.blue_500,
                 iconSize: 20,
-                action: () => alterTeamView()
+                action: () => alterTeamView(),
               ),
             ],
           ),
           const Divider(color: AppColors.grey_300),
-          LineupWidget(
-            category: gameController.currentGameConfig!.category
-          )
+          LineupWidget(category: category),
         ],
       ),
     );
