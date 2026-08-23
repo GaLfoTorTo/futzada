@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/data/models/escalation_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/controllers/mixin/escalation/escalation_market_mixin.dart';
+import 'package:go_router/go_router.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/escalation_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/controllers/mixin/escalation/escalation_market_mixin.dart';
 
 //===MIXIN - GERENCIAMENTO DE ESCALAÇÃO===
 mixin EscalationManagerMixin on ChangeNotifier, EscalationMarketMixin implements EscalationBase {
@@ -93,6 +96,8 @@ mixin EscalationManagerMixin on ChangeNotifier, EscalationMarketMixin implements
       formations = escalationService.getFormations(category);
     } catch (e) {
       hasError = true;
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
     isLoading = false;
   }
@@ -114,6 +119,8 @@ mixin EscalationManagerMixin on ChangeNotifier, EscalationMarketMixin implements
       managerValuation = user.manager!.economies!.firstWhere((e) => e.eventId == event!.id).valuation!;
     } catch (e) {
       hasError = true;
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
     isLoading = false;
   }

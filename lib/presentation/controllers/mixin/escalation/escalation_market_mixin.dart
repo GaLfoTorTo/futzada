@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
 
 //===MIXIN - MERCADO DE JOGADORES===
 mixin EscalationMarketMixin on ChangeNotifier implements EscalationBase {

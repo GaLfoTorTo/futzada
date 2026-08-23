@@ -1,8 +1,8 @@
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/extensions/string_extensions.dart';
+import 'package:esportly/data/models/participant_model.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/rating_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/extensions/string_extensions.dart';
 
 class UserHelper {
   //FUNÇÃO PARA RESGATAR NOME COMPLETO DO USUARIO

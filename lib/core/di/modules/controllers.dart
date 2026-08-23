@@ -1,19 +1,19 @@
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/presentation/controllers/app_controller.dart';
-import 'package:futzada/presentation/controllers/auth_controller.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
-import 'package:futzada/presentation/controllers/theme_controller.dart';
-import 'package:futzada/presentation/controllers/showcase_controller.dart';
-import 'package:futzada/presentation/controllers/user_controller.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/presentation/controllers/rank_controller.dart';
-import 'package:futzada/presentation/controllers/explorer_controller.dart';
-import 'package:futzada/presentation/controllers/chat_controller.dart';
-import 'package:futzada/presentation/controllers/notification_controller.dart';
-import 'package:futzada/presentation/controllers/statistics_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/presentation/controllers/app_controller.dart';
+import 'package:esportly/presentation/controllers/auth_controller.dart';
+import 'package:esportly/presentation/controllers/navigation_controller.dart';
+import 'package:esportly/presentation/controllers/theme_controller.dart';
+import 'package:esportly/presentation/controllers/showcase_controller.dart';
+import 'package:esportly/presentation/controllers/user_controller.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
+import 'package:esportly/presentation/controllers/rank_controller.dart';
+import 'package:esportly/presentation/controllers/explorer_controller.dart';
+import 'package:esportly/presentation/controllers/chat_controller.dart';
+import 'package:esportly/presentation/controllers/notification_controller.dart';
+import 'package:esportly/presentation/controllers/statistics_controller.dart';
 
 /// Controllers permanentes — criados uma vez, vivem enquanto o app viver
 void registerInitControllers() {

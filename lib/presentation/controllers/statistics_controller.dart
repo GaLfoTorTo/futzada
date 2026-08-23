@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/manager_service.dart';
-import 'package:futzada/data/services/escalation_service.dart';
-import 'package:futzada/data/services/market_service.dart';
-import 'package:futzada/data/services/participant_service.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/manager_service.dart';
+import 'package:esportly/data/services/escalation_service.dart';
+import 'package:esportly/data/services/market_service.dart';
+import 'package:esportly/data/services/participant_service.dart';
 
 //===DEPENDENCIAS BASE===
 abstract class StatisticsBase {

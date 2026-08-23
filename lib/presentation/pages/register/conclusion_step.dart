@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:futzada/presentation/widget/termos_politicas/termos.dart';
-import 'package:futzada/presentation/widget/termos_politicas/politicas_privacidade.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/widget/termos_politicas/termos.dart';
+import 'package:esportly/presentation/widget/termos_politicas/politicas_privacidade.dart';
 
 class ConclusionStep extends StatefulWidget {
   const ConclusionStep({super.key});

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/pages/erros/erro_historic_game_page.dart';
-import 'package:futzada/presentation/widget/skeletons/skeleton_games_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_game_widget.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/pages/event/error/erro_historic_game_page.dart';
+import 'package:esportly/presentation/widget/skeletons/skeleton_games_widget.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_game_widget.dart';
 
 class EventHistoricPage extends ConsumerStatefulWidget {
   const EventHistoricPage({super.key});

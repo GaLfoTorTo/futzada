@@ -1,12 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/providers/navigation_provider.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/services/home_service.dart';
-import 'package:futzada/data/services/user_service.dart';
-import 'package:futzada/data/services/address_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/providers/navigation_provider.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/services/home_service.dart';
+import 'package:esportly/data/services/user_service.dart';
+import 'package:esportly/data/services/address_service.dart';
 
 //===HOME BASE===
 abstract class HomeBase {
@@ -106,11 +108,11 @@ class HomeController extends ChangeNotifier implements HomeBase {
     } catch (e, stackTrace) {
       hasError = true;
       isLoading = false;
-      //LOGS DE ERRO
-      print('=== ERRO COMPLETO ===');
-      print('Erro: $e');
-      print('Stack trace: $stackTrace');
-      print('=====================');
+      debugPrint('fetchHome error: $e\n$stackTrace');
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) {
+        AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+      }
     }
   }
 

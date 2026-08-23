@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:futzada/data/models/participant_model.dart';
+import 'package:esportly/data/models/participant_model.dart';
 
 class RankService {
   static var random = Random();

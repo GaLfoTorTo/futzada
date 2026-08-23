@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/extensions/string_extensions.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/extensions/string_extensions.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
-import 'package:futzada/core/providers/theme_provider.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/core/theme/app_size.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/auth_controller.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
+import 'package:esportly/core/providers/theme_provider.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/core/theme/app_size.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/auth_controller.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
 
 class DrawerWidget extends ConsumerStatefulWidget {
   const DrawerWidget({super.key});

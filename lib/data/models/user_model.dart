@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/achievement_model.dart';
-import 'package:futzada/data/models/level_model.dart';
-import 'package:futzada/data/models/manager_model.dart';
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/data/models/user_config_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/achievement_model.dart';
+import 'package:esportly/data/models/level_model.dart';
+import 'package:esportly/data/models/manager_model.dart';
+import 'package:esportly/data/models/participant_model.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/user_config_model.dart';
 
 class UserModel {
   int? id;

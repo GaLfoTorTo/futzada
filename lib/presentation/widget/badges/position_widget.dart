@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_size.dart';
-import 'package:futzada/core/helpers/player_helper.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_size.dart';
+import 'package:esportly/core/helpers/player_helper.dart';
 
 class PositionWidget extends StatelessWidget {
   final String position;

@@ -3,8 +3,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiRoutes {
   //URL BASE DAS REQUISIÇÕES
-  static String uri() => "${dotenv.env["APP_SCHEME"]}://${dotenv.env["APP_HOST"]}:${dotenv.env["APP_PORT"]}";
-  static String url() => "${dotenv.env["APP_SCHEME"]}://${dotenv.env["APP_HOST"]}:${dotenv.env["APP_PORT"]}/api/";
+  static String _port() {
+    final host = dotenv.env["APP_HOST"];
+    return (host != null && !host.contains('esportly')) ? ':${dotenv.env["APP_PORT"]}' : '';
+  }
+  static String uri() => "${dotenv.env["APP_SCHEME"]}://${dotenv.env["APP_HOST"]}${_port()}";
+  static String url() => "${dotenv.env["APP_SCHEME"]}://${dotenv.env["APP_HOST"]}${_port()}/api/";
   //FUNÇÃO PARA GERAR URL (DOMINIO + ROTA)
   static String getUrl(String route) => url() + route;
   //ROTAS DE AUTH

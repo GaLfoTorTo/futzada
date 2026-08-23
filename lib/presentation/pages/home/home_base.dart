@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/pages/home/home_page.dart';
-import 'package:futzada/presentation/pages/home/home_error_page.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/skeletons/skeleton_home_widget.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/pages/home/home_page.dart';
+import 'package:esportly/presentation/pages/home/home_error_page.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/skeletons/skeleton_home_widget.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
 
 class HomeBase extends StatelessWidget {
   HomeBase({super.key});

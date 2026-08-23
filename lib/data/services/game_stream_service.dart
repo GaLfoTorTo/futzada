@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/snapshot_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/snapshot_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:futzada/core/storage/app_storage.dart';
+import 'package:esportly/core/storage/app_storage.dart';
 import 'package:laravel_echo_null/laravel_echo_null.dart';
 import 'package:pusher_client_socket/pusher_client_socket.dart' as PUSHER;
 

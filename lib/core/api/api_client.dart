@@ -1,8 +1,8 @@
 import 'api_interceptor.dart';
 import 'package:dio/dio.dart';
-import 'package:futzada/core/api/api_response.dart';
-import 'package:futzada/core/api/api_routes.dart';
-import 'package:futzada/core/storage/app_storage.dart';
+import 'package:esportly/core/api/api_response.dart';
+import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/core/storage/app_storage.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -30,16 +30,15 @@ class ApiClient {
     ]);
   }
 
-  // GET — 
+  // GET —
   Future<ApiResponse> get(String route) async {
     final resp = await _dio.get(route);
-    //RESTAURAR TOKEN (SE NECESSÁRIO)
     storeToken(resp);
-    //RESPOSTA
+    final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
     return ApiResponse(
-      data: Map<String, dynamic>.from(resp.data),
+      data: respData,
       status: resp.statusCode ?? 200,
-      message: resp.data?['message'],
+      message: respData['message'] as String?,
     );
   }
 
@@ -47,39 +46,36 @@ class ApiClient {
   Future<ApiResponse> post(String route, Map<String, dynamic> data) async {
     final body = await _buildBody(data);
     final resp = await _dio.post(route, data: body);
-    //RESTAURAR TOKEN (SE NECESSÁRIO)
     storeToken(resp);
-    //RESPOSTA
+    final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
     return ApiResponse(
-      data: Map<String, dynamic>.from(resp.data),
+      data: respData,
       status: resp.statusCode ?? 200,
-      message: resp.data?['message'],
+      message: respData['message'] as String?,
     );
   }
 
-  // PUT
-  Future<ApiResponse> put(String route, Map<String, dynamic> data) async {
-    final resp = await _dio.put(route, data: data);
-    //RESTAURAR TOKEN (SE NECESSÁRIO)
+  // PATCH
+  Future<ApiResponse> patch(String route, Map<String, dynamic> data) async {
+    final resp = await _dio.patch(route, data: data);
     storeToken(resp);
-    //RESPOSTA
+    final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
     return ApiResponse(
-      data: Map<String, dynamic>.from(resp.data),
+      data: respData,
       status: resp.statusCode ?? 200,
-      message: resp.data?['message'],
+      message: respData['message'] as String?,
     );
   }
 
   // DELETE -
   Future<ApiResponse> delete(String route) async {
     final resp = await _dio.delete(route);
-    //RESTAURAR TOKEN (SE NECESSÁRIO)
     storeToken(resp);
-    //RESPOSTA
+    final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
     return ApiResponse(
-      data: Map<String, dynamic>.from(resp.data),
+      data: respData,
       status: resp.statusCode ?? 200,
-      message: resp.data?['message'],
+      message: respData['message'] as String?,
     );
   }
 

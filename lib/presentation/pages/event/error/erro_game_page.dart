@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class ErroGamePage extends StatelessWidget {
   final VoidCallback function;
@@ -18,8 +18,8 @@ class ErroGamePage extends StatelessWidget {
 
     return  Container(
       width: dimensions.width,
-      height: dimensions.height - 150,
-      padding: const EdgeInsets.all(10),
+      height: dimensions.height,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [

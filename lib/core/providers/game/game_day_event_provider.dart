@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
 
 //ESTADO - GAME DAY
 class GameDayEventState {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/badges/position_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/badges/position_widget.dart';
 
 class InputPosicaoWidget extends StatelessWidget {
   final String title;

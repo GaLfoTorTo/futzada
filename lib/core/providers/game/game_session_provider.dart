@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_config_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/result_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/providers/game/game_match_provider.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
-import 'package:futzada/core/providers/game/game_votes_provider.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_config_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/result_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/providers/game/game_match_provider.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/core/providers/game/game_votes_provider.dart';
 
 //ESTADO - GAME SESSION
 class GameSessionState {

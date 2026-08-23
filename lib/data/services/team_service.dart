@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/models/team_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/data/models/team_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 class TeamService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

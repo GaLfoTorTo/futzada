@@ -1,6 +1,6 @@
-import 'package:futzada/data/models/event_model.dart';
+import 'package:esportly/data/models/event_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:futzada/data/services/notification_service.dart';
+import 'package:esportly/data/services/notification_service.dart';
 
 class FirebaseService {
 

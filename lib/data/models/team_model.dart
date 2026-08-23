@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
 
 class TeamModel {
   final int? id;

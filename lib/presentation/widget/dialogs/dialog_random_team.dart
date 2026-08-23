@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
 
 class DialogRandomTeam extends StatelessWidget {
   final Future<void> Function() actionRandom;

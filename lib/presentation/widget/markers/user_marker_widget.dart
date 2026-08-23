@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 import 'package:latlong2/latlong.dart';
 
 class UserMarkerWidget extends StatelessWidget {

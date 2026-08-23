@@ -1,10 +1,10 @@
-import 'package:futzada/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/presentation/widget/bars/header_glass_widget.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/presentation/widget/bars/header_glass_widget.dart';
+import 'package:esportly/presentation/widget/buttons/float_button_widget.dart';
 
 class OnboardingStep extends StatefulWidget {
   const OnboardingStep({super.key,});
@@ -99,7 +99,7 @@ class _OnboardingStepState extends State<OnboardingStep> {
                   textAlign: TextAlign.center,
                 ), 
                 Text(
-                  'Pronto para jogar? Vamos criar seu perfil no Futzada e dar inicio a sua mais nova jornada esportiva.',
+                  'Pronto para jogar? Vamos criar seu perfil no esportly e dar inicio a sua mais nova jornada esportiva.',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: textColor
                   ),

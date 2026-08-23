@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_day_event_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_event_today_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_task_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_to_you_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_popular_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_day_event_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_event_today_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_player_game_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_task_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_to_you_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_popular_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_page_widget.dart';
 
 class SectionHomeWidget extends StatefulWidget {
   final dynamic options;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class DialogAlertStart extends StatelessWidget {
   const DialogAlertStart({super.key});

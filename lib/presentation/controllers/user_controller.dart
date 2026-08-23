@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/task_model.dart';
-import 'package:futzada/data/services/task_service.dart';
-import 'package:futzada/data/services/address_service.dart';
-import 'package:futzada/data/services/firebase/firebase_service.dart';
-import 'package:futzada/data/repositories/event_repository.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/task_model.dart';
+import 'package:esportly/data/services/task_service.dart';
+import 'package:esportly/data/services/address_service.dart';
+import 'package:esportly/data/services/firebase/firebase_service.dart';
+import 'package:esportly/data/repositories/event_repository.dart';
 
 class UserController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETX

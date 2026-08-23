@@ -10,7 +10,7 @@
         <package android:name="com.moovit" />
     </queries>
     <application
-        android:label="Futzada"
+        android:label="E-sportly"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

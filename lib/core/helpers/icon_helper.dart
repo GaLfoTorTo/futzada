@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_icones.dart';
 
 class IconHelper {
   //FUNÇÃO PARA RESGATAR ICONE DA CATEGORIA

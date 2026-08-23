@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/escalation_helper.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/img_helper.dart';
+import 'package:esportly/core/helpers/escalation_helper.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/img_helper.dart';
 
 class PlayersLineupWidget extends StatelessWidget {
   final List<UserModel> players;

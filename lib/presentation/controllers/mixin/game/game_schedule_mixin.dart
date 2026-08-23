@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - PARTIDAS===
 mixin GameScheduleMixin on ChangeNotifier implements GameBase {

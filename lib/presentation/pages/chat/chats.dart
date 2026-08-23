@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/chat_controller.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/controllers/chat_controller.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});

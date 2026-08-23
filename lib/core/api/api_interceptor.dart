@@ -1,9 +1,9 @@
 import 'api_exception.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/providers/app_session_provider.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/providers/app_session_provider.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
 
 class ApiInterceptor extends Interceptor {
   //FUNÇÃO DE CAPTURA DE ERROS DE REQUISIÇÃO
@@ -55,7 +55,8 @@ class ApiInterceptor extends Interceptor {
   //FUNÇÃO DE MAPEAMENTO DE MENSAGENS DE ERROS DE REQUISIÇÃO
   ApiException _mapStatusCode(DioException err) {
     final status = err.response?.statusCode ?? 500;
-    final serverMsg = err.response?.data?['message'] as String?;
+    final data = err.response?.data;
+    final serverMsg = data is Map ? data['message'] as String? : null;
 
     final message = switch (status) {
       400 => serverMsg ?? 'Dados inválidos!',

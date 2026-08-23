@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 class IntroductionPage extends StatefulWidget {
   final Map<String, dynamic> item;

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_map_apps.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/data/models/address_model.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_map_apps.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/address_model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -219,7 +219,7 @@ class IntegrationRouteService {
         '&pickup_longitude=${params.startLng}'
         '&dropoff_latitude=${params.endLat}'
         '&dropoff_longitude=${params.endLng}'
-        '&source=futzada';
+        '&source=esportly';
   }
 
   //WAZE

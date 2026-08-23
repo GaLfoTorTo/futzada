@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class DialogAlertTeam extends StatelessWidget {
   const DialogAlertTeam({

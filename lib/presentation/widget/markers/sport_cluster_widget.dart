@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/markers_helper.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/markers_helper.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class SportClusterWidget extends StatelessWidget {

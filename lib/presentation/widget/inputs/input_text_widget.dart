@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 class InputTextWidget extends StatefulWidget {
   final String? name;
@@ -89,18 +89,16 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   
   //FUNÇÃO DE CONSTRUÇÃO DE SUFIX ICON
   Widget? _buildSuffixIcon() {
-    if (_sufixIcon == null){
-      return null;
-    } else{
-      if(widget.suffixFunction != null){
-        return IconButton(
-          icon: _sufixIcon!,
-          onPressed: () =>_showText(),
-          color: _textColor,
-        );
-      }
-      return _sufixIcon;
+    if (_sufixIcon == null) return null;
+    final icon = Icon(_sufixIcon!.icon, color: _textColor);
+    if (widget.suffixFunction != null) {
+      return IconButton(
+        icon: icon,
+        onPressed: () => _showText(),
+        color: _textColor,
+      );
     }
+    return icon;
   }
 
   @override
@@ -108,7 +106,7 @@ class _InputTextWidgetState extends State<InputTextWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
-        style: Theme.of(context).textTheme.labelLarge,
+        style: Theme.of(context).textTheme.labelLarge!.copyWith(color: _textColor),
         cursorColor: AppColors.green_300,
         focusNode: _focusNode,
         initialValue: widget.initialValue,
@@ -118,13 +116,16 @@ class _InputTextWidgetState extends State<InputTextWidget> {
         minLines: widget.textArea ? 5 : 1,
         maxLines: widget.textArea ? 10 : 1,
         maxLength: widget.maxLength,
-        textCapitalization: widget.maxLength != null 
-          ? TextCapitalization.characters 
+        textCapitalization: widget.maxLength != null
+          ? TextCapitalization.characters
           : TextCapitalization.none,
         decoration: InputDecoration(
           hintText: widget.hint,
           labelText: widget.label,
-          prefixIcon: _prefixIcon,
+          labelStyle: _textColor != null ? TextStyle(color: _textColor) : null,
+          prefixIcon: widget.prefixIcon != null
+              ? Icon(widget.prefixIcon, color: _textColor)
+              : null,
           hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
             color: _textColor
           ),

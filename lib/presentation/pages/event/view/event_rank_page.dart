@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/rank_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_podium_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_rank_position_widget.dart';
+import 'package:esportly/presentation/controllers/rank_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_podium_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_rank_position_widget.dart';
 
 class EventRankPage extends StatelessWidget {
   const EventRankPage({

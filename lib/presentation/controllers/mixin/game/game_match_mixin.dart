@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-import 'package:futzada/data/models/game_event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/result_model.dart';
-import 'package:futzada/data/models/team_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/data/models/game_event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/result_model.dart';
+import 'package:esportly/data/models/team_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - PARTIDA ATUAL===
 mixin GameMatchMixin on ChangeNotifier implements GameBase {

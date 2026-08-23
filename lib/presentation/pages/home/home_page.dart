@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/widget/cards/card_ads.dart';
-import 'package:futzada/presentation/widget/cards/card_level_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_presentation_widget.dart';
-import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
-import 'package:futzada/presentation/pages/home/secao/section_home_widget.dart';
-import 'package:futzada/presentation/pages/home/secao/section_categories_widget.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
-import 'package:futzada/presentation/controllers/showcase_controller.dart';
-import 'package:futzada/presentation/controllers/user_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/widget/cards/card_ads.dart';
+import 'package:esportly/presentation/widget/cards/card_level_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_presentation_widget.dart';
+import 'package:esportly/presentation/widget/showcase/wizard_widget.dart';
+import 'package:esportly/presentation/pages/home/secao/section_home_widget.dart';
+import 'package:esportly/presentation/pages/home/secao/section_categories_widget.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
+import 'package:esportly/presentation/controllers/showcase_controller.dart';
+import 'package:esportly/presentation/controllers/user_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

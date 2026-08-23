@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/storage/app_storage.dart';
+import 'package:esportly/core/storage/app_storage.dart';
 
 class ThemeNotifier extends Notifier<ThemeMode> {
   @override

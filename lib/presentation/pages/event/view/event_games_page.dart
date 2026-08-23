@@ -1,17 +1,17 @@
-import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_game_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_game_live_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
-import 'package:futzada/presentation/widget/skeletons/skeleton_games_widget.dart';
-import 'package:futzada/presentation/pages/erros/erro_game_page.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_game_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_game_live_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
+import 'package:esportly/presentation/widget/skeletons/skeleton_games_widget.dart';
+import 'package:esportly/presentation/pages/event/error/erro_game_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class EventGamesPage extends ConsumerStatefulWidget {

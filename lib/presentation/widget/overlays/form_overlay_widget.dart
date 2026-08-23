@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:futzada/core/theme/app_animations.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/core/theme/app_animations.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
 
 class FormOverlayWidget extends StatelessWidget {
   final int status;

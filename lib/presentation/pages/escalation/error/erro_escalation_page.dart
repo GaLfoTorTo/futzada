@@ -1,9 +1,9 @@
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class ErroEscalationPage extends StatelessWidget {
   const ErroEscalationPage({super.key});
@@ -17,8 +17,8 @@ class ErroEscalationPage extends StatelessWidget {
 
     return  Container(
       width: dimensions.width,
-      height: dimensions.height,
-      padding: const EdgeInsets.all(10),
+      height: dimensions.height * 0.90,
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -54,7 +54,7 @@ class ErroEscalationPage extends StatelessWidget {
               ButtonTextWidget(
                 text: "Buscar Pelada",
                 width: dimensions.width,
-                icon: AppIcones.apito,
+                icon: Icons.sports,
                 action: () => context.push('/explore/map'),
               ),
               ButtonOutlineWidget(

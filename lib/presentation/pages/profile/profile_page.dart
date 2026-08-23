@@ -1,18 +1,18 @@
-import 'package:futzada/presentation/controllers/profile_controller.dart';
-import 'package:futzada/presentation/pages/profile/profile_overview_page.dart';
-import 'package:futzada/presentation/widget/skeletons/skeleton_profile_widget.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/presentation/controllers/profile_controller.dart';
+import 'package:esportly/presentation/pages/profile/profile_overview_page.dart';
+import 'package:esportly/presentation/widget/skeletons/skeleton_profile_widget.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

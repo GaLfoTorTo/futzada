@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
-import 'package:futzada/core/providers/game/game_stopwatch_provider.dart';
-import 'package:futzada/presentation/widget/overlays/stopwatch_overlay_widget.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/providers/game/game_stopwatch_provider.dart';
+import 'package:esportly/presentation/widget/overlays/stopwatch_overlay_widget.dart';
 
 class StopWatchDialog extends ConsumerStatefulWidget {
   const StopWatchDialog({super.key});

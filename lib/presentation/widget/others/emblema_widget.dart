@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
 
 class EmblemaWidget extends StatefulWidget {
   final String emblem;

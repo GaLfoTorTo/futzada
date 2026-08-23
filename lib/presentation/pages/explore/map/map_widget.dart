@@ -1,23 +1,26 @@
-import 'package:futzada/core/api/api_routes.dart';
+import 'package:esportly/core/api/api_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/presentation/pages/erros/erro_permission_page.dart';
-import 'package:futzada/presentation/widget/markers/user_marker_widget.dart';
-import 'package:futzada/presentation/widget/markers/sport_cluster_widget.dart';
-import 'package:futzada/presentation/widget/markers/event_cluster_widget.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/presentation/pages/explore/error/erro_permission_page.dart';
+import 'package:esportly/presentation/widget/markers/user_marker_widget.dart';
+import 'package:esportly/presentation/widget/markers/sport_cluster_widget.dart';
+import 'package:esportly/presentation/widget/markers/event_cluster_widget.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  final MapWidgetController mapWidgetController;
+  const MapWidget({
+    super.key, 
+    required this.mapWidgetController
+  });
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
 }
 
 class _MapWidgetState extends State<MapWidget> {
-  //CONTROLLER DO MAPA (CUSTOM)
-  final MapWidgetController mapWidgetController = MapWidgetController.instance;
+  MapWidgetController get mapWidgetController => widget.mapWidgetController;
   
   @override
   Widget build(BuildContext context) {

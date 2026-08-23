@@ -1,44 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/providers/app_session_provider.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/pages/app_base.dart';
-import 'package:futzada/presentation/pages/home/home_base.dart';
-import 'package:futzada/presentation/pages/notification/notification_page.dart';
-import 'package:futzada/presentation/pages/splash_page.dart';
-import 'package:futzada/presentation/pages/auth/login_page.dart';
-import 'package:futzada/presentation/pages/register/onboarding_step.dart';
-import 'package:futzada/presentation/pages/register/register_form.dart';
-import 'package:futzada/presentation/pages/register/player_mode_step.dart';
-import 'package:futzada/presentation/pages/register/manager_mode_step.dart';
-import 'package:futzada/presentation/pages/onboarding/onboarding_page.dart';
-import 'package:futzada/presentation/pages/profile/profile_page.dart';
-import 'package:futzada/presentation/pages/chat/chats.dart';
-import 'package:futzada/presentation/pages/chat/chat_private.dart';
-import 'package:futzada/presentation/pages/escalation/escalation_landing_page.dart';
-import 'package:futzada/presentation/pages/escalation/escalation_page.dart';
-import 'package:futzada/presentation/pages/escalation/historic_page.dart';
-import 'package:futzada/presentation/pages/escalation/market_page.dart';
-import 'package:futzada/presentation/pages/escalation/statistics_page.dart';
-import 'package:futzada/presentation/pages/games/detail/game_detail_page.dart';
-import 'package:futzada/presentation/pages/games/detail/games_day_page%20.dart';
-import 'package:futzada/presentation/pages/games/config/game_config_page.dart';
-import 'package:futzada/presentation/pages/games/config/game_random_teams_page.dart';
-import 'package:futzada/presentation/pages/event/event_landing_page.dart';
-import 'package:futzada/presentation/pages/event/view/event_list_page.dart';
-import 'package:futzada/presentation/pages/event/view/event_page.dart';
-import 'package:futzada/presentation/pages/event/view/event_settings_page.dart.dart';
-import 'package:futzada/presentation/pages/event/view/event_historic_page.dart';
-import 'package:futzada/presentation/pages/event/register/event_config_game_step.dart';
-import 'package:futzada/presentation/pages/event/register/event_basic_step.dart';
-import 'package:futzada/presentation/pages/event/register/event_address_step.dart';
-import 'package:futzada/presentation/pages/event/register/event_participants_step.dart';
-import 'package:futzada/presentation/pages/explore/explore_landing_page.dart';
-import 'package:futzada/presentation/pages/explore/map/map_picker.dart';
-import 'package:futzada/presentation/pages/explore/map/map_explorer.dart';
-import 'package:futzada/presentation/pages/explore/explore_filter_page.dart';
-import 'package:futzada/presentation/pages/explore/explore_search_page.dart';
+import 'package:esportly/core/providers/app_session_provider.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/pages/app_base.dart';
+import 'package:esportly/presentation/pages/home/home_base.dart';
+import 'package:esportly/presentation/pages/notification/notification_page.dart';
+import 'package:esportly/presentation/pages/splash_page.dart';
+import 'package:esportly/presentation/pages/auth/login_page.dart';
+import 'package:esportly/presentation/pages/register/onboarding_step.dart';
+import 'package:esportly/presentation/pages/register/register_form.dart';
+import 'package:esportly/presentation/pages/register/player_mode_step.dart';
+import 'package:esportly/presentation/pages/register/manager_mode_step.dart';
+import 'package:esportly/presentation/pages/onboarding/onboarding_page.dart';
+import 'package:esportly/presentation/pages/profile/profile_page.dart';
+import 'package:esportly/presentation/pages/chat/chats.dart';
+import 'package:esportly/presentation/pages/chat/chat_private.dart';
+import 'package:esportly/presentation/pages/escalation/escalation_landing_page.dart';
+import 'package:esportly/presentation/pages/escalation/escalation_page.dart';
+import 'package:esportly/presentation/pages/escalation/historic_page.dart';
+import 'package:esportly/presentation/pages/escalation/market_page.dart';
+import 'package:esportly/presentation/pages/escalation/statistics_page.dart';
+import 'package:esportly/presentation/pages/games/detail/game_detail_page.dart';
+import 'package:esportly/presentation/pages/games/detail/games_day_page%20.dart';
+import 'package:esportly/presentation/pages/games/config/game_config_page.dart';
+import 'package:esportly/presentation/pages/games/config/game_random_teams_page.dart';
+import 'package:esportly/presentation/pages/event/event_landing_page.dart';
+import 'package:esportly/presentation/pages/event/view/event_list_page.dart';
+import 'package:esportly/presentation/pages/event/view/event_page.dart';
+import 'package:esportly/presentation/pages/event/view/event_settings_page.dart.dart';
+import 'package:esportly/presentation/pages/event/view/event_historic_page.dart';
+import 'package:esportly/presentation/pages/event/register/event_config_game_step.dart';
+import 'package:esportly/presentation/pages/event/register/event_basic_step.dart';
+import 'package:esportly/presentation/pages/event/register/event_address_step.dart';
+import 'package:esportly/presentation/pages/event/register/event_participants_step.dart';
+import 'package:esportly/presentation/pages/explore/explore_landing_page.dart';
+import 'package:esportly/presentation/pages/explore/map/map_picker.dart';
+import 'package:esportly/presentation/pages/explore/map/map_explorer.dart';
+import 'package:esportly/presentation/pages/explore/explore_filter_page.dart';
+import 'package:esportly/presentation/pages/explore/explore_search_page.dart';
 
 class _SessionRefreshNotifier extends ChangeNotifier {
   _SessionRefreshNotifier(ProviderContainer container) {
@@ -59,7 +59,7 @@ class AppRoutes {
         case AppSession.loading:
           return location == '/splash' ? null : '/splash';
         case AppSession.unauthenticated:
-          return location == '/login' ? null : '/login';
+          return (location == '/login' || location.startsWith('/register')) ? null : '/login';
         case AppSession.firstLogin:
           return location == '/onboarding' ? null : '/onboarding';
         case AppSession.authenticated:
@@ -212,18 +212,22 @@ class AppRoutes {
       ),
       GoRoute(
         path: '/register',
-        pageBuilder: (_, __) => transitionToLeft(const RegisterStep()),
+        redirect: (_, __) => '/register/onboarding',
         routes: [
           GoRoute(
-            path: '/onboarding',
+            path: 'onboarding',
             pageBuilder: (_, __) => transitionToRight(const OnboardingStep()),
           ),
           GoRoute(
-            path: '/player',
+            path: 'dados_basicos',
+            pageBuilder: (_, __) => transitionToLeft(const RegisterStep()),
+          ),
+          GoRoute(
+            path: 'player',
             pageBuilder: (_, __) => transitionToRight(const PlayerModeStep()),
           ),
           GoRoute(
-            path: '/manager',
+            path: 'manager',
             pageBuilder: (_, __) => transitionToRight(const ManagerModeStep()),
           ),
         ],

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/helpers/map_helper.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/core/extensions/string_extensions.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/map_helper.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/core/extensions/string_extensions.dart';
 
 
 class CardPresentationWidget extends StatelessWidget {

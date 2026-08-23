@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/address_service.dart';
-import 'package:futzada/data/repositories/event_repository.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/address_service.dart';
+import 'package:esportly/data/repositories/event_repository.dart';
 
 class MapWidgetController extends ChangeNotifier {
   //DEFINIR MODEL DE CHAMANDA DO CONTROLLER (passado pelo chamador)

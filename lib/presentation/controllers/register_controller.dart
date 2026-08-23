@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/data/models/manager_model.dart';
-import 'package:futzada/data/repositories/user_repository.dart';
-import 'package:futzada/presentation/widget/overlays/form_overlay_widget.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/manager_model.dart';
+import 'package:esportly/data/repositories/user_repository.dart';
+import 'package:esportly/presentation/widget/overlays/form_overlay_widget.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class RegisterController extends ChangeNotifier {
@@ -181,29 +181,35 @@ class RegisterController extends ChangeNotifier {
       //EXIBIR OVERLAY
       final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
       if (ctx != null) {
-        await LoadingOverlay.show(
-          ctx,
-          () async {
-            //ENVAR FORMULARIO
-            submitStatus = await registerUser();
-          },
-          loadingWidget: Material(
-            color: Colors.transparent,
-            child: ListenableBuilder(
-              listenable: this,
-              builder: (_, __) => FormOverlayWidget(
-                status: submitStatus,
-                form: "user",
+        try {
+          await LoadingOverlay.show(
+            ctx,
+            () async {
+              //ENVAR FORMULARIO
+              submitStatus = await registerUser();
+            },
+            loadingWidget: Material(
+              color: Colors.transparent,
+              child: ListenableBuilder(
+                listenable: this,
+                builder: (_, __) => FormOverlayWidget(
+                  status: submitStatus,
+                  form: "user",
+                ),
               ),
             ),
-          ),
-          barrierColor: AppColors.dark_700.withAlpha(178),
-        );
+            barrierColor: AppColors.dark_700.withAlpha(178),
+          );
+        } catch (e) {
+          final errCtx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+          if (errCtx != null) AppHelper.feedbackMessage(errCtx, AppHelper.extractErrorMessage(e));
+          return;
+        }
       }
       //SE SUCESSO, NAVEGA PARA LOGIN
       if (submitStatus == 200) {
         sl<GoRouter>().go('/login');
-      }else{
+      } else {
         //EXIBIR MENSAGEM DE ERRO
         final errCtx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
         if (errCtx != null) AppHelper.feedbackMessage(errCtx, "Houve um erro ao enviar as informações, tente novamente.");

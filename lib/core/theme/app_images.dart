@@ -1,5 +1,5 @@
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/presentation/controllers/theme_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/presentation/controllers/theme_controller.dart';
 
 class AppImages {
   //RESGATAR COR PRINCIPAL

@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/game_event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/team_model.dart';
-import 'package:futzada/data/models/user_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/game_event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/team_model.dart';
+import 'package:esportly/data/models/user_model.dart';
 
 //ESTADO - GAME MATCH
 class GameMatchState {

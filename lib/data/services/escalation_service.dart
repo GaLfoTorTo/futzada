@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/models/escalation_model.dart';
-import 'package:futzada/data/models/participant_model.dart';
+import 'package:esportly/data/models/escalation_model.dart';
+import 'package:esportly/data/models/participant_model.dart';
 
 class EscalationService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

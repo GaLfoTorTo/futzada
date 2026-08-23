@@ -1,5 +1,5 @@
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/event_service.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/event_service.dart';
 
 class EventRepository {
   //SERVIÇOS - USUARIO, CACHE LOCAL

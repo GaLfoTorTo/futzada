@@ -1,11 +1,11 @@
 import 'dart:math';
 import 'package:dio/dio.dart'as Dio;
 import 'package:faker/faker.dart';
-import 'package:futzada/core/api/api_routes.dart';
+import 'package:esportly/core/api/api_routes.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/presentation/controllers/address_controller.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/presentation/controllers/address_controller.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
 
 class AddressService {
 
@@ -52,7 +52,7 @@ class AddressService {
           'addressdetails': 1,
         },
         options: Dio.Options(
-          headers: {'User-Agent': 'futzada-app/1.0 (futzada@futzada.com)'},
+          headers: {'User-Agent': 'esportly-app/1.0 (esportly@esportly.com)'},
         ),
       );
       //VERIFICAR RESPOSTA DO SERVIDOR
@@ -218,7 +218,7 @@ class AddressService {
         },
         options: Dio.Options(
           headers: {
-            'User-Agent': 'futzada-app/1.0 (futzada@futzada.com)'
+            'User-Agent': 'esportly-app/1.0 (esportly@esportly.com)'
           }
         ),
       );

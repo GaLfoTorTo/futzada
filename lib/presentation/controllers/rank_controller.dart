@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/services/rank_service.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/services/rank_service.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 
 abstract class RankBase {
   //GETTER - SERVIÇO DE PARTIDAS

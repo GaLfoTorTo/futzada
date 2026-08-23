@@ -1,26 +1,26 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/presentation/widget/overlays/form_overlay_widget.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/presentation/widget/overlays/form_overlay_widget.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/data/services/game_service.dart';
+import 'package:esportly/data/services/game_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/others/court_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/dialogs/dialog_category.dart';
-import 'package:futzada/presentation/widget/inputs/select_rounded_widget.dart';
-import 'package:futzada/presentation/widget/inputs/silder_players_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_form_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/others/court_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/dialogs/dialog_category.dart';
+import 'package:esportly/presentation/widget/inputs/select_rounded_widget.dart';
+import 'package:esportly/presentation/widget/inputs/silder_players_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_form_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/controllers/navigation_controller.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 
 class EventConfigGameStep extends StatefulWidget {  
   const EventConfigGameStep({super.key});
@@ -494,7 +494,7 @@ class EventConfigGameStepState extends State<EventConfigGameStep> {
                         style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppColors.dark_300),
                       ),
                       secondary: const Icon(
-                        AppIcones.apito,
+                        Icons.sports,
                         color: AppColors.grey_500,
                       ),
                     ),

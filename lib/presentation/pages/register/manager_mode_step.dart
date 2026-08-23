@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/helpers/manager_helper.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/manager_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_circular_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/pickers/picker_color_widget.dart';
-import 'package:futzada/presentation/widget/pickers/picker_emblema_widget.dart';
-import 'package:futzada/presentation/widget/pickers/picker_uniforme_widget.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_info_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_circular_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/pickers/picker_color_widget.dart';
+import 'package:esportly/presentation/widget/pickers/picker_emblema_widget.dart';
+import 'package:esportly/presentation/widget/pickers/picker_uniforme_widget.dart';
 
 class ManagerModeStep extends StatefulWidget {  
   const ManagerModeStep({super.key});
@@ -190,7 +190,7 @@ class ManagerModeStepStateState extends State<ManagerModeStep> {
     ){
       registerController.managerChecked = true;
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      context.go("/register");
+      context.go("/register/dados_basicos");
     }else{
       AppHelper.feedbackMessage(context, "Complete o cadastro de infromações de tecnico para continuar.");
     }

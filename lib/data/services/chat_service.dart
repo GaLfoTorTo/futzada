@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:futzada/data/services/user_service.dart';
+import 'package:esportly/data/services/user_service.dart';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 

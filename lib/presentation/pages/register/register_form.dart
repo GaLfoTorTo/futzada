@@ -1,15 +1,15 @@
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/pages/register/conclusion_step.dart';
-import 'package:futzada/presentation/pages/register/modality_step.dart';
-import 'package:futzada/presentation/pages/register/modes_step.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/pages/register/conclusion_step.dart';
+import 'package:esportly/presentation/pages/register/modality_step.dart';
+import 'package:esportly/presentation/pages/register/modes_step.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/pages/register/user_step.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/pages/register/user_step.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
 class RegisterStep extends StatefulWidget {
   

@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/data/models/game_config_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/game_config_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - CONFIGURAÇÕES DAS PARTIDAS===
 mixin GameConfigMixin on ChangeNotifier implements GameBase {

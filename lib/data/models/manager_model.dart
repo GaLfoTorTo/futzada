@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/economy_model.dart';
-import 'package:futzada/data/models/escalation_model.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/economy_model.dart';
+import 'package:esportly/data/models/escalation_model.dart';
 
 class ManagerModel {
   int? id;

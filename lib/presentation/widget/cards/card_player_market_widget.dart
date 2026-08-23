@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/widget/badges/position_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/participant_model.dart';
+import 'package:esportly/data/models/rating_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/widget/badges/position_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 
 class CardPlayerMarketWidget extends StatelessWidget {
   final UserModel user;

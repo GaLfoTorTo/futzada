@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/notification_controller.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
+import 'package:esportly/presentation/controllers/notification_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 

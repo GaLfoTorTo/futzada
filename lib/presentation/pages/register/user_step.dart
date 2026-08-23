@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/presentation/widget/cards/card_info_widget.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/presentation/widget/inputs/input_radio_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/presentation/widget/inputs/input_radio_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
 
 class UserStep extends StatefulWidget {
   const UserStep({super.key});

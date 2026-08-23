@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart' as fakerData;
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/participant_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/participant_model.dart';
 
 class ParticipantService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

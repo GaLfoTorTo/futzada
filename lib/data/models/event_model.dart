@@ -1,15 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/news_model.dart';
-import 'package:futzada/data/models/rule_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/data/models/avaliation_model.dart';
-import 'package:futzada/data/models/game_config_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/news_model.dart';
+import 'package:esportly/data/models/rule_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/data/models/avaliation_model.dart';
+import 'package:esportly/data/models/game_config_model.dart';
 
 class EventModel {
   int? id;

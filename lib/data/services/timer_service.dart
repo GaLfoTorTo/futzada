@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 
 /// SERVIÇO PARA GERENCIAMENTO DE CRONOMETROS DE PARTIDAS (CADA PARTIDA COM SEU CRONOMETRO INDIVIDUAL)
 class TimerService {

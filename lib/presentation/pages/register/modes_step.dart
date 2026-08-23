@@ -1,10 +1,10 @@
-import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:futzada/presentation/widget/buttons/button_circular_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/widget/buttons/button_circular_widget.dart';
 
 class ModesStep extends StatelessWidget {
   const ModesStep({super.key});

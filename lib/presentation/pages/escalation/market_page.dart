@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_size.dart';
-import 'package:futzada/presentation/widget/buttons/button_dropdown_multi_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_dropdown_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_player_market_widget.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_market.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_size.dart';
+import 'package:esportly/presentation/widget/buttons/button_dropdown_multi_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_dropdown_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_player_market_widget.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_market.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
 class MarketPage extends StatefulWidget {
   const MarketPage({super.key});

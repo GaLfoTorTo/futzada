@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/services/timer_service.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/services/timer_service.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 
 //ESTADO - GAME STOPWATCH
 class GameStopwatchState {

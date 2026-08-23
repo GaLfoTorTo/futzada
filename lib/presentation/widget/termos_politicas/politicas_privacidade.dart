@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 class PoliticasPrivacidade extends StatelessWidget {
   const PoliticasPrivacidade({super.key});
@@ -10,7 +10,7 @@ class PoliticasPrivacidade extends StatelessWidget {
     final List<String> compromisso_usuario = [
       'Não se envolver em atividades que sejam ilegais ou contrárias à boa fé a à ordem pública;',
       'Não difundir propaganda ou conteúdo de natureza racista, xenofóbica, 166bet ou azar, qualquer tipo de pornografia ilegal, de apologia ao terrorismo ou contra os direitos humanos;',
-      'Não causar danos aos sistemas físicos (hardwares) e lógicos (softwares) do Futzada, de seus fornecedores ou terceiros, para introduzir ou disseminar vírus informáticos ou quaisquer outros sistemas de hardware ou software que sejam capazes de causar danos anteriormente mencionados.',
+      'Não causar danos aos sistemas físicos (hardwares) e lógicos (softwares) do esportly, de seus fornecedores ou terceiros, para introduzir ou disseminar vírus informáticos ou quaisquer outros sistemas de hardware ou software que sejam capazes de causar danos anteriormente mencionados.',
     ];
 
     return SingleChildScrollView(
@@ -33,7 +33,7 @@ class PoliticasPrivacidade extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   """
-                  \nA sua privacidade é importante para nós. É política do Futzada respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site Futzada, e outros sites que possuímos e operamos.
+                  \nA sua privacidade é importante para nós. É política do esportly respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site esportly, e outros sites que possuímos e operamos.
                   \nSolicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço. Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento. Também informamos por que estamos coletando e como será usado.
                   \nApenas retemos as informações coletadas pelo tempo necessário para fornecer o serviço solicitado. Quando armazenamos dados, protegemos dentro de meios comercialmente aceitáveis ​​para evitar perdas e roubos, bem como acesso, divulgação, cópia, uso ou modificação não autorizados.
                   \nNão compartilhamos informações de identificação pessoal publicamente ou com terceiros, exceto quando exigido por lei.
@@ -64,7 +64,7 @@ class PoliticasPrivacidade extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  "O usuário se compromete a fazer uso adequado dos conteúdos e da informação que o Futzada oferece no site e com caráter enunciativo, mas não limitativo:",
+                  "O usuário se compromete a fazer uso adequado dos conteúdos e da informação que o esportly oferece no site e com caráter enunciativo, mas não limitativo:",
                   style: TextStyle(
                     color: AppColors.grey_500,
                     fontSize: 12,

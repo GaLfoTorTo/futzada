@@ -1,17 +1,17 @@
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/app_widget.dart';
+import 'package:esportly/app_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/storage/app_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:futzada/core/di/modules/services.dart';
-import 'package:futzada/core/di/modules/controllers.dart';
-import 'package:futzada/core/di/modules/repositories.dart';
+import 'package:esportly/core/di/modules/services.dart';
+import 'package:esportly/core/di/modules/controllers.dart';
+import 'package:esportly/core/di/modules/repositories.dart';
 
 void main() async {
   //1 - INICIALIZAR OS BINDINGS DO FLUTTER
@@ -26,9 +26,11 @@ void main() async {
     await AppStorage.init();
     //5 - INICIALIZAR FIREBASE (com timeout para evitar travamentos)
     //5.1 - INICIALIZAR FIREBASE APP (INTEGRATION)
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    ).timeout(const Duration(seconds: 10));
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ).timeout(const Duration(seconds: 10));
+    }
     //5.2 - INICIALIZAR FIREBASE MESSAGING (BACKGROUND)
     FirebaseMessaging.onBackgroundMessage(initFirebaseHandler);
     //6 - REGISTRAR PROVIDER CONTAINER GLOBAL (acesso Riverpod fora da widget tree)
@@ -84,5 +86,5 @@ void main() async {
 }
 
 Future<void> initFirebaseHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }

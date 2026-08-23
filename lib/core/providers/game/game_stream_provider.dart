@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/snapshot_model.dart';
-import 'package:futzada/data/services/game_stream_service.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
-import 'package:futzada/core/providers/game/game_match_provider.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/snapshot_model.dart';
+import 'package:esportly/data/services/game_stream_service.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/providers/game/game_match_provider.dart';
 
 //ESTADO - GAME STREAM
 class GameStreamState {

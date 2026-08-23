@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/controllers/user_controller.dart';
+import 'package:esportly/core/di/modules/session.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class ErroPermissionPage extends StatelessWidget {
   const ErroPermissionPage({
@@ -12,8 +12,6 @@ class ErroPermissionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE USUARIO
-    UserController userController = UserController.instance;
 
     return  Expanded(
       child: Container(
@@ -51,7 +49,7 @@ class ErroPermissionPage extends StatelessWidget {
                   width: dimensions.width,
                   icon: Icons.location_on,
                   iconSize: 30,
-                  action: () => {}//userController.getCurrentLocation(),
+                  action: () => registerLocation(),
                 ),
                 const Padding(padding: EdgeInsets.all(10)),
               ],

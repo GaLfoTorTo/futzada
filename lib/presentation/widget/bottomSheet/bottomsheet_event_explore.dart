@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/helpers/img_helper.dart';
-import 'package:futzada/core/helpers/map_helper.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_avaliacao_widget.dart';
+import 'package:esportly/core/helpers/img_helper.dart';
+import 'package:esportly/core/helpers/map_helper.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class BottomSheetEventExplore extends StatelessWidget {
@@ -25,11 +25,8 @@ class BottomSheetEventExplore extends StatelessWidget {
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //DEFINIR CONTROLLER DE EVENTO 
     EventController eventController = EventController.instance;
-    //DEFINIR CONTROLLER DE MAP (CUSTOM)
     MapWidgetController mapWidgetController = MapWidgetController.instance;
-    //CONTROLLADOR DE BARRA DE ROLAGEM
     PageController pageController = PageController();
     //DEFINIR ALTURA DO DIALOG
     double height = events.length > 1 
@@ -62,30 +59,23 @@ class BottomSheetEventExplore extends StatelessWidget {
                   },
                   {
                     'label': "Partidas",
-                    'icon': AppIcones.apito,
+                    'icon': Icons.sports,
                     'value' : event.games?.length ?? 0,
                   },
                 ];
-                //RESGATAR AVALIAÇÃO DO EVENTO
                 double avaliation = 12.2;//eventController.eventService.getEventAvaliation(event.avaliations);
-                //RESGATAR DATA DO EVENTO
                 String eventDate = event.date.toString().replaceAll('[', '').replaceAll(']', '').toString();
-                //RESGATAR POSIÇÕES DO USUARIO
-                final userLatLon = mapWidgetController.currentLatLog!;
-                //RESGATAR POSIÇÕES DO MARKER
+                final userLatLon = mapWidgetController.currentLatLog;
                 final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
-                //RESGATAR DISTANCIA ATE O LOCAL
                 double distance = MapHelper.getDistance(userLatLon, eventLatLon);
                 //RESGATAR MELHOR METODO DE TRANSPORTE BASEADO NA DISTANCIA
                 Map<String, dynamic> travelMode = MapHelper.getTravelMode(distance);
                 //RESGATAR TEMPO DE VIAGEM ATE O LOCAL
                 Duration timeTravelMode = MapHelper.getTravelTime(distance, travelMode['speed']);
                 String timeTravel = MapHelper.setTimeTravel(timeTravelMode);
-                //RESGATAR FOTO DOS 3 PRIMEIROS PARTICIPANTES
+                //RESGATAR FOTOS DOS 3 PRIMEIROS PARTICIPANTES
                 List<String?> imgParticipantes = [];
-                //VERIFICAR SE EXISTEM PARTICIPANTES
                 if(event.participants != null && event.participants!.isNotEmpty){
-                  //RESGATAR FOTOS DOS 3 PRIMEIROS PARTICIPANTES
                   imgParticipantes = event.participants!.take(3).map((user) => user.photo).toList();
                 }
                 //RESGATAR IMAGEM DO LOCAL

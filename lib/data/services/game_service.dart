@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/data/models/game_config_model.dart';
-import 'package:futzada/data/services/result_service.dart';
-import 'package:futzada/data/services/team_service.dart';
-import 'package:futzada/data/services/participant_service.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/event_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/data/models/game_config_model.dart';
+import 'package:esportly/data/services/result_service.dart';
+import 'package:esportly/data/services/team_service.dart';
+import 'package:esportly/data/services/participant_service.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/event_model.dart';
 
 class GameService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

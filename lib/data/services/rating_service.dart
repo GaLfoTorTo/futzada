@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart' as fakerData;
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/rating_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/rating_model.dart';
 
 class RatingService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

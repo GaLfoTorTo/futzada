@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_size.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_size.dart';
 
 class ButtonDropdownWidget extends StatelessWidget {
   final dynamic selectedItem;

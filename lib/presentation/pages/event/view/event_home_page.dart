@@ -1,25 +1,25 @@
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/core/helpers/event_helper.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/core/helpers/event_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:intl/intl.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/api/api_routes.dart';
-import 'package:futzada/core/helpers/img_helper.dart';
-import 'package:futzada/core/helpers/map_helper.dart';
+import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/core/helpers/img_helper.dart';
+import 'package:esportly/core/helpers/map_helper.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/escalation_service.dart';
-import 'package:futzada/data/services/integration_map_service.dart';
-import 'package:futzada/presentation/widget/buttons/button_icon_widget.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_map_travel.dart';
-import 'package:futzada/presentation/widget/text/expandable_text_widget.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/escalation_service.dart';
+import 'package:esportly/data/services/integration_map_service.dart';
+import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_map_travel.dart';
+import 'package:esportly/presentation/widget/text/expandable_text_widget.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 
 class EventHomePage extends StatefulWidget {
   
@@ -315,7 +315,7 @@ class _EventHomePageState extends State<EventHomePage> {
                 Column(
                   children: [
                     ButtonIconWidget(
-                      icon: AppIcones.apito,
+                      icon: Icons.sports,
                       iconSize: 30,
                       padding: 20,
                       iconColor: modalityColor,
@@ -508,7 +508,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   children: [
                     TileLayer(
                       urlTemplate: ApiRoutes.map,
-                      userAgentPackageName: 'com.example.futzada',
+                      userAgentPackageName: 'com.example.esportly',
                       subdomains: const ['a', 'b', 'c', 'd'],
                     ),
                     MarkerLayer(

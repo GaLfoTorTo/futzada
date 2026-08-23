@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_config_model.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_config_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 
 
 //===MIXIN - CONFIGURAÇÕES DO EVENTO===

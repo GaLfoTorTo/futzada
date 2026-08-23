@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 import 'package:faker/faker.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/news_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/news_model.dart';
 
 class NewsService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

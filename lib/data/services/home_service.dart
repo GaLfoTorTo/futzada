@@ -1,7 +1,7 @@
-import 'package:futzada/core/api/api_client.dart';
-import 'package:futzada/core/api/api_routes.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
+import 'package:esportly/core/api/api_client.dart';
+import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
 
 class HomeService {
 

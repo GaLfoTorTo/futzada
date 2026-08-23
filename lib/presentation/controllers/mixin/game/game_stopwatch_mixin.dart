@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart' as rxdart;
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/result_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/result_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - CRONÔMETRO===
 mixin GameStopwatchMixin on ChangeNotifier implements GameBase {

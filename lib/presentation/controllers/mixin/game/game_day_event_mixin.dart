@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - DIA DE EVENTO===
 mixin GameDayEventMixin on ChangeNotifier implements GameBase {

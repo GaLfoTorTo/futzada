@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/presentation/controllers/theme_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
-import 'package:futzada/presentation/widget/inputs/select_rounded_widget.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/presentation/controllers/theme_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_info_widget.dart';
+import 'package:esportly/presentation/widget/inputs/select_rounded_widget.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
 
 class ModalityStep extends StatefulWidget {
   const ModalityStep({super.key});

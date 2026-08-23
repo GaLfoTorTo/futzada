@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/services/rating_service.dart';
-import 'package:futzada/data/models/player_model.dart';
+import 'package:esportly/data/services/rating_service.dart';
+import 'package:esportly/data/models/player_model.dart';
 
 class PlayerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

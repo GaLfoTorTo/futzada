@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_animations.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_images.dart';
+import 'package:esportly/core/theme/app_animations.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_images.dart';
 import 'package:lottie/lottie.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -33,7 +33,7 @@ class WelcomePage extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const Text(
-            "FUTZADA",
+            "E-sportly",
             style: TextStyle(
               fontSize: 32.0, 
               fontWeight: FontWeight.bold, 

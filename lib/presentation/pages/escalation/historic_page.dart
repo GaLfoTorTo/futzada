@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
 class HistoricPage extends StatefulWidget {
   const HistoricPage({super.key});

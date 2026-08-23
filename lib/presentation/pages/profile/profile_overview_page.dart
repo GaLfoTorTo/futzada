@@ -1,17 +1,17 @@
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_player_widget.dart';
-import 'package:futzada/presentation/widget/charts/chart_bars_widget.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/widget/cards/card_player_game_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_player_widget.dart';
+import 'package:esportly/presentation/widget/charts/chart_bars_widget.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/presentation/controllers/profile_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_event_search_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_level_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/presentation/controllers/profile_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_event_search_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_level_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_page_widget.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
 class ProfileOverviewPage extends StatefulWidget {

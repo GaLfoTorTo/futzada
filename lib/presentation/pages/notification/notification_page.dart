@@ -1,9 +1,9 @@
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/presentation/controllers/notification_controller.dart';
-import 'package:futzada/presentation/pages/notification/notification_view.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/controllers/notification_controller.dart';
+import 'package:esportly/presentation/pages/notification/notification_view.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
 class NotificationPage extends StatefulWidget {
   

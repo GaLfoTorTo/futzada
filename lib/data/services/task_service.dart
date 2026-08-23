@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/models/task_model.dart';
+import 'package:esportly/data/models/task_model.dart';
 
 
 class TaskService {

@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/pickers/picker_color_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/pickers/picker_color_widget.dart';
 import 'dart:math'; 
 
 class PickerUniformeWidget extends StatelessWidget {

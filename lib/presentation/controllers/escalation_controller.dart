@@ -1,16 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/manager_service.dart';
-import 'package:futzada/data/services/user_service.dart';
-import 'package:futzada/data/services/escalation_service.dart';
-import 'package:futzada/data/services/market_service.dart';
-import 'package:futzada/data/services/participant_service.dart';
-import 'package:futzada/presentation/controllers/mixin/escalation/escalation_manager_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/escalation/escalation_market_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/escalation/escalation_team_mixin.dart';
+import 'package:go_router/go_router.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/manager_service.dart';
+import 'package:esportly/data/services/user_service.dart';
+import 'package:esportly/data/services/escalation_service.dart';
+import 'package:esportly/data/services/market_service.dart';
+import 'package:esportly/data/services/participant_service.dart';
+import 'package:esportly/presentation/controllers/mixin/escalation/escalation_manager_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/escalation/escalation_market_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/escalation/escalation_team_mixin.dart';
 
 //===DEPENDENCIAS BASE===
 abstract class EscalationBase {
@@ -128,9 +130,13 @@ class EscalationController extends ChangeNotifier
         isReady = true;
       } else {
         hasError = true;
+        final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+        if (ctx != null) AppHelper.feedbackMessage(ctx, 'Nenhum evento encontrado.');
       }
     } catch (e) {
       hasError = true;
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
     isLoading = false;
   }

@@ -1,16 +1,16 @@
-import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/images/img_group_circle_widget.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
 
 class CardDayEventWidget extends ConsumerWidget {
   final EventModel event;

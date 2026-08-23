@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/services/notification_service.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/services/notification_service.dart';
 
 class NotificationController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETX

@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'package:futzada/core/helpers/form_helper.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/core/helpers/form_helper.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/inputs/input_date_widget.dart';
-import 'package:futzada/presentation/widget/inputs/select_days_week_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_form_widget.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/inputs/input_date_widget.dart';
+import 'package:esportly/presentation/widget/inputs/select_days_week_widget.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_form_widget.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/controllers/navigation_controller.dart';
 
 class EventAddressStep extends StatefulWidget {  
   const EventAddressStep({super.key});

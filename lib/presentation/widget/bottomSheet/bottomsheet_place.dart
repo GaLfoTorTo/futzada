@@ -1,11 +1,11 @@
 
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/address_controller.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
+import 'package:esportly/presentation/controllers/address_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
 import 'package:latlong2/latlong.dart';
 
 class BottomSheetPlace extends StatefulWidget {

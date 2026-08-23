@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/data/models/rule_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_rule.dart';
+import 'package:esportly/data/models/rule_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_rule.dart';
 
 class CardRule extends StatelessWidget {
   final RuleModel rule;

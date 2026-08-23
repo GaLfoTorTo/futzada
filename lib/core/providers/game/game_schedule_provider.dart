@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/services/game_service.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/services/game_service.dart';
 
 //ESTADO - GAME SCHEDULE
 class GameScheduleState {

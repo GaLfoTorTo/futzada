@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/pages/onboarding/welcome_page.dart';
-import 'package:futzada/presentation/pages/onboarding/introduction_page.dart';
-import 'package:futzada/core/theme/app_animations.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/providers/app_session_provider.dart';
+import 'package:esportly/presentation/pages/onboarding/welcome_page.dart';
+import 'package:esportly/presentation/pages/onboarding/introduction_page.dart';
+import 'package:esportly/core/theme/app_animations.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/providers/app_session_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -68,7 +68,7 @@ class OnboardingPageState extends State<OnboardingPage> {
       },
       {
         'title':"Quem manda é o professor!",
-        'descricao':"No Futzada, você pode mostrar que é o craque também com a prancheta. Monte o time ideal da pelada com os melhores na sua escalação.",
+        'descricao':"No esportly, você pode mostrar que é o craque também com a prancheta. Monte o time ideal da pelada com os melhores na sua escalação.",
         'animation':AppAnimations.introductionManager
       },
       {

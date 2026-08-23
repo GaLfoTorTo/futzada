@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/event_helper.dart';
-import 'package:futzada/presentation/widget/buttons/button_player_widget.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/event_helper.dart';
+import 'package:esportly/presentation/widget/buttons/button_player_widget.dart';
 
 class ReserveBankWidget extends StatelessWidget {
   final String category;

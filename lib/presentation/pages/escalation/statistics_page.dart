@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/statistics_controller.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_team_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_player_game_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_page_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_dropdown_icon_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/statistics_controller.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_team_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_player_game_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_page_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_dropdown_icon_widget.dart';
 
 class StatisticsPage extends StatefulWidget {  
   const StatisticsPage({

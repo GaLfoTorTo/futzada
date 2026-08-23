@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/data/services/address_service.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/data/services/address_service.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 
 class AddressController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETIT

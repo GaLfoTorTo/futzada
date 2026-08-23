@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/pages/presentation_page.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/pages/presentation_page.dart';
 
 class EscalationLandingPage extends StatelessWidget {
   const EscalationLandingPage({super.key});

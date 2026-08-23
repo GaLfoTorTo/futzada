@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/cards/card_ranking_widget.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/cards/card_ranking_widget.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 
 class CardTopRankingWidget extends StatelessWidget {
   final List<Map<String, dynamic>> ranking;

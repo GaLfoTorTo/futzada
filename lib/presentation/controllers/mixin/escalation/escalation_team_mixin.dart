@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
 
 //===MIXIN - GERENCIAMENTO DE EQUIPE===
 mixin EscalationTeamMixin on ChangeNotifier implements EscalationBase {

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_addres.dart';
-import 'package:futzada/presentation/controllers/address_controller.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/presentation/pages/explore/map/map_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/presentation/widget/buttons/float_button_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_addres.dart';
+import 'package:esportly/presentation/controllers/address_controller.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/presentation/pages/explore/map/map_widget.dart';
 
 class MapPickerPage extends StatefulWidget {
   const MapPickerPage({super.key});
@@ -27,15 +28,17 @@ class _MapPickerPageState extends State<MapPickerPage> {
     super.initState();
     //INICIALIZAR CONTROLLER DE EXPLORER
     addressController = AddressController()..init();
-    //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
-    mapWidgetController = MapWidgetController()..init();
+    //INICIALIZAR CONTROLLER DE MAP (CUSTOM) e registrar no GetIt
+    mapWidgetController = MapWidgetController(model: 'Address')..init();
+    sl.registerSingleton<MapWidgetController>(mapWidgetController);
   }
 
   @override
   void dispose() {
     //FINALIZAR CONTROLLER DE ENDEREÇOS
     addressController.dispose();
-    //REMOVER CONTROLLER DE MAP (CUSTOM)
+    //REMOVER CONTROLLER DE MAP (CUSTOM) do GetIt e dispor
+    if (sl.isRegistered<MapWidgetController>()) sl.unregister<MapWidgetController>();
     mapWidgetController.dispose();
     super.dispose();
   }
@@ -63,7 +66,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
         if (!mapWidgetController.isLoaded) {
           return const Center(child: IndicatorLoadingWidget());
         }else{
-          return const MapWidget();
+          return MapWidget(mapWidgetController: mapWidgetController);
         }
       }),
       floatingActionButton: Column(

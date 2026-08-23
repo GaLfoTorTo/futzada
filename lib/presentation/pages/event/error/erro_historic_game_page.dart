@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
-class ErroParticipantsPage extends StatelessWidget {
-  const ErroParticipantsPage({
-    super.key,
-  });
+class ErroHistoricGamePage extends StatelessWidget {
+  const ErroHistoricGamePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +13,7 @@ class ErroParticipantsPage extends StatelessWidget {
 
     return  Container(
       width: dimensions.width,
-      height: dimensions.height - 150,
+      height: dimensions.height * 0.90,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -35,34 +32,24 @@ class ErroParticipantsPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              'Sua pelada não tem nenhum participante registrado',
+              'Nenhuma partida finalizada',
               style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
           ),
           const Icon(
-            Icons.person_off_rounded,
+            Icons.history_rounded,
             size: 200,
+            color: AppColors.blue_500,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Text(
-              'Parece que sua peladas não tem nenhum participante registrado até o momento. Inicie a convocação dos participantes para fazerem parte da sua pelada.',
+              'Parece que sua peladas não tem nenhuma partida finalizada até o momento. Quando uma partida e finalizada e será armazenada no histórico de acordo com o dia e mes de acontecimento.',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ),
-          Column(
-            children: [
-              ButtonTextWidget(
-                text: "Adicionar Participantes",
-                width: dimensions.width,
-                icon: Icons.person_add,
-                iconSize: 30,
-                action: () => {},
-              ),
-            ],
-          )
         ],
       ),
     );

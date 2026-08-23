@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
-import 'package:futzada/core/providers/game/game_match_provider.dart';
-import 'package:futzada/core/providers/game/game_day_event_provider.dart';
-import 'package:futzada/presentation/pages/games/detail/game_escalation_page.dart';
-import 'package:futzada/presentation/pages/games/detail/game_overview_page.dart';
-import 'package:futzada/presentation/pages/games/detail/game_statistics_page.dart';
-import 'package:futzada/presentation/pages/games/detail/game_timeline_page.dart';
-import 'package:futzada/presentation/widget/bars/header_scroll_widget.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
-import 'package:futzada/presentation/widget/dialogs/dialog_alert_start.dart';
-import 'package:futzada/presentation/widget/cards/card_game_detail_widget.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/providers/game/game_match_provider.dart';
+import 'package:esportly/core/providers/game/game_day_event_provider.dart';
+import 'package:esportly/presentation/pages/games/detail/game_escalation_page.dart';
+import 'package:esportly/presentation/pages/games/detail/game_overview_page.dart';
+import 'package:esportly/presentation/pages/games/detail/game_statistics_page.dart';
+import 'package:esportly/presentation/pages/games/detail/game_timeline_page.dart';
+import 'package:esportly/presentation/widget/bars/header_scroll_widget.dart';
+import 'package:esportly/presentation/widget/buttons/float_button_widget.dart';
+import 'package:esportly/presentation/widget/dialogs/dialog_alert_start.dart';
+import 'package:esportly/presentation/widget/cards/card_game_detail_widget.dart';
 
 class GameDetailPage extends ConsumerStatefulWidget {
   const GameDetailPage({super.key});

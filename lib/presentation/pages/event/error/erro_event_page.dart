@@ -1,9 +1,8 @@
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class ErroEventPage extends StatelessWidget {
   const ErroEventPage({super.key});
@@ -18,11 +17,11 @@ class ErroEventPage extends StatelessWidget {
     return  Container(
       width: dimensions.width,
       height: dimensions.height * 0.90,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            backgroundColor.withAlpha(50),
+            backgroundColor.withAlpha(10),
             backgroundColor,
           ],
           begin: Alignment.topCenter,
@@ -44,7 +43,7 @@ class ErroEventPage extends StatelessWidget {
             size: 150,
           ),
           Text(
-            'Parece que você não está participando de nenhuma peladas ainda. Entre em uma nova pelada ou crie seu proprio evento de pelada para começar a jogar.',
+            'Parece que você não está participando de nenhuma peladas ainda. Entre em uma nova ou crie sua propria pelada para começar a jogar.',
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -54,8 +53,8 @@ class ErroEventPage extends StatelessWidget {
               ButtonTextWidget(
                 text: "Buscar Pelada",
                 width: dimensions.width,
-                icon: AppIcones.apito,
-                action: () => context.push('/explore/map'),
+                icon: Icons.search,
+                action: () => context.go('/explore/map'),
               ),
               ButtonOutlineWidget(
                 text: "Criar Pelada",

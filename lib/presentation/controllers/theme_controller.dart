@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/theme/app_colors.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/theme/app_colors.dart';
 
 class ThemeController extends ChangeNotifier {
   //GETTER - INSTANCIA DE CONTROLLER DE EVENTOS

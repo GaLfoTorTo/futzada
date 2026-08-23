@@ -1,6 +1,6 @@
-import 'package:futzada/core/api/api_client.dart';
-import 'package:futzada/core/api/api_response.dart';
-import 'package:futzada/core/api/api_routes.dart';
+import 'package:esportly/core/api/api_client.dart';
+import 'package:esportly/core/api/api_response.dart';
+import 'package:esportly/core/api/api_routes.dart';
 
 class AuthService { 
   //CLIENT HTTP

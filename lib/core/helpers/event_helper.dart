@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
 
 class EventHelper {
   //FUNÇÃO PARA RESGATAR NOME COMPLETO DO USUARIO
@@ -75,7 +75,7 @@ class EventHelper {
           },
           {
             'label': "Árbitro",
-            'icon': AppIcones.apito,
+            'icon': Icons.sports,
             'value' : event.gameConfig!.config!["refereerId"] != null ? "Sim" : "Não",
           },
         ];
@@ -108,7 +108,7 @@ class EventHelper {
           },
           {
             'label': "Árbitro",
-            'icon': AppIcones.apito,
+            'icon': Icons.sports,
             'value' : event.gameConfig!.config!["refereerId"] != null ? "Sim" : "Não",
           },
         ];
@@ -141,7 +141,7 @@ class EventHelper {
           },
           {
             'label': "Árbitro",
-            'icon': AppIcones.apito,
+            'icon': Icons.sports,
             'value' : event.gameConfig!.config!["refereerId"] != null ? "Sim" : "Não",
           },
         ];

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_rule.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_rule.dart';
 
 class EventRulesPage extends StatefulWidget {
   const EventRulesPage({

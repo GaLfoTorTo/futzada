@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/di/modules/session.dart';
-import 'package:futzada/core/providers/app_session_provider.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/presentation/controllers/user_controller.dart';
-import 'package:futzada/presentation/controllers/home_controller.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/di/modules/session.dart';
+import 'package:esportly/core/providers/app_session_provider.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/presentation/controllers/user_controller.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
 
 
 class AppController extends ChangeNotifier {
@@ -37,7 +37,7 @@ class AppController extends ChangeNotifier {
     try {
       await registerSession(user);
       await registerEvents(user);
-      registerLocation();
+      await registerLocation();
       userController.init();
       homeController.init();
       final session = sl<ProviderContainer>().read(appSessionProvider.notifier);

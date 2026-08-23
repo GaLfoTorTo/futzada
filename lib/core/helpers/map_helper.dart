@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 
 class MapHelper {
 

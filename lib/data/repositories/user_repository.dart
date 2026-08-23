@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/api/api_response.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/services/user_service.dart';
+import 'package:esportly/core/api/api_response.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/services/user_service.dart';
 
 class UserRepository {
   //SERVIÇOS - USUARIO, CACHE LOCAL

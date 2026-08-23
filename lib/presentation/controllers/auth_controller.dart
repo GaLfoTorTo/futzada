@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/di/service_locator.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:futzada/core/storage/app_storage.dart';
-import 'package:futzada/core/providers/app_session_provider.dart';
+import 'package:esportly/core/storage/app_storage.dart';
+import 'package:esportly/core/providers/app_session_provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:futzada/data/services/auth_service.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/presentation/controllers/app_controller.dart';
-import 'package:futzada/presentation/controllers/theme_controller.dart';
+import 'package:esportly/data/services/auth_service.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/presentation/controllers/app_controller.dart';
+import 'package:esportly/presentation/controllers/theme_controller.dart';
 
 class AuthController{
   //CONTROLLERS - AUTH E THEME
@@ -91,7 +91,7 @@ class AuthController{
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       if (googleAuth.idToken == null) throw('Houve um erro ao tentar efetuar login, tente novamente.');
       
-      //BUSCAR USUARIO NA BASE DO FUTZADA
+      //BUSCAR USUARIO NA BASE DO esportly
       final formData = {
         "id_token" : googleAuth.idToken,
         "type" : 'google'
@@ -108,10 +108,11 @@ class AuthController{
     } catch (e) {
       await googleSignIn.signOut();
       await removeUser();
+      rethrow;
     }
   }
 
-  //FUNÇÃO DE LOGIN (BASE FUTZADA)
+  //FUNÇÃO DE LOGIN (BASE esportly)
   Future<void>platform() async {
     //TENTAR LOGAR
     try {
@@ -124,12 +125,14 @@ class AuthController{
       final resp = await authService.userFetchLogin(formData);
       if (resp.status != 200) {
         await removeUser();
+        throw Exception(resp.message);
       }
 
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE (AGUARDAR COMPLETAMENTE)
       await saveUser(resp.data);
-    } catch (_) {
-      removeUser();
+    } catch (e) {
+      await removeUser();
+      rethrow;
     }
   }
   

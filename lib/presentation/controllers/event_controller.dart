@@ -1,20 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/api/api_client.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/news_service.dart';
-import 'package:futzada/data/services/avaliation_service.dart';
-import 'package:futzada/data/repositories/event_repository.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_config_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_overview_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_participants_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_rank_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_register_mixin.dart';
-import 'package:futzada/presentation/controllers/mixin/event/event_rule_mixin.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/api/api_client.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/news_service.dart';
+import 'package:esportly/data/services/avaliation_service.dart';
+import 'package:esportly/data/repositories/event_repository.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_config_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_overview_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_participants_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_rank_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_register_mixin.dart';
+import 'package:esportly/presentation/controllers/mixin/event/event_rule_mixin.dart';
 
 abstract class EventBase {
   EventRepository get eventRepository;

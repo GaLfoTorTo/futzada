@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/services/economy_service.dart';
-import 'package:futzada/data/services/escalation_service.dart';
-import 'package:futzada/data/models/manager_model.dart';
+import 'package:esportly/data/services/economy_service.dart';
+import 'package:esportly/data/services/escalation_service.dart';
+import 'package:esportly/data/models/manager_model.dart';
 
 class ManagerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

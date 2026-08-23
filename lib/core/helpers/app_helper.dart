@@ -4,10 +4,12 @@ import 'dart:io' as io;
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/widget/alerts/alert_widget.dart';
+import 'package:dio/dio.dart';
+import 'package:esportly/core/api/api_exception.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/widget/alerts/alert_widget.dart';
 
 class AppHelper {
   //VERIFICAÇÃO DE COMPLEXIDADE DE SENHAS
@@ -301,6 +303,16 @@ class AppHelper {
     //ADICIONAR OVERLAY NA PAGINA
     overlay.insert(entry);
     Future.delayed(Duration(seconds: duration), () => entry.remove());
+  }
+
+  //FUNÇÃO PARA EXTRAIR MENSAGEM LEGÍVEL DE QUALQUER EXCEÇÃO CAPTURADA
+  static String extractErrorMessage(dynamic e, {String fallback = 'Houve um erro, tente novamente!'}) {
+    if (e is DioException && e.error is ApiException) {
+      return (e.error as ApiException).message;
+    }
+    if (e is ApiException) return e.message;
+    if (e is String && e.isNotEmpty) return e;
+    return fallback;
   }
 
   //FUNÇÃO PARA MOSTRAR ALERTA DE ERRO

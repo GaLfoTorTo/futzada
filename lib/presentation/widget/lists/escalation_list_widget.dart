@@ -1,8 +1,8 @@
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/core/helpers/event_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/helpers/event_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_escalation_list_widget.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_escalation_list_widget.dart';
 
 class EscalationListWidget extends StatelessWidget {
   final String title;

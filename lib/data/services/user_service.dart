@@ -1,8 +1,8 @@
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/api/api_client.dart';
-import 'package:futzada/core/api/api_response.dart';
-import 'package:futzada/core/api/api_routes.dart';
-import 'package:futzada/data/models/user_model.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/api/api_client.dart';
+import 'package:esportly/core/api/api_response.dart';
+import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/data/models/user_model.dart';
 
 
 class UserService {

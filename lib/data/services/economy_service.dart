@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:faker/faker.dart' as fakerData;
-import 'package:futzada/data/models/economy_model.dart';
+import 'package:esportly/data/models/economy_model.dart';
 
 class EconomyService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

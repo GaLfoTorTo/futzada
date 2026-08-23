@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
-import 'package:futzada/data/models/result_model.dart';
+import 'package:esportly/data/models/result_model.dart';
 
 class ResultService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

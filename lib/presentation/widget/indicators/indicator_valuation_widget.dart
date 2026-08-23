@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
 
 class IndicatorValuationWidget extends StatelessWidget {
   final double? points;

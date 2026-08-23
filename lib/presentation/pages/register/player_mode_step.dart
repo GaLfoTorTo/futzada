@@ -1,19 +1,19 @@
-import 'package:futzada/core/helpers/modality_helper.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/helpers/app_helper.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:futzada/presentation/controllers/register_controller.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/cards/card_info_widget.dart';
-import 'package:futzada/presentation/widget/badges/position_widget.dart';
-import 'package:futzada/presentation/widget/inputs/select_rounded_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_circular_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_outline_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/controllers/register_controller.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/cards/card_info_widget.dart';
+import 'package:esportly/presentation/widget/badges/position_widget.dart';
+import 'package:esportly/presentation/widget/inputs/select_rounded_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_circular_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_outline_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class PlayerModeStep extends StatefulWidget {
   const PlayerModeStep({super.key});
@@ -115,7 +115,7 @@ class PlayerModeStepState extends State<PlayerModeStep> {
     if(registerController.bestSideController.text.isNotEmpty && registerController.positions.isNotEmpty && registerController.mainPositions.isNotEmpty){
       registerController.playerChecked = true;
       //RETORNAR PARA APRESENTAÇÃO DOS MODOS
-      context.go("/register");
+      context.go("/register/dados_basicos");
     }else{
       AppHelper.feedbackMessage(context, "Informe o seu melhor lado e escolha as posições que você atua em cada modalidade.");
     }

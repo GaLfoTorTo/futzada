@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/providers/navigation_provider.dart';
-import 'package:futzada/presentation/widget/showcase/wizard_widget.dart';
-import 'package:futzada/presentation/controllers/navigation_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/providers/navigation_provider.dart';
+import 'package:esportly/presentation/widget/showcase/wizard_widget.dart';
+import 'package:esportly/presentation/controllers/navigation_controller.dart';
 
 class NavigationBarWidget extends ConsumerWidget {
   final int selectedIndex;
@@ -46,7 +46,9 @@ class NavigationBarWidget extends ConsumerWidget {
           //RENDERIZAR BOTÕES DE TAB
           final key = item.key;
           final option = item.value;
+          double size = option['icon'] == Icons.sports ? 30 : 25;
           if(key == selectedIndex){
+            size = option['icon'] == Icons.sports ? 35 : 30;
             return WizardWidget(
               elementKey: option['key'],
               child: NavigationDestination(
@@ -59,7 +61,7 @@ class NavigationBarWidget extends ConsumerWidget {
                   child: Icon(
                     option['icon'],
                     color: AppColors.blue_500,
-                    size: 30
+                    size: size
                   ),
                 ),
                 label: option['label']
@@ -71,7 +73,7 @@ class NavigationBarWidget extends ConsumerWidget {
             child: NavigationDestination(
               icon: Icon(
                 option['icon'],
-                size: 25
+                size: size
               ),
               label: option['label']
             ),

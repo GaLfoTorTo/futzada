@@ -1,14 +1,16 @@
+import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_images.dart';
-import 'package:futzada/core/helpers/loading_overlay.dart';
-import 'package:futzada/presentation/widget/buttons/button_svg_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/presentation/controllers/auth_controller.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_images.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/helpers/loading_overlay.dart';
+import 'package:esportly/presentation/widget/buttons/button_svg_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/controllers/auth_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   //FUNÇÃO DE CHAMADA DE OVERLAY E LOGIN
-  void logar(type){
+  Future<void> logar(type) async {
     //RESGATAR O FORMULÁRIO
     var formData = formKey.currentState;
     //VERIFICAR SE DADOS DA ETAPA FORAM PREENCHIDOS CORRETAMENTE
@@ -44,11 +46,17 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
     //EXIBIR OVERLAY DE CARREGAMENTO
-    LoadingOverlay.show(
-      context,
-      () async => await authController.login(type: type),
-      barrierColor: AppColors.dark_700.withAlpha(179),
-    );
+    try {
+      await LoadingOverlay.show(
+        context,
+        () async => await authController.login(type: type),
+        barrierColor: AppColors.dark_700.withAlpha(179),
+      );
+    } catch (e) {
+      if (mounted) {
+        AppHelper.feedbackMessage(context, AppHelper.extractErrorMessage(e));
+      }
+    }
   }
 
   //FUNÇÃO DE VALIDAÇÃO DE CAMPOS 
@@ -71,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
       {
         'name': 'user',
         'hint': 'Usuário ou E-mail',
-        'prefixIcon' : AppIcones.user_outline,
+        'prefixIcon' : Icons.person,
         'sufixIcon' : null,
         'controller': authController.userController,
         'validator': validateField
@@ -79,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
       {
         'name':'password',
         'hint': 'Senha',
-        'prefixIcon' : AppIcones.lock_outline,
+        'prefixIcon' : Icons.lock,
         'sufixIcon' : Icons.visibility_off,
         'controller': authController.passwordController,
         'validator': validateField,
@@ -111,25 +119,24 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               SizedBox(
                 width: double.maxFinite,
-                height: 250,
+                height: 300,
                 child: Column(
+                  spacing: 10,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left:40),
                       child: SvgPicture.asset(
                         AppIcones.logo,
-                        width: 130,
-                        height: 130,
+                        width: 150,
+                        height: 150,
                       ),
                     ),
-                    const Text(
-                      'Futzada',
-                      style: TextStyle(
-                        color: AppColors.blue_500,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                      ),
+                    Text(
+                      'E-sportly',
+                      style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                        fontSize: 30,
+                        color: AppColors.blue_500
+                      )
                     ),
                   ],
                 ),
@@ -139,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Form(
                   key: formKey,
                   child: Column(
+                    spacing: 5,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ...inputs.map((input){
@@ -156,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                       }),
                       ButtonTextWidget(
                         text: "Entrar",
+                        textSize: 20,
                         textColor: AppColors.white,
                         backgroundColor: AppColors.blue_500,
                         width: double.infinity,
@@ -167,6 +176,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               Container(
                 width: double.maxFinite,
+                height: 100,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   'Esqueceu sua senha?',
@@ -175,39 +185,6 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: TextDecoration.underline,
                     decorationColor: AppColors.blue_500
                   ),
-                ),
-              ),
-              SizedBox(
-                width: double.maxFinite,
-                height: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Ainda não possui uma conta ?',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: AppColors.white,
-                      ),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateColor.resolveWith((color){
-                          return AppColors.green_300.withAlpha(0);
-                        })
-                      ),
-                      child: Text(
-                        'Cadastre-se',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: AppColors.blue_500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.blue_500
-                        ),
-                      ),
-                      onPressed: (){
-                        context.push('/register/onboarding');
-                      },
-                    ),
-                  ],
                 ),
               ),
               SizedBox(
@@ -223,12 +200,20 @@ class _LoginPageState extends State<LoginPage> {
                       height: 60,
                       action: () => logar('google')
                     ),
-                    ButtonSvgWidget(
+                    ButtonIconWidget(
+                      icon: AppIcones.user_plus_solid,
+                      iconSize: 30,
+                      iconColor: AppColors.grey_700,
+                      backgroundColor: AppColors.white,
+                      padding: 15,
+                      action: () => context.push('/register/onboarding')
+                    ),
+                    /* ButtonSvgWidget(
                       icon: AppIcones.facebook,
                       width: 60,
                       height: 60,
                       action: () => logar('facebook')
-                    ),
+                    ), */
                   ],
                 ),
               )

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/presentation/widget/buttons/float_button_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
-import 'package:futzada/presentation/controllers/explorer_controller.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/presentation/pages/explore/map/map_widget.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/widget/buttons/float_button_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/presentation/controllers/explorer_controller.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/presentation/pages/explore/map/map_widget.dart';
 
 class MapExplorePage extends StatefulWidget {
   const MapExplorePage({super.key});
@@ -27,14 +27,16 @@ class _MapExplorePageState extends State<MapExplorePage> {
     super.initState();
     //INICIALIZAR CONTROLLER DE EXPLORER (singleton compartilhado via GetIt)
     exploreController = sl<ExplorerController>();
-    //INICIALIZAR CONTROLLER DE MAP (CUSTOM)
+    //INICIALIZAR CONTROLLER DE MAP (CUSTOM) e registrar no GetIt
     mapWidgetController = MapWidgetController()..init();
+    sl.registerSingleton<MapWidgetController>(mapWidgetController);
   }
 
   @override
   void dispose() {
     //NÃO dispõe exploreController — é singleton gerenciado pelo GetIt
-    //REMOVER CONTROLLER DE MAP (CUSTOM)
+    //REMOVER CONTROLLER DE MAP (CUSTOM) do GetIt e dispor
+    if (sl.isRegistered<MapWidgetController>()) sl.unregister<MapWidgetController>();
     mapWidgetController.dispose();
     super.dispose();
   }
@@ -62,7 +64,7 @@ class _MapExplorePageState extends State<MapExplorePage> {
         if (!mapWidgetController.isLoaded) {
           return const Center(child: IndicatorLoadingWidget());
         }else{
-          return const MapWidget();
+          return MapWidget(mapWidgetController: mapWidgetController);
         }
       }),
       floatingActionButton: Column(
@@ -86,8 +88,8 @@ class _MapExplorePageState extends State<MapExplorePage> {
               icon: Icons.my_location_rounded,
               onPressed: () => mapWidgetController.moveMapCurrentUser(
                 LatLng(
-                  mapWidgetController.currentPosition!.latitude, 
-                  mapWidgetController.currentPosition!.longitude
+                  mapWidgetController.currentPosition.latitude, 
+                  mapWidgetController.currentPosition.longitude
                 ),
               ),
             ),

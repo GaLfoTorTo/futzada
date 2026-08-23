@@ -2,10 +2,10 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/participant_model.dart';
-import 'package:futzada/data/models/team_model.dart';
-import 'package:futzada/data/models/game_event_model.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/participant_model.dart';
+import 'package:esportly/data/models/team_model.dart';
+import 'package:esportly/data/models/game_event_model.dart';
 
 class GameEventService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)

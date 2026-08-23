@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/helpers/modality_helper.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
 
 class CardGameWidget extends ConsumerStatefulWidget {
   final double? width;

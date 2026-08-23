@@ -1,16 +1,16 @@
-import 'package:futzada/presentation/widget/indicators/indicator_loading_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/presentation/controllers/explorer_controller.dart';
-import 'package:futzada/presentation/controllers/map_controller.dart';
-import 'package:futzada/presentation/widget/cards/card_event_search_widget.dart';
-import 'package:futzada/presentation/widget/bars/header_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
-import 'package:futzada/presentation/widget/buttons/button_dropdown_widget.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/presentation/controllers/explorer_controller.dart';
+import 'package:esportly/presentation/controllers/map_controller.dart';
+import 'package:esportly/presentation/widget/cards/card_event_search_widget.dart';
+import 'package:esportly/presentation/widget/bars/header_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/presentation/widget/buttons/button_dropdown_widget.dart';
 
 class ExploreSearchPage extends StatefulWidget {
   const ExploreSearchPage({super.key});

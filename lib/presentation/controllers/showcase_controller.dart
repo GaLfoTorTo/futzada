@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/storage/app_storage.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/storage/app_storage.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class ShowcaseController extends ChangeNotifier {
@@ -44,7 +44,7 @@ class ShowcaseController extends ChangeNotifier {
     'start': {
       'key': GlobalKey(),
       'title': 'Boas Vindas',
-      'description': 'Olá, sejá bem vindo ao Futzada sua plataforma esportiva personalizada. Aqui, você tem tudo o que precisa para aprimorar sua diversão com seus amigos.',
+      'description': 'Olá, sejá bem vindo ao esportly sua plataforma esportiva personalizada. Aqui, você tem tudo o que precisa para aprimorar sua diversão com seus amigos.',
       'subDescription': 'Vamos juntos? Que tal um tuor pela sua nova experiência esportiva?',
       'progress': 0.0,
     },
@@ -162,8 +162,9 @@ class ShowcaseController extends ChangeNotifier {
     isCompleted = true;
     //MARCAR SHOW CASE COMO TRUE
     AppStorage.write('tutorial', true);
-    ShowcaseView.get().unregister();
-    ShowcaseView.get().dismiss();
+    final view = ShowcaseView.get();
+    view.dismiss();
+    view.unregister();
   }
 
   //FUNÇÃO PARA REINICIAR SHOWCASES

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/providers/game/game_match_provider.dart';
-import 'package:futzada/presentation/widget/indicators/stats_game_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/providers/game/game_match_provider.dart';
+import 'package:esportly/presentation/widget/indicators/stats_game_widget.dart';
 
 class GameStatisticsPage extends ConsumerWidget {
   const GameStatisticsPage({super.key});

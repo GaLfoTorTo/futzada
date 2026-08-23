@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/data/models/address_model.dart';
-import 'package:futzada/presentation/controllers/address_controller.dart';
-import 'package:futzada/presentation/widget/buttons/button_text_widget.dart';
+import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/presentation/controllers/address_controller.dart';
+import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class DialogAlertAddress extends StatelessWidget {
   final AddressModel suggestion;

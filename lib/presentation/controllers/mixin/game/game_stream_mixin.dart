@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/data/models/game_model.dart';
-import 'package:futzada/data/models/snapshot_model.dart';
-import 'package:futzada/data/models/game_event_model.dart';
-import 'package:futzada/data/services/game_stream_service.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/data/models/game_model.dart';
+import 'package:esportly/data/models/snapshot_model.dart';
+import 'package:esportly/data/models/game_event_model.dart';
+import 'package:esportly/data/services/game_stream_service.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 mixin GameStreamMixin on ChangeNotifier implements GameBase {
   //RESGATAR SERVIÇO DE STREAM

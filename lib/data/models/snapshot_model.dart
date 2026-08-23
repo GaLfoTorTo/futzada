@@ -1,4 +1,4 @@
-import 'package:futzada/core/enum/enums.dart';
+import 'package:esportly/core/enum/enums.dart';
 
 class SnapshotModel {
   final SnapshotType type;

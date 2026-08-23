@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/presentation/controllers/game_controller.dart';
+import 'package:esportly/presentation/controllers/game_controller.dart';
 
 //===MIXIN - VOTES===
 mixin GameVotesMixin on ChangeNotifier implements GameBase {

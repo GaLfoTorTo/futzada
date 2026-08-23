@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/theme/app_images.dart';
+import 'package:esportly/core/theme/app_images.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class AppColors {

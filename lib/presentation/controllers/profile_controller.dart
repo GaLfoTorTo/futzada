@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/repositories/event_repository.dart';
-import 'package:futzada/data/repositories/user_repository.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/repositories/event_repository.dart';
+import 'package:esportly/data/repositories/user_repository.dart';
 
 class ProfileController extends ChangeNotifier {
   ProfileController();

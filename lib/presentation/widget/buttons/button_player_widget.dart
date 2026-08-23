@@ -1,14 +1,14 @@
-import 'package:futzada/data/models/rating_model.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
+import 'package:esportly/data/models/rating_model.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/models/player_model.dart';
-import 'package:futzada/presentation/controllers/escalation_controller.dart';
-import 'package:futzada/presentation/widget/bottomSheet/bottomsheet_player.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_valuation_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_player.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_valuation_widget.dart';
 
 class ButtonPlayerWidget extends StatelessWidget {
   final int index;

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:futzada/core/di/service_locator.dart';
-import 'package:futzada/data/models/user_model.dart';
-import 'package:futzada/data/services/chat_service.dart';
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/services/chat_service.dart';
 
 class ChatController extends ChangeNotifier {
   //DEFINIR CONTROLLER UNICO NO GETIT

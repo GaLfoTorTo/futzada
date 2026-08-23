@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:futzada/core/enum/enums.dart';
-import 'package:futzada/presentation/pages/erros/erro_participants_page.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/theme/app_icones.dart';
-import 'package:futzada/core/theme/app_size.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/core/helpers/user_helper.dart';
-import 'package:futzada/presentation/widget/images/img_circle_widget.dart';
-import 'package:futzada/presentation/widget/badges/position_widget.dart';
-import 'package:futzada/presentation/widget/inputs/input_text_widget.dart';
+import 'package:esportly/core/enum/enums.dart';
+import 'package:esportly/presentation/pages/event/error/erro_participants_page.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/theme/app_size.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/badges/position_widget.dart';
+import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class EventParticipantsPage extends StatelessWidget {

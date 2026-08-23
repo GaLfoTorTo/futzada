@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:futzada/core/theme/app_colors.dart';
-import 'package:futzada/core/helpers/img_helper.dart';
-import 'package:futzada/core/helpers/date_helper.dart';
-import 'package:futzada/data/models/event_model.dart';
-import 'package:futzada/data/services/avaliation_service.dart';
-import 'package:futzada/presentation/controllers/event_controller.dart';
-import 'package:futzada/core/providers/game/game_schedule_provider.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_avaliacao_widget.dart';
-import 'package:futzada/presentation/widget/indicators/indicator_live_widget.dart';
+import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/core/helpers/img_helper.dart';
+import 'package:esportly/core/helpers/date_helper.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/avaliation_service.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_avaliacao_widget.dart';
+import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
 
 class CardEventListWidget extends ConsumerWidget {
   final EventModel event;
