@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiRoutes {
@@ -30,7 +30,7 @@ class ApiRoutes {
   static const eventEdit = 'event/edit/';
   static const eventDelete = 'event/delete/';
   //ROTAS DE MAPAS
-  static String get map => WidgetsBinding.instance.platformDispatcher.platformBrightness == Brightness.dark
+  static String mapUrl(Brightness brightness) => brightness == Brightness.dark
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
     : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png";
   static const alternativeMap = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';

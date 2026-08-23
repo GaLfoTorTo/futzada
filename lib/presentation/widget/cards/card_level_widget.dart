@@ -18,7 +18,7 @@ class CardLevelWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     //RESGATAR TEMA PERSONALIZADO PARA MODALIDADE PRINCIPAL DO USUARIO
-    final modalityInfo = ModalityHelper.getEventModalityColor(user.config?.mainModality!.name ?? 'Football');
+    final modalityInfo = ModalityHelper.getEventModalityColor(user.config?.mainModality?.name ?? 'Football');
     final modalityColor = modalityInfo['color'];
     final modalityTextColor = modalityInfo['textColor'];
     final modalityImage = modalityInfo['image'];

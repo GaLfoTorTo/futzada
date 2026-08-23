@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: CardLevelWidget(
-              user: user!
+              user: user
             ),
           )
         ],

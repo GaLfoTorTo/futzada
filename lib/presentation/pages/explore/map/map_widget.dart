@@ -55,7 +55,7 @@ class _MapWidgetState extends State<MapWidget> {
           const ErroPermissionPage()
         ]else...[
           TileLayer(
-            urlTemplate: ApiRoutes.map,
+            urlTemplate: ApiRoutes.mapUrl(Theme.of(context).brightness),
             subdomains: const ['a', 'b', 'c', 'd'],
           ),
           //POSIÇÃO ATUAL DO USUARIO

@@ -507,7 +507,7 @@ class _EventHomePageState extends State<EventHomePage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: ApiRoutes.map,
+                      urlTemplate: ApiRoutes.mapUrl(Theme.of(context).brightness),
                       userAgentPackageName: 'com.example.esportly',
                       subdomains: const ['a', 'b', 'c', 'd'],
                     ),

@@ -16,7 +16,7 @@ class EventService {
   //FUNÇÃO DE BUSCA DE TODOS OS EVENTOS
   Future<List<EventModel>> fetchEvents() async{
     final resp = await apiClient.get(ApiRoutes.events);
-    final events = resp.data ?? [];
+    final events = resp.data['events'] ?? [];
     return events
       .map<EventModel>((e) => EventModel.fromMap(e))
       .toList();

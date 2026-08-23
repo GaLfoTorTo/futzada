@@ -41,7 +41,7 @@ class AuthController{
   }
 
   //FUNÇÃO SE SALVAMENTO DE USUARIO LOCAL
-  Future<void>saveUser(Map<String, dynamic> resp)async{
+  Future<void>saveUser(Map<String, dynamic> resp) async{
     try {
       final UserModel user = UserModel.fromMap(resp['user']);
       final String token = resp['token'];
@@ -130,7 +130,9 @@ class AuthController{
 
       //SALVAR INFORMAÇÕES DO USUÁRIO LOCALMENTE (AGUARDAR COMPLETAMENTE)
       await saveUser(resp.data);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print(e);
+      print(stackTrace);
       await removeUser();
       rethrow;
     }
