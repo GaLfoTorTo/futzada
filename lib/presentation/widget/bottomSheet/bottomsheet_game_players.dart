@@ -69,11 +69,7 @@ class _BottomSheetGamePlayersState extends ConsumerState<BottomSheetGamePlayers>
   Widget build(BuildContext context) {
     final modality = ref.read(gameSessionProvider).event?.modality?.name ?? '';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
-      ),
+    return SizedBox(
       child: Column(
         children: [
           Padding(

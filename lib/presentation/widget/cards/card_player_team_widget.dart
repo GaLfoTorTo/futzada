@@ -77,9 +77,10 @@ class _CardPlayerTeamWidgetState extends ConsumerState<CardPlayerTeamWidget> {
                     size: 20,
                   ),
                 ),
-                PositionWidget(
-                  position: widget.user.player!.mainPosition[widget.modality]!,
-                )
+                if (widget.user.player!.getMainPosition(widget.modality) != null)
+                  PositionWidget(
+                    position: widget.user.player!.getMainPosition(widget.modality)!.alias,
+                  )
               ]
             ),
           ],

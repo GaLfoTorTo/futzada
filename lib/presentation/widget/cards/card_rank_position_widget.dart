@@ -121,13 +121,14 @@ class CardRankPositionWidget extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
-                        PositionWidget(
-                          position: user.player!.mainPosition[event.modality!.name]!,
-                          mainPosition: true,
-                          width: 35,
-                          height: 25,
-                          textSide: 10,
-                        ),
+                        if (user.player!.getMainPosition(event.modality!.name) != null)
+                          PositionWidget(
+                            position: user.player!.getMainPosition(event.modality!.name)!.alias,
+                            mainPosition: true,
+                            width: 35,
+                            height: 25,
+                            textSide: 10,
+                          ),
                       ],
                     ),
                   ),

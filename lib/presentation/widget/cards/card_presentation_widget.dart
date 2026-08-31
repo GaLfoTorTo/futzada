@@ -67,14 +67,16 @@ class CardPresentationWidget extends StatelessWidget {
                         size: 20,
                         color: AppColors.blue_500,
                       ),
-                      Text(
-                        MapHelper.getLocation(),
-                        style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                          color: AppColors.blue_500
+                      Expanded(
+                        child: Text(
+                          MapHelper.getLocation(),
+                          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                            color: AppColors.blue_500
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

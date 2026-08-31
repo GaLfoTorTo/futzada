@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
-class HistoricPage extends StatefulWidget {
+class HistoricPage extends ConsumerWidget {
   const HistoricPage({super.key});
 
   @override
-  State<HistoricPage> createState() => _HistoricPageState();
-}
-
-class _HistoricPageState extends State<HistoricPage> {
-  @override
-  Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE CHAT
-    var controller = EscalationController.instance;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(escalationSessionProvider);
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -24,20 +19,11 @@ class _HistoricPageState extends State<HistoricPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
-              children: [
-                ListenableBuilder(listenable: controller, builder: (_, __){
-                  
-                  return Column(
-                    children: controller.myEscalations.map((entry) {
-                      //RESGATAR ITENS 
-                      //Map<String, dynamic> item = entry;
-                      return  Container();
-                    }).toList(),
-                  );
-                }),
-              ]
+              children: session.escalations.map((entry) {
+                return Container();
+              }).toList(),
             ),
           ),
         ),

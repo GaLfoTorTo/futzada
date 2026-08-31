@@ -58,7 +58,9 @@ class UserConfigModel {
     return UserConfigModel(
       id: map['id'] as int,
       userId : map['userId'] as int,
-      mainModality : map['mainModality'] != null ? Modality.values.byName(map['mainModality']) : null,
+      mainModality : (map['mainModality']) != null
+        ? Modality.values.byName(map['mainModality'])
+        : null,
       modalities: map['modalities'] != null
         ? (map['modalities'] as List)
             .map((e) => Modality.values.byName(e))

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_size.dart';
-import 'package:esportly/core/theme/app_images.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:esportly/core/helpers/img_helper.dart';
 
-class ButtonDropdownIconWidget extends StatelessWidget {
-  final dynamic selectedItem;
-  final List<dynamic> items;
-  final Function onChange;
+class ButtonDropdownIconWidget<T> extends StatelessWidget {
+  final T? selectedItem;
+  final List<T> items;
+  final ValueChanged<T?> onChange;
+  final String Function(T) labelBuilder;
+  final Widget? Function(T)? iconBuilder;
   final double? width;
   final double? menuWidth;
   final double? menuHeight;
@@ -25,6 +24,8 @@ class ButtonDropdownIconWidget extends StatelessWidget {
     required this.selectedItem,
     required this.items,
     required this.onChange,
+    required this.labelBuilder,
+    this.iconBuilder,
     this.width = 150,
     this.menuWidth = 170,
     this.menuHeight = 200,
@@ -34,15 +35,14 @@ class ButtonDropdownIconWidget extends StatelessWidget {
     this.borderColor,
     this.iconSize = 10,
     this.iconAfter = true,
-    this.aligment = Alignment.center
+    this.aligment = Alignment.center,
   });
 
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       width: width,
-      alignment: aligment ?? null,
+      alignment: aligment,
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.transparent,
@@ -52,9 +52,9 @@ class ButtonDropdownIconWidget extends StatelessWidget {
           width: 1.0,
         ),
       ),
-      child: DropdownButton<dynamic>(
+      child: DropdownButton<T>(
         value: selectedItem,
-        onChanged: (dynamic newValue) => onChange(newValue),
+        onChanged: onChange,
         style: Theme.of(context).textTheme.displayMedium!.copyWith(
           color: textColor,
           fontSize: textSize,
@@ -64,74 +64,51 @@ class ButtonDropdownIconWidget extends StatelessWidget {
         icon: const SizedBox.shrink(),
         underline: Container(height: 0),
         menuWidth: menuWidth ?? width,
-        menuMaxHeight: menuHeight ?? null,
+        menuMaxHeight: menuHeight,
         hint: Text(
           'Selecione',
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.grey_300, fontSize: textSize),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            color: AppColors.grey_300,
+            fontSize: textSize,
+          ),
         ),
-        items: items.map<DropdownMenuItem<dynamic>>((item) {
-          //RESGATAR O VALUE E O TITULO DEPENDENDO DO TIPO DE DADO NA LISTA
-          final optionValue = item is Map<String, dynamic> ? item['id'] : item;
-          final optionTitle = item is Map<String, dynamic> ? item['title'] : item;
-          return DropdownMenuItem<dynamic>(
-            value: optionValue,
+        items: items.map<DropdownMenuItem<T>>((item) {
+          final icon = iconBuilder?.call(item);
+          return DropdownMenuItem<T>(
+            value: item,
             child: Padding(
-              padding: !iconAfter 
-                ? const EdgeInsets.only(right: 10) 
-                : const EdgeInsets.only(left: 10),
+              padding: !iconAfter
+                  ? const EdgeInsets.only(right: 10)
+                  : const EdgeInsets.only(left: 10),
               child: Row(
                 children: [
-                  if(item is Map<String, dynamic> && !iconAfter)...[
-                    if(item.containsKey('photo'))...[
-                      SizedBox(
-                        width: iconSize! * 3, 
-                        height: iconSize! * 3,
-                        child: CircleAvatar(
-                          backgroundImage: ImgHelper.getUserImg(item['photo']),
-                        ),
-                      ),
-                    ]else...[
-                      Icon(
-                        item['icon'],
-                        size: iconSize,
-                        color: item['color'],
-                      )
-                    ]
-                  ],
+                  if (icon != null && !iconAfter)
+                    SizedBox(
+                      width: iconSize! * 3,
+                      height: iconSize! * 3,
+                      child: icon,
+                    ),
                   Expanded(
                     child: Padding(
                       padding: iconAfter
-                        ? const EdgeInsets.only(right: 5)
-                        : const EdgeInsets.only(left: 5),
+                          ? const EdgeInsets.only(right: 5)
+                          : const EdgeInsets.only(left: 5),
                       child: Text(
-                        optionTitle.toString(),
+                        labelBuilder(item),
                         style: Theme.of(context).textTheme.displayMedium!.copyWith(
-                          fontSize: textSize
+                          fontSize: textSize,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
                     ),
                   ),
-                  if(item is Map<String, dynamic> && iconAfter)...[
-                    if(item.containsKey('photo'))...[
-                      SizedBox(
-                        width: iconSize! * 3, 
-                        height: iconSize! * 3,
-                        child: CircleAvatar(
-                          backgroundImage: item['photo'] != null
-                            ? CachedNetworkImageProvider(item['photo']!) 
-                            : const AssetImage(AppImages.userDefault) as ImageProvider,
-                        ),
-                      ),
-                    ]else...[
-                      Icon(
-                        item['icon'],
-                        size: iconSize,
-                        color: item['color'],
-                      )
-                    ]
-                  ],
+                  if (icon != null && iconAfter)
+                    SizedBox(
+                      width: iconSize! * 3,
+                      height: iconSize! * 3,
+                      child: icon,
+                    ),
                 ],
               ),
             ),

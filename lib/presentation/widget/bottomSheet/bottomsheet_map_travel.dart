@@ -15,10 +15,6 @@ class BottomSheetMapTravel extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
-      ),
       child: SingleChildScrollView(
         child: Column(
           spacing: 10,

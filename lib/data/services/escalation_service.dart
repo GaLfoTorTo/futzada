@@ -1,30 +1,18 @@
-import 'dart:math';
-import 'package:faker/faker.dart';
-import 'package:esportly/data/models/escalation_model.dart';
-import 'package:esportly/data/models/participant_model.dart';
+import 'package:esportly/core/api/api_client.dart';
+import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/di/service_locator.dart';
 
 class EscalationService {
-  //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
-  static var faker = Faker();
-  static var random = Random();
-
-  //FUNÇÃO DE GERAÇÃO DE ESCALAÇÃO DO USUARIO
-  EscalationModel generateEscalation(String category){
-    //RESGATAR LISTA DE FORMAÇÕES
-    List<String> listFormations = getFormations(category);
-    //DEFINIR ESCALAÇÃO
-    return EscalationModel.fromMap({
-      "id" : random.nextInt(2),
-      "eventId" : 1,
-      "managerId" : 1,
-      "formation" : listFormations[random.nextInt(listFormations.length)],
-      "starters" : setEscalation(category, 'starters'),
-      "reserves" : setEscalation(category, 'reserves'),
-      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
-      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
-    });
+  //CLIENTE HTTP
+  ApiClient apiClient = sl<ApiClient>();
+  
+  //REQUISIÇÃO - BUSCA DE PARTICIPANTS DO EVENTO
+  Future<List<UserModel?>> participantsFetch(int id) async{
+    //BUSCAR USUARIO
+    final resp = await apiClient.get(ApiRoutes.getUrl("${ApiRoutes.eventParticipants}/$id"));
+    return resp.data.map<UserModel?>((json) => UserModel.fromJson(json)).toList();
   }
-
 
   //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
   List<int?> setEscalation(String category, String occupation) {
@@ -61,7 +49,7 @@ class EscalationService {
   //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
   String getPositionName(int sectorIndex, String category, String formationString) {
     //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-    final formation = getFormationList(formationString);
+    final formation = getFormation(formationString);
     final totalGroups = formation.length;
     
     switch (category) {
@@ -79,7 +67,7 @@ class EscalationService {
   //FUNÇÃO PARA RESGATAR POSIÇÃO DO JOGADOR NA ESCALAÇÃO
   String getPositionEscalation(int index, String category, String formationString) {
     //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-    final formation = getFormationList(formationString);
+    final formation = getFormation(formationString);
     int sectorIndex = 0;
     //LOOP NO ARRAY DE FORMAÇÃOS
     for(int i = 0; i < formation.length; i++){
@@ -183,13 +171,13 @@ class EscalationService {
   }
   
   //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-  List<int> getFormationList(String formation) {
+  List<int> getFormation(String formation) {
     List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
     splitedFormation.insert(0, 1);
     return splitedFormation.reversed.toList();
   }
 
-  //FUNÇÃO PARA DEFINIR OS TIPOS DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
+  //FUNÇÃO DE OPÇÕES DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
   List<String> getFormations(String category){
     switch (category) {
       case 'Futebol':

@@ -1,264 +1,233 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/theme/app_size.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/providers/escalation/escalation_market_provider.dart';
 import 'package:esportly/presentation/widget/badges/position_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_dropdown_multi_widget.dart';
 import 'package:esportly/presentation/widget/inputs/input_checkbox_widget.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 import 'package:esportly/presentation/widget/buttons/button_dropdown_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:esportly/presentation/widget/inputs/select_rounded_widget.dart';
 
-class BottomSheetMarket extends StatefulWidget {
-
+class BottomSheetMarket extends ConsumerWidget {
   const BottomSheetMarket({super.key});
 
   @override
-  State<BottomSheetMarket> createState() => _BottomSheetMarketState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dimensions = MediaQuery.of(context).size;
+    final market = ref.watch(escalationMarketProvider);
 
-class _BottomSheetMarketState extends State<BottomSheetMarket> {
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  EscalationController escalationController = EscalationController.instance;
+    void selectFilter(String name, dynamic newValue) {
+      ref.read(escalationMarketProvider.notifier).setFilter(name, newValue);
+    }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
-  void selectFilter(String name, dynamic newValue){
-    setState(() {
-      escalationController.setFilter(name, newValue);
-          });
-  }
-
-  //FUNÇÃO PARA APLICAR CONFIGURAÇÕES DE FILTRO
-  void applyFilter(){
-    //FECHAR BOTTOM SHEET
-    Navigator.of(context).pop();
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    
-    //LISTA DE METRICAS DO CARD
-    List<Map<String, dynamic>> metricOptions = [
+    final List<Map<String, dynamic>> metricOptions = [
       {
-        'name':'price',
-        'label':'Preço',
+        'name': 'price',
+        'label': 'Preço',
         'icon': AppIcones.money_check_solid,
-        'selectedItem' : escalationController.filtrosMarket['price'],
-        'itens': escalationController.filterOptions['price'],
-        'width' : 3
+        'selectedItem': market.filtrosMarket['price'],
+        'itens': market.filterOptions['price'],
+        'width': 3,
       },
       {
-        'name':'media',
-        'label':'Média',
+        'name': 'media',
+        'label': 'Média',
         'icon': AppIcones.chart_line_solid,
-        'selectedItem' : escalationController.filtrosMarket['media'],
-        'itens': escalationController.filterOptions['media'],
-        'width' : 3
+        'selectedItem': market.filtrosMarket['media'],
+        'itens': market.filterOptions['media'],
+        'width': 3,
       },
       {
-        'name':'games',
-        'label':'Jogos',
+        'name': 'games',
+        'label': 'Jogos',
         'icon': AppIcones.clipboard_solid,
-        'selectedItem' : escalationController.filtrosMarket['game'],
-        'itens': escalationController.filterOptions['games'],
-        'width' : 3
+        'selectedItem': market.filtrosMarket['game'],
+        'itens': market.filterOptions['games'],
+        'width': 3,
       },
       {
-        'name':'lastPontuation',
-        'label':'Última Pontuação',
+        'name': 'lastPontuation',
+        'label': 'Última Pontuação',
         'icon': AppIcones.calculator_solid,
-        'selectedItem' : escalationController.filtrosMarket['lastPontuation'],
-        'itens': escalationController.filterOptions['lastPontuation'],
-        'width' : 2
+        'selectedItem': market.filtrosMarket['lastPontuation'],
+        'itens': market.filterOptions['lastPontuation'],
+        'width': 2,
       },
       {
-        'name':'valorization',
-        'label':'Valorização',
+        'name': 'valorization',
+        'label': 'Valorização',
         'icon': AppIcones.sort_amount_up_solid,
-        'selectedItem' : escalationController.filtrosMarket['valorization'],
-        'itens': escalationController.filterOptions['valorization'],
-        'width' : 2
+        'selectedItem': market.filtrosMarket['valorization'],
+        'itens': market.filterOptions['valorization'],
+        'width': 2,
       },
       {
-        'name':'nome',
-        'label':'Ordenar',
+        'name': 'nome',
+        'label': 'Ordenar',
         'icon': AppIcones.money_check_solid,
-        'selectedItem' : escalationController.filtrosMarket['nome'],
-        'itens': escalationController.filterPlayerOptions['nome'],
-        'width' : 2
+        'selectedItem': market.filtrosMarket['nome'],
+        'itens': market.filterPlayerOptions['nome'],
+        'width': 2,
       },
       {
-        'name':'status',
-        'label':'Status',
+        'name': 'status',
+        'label': 'Status',
         'icon': AppIcones.check_circle_solid,
-        'selectedItem' : escalationController.filtrosMarket['status'],
-        'itens': escalationController.filterOptions['status'],
-        'width' : 2
+        'selectedItem': market.filtrosMarket['status'],
+        'itens': market.filterOptions['status'],
+        'width': 2,
       },
-    ];
-    
-    //LISTA DE MELHOR PÉ
-    List<Map<String, dynamic>> bestSideOptions = [
-      {'value': 'Esquerda', 'icon': AppIcones.foot_left_solid, 'checked': escalationController.filtrosMarket['bestSide'] == 'Esquerda' ? true : false},
-      {'value': 'Direita', 'icon': AppIcones.foot_right_solid, 'checked': escalationController.filtrosMarket['bestSide'] == 'Direita' ? true : false},
-    ];
-    
-    //LISTA DE STATUS DISPONIVEIS
-    List<Map<String, dynamic>> positionsOptions = [
-      {'label': 'ATA','value': 'ata', 'checked': escalationController.filtrosMarket['positions'].contains('ATA') ? true : false},
-      {'label': 'MEI','value': 'mei', 'checked': escalationController.filtrosMarket['positions'].contains('MEI') ? true : false},
-      {'label': 'ZAG','value': 'zag', 'checked': escalationController.filtrosMarket['positions'].contains('ZAG') ? true : false},
-      {'label': 'GOL','value': 'gol', 'checked': escalationController.filtrosMarket['positions'].contains('GOL') ? true : false},
     ];
 
-    return  SingleChildScrollView(
+    final List<Map<String, dynamic>> bestSideOptions = [
+      {
+        'value': 'Esquerda',
+        'icon': AppIcones.foot_left_solid,
+        'checked': market.filtrosMarket['bestSide'] == 'Esquerda',
+      },
+      {
+        'value': 'Direita',
+        'icon': AppIcones.foot_right_solid,
+        'checked': market.filtrosMarket['bestSide'] == 'Direita',
+      },
+    ];
+
+    final List<Map<String, dynamic>> positionsOptions = [
+      {'label': 'ATA', 'value': 'ata', 'checked': market.filtrosMarket['positions'].contains('ATA')},
+      {'label': 'MEI', 'value': 'mei', 'checked': market.filtrosMarket['positions'].contains('MEI')},
+      {'label': 'ZAG', 'value': 'zag', 'checked': market.filtrosMarket['positions'].contains('ZAG')},
+      {'label': 'GOL', 'value': 'gol', 'checked': market.filtrosMarket['positions'].contains('GOL')},
+    ];
+
+    return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Theme.of(context).dialogTheme.backgroundColor,
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
-        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              child: Column(
-                children: [
-                  Text(
-                    'Filtros',
-                    style: Theme.of(context).textTheme.headlineLarge,
+            Column(
+              children: [
+                Text('Filtros', style: Theme.of(context).textTheme.headlineLarge),
+                SizedBox(
+                  width: dimensions.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text('Metricas', style: Theme.of(context).textTheme.titleMedium),
+                      ),
+                      Wrap(
+                        spacing: 10,
+                        children: metricOptions.map((item) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: Text(
+                                  item['label'],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall!
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              if (item['label'] == 'Status') ...[
+                                ButtonDropdownMultiWidget(
+                                  selectedItems: market.filtrosMarket['status'] as List<dynamic>,
+                                  items: market.filterOptions['status'] as List<dynamic>,
+                                  onChanged: (newValue) => selectFilter('status', newValue),
+                                  textSize: AppSize.fontSm,
+                                  borderColor: AppColors.grey_300,
+                                  width: (dimensions.width / 2) - 20,
+                                ),
+                              ] else ...[
+                                ButtonDropdownWidget(
+                                  width: (dimensions.width / 2) - 20,
+                                  menuWidth: (dimensions.width / 2),
+                                  selectedItem: item['selectedItem'],
+                                  items: item['itens'],
+                                  textSize: AppSize.fontSm,
+                                  borderColor: AppColors.grey_300,
+                                  aligment: item['name'] == 'status' ? 'center' : 'centerLeft',
+                                  onChange: (newValue) => selectFilter(item['name'], newValue),
+                                ),
+                              ],
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text('Jogador', style: Theme.of(context).textTheme.titleMedium),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text(
+                          'Posições',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: positionsOptions.map((item) {
+                          return Column(
+                            children: [
+                              PositionWidget(
+                                position: item["label"],
+                                mainPosition: true,
+                                width: 35,
+                                height: 25,
+                                textSide: 10,
+                              ),
+                              InputCheckBoxWidget(
+                                name: item['label'],
+                                value: item['checked'],
+                                onChanged: (newValue) =>
+                                    selectFilter('positions', newValue as String),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Text(
+                          'Melhor Pé',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: bestSideOptions.map((item) {
+                          return SelectRoundedWidget(
+                            size: 100,
+                            iconSize: 70,
+                            value: item['value'],
+                            icon: item['icon'],
+                            checked: item['checked'],
+                            onChanged: (newValue) => selectFilter('bestSide', newValue),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: dimensions.width,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            'Metricas',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 10,
-                          children: [
-                            ...metricOptions.asMap().entries.map((entry){
-                              final item = entry.value;
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 5),
-                                    child: Text(
-                                      item['label'],
-                                      style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  if(item['label'] == 'Status')...[
-                                    ButtonDropdownMultiWidget(
-                                      selectedItems: escalationController.filtrosMarket['status'] as List<dynamic>,
-                                      items: escalationController.filterOptions['status'] as List<dynamic>, 
-                                      onChanged: (newValue) => selectFilter('status', newValue),
-                                      textSize: AppSize.fontSm,
-                                      borderColor: AppColors.grey_300,
-                                      width: ( dimensions.width / 2 ) - 20,
-                                    ),
-                                  ]else...[
-                                    ButtonDropdownWidget(
-                                      width: ( dimensions.width / 2 ) - 20,
-                                      menuWidth: ( dimensions.width / 2 ),
-                                      selectedItem: item['selectedItem'], 
-                                      items: item['itens'], 
-                                      textSize: AppSize.fontSm,
-                                      borderColor: AppColors.grey_300,
-                                      aligment: item['name'] == 'status' ? 'center' : 'centerLeft',
-                                      onChange: (newValue) => selectFilter(item['name'], newValue),
-                                    ),
-                                  ]
-                                ],
-                              );
-                            }),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            'Jogador',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            'Posições',
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...positionsOptions.asMap().entries.map((entry){
-                              final item = entry.value;
-                              return Column(
-                                children: [
-                                  PositionWidget(
-                                    position: item["label"],
-                                    mainPosition: true,
-                                    width: 35,
-                                    height: 25,
-                                    textSide: 10,
-                                  ),
-                                  InputCheckBoxWidget(
-                                    name: item['label'],
-                                    value: item['checked'],
-                                    onChanged: (newValue) => selectFilter('positions', newValue as String),
-                                  ),
-                                ],
-                              );
-                            }),
-                          ]
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Text(
-                            'Melhor Pé',
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ...bestSideOptions.asMap().entries.map((entry){
-                              final item = entry.value;
-                              return SelectRoundedWidget(
-                                size: 100,
-                                iconSize: 70,
-                                value: item['value'],
-                                icon: item['icon'],
-                                checked: item['checked'],
-                                onChanged: (newValue) => selectFilter('bestSide', newValue),
-                              );
-                            }),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -281,7 +250,7 @@ class _BottomSheetMarketState extends State<BottomSheetMarket> {
                 ),
               ],
             ),
-          ]
+          ],
         ),
       ),
     );

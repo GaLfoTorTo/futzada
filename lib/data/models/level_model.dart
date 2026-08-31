@@ -50,8 +50,8 @@ class LevelModel {
       'number': number,
       'tier': tier,
       'points': points,
-      'points_min': pointsMin,
-      'points_max': pointsMax,
+      'pointsMin': pointsMin,
+      'pointsMax': pointsMax,
       'image': image,
       'color': color,
     };
@@ -63,8 +63,8 @@ class LevelModel {
       number: map['number'] as int,
       tier: map['tier'] as String,
       points: map['points'] as int,
-      pointsMin: map['points_min'] as int,
-      pointsMax: map['points_max'] as int,
+      pointsMin: (map['pointsMin'] ?? map['points_min']) as int,
+      pointsMax: (map['pointsMax'] ?? map['points_max']) as int,
       image: map['image'] as String,
       color: map['color'] as String,
     );

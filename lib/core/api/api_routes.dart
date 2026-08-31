@@ -21,14 +21,16 @@ class ApiRoutes {
   static const userEdit = 'user/edit/';
   static const userDelete = 'user/delete/';
   static const userEvent = 'user/events/';
+  static const userInfo = 'user/info/';
   //ROTAS DE HOME
   static const home = 'home';
   //ROTAS DE EVENTO
-  static const event = 'event/';
+  static const event = 'events/';
   static const events = 'events';
-  static const eventCreate = 'event/create';
-  static const eventEdit = 'event/edit/';
-  static const eventDelete = 'event/delete/';
+  static const eventCreate = 'events/create';
+  static const eventEdit = 'events/edit/';
+  static const eventDelete = 'events/delete/';
+  static const eventParticipants = 'events/participants/';
   //ROTAS DE MAPAS
   static String mapUrl(Brightness brightness) => brightness == Brightness.dark
     ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"

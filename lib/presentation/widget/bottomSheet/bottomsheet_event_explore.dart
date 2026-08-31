@@ -33,12 +33,8 @@ class BottomSheetEventExplore extends StatelessWidget {
       ? dimensions.height * 0.65
       : dimensions.height * 0.6;
 
-    return Container(
+    return SizedBox(
       height: height,
-      decoration: BoxDecoration(
-        color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
-      ),
       child: Column(
         children: [
           Expanded(
@@ -81,7 +77,16 @@ class BottomSheetEventExplore extends StatelessWidget {
                 //RESGATAR IMAGEM DO LOCAL
                 final addressImg = ImgHelper.getAddressImg(event.address?.photos);
                 //RESGATAR ORGANIZADOR
-                final eventOrganizador = event.participants!.firstWhere((user) => user.participants!.where((p) => p.eventId == event.id).first.role!.contains("Organizator"));
+                final hasParticipants = event.participants != null && event.participants!.isNotEmpty;
+                final eventOrganizador = hasParticipants
+                  ? event.participants!.firstWhere(
+                      (user) {
+                        final participation = user.participants?.where((p) => p.eventId == event.id);
+                        return participation != null && participation.isNotEmpty && (participation.first.role?.contains("Organizator") ?? false);
+                      },
+                      orElse: () => event.participants!.first,
+                    )
+                  : null;
             
                 return Padding(
                   padding: const EdgeInsets.all(15),
@@ -296,40 +301,42 @@ class BottomSheetEventExplore extends StatelessWidget {
                             ]
                           ],
                         ),
-                        const Divider(color: AppColors.grey_300),
-                        Row(
-                          spacing: 10,
-                          children: [
-                            SizedBox(
-                              width: 35,
-                              height: 35,
-                              child: CircleAvatar(
-                                backgroundImage: ImgHelper.getUserImg(eventOrganizador.photo),
+                        if(eventOrganizador != null)...[
+                          const Divider(color: AppColors.grey_300),
+                          Row(
+                            spacing: 10,
+                            children: [
+                              SizedBox(
+                                width: 35,
+                                height: 35,
+                                child: CircleAvatar(
+                                  backgroundImage: ImgHelper.getUserImg(eventOrganizador.photo),
+                                ),
                               ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  UserHelper.getFullName(eventOrganizador),
-                                  style: Theme.of(context).textTheme.titleSmall,
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                Text(
-                                  "Organizador",
-                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    color: AppColors.grey_500,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    UserHelper.getFullName(eventOrganizador),
+                                    style: Theme.of(context).textTheme.titleSmall,
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                  Text(
+                                    "Organizador",
+                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                      color: AppColors.grey_500,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
                         const Divider(color: AppColors.grey_300),
                         Row(
                         crossAxisAlignment: CrossAxisAlignment.start,

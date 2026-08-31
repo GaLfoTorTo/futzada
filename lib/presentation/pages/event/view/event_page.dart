@@ -308,7 +308,11 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
             icon: Icons.play_arrow_rounded,
             backgroundColor: modalityColor,
             color: modalityTextColor,
-            onPressed: () => showModalBottomSheet(context: context, builder: (_) => const BottomSheetEventGames())
+            onPressed: () => showModalBottomSheet(
+              context: context, 
+              backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+              builder: (_) => const BottomSheetEventGames()
+            )
           );
         }
         if (hasGames && tabIndex == 4) {
@@ -317,7 +321,12 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
             icon: Icons.add_rounded,
             backgroundColor: modalityColor,
             color: modalityTextColor,
-            onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => const BottomSheetRule()),
+            onPressed: () => showModalBottomSheet(
+              context: context, 
+              isScrollControlled: true, 
+              backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+              builder: (_) => const BottomSheetRule()
+            ),
           );
         }
         return const SizedBox.shrink();

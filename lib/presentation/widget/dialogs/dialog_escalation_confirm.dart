@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/event_helper.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/presentation/widget/badges/position_widget.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 
-class DialogEscalationConfirm extends StatelessWidget {
-  const DialogEscalationConfirm({
-    super.key,
-  });
+class DialogEscalationConfirm extends ConsumerWidget {
+  const DialogEscalationConfirm({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //RESGATAR INSTÂNCIA DO CONTROLLER DE ESCALAÇÃO
-    EscalationController escalationController = EscalationController.instance;
-    //RESGATAR CAPITÃO
-    int i = escalationController.starters.firstWhere((p) => p == escalationController.selectedPlayerCapitan)!;
-    UserModel capitan = EventHelper.getUserEvent(escalationController.event!, i)!;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dimensions = MediaQuery.of(context).size;
+    final session = ref.watch(escalationSessionProvider);
+    final team = ref.watch(escalationTeamProvider);
+
+    final int i = team.starters.firstWhere((p) => p == team.selectedPlayerCapitan)!;
+    final UserModel capitan = EventHelper.getUserEvent(session.event!, i)!;
 
     return Dialog(
       child: Padding(
@@ -40,7 +39,10 @@ class DialogEscalationConfirm extends StatelessWidget {
             ),
             Text(
               'Confirme a escalação do time para a próxima rodada. Após confirmar você poderá fazer alterações na sua equipe até o início da rodada.',
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.grey_500),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall!
+                  .copyWith(color: AppColors.grey_500),
               textAlign: TextAlign.center,
             ),
             SizedBox(
@@ -50,10 +52,7 @@ class DialogEscalationConfirm extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'Formação:',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                      Text('Formação:', style: Theme.of(context).textTheme.titleSmall),
                       Container(
                         margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
@@ -62,64 +61,67 @@ class DialogEscalationConfirm extends StatelessWidget {
                         ),
                         padding: const EdgeInsets.all(5),
                         child: Text(
-                          '${escalationController.formation}',
+                          session.formation,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ),
-                    ]
+                    ],
                   ),
                   Row(
                     children: [
-                      Text(
-                        'Titulares:',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                      Text('Titulares:', style: Theme.of(context).textTheme.titleSmall),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: ImgGroupCircularWidget(
                           size: 30,
                           side: "right",
-                          images: escalationController.starters.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
+                          images: team.starters
+                              .take(3)
+                              .map((i) => EventHelper.getUserEvent(session.event!, i!)?.photo)
+                              .toList(),
                         ),
                       ),
                       Text(
-                        '+ ${escalationController.starters.length - 3}',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.grey_500),
+                        '+ ${team.starters.length - 3}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: AppColors.grey_500),
                       ),
-                    ]
+                    ],
                   ),
                   Row(
                     children: [
-                      Text(
-                        'Reservas:',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      if(!escalationController.reserves.contains(null))...[
+                      Text('Reservas:', style: Theme.of(context).textTheme.titleSmall),
+                      if (!team.reserves.contains(null)) ...[
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: ImgGroupCircularWidget(
                             size: 30,
                             side: "right",
-                            images: escalationController.reserves.take(3).map((i) => EventHelper.getUserEvent(escalationController.event!, i!)?.photo).toList()
+                            images: team.reserves
+                                .take(3)
+                                .map((i) => EventHelper.getUserEvent(session.event!, i!)?.photo)
+                                .toList(),
                           ),
                         ),
-                      ]else...[
+                      ] else ...[
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: Text(
                             'Reservas não escalados',
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: AppColors.grey_500),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall!
+                                .copyWith(color: AppColors.grey_500),
                           ),
                         ),
-                      ]
-                    ]
+                      ],
+                    ],
                   ),
                   Row(
                     children: [
-                      Text(
-                        'Capitão:',
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
+                      Text('Capitão:', style: Theme.of(context).textTheme.titleSmall),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                         child: Row(
@@ -127,9 +129,9 @@ class DialogEscalationConfirm extends StatelessWidget {
                             ImgCircularWidget(
                               size: 30,
                               image: capitan.photo,
-                              borderColor: AppColors.yellow_200
+                              borderColor: AppColors.yellow_200,
                             ),
-                            Container (
+                            Container(
                               width: dimensions.width * 0.4,
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
@@ -152,9 +154,9 @@ class DialogEscalationConfirm extends StatelessWidget {
                               textSide: 10,
                             ),
                           ],
-                        )
+                        ),
                       ),
-                    ]
+                    ],
                   ),
                 ],
               ),

@@ -23,7 +23,7 @@ class PodiumWidget extends StatelessWidget {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     //RESGATAR POSIÇÃO PRINCIPAL DO JOGADOR APARTIR DA MODALIDADE
-    final position = user.player!.mainPosition[modality];
+    final mainPos = user.player!.getMainPosition(modality.name);
 
     Map<String, dynamic> setPosition(rank){
       switch(rank){
@@ -119,13 +119,14 @@ class PodiumWidget extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    PositionWidget(
-                      position: position!,
-                      mainPosition: true,
-                      width: 35,
-                      height: 25,
-                      textSide: 10,
-                    ),
+                    if (mainPos != null)
+                      PositionWidget(
+                        position: mainPos.alias,
+                        mainPosition: true,
+                        width: 35,
+                        height: 25,
+                        textSide: 10,
+                      ),
                     Text(
                       UserHelper.getFullName(user),
                       style: Theme.of(context).textTheme.labelSmall,

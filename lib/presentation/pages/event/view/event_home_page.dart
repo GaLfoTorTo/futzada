@@ -48,12 +48,14 @@ class _EventHomePageState extends State<EventHomePage> {
   late String eventCategory;
   late Color modalityColor;
   //ESTADOS - MAPA/VIAGEM
-  ValueNotifier<LatLng?> userLatLon = sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog');
+  final ValueNotifier<LatLng?>? userLatLon = sl.isRegistered<ValueNotifier<LatLng?>>(instanceName: 'userLatLog')
+      ? sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog')
+      : null;
   bool isMapLoaded = false;
-  late Map<String, dynamic> travelMode;
-  late double distance;
-  late Duration timeTravelMode;
-  late String timeTravel;
+  Map<String, dynamic> travelMode = {};
+  double distance = 0.0;
+  Duration timeTravelMode = Duration.zero;
+  String timeTravel = '—';
   //ESTADO - DESTAQUES
   late List<Map<String, dynamic>> highlights;
 
@@ -74,8 +76,9 @@ class _EventHomePageState extends State<EventHomePage> {
 
   //FUNÇÃO DE DEFINIÇÃO DE TEMPO DE VIAGEM
   void setTravelModel(){
+    if (userLatLon?.value == null) return;
     //RESGATAR DISTANCIA
-    distance = MapHelper.getDistance(userLatLon.value!, eventLatLon);
+    distance = MapHelper.getDistance(userLatLon!.value!, eventLatLon);
     //RESGATAR MODO DE VIAGEM
     travelMode = MapHelper.getTravelMode(distance);
     //RESGATAR TEMPO
@@ -585,7 +588,11 @@ class _EventHomePageState extends State<EventHomePage> {
                         padding: 15,
                         iconColor: modalityColor,
                         backgroundColor: modalityColor.withAlpha(50),
-                        action: () => showModalBottomSheet(context: context, builder: (_) => const BottomSheetMapTravel())
+                        action: () => showModalBottomSheet(
+                          context: context, 
+                          backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+                          builder: (_) => const BottomSheetMapTravel()
+                        )
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),

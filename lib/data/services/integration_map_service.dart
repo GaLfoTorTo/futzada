@@ -74,7 +74,13 @@ class IntegrationRouteService {
     if(apps.isNotEmpty){
       //EXIBIR DIALOG DE APPS
       final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) showModalBottomSheet(context: ctx, builder: (_) => BottomSheetMapApps(params: params, apps: apps));
+      if (ctx != null) {
+        showModalBottomSheet(
+          context: ctx, 
+          backgroundColor: Theme.of(ctx).dialogTheme.backgroundColor,
+          builder: (_) => BottomSheetMapApps(params: params, apps: apps)
+        );
+      }
     }else{
       //REDIRECIONAR PARA LOJA
       _handleFallback();

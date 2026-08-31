@@ -17,9 +17,10 @@ class TaskService {
       "title" : faker.company.name(),
       "description" : faker.lorem.sentence().toString(),
       "points" : faker.randomGenerator.integer(10000, min: 1),
-      "recurrent" : false,
-      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
-      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
+      "category" : faker.randomGenerator.element(["onboarding", "player", "manager", "participation", "organization", "social"]),
+      "modality" : null,
+      "completed" : null,
+      "completedAt" : null,
     });
   }
 }

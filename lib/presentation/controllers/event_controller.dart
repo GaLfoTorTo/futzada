@@ -7,7 +7,6 @@ import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/services/news_service.dart';
 import 'package:esportly/data/services/avaliation_service.dart';
 import 'package:esportly/data/repositories/event_repository.dart';
-import 'package:esportly/presentation/controllers/game_controller.dart';
 import 'package:esportly/core/providers/game/game_session_provider.dart';
 import 'package:esportly/presentation/controllers/mixin/event/event_config_mixin.dart';
 import 'package:esportly/presentation/controllers/mixin/event/event_overview_mixin.dart';
@@ -81,12 +80,8 @@ class EventController extends ChangeNotifier
 
   void setSelectedEvent(EventModel event) {
     this.event = event;
-    // Atualiza GameSessionProvider (Riverpod) — páginas migradas
     sl<ProviderContainer>()
         .read(gameSessionProvider.notifier)
         .setEvent(event);
-    // Atualiza GameController (GetIt) — páginas ainda não migradas
-    GameController.instance.event = event;
-    GameController.instance.currentGameConfig = event.gameConfig;
   }
 }

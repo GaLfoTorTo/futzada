@@ -225,6 +225,7 @@ class _GameRandomTeamsPageState extends ConsumerState<GameRandomTeamsPage> {
                                       action: () => showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: true,
+                                        backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
                                         builder: (_) => BottomSheetGamePlayers(team: i, qtdPlayers: qtdPlayers),
                                       ).then((_) => setState(() {})),
                                     ),

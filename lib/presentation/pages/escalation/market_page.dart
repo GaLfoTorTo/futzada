@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/core/providers/escalation/escalation_market_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_size.dart';
@@ -12,32 +14,32 @@ import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
-class MarketPage extends StatefulWidget {
+class MarketPage extends ConsumerStatefulWidget {
   const MarketPage({super.key});
 
   @override
-  State<MarketPage> createState() => MarketPageState();
+  ConsumerState<MarketPage> createState() => MarketPageState();
 }
 
-class MarketPageState extends State<MarketPage> {
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  EscalationController escalationController = EscalationController.instance;
-  //DEFINIR COR A PARTIR DO TEMA (calculado no build via context)
-  Color get _color => AppColors.white; // sobrescrito no build
+class MarketPageState extends ConsumerState<MarketPage> {
 
-  //FUNÇÃO PARA SELECIONAR FILTRO POR STATUS
-  void selectFilter(String name, dynamic newValue){
-    setState(() {
-      escalationController.setFilter(name, newValue);
-          });
+  @override
+  void initState() {
+    super.initState();
   }
-  
+
+  void selectFilter(String name, dynamic newValue) {
+    ref.read(escalationMarketProvider.notifier).setFilter(name, newValue);
+  }
+
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
+    final dimensions = MediaQuery.of(context).size;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = isDark ? AppColors.dark_500 : AppColors.white;
+    final market = ref.watch(escalationMarketProvider);
+    final session = ref.watch(escalationSessionProvider);
+    final pesquisaController = ref.read(escalationMarketProvider.notifier).pesquisaController;
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -59,7 +61,7 @@ class MarketPageState extends State<MarketPage> {
                       color: AppColors.dark_500.withAlpha(30),
                       spreadRadius: 0.5,
                       blurRadius: 7,
-                      offset: Offset(2, 5),
+                      offset: const Offset(2, 5),
                     ),
                   ],
                 ),
@@ -69,61 +71,54 @@ class MarketPageState extends State<MarketPage> {
                       name: 'search',
                       hint: 'Pesquisa',
                       prefixIcon: AppIcones.search_solid,
-                      textController: escalationController.pesquisaController,
+                      textController: pesquisaController,
                       type: TextInputType.text,
                     ),
-                    ListenableBuilder(listenable: escalationController, builder: (_, __){
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ButtonDropdownWidget(
-                            selectedItem: escalationController.filtrosMarket['price'],
-                            items: escalationController.filterOptions['price'] as List<dynamic>, 
-                            onChange: (newValue) => selectFilter('price', newValue),
-                            textSize: AppSize.fontMd,
-                            width: ( dimensions.width / 3 ) - 10,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ButtonDropdownWidget(
+                          selectedItem: market.filtrosMarket['price'],
+                          items: market.filterOptions['price'] as List<dynamic>,
+                          onChange: (newValue) => selectFilter('price', newValue),
+                          textSize: AppSize.fontMd,
+                          width: (dimensions.width / 3) - 10,
+                        ),
+                        const SizedBox(
+                          height: 50,
+                          width: 1,
+                          child: VerticalDivider(color: AppColors.grey_300, thickness: 1),
+                        ),
+                        ButtonDropdownMultiWidget(
+                          selectedItems: market.filtrosMarket['status'] as List<dynamic>,
+                          items: market.filterOptions['status'] as List<dynamic>,
+                          onChanged: (newValue) => selectFilter('status', newValue),
+                          textSize: AppSize.fontSm,
+                          width: (dimensions.width / 3) - 10,
+                        ),
+                        const SizedBox(
+                          height: 50,
+                          width: 1,
+                          child: VerticalDivider(color: AppColors.grey_300, thickness: 1),
+                        ),
+                        ButtonTextWidget(
+                          text: "Filtros",
+                          backgroundColor: isDark ? AppColors.dark_500 : AppColors.white,
+                          textColor: isDark ? AppColors.white : AppColors.blue_500,
+                          textSize: AppSize.fontSm,
+                          icon: AppIcones.filter_solid,
+                          iconAfter: true,
+                          width: (dimensions.width / 3) - 50,
+                          action: () => showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+                            builder: (_) => const BottomSheetMarket(),
                           ),
-                          const SizedBox(
-                            height: 50,
-                            width: 1,
-                            child: VerticalDivider(
-                              color: AppColors.grey_300,
-                              thickness: 1,
-                            ),
-                          ),
-                          ButtonDropdownMultiWidget(
-                            selectedItems: escalationController.filtrosMarket['status'] as List<dynamic>,
-                            items: escalationController.filterOptions['status'] as List<dynamic>, 
-                            onChanged: (newValue) => selectFilter('status', newValue),
-                            textSize: AppSize.fontSm,
-                            width: ( dimensions.width / 3 ) - 10,
-                          ),
-                          const SizedBox(
-                            height: 50,
-                            width: 1,
-                            child: VerticalDivider(
-                              color: AppColors.grey_300,
-                              thickness: 1,
-                            ),
-                          ),
-                          ButtonTextWidget(
-                            text: "Filtros",
-                            backgroundColor: isDark ? AppColors.dark_500 : AppColors.white,
-                            textColor: isDark ? AppColors.white : AppColors.blue_500,
-                            textSize: AppSize.fontSm,
-                            icon: AppIcones.filter_solid,
-                            iconAfter: true,
-                            width: ( dimensions.width / 3 ) - 50,
-                            action: () => showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (_) => const BottomSheetMarket(),
-                            )
-                          ),
-                        ],
-                      );
-                    })
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -132,16 +127,16 @@ class MarketPageState extends State<MarketPage> {
                 child: Column(
                   spacing: 10,
                   children: [
-                    if(escalationController.filteredPlayersMarket.isNotEmpty)...[
-                      ...escalationController.filteredPlayersMarket.map((entry) {
-                        //RESGATAR ITENS 
-                        final item = entry;
-                        return  CardPlayerMarketWidget(
+                    if (market.playersFiltered.isNotEmpty) ...[
+                      ...market.playersFiltered.map((item) {
+                        final participant = item.participants![0];
+                        return CardPlayerMarketWidget(
                           user: item,
-                          modality: escalationController.event!.modality!.name,
+                          participant: participant,
+                          modality: session.event!.modality!.name,
                         );
                       }),
-                    ]else...[
+                    ] else ...[
                       Container(
                         alignment: Alignment.center,
                         width: dimensions.width,
@@ -152,8 +147,11 @@ class MarketPageState extends State<MarketPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Nenhum jogador encontrado', 
-                              style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.grey_500, fontWeight: FontWeight.normal),
+                              'Nenhum jogador encontrado',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: AppColors.grey_500, fontWeight: FontWeight.normal),
                               textAlign: TextAlign.center,
                             ),
                             const Icon(
@@ -162,17 +160,20 @@ class MarketPageState extends State<MarketPage> {
                               size: 150,
                             ),
                             Text(
-                              'Verifique a aplicação de filtros ou faça uma nova pesquisa.', 
-                              style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.grey_500, fontWeight: FontWeight.normal),
+                              'Verifique a aplicação de filtros ou faça uma nova pesquisa.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: AppColors.grey_500, fontWeight: FontWeight.normal),
                               textAlign: TextAlign.center,
                             ),
-                          ]
-                        )
-                      )
-                    ]
-                  ]
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-              )
+              ),
             ],
           ),
         ),

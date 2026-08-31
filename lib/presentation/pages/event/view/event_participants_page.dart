@@ -128,13 +128,14 @@ class EventParticipantsPage extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        PositionWidget(
-                                          position: user.player!.mainPosition[eventController.event.modality!.name]!,
-                                          mainPosition: true,
-                                          width: 35,
-                                          height: 25,
-                                          textSide: AppSize.fontXs,
-                                        ),
+                                        if (user.player!.getMainPosition(eventController.event.modality!.name) != null)
+                                          PositionWidget(
+                                            position: user.player!.getMainPosition(eventController.event.modality!.name)!.alias,
+                                            mainPosition: true,
+                                            width: 35,
+                                            height: 25,
+                                            textSide: AppSize.fontXs,
+                                          ),
                                       ],
                                     ),
                                   ),

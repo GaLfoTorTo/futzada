@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:esportly/core/helpers/modality_helper.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:esportly/presentation/widget/others/players_escalation_widget.dart';
 
-class EscalationWidget extends StatefulWidget {
+class EscalationWidget extends StatelessWidget {
   final double? width;
   final double? height;
   final String category;
@@ -16,19 +15,10 @@ class EscalationWidget extends StatefulWidget {
     this.width = 342,
     this.height = 518,
     this.category = "Futebol",
-    this.formation = '4-3-3'
+    this.formation = '4-3-3',
   });
 
-  @override
-  State<EscalationWidget> createState() => _EscalationWidgetState();
-}
-
-class _EscalationWidgetState extends State<EscalationWidget> {
-  //INICIARLIZAR SERVIÇO DE CAMPO/QUADRA
-  EscalationController escalationController = EscalationController.instance;
-
-  //FUNÇÃO PARA RENDERIZAR CAMPO
-  Widget renderField(){
+  Widget _renderField() {
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
@@ -40,13 +30,11 @@ class _EscalationWidgetState extends State<EscalationWidget> {
             color: AppColors.dark_300.withAlpha(50),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: const Offset(0,5), 
+            offset: const Offset(0, 5),
           ),
         ],
       ),
-      child: SvgPicture.asset(
-        ModalityHelper.getCategoryCourt(widget.category),
-      )
+      child: SvgPicture.asset(ModalityHelper.getCategoryCourt(category)),
     );
   }
 
@@ -59,12 +47,11 @@ class _EscalationWidgetState extends State<EscalationWidget> {
           alignment: Alignment.topCenter,
           transform: Matrix4.identity()
             ..setEntry(3, 2, 0.0008)
-            ..rotateX(-0.7), 
-          child: renderField()
+            ..rotateX(-0.7),
+          child: _renderField(),
         ),
-        //COMPONENTE AQUI
-        const PlayersEscalationWidget()
-      ]
+        const PlayersEscalationWidget(),
+      ],
     );
   }
 }

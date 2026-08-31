@@ -22,6 +22,12 @@ class UserService {
     final resp = await apiClient.get(ApiRoutes.getUrl("${ApiRoutes.user}id"));
     return UserModel.fromJson(resp.data);
   }
+  
+  //REQUISIÇÃO - BUSCA DE DADOS EXTRA DO USUARIO
+  Future<UserModel> userInfoFetch() async{
+    final resp = await apiClient.get(ApiRoutes.getUrl(ApiRoutes.userInfo));
+    return UserModel.fromMap(resp.data['user'] as Map<String, dynamic>);
+  }
 
   //REQUISIÇÃO - CRIAÇÃO DE USUARIO
   Future<ApiResponse> userRegister(data) async {

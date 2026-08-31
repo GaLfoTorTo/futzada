@@ -175,7 +175,7 @@ class _GamesDayPageState extends ConsumerState<GamesDayPage> {
                                     children: [
                                       Text(UserHelper.getFullName(user), style: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
                                       Text("@${user.userName}", style: Theme.of(context).textTheme.labelMedium!.copyWith(color: AppColors.grey_300), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                      PositionWidget(position: user.player!.mainPosition[event.modality!.name]!, mainPosition: true, width: 35, height: 25, textSide: 10),
+                                      if (user.player!.getMainPosition(event.modality!.name) != null) PositionWidget(position: user.player!.getMainPosition(event.modality!.name)!.alias, mainPosition: true, width: 35, height: 25, textSide: 10),
                                     ],
                                   ),
                                 ),

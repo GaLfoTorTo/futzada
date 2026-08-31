@@ -1,5 +1,6 @@
 import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/helpers/img_helper.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -301,7 +302,7 @@ class _GameConfigPageState extends ConsumerState<GameConfigPage> {
                       },
                     ),
                     if (hasRefereerSwitch && event != null) ...[
-                      ButtonDropdownIconWidget(
+                      ButtonDropdownIconWidget<UserModel>(
                         width: dimensions.width,
                         menuWidth: dimensions.width - 20,
                         menuHeight: 200,
@@ -311,22 +312,13 @@ class _GameConfigPageState extends ConsumerState<GameConfigPage> {
                         iconAfter: false,
                         iconSize: 30,
                         textSize: AppSize.fontMd,
-                        onChange: (newValue) {
-                          setState(() {
-                            refereer = event.participants?.firstWhere(
-                              (u) => u.id == newValue,
-                              orElse: () => event.participants!.first,
-                            );
-                          });
-                        },
-                        selectedItem: refereer?.id,
-                        items: List.generate(event.participants!.length, (i) {
-                          return {
-                            'id': event.participants![i].id,
-                            'title': UserHelper.getFullName(event.participants![i]),
-                            'photo': event.participants![i].photo,
-                          };
-                        }),
+                        onChange: (u) => setState(() => refereer = u),
+                        selectedItem: refereer,
+                        items: event.participants!,
+                        labelBuilder: (u) => UserHelper.getFullName(u),
+                        iconBuilder: (u) => CircleAvatar(
+                          backgroundImage: ImgHelper.getUserImg(u.photo),
+                        ),
                       ),
                     ],
                   ],

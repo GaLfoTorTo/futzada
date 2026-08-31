@@ -78,7 +78,12 @@ class _MapPickerPageState extends State<MapPickerPage> {
             FloatButtonWidget(
               floatKey: "search_map",
               icon: Icons.search_rounded,
-              onPressed: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetAddress()),
+              onPressed: () => showModalBottomSheet(
+                context: context, 
+                isScrollControlled: true, 
+                backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+                builder: (_) => BottomSheetAddress()
+              ),
             ),
             FloatButtonWidget(
               floatKey: "position_map",

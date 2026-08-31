@@ -10,7 +10,6 @@ class EventHelper {
   }
 
   //FUNÇÃO PARA RESGATAR ORGANIZADOR DO EVENTO
-
   static UserModel getUserOrganizator(EventModel event){
     return event.participants!.firstWhere((u){
       final participant = u.participants!.where((p) => p.eventId == event.id).first;

@@ -22,7 +22,9 @@ class MapWidgetController extends ChangeNotifier {
   MapWidgetController({this.model = 'Explorer'});
 
   //ESTADOS - POSIÇÃO, ZOOM E CARREGAMENTO DO MAPA
-  Map<String, dynamic> _currentLocation = sl<Map<String, dynamic>>(instanceName: 'userLocation');
+  Map<String, dynamic> _currentLocation = sl.isRegistered<Map<String, dynamic>>(instanceName: 'userLocation')
+      ? sl<Map<String, dynamic>>(instanceName: 'userLocation')
+      : {};
   Map<String, dynamic> get currentLocation => _currentLocation;
   set currentLocation(Map<String, dynamic> v) { _currentLocation = v; notifyListeners(); }
 

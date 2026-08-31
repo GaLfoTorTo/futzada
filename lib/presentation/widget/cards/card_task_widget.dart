@@ -33,7 +33,7 @@ class CardTaskWidget extends StatelessWidget {
                     )
                   ),
                   Text(
-                    task.description,
+                    task.description!,
                     style: Theme.of(context).textTheme.displayLarge
                   ),
                 ],

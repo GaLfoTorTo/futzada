@@ -91,10 +91,11 @@ class _InputTextWidgetState extends State<InputTextWidget> {
   Widget? _buildSuffixIcon() {
     if (_sufixIcon == null) return null;
     final icon = Icon(_sufixIcon!.icon, color: _textColor);
-    if (widget.suffixFunction != null) {
+    final isPasswordField = widget.type == TextInputType.visiblePassword;
+    if (isPasswordField || widget.suffixFunction != null) {
       return IconButton(
         icon: icon,
-        onPressed: () => _showText(),
+        onPressed: isPasswordField ? _showText : widget.suffixFunction,
         color: _textColor,
       );
     }

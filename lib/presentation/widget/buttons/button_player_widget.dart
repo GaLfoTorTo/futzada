@@ -1,16 +1,19 @@
-import 'package:esportly/data/models/rating_model.dart';
-import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/data/models/player_model.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
-import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_player.dart';
+import 'package:esportly/data/models/rating_model.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
+import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_player.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_valuation_widget.dart';
 
-class ButtonPlayerWidget extends StatelessWidget {
+class ButtonPlayerWidget extends ConsumerWidget {
   final int index;
   final String occupation;
   final String position;
@@ -33,44 +36,39 @@ class ButtonPlayerWidget extends StatelessWidget {
     this.borderColor = AppColors.white,
     this.size = 55,
     this.userDefault = false,
-    this.showName = false
+    this.showName = false,
   });
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE ESCALAÇÃO
-    EscalationController escalationController = EscalationController.instance;
-    
-    //FUNÇÃO PARA ABRIR O DIALOG DO JOGADOR
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(escalationSessionProvider);
+
+    //FUNÇÃO DE DFINIÇÃO DE SELEÇÃO DE JOGADOR
     void selectPlayer(UserModel? user) {
-      //ATUALIZAR INDEX DE JOGADOR SELECIONADO
-      escalationController.selectedPlayer = index;
-      escalationController.selectedOccupation = occupation;
-      //VERIFICAR SE JOGADOR NÃO É NULO
-      if(user != null){
-        //CHAMAR DIALOG DO JOGADOR
-        showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetPlayer(user: user));
-      }else{
-        //AJUSTAR FILTRO PARA POSIÇÃO SELECIONADA
-        escalationController.setFilter('positions', [position]);
-                //NAVEGAR PARA PAGINA DE MERCADO
+      ref.read(escalationTeamProvider.notifier).setSelectedPlayer(index, occupation);
+      if (user != null) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (_) => BottomSheetPlayer(user: user),
+        );
+      } else {
+        //ref.read(escalationMarketProvider.notifier).setFilter('positions', [position]);
         context.push('/escalation/market');
       }
-          }
+    }
 
-    //FUNÇÃO PARA DEFINIR BOTÃO DE JOGADOR
-    List<Widget> setPlayerButton(UserModel? user){
-      //VERIFICAR SE JOGADOR FOI DEFINIDO
-      if(user != null){
-        //RESGATAR JOGADOR
-        PlayerModel player = user.player!;
-        //RESGATAR RATING DO EVENTO
-        RatingModel rating = UserHelper.getRating(player, escalationController.event!.id!);
-        //DEEFINIR COR A PARTIR DO TEMA
-        final color = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white;
+    //FUNÇÃO DE DEFINIÇÃO DE BOTÃO DE JOGADOR
+    List<Widget> setPlayerButton(UserModel? user) {
+      final style = ModalityHelper.getEventModalityColor(session.event!.modality?.name ?? '');
+      final color = Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white;
+
+      if (user != null) {
+        final PlayerModel player = user.player!;
+        final RatingModel rating = UserHelper.getRating(player, session.event!.id!);
 
         return [
-          if(rating.points != null)...[
+          if (rating.points != null) ...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
@@ -81,25 +79,18 @@ class ButtonPlayerWidget extends StatelessWidget {
                     color: AppColors.dark_300.withAlpha(50),
                     spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0,5), 
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
-              child: IndicatorValuationWidget(
-                points: rating.points
-              )
+              child: IndicatorValuationWidget(points: rating.points),
             ),
           ],
           InkWell(
             onTap: () => selectPlayer(user),
-            child:
-              ImgCircularWidget(
-                size: size!,
-                image: user.photo,
-                borderColor: borderColor,
-              ),
+            child: ImgCircularWidget(size: size!, image: user.photo, borderColor: borderColor),
           ),
-          if(showName!)...[
+          if (showName!) ...[
             Container(
               width: 80,
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
@@ -109,61 +100,53 @@ class ButtonPlayerWidget extends StatelessWidget {
               ),
               child: Text(
                 UserHelper.getFullName(user),
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  color: AppColors.white, 
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall!
+                    .copyWith(color: AppColors.white),
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ];
-      }else{
+      } else {
         return [
           InkWell(
             onTap: () => selectPlayer(user),
-            child: 
-            Container(
+            child: Container(
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: AppColors.green_300,
-                gradient: const LinearGradient(
-                  colors: [AppColors.green_300, AppColors.green_500],
+                color: style['color'],
+                gradient: LinearGradient(
+                  colors: [style['color'], style['bg']],
                   begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter
+                  end: Alignment.bottomCenter,
                 ),
-                border: Border.all(
-                  color: AppColors.white,
-                  width: 2,
-                ),
+                border: Border.all(color: AppColors.white, width: 2),
                 borderRadius: BorderRadius.circular(size! / 2),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.dark_300.withAlpha(50),
                     spreadRadius: 1,
                     blurRadius: 5,
-                    offset: Offset(0,5), 
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.add,
-                color: AppColors.white,
-                size: 40,
-                fontWeight: FontWeight.bold,
-              ),
-            )
+              child: const Icon(Icons.add, color: AppColors.white, size: 40),
+            ),
           ),
         ];
       }
     }
 
-    return Container(
-      height: user!= null ? size! + 50 : size,
+    return SizedBox(
+      height: user != null ? size! + 50 : size,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: setPlayerButton(user)
+        children: setPlayerButton(user),
       ),
     );
   }

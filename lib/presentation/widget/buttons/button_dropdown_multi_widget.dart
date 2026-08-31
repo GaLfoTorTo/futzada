@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_size.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
@@ -35,7 +34,6 @@ class ButtonDropdownMultiWidget extends StatefulWidget {
     this.showIcon = true,
     this.iconSize = 20,
     this.alignment = 'center',
-
   });
 
   @override
@@ -43,18 +41,15 @@ class ButtonDropdownMultiWidget extends StatefulWidget {
 }
 
 class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  EscalationController escalationController = EscalationController.instance;
-  //CONTROLDOR DE MENU
   bool isMenuOpen = false;
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR PRIMEIRO OPÇÃO SELECIONADA
-    var hint = widget.selectedItems.isNotEmpty ? widget.items.firstWhere((item) => item['id'] == widget.selectedItems[0]) : null;
+    final hint = widget.selectedItems.isNotEmpty
+        ? widget.items.firstWhere((item) => item['id'] == widget.selectedItems[0])
+        : null;
 
-    //FUNÇÃO PARA SELECIONAR ITEMS
-    void setItems(String value){
+    void setItems(String value) {
       widget.onChanged(value);
     }
 
@@ -77,22 +72,14 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              hint != null? hint['title']! : 'Status',
+              hint != null ? hint['title']! : 'Status',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: widget.textSize),
             ),
             if (hint != null)
-              Icon(
-                hint['icon'],
-                color: hint['color'],
-                size: widget.iconSize,
-              )
+              Icon(hint['icon'], color: hint['color'], size: widget.iconSize),
           ],
         ),
-        onMenuStateChange: (isOpen) {
-          setState(() {
-            isMenuOpen = isOpen;
-          });
-        },
+        onMenuStateChange: (isOpen) => setState(() => isMenuOpen = isOpen),
         dropdownStyleData: DropdownStyleData(
           width: widget.menuWidth ?? widget.width,
           decoration: BoxDecoration(
@@ -100,10 +87,7 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
         ),
-        iconStyleData: const IconStyleData(
-          icon: SizedBox.shrink(),
-          iconSize: 0,
-        ),
+        iconStyleData: const IconStyleData(icon: SizedBox.shrink(), iconSize: 0),
         alignment: widget.alignment != 'center' ? Alignment.centerLeft : Alignment.center,
         underline: Container(height: 0),
         items: widget.items.map<DropdownMenuItem<dynamic>>((item) {
@@ -114,47 +98,36 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
             value: optionValue,
             child: StatefulBuilder(
               builder: (context, menuSetState) {
-                return ListenableBuilder(listenable: escalationController, builder: (_, __){
-                  //RESGATAR STATUS SELECIONADA
-                  final isSelected = escalationController.filtrosMarket['status'].contains(optionValue);
-
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if(isMenuOpen)...[
-                        Checkbox(
-                          value: isSelected,
-                          onChanged: (bool? selected) => setItems(optionValue),
-                        ),
-                      ],
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 5),
-                          child: Text(
-                            optionTitle.toString(),
-                            style: TextStyle(
-                              color: widget.textColor,
-                              fontSize: widget.textSize,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                final isSelected = widget.selectedItems.contains(optionValue);
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (isMenuOpen) ...[
+                      Checkbox(
+                        value: isSelected,
+                        onChanged: (bool? selected) => setItems(optionValue),
+                      ),
+                    ],
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: Text(
+                          optionTitle.toString(),
+                          style: TextStyle(
+                            color: widget.textColor,
+                            fontSize: widget.textSize,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
-                      if (item.containsKey('photo')) ...[
-                        ImgCircularWidget(
-                          size: widget.iconSize!,
-                          image: item['photo'],
-                        ),
-                      ] else if (item.containsKey('icon')) ...[
-                        Icon(
-                          item['icon'],
-                          color: item['color'],
-                          size: widget.iconSize,
-                        )
-                      ]
+                    ),
+                    if (item is Map<String, dynamic> && item.containsKey('photo')) ...[
+                      ImgCircularWidget(size: widget.iconSize!, image: item['photo']),
+                    ] else if (item is Map<String, dynamic> && item.containsKey('icon')) ...[
+                      Icon(item['icon'], color: item['color'], size: widget.iconSize),
                     ],
-                  );
-                });
+                  ],
+                );
               },
             ),
           );

@@ -7,6 +7,7 @@ import 'package:esportly/data/models/level_model.dart';
 import 'package:esportly/data/models/manager_model.dart';
 import 'package:esportly/data/models/participant_model.dart';
 import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/task_model.dart';
 import 'package:esportly/data/models/user_config_model.dart';
 
 class UserModel {
@@ -24,6 +25,7 @@ class UserModel {
   LevelModel? level;
   PlayerModel? player;
   ManagerModel? manager;
+  List<TaskModel>? tasks;
   List<ParticipantModel>? participants;
   List<AchievementModel>? achievements;
   DateTime? createdAt;
@@ -45,6 +47,7 @@ class UserModel {
     this.level,
     this.player,
     this.manager,
+    this.tasks,
     this.participants,
     this.achievements,
     this.createdAt,
@@ -67,6 +70,7 @@ class UserModel {
     LevelModel? level,
     PlayerModel? player,
     ManagerModel? manager,
+    List<TaskModel>? tasks,
     List<ParticipantModel>? participants,
     List<AchievementModel>? achievements,
     DateTime? createdAt,
@@ -88,6 +92,7 @@ class UserModel {
       privacy: privacy ?? this.privacy,
       player: player ?? this.player,
       manager: manager ?? this.manager,
+      tasks: tasks ?? this.tasks,
       participants: participants ?? this.participants,
       achievements: achievements ?? this.achievements,
       createdAt: createdAt ?? this.createdAt,
@@ -112,6 +117,7 @@ class UserModel {
       'privacy': privacy?.name,
       'player': player?.toMap(),
       'manager': manager?.toMap(),
+      'tasks': tasks?.map((x) => x.toMap()).toList(),
       'participants': participants?.map((x) => x.toMap()).toList(),
       'achievements': achievements?.map((x) => x.toMap()).toList(),
       'createdAt': createdAt?.toIso8601String(),
@@ -141,9 +147,13 @@ class UserModel {
       player: map['player'] != null 
         ? PlayerModel.fromMap(map['player'] as Map<String, dynamic>) 
         : null,
-      manager: map['manager'] != null 
-        ? ManagerModel.fromMap(map['manager'] as Map<String, dynamic>) 
+      manager: map['manager'] != null
+        ? ManagerModel.fromMap(map['manager'] as Map<String, dynamic>)
         : null,
+      tasks: map['tasks'] != null
+        ? List<TaskModel>.from((map['tasks'] as List<dynamic>)
+          .map<TaskModel>((x) => TaskModel.fromMap(x as Map<String, dynamic>)))
+        : [],
       participants: map['participants'] != null 
         ? List<ParticipantModel>.from((map['participants'] as List<dynamic>)
           .map<ParticipantModel>(

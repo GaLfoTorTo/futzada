@@ -1,172 +1,111 @@
 import 'package:esportly/core/helpers/player_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/helpers/app_helper.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/data/models/player_model.dart';
 import 'package:esportly/data/models/user_model.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 import 'package:esportly/presentation/widget/badges/position_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 
-class BottomSheetPlayer extends StatefulWidget {
+class BottomSheetPlayer extends ConsumerStatefulWidget {
   final UserModel user;
 
-  const BottomSheetPlayer({
-    super.key,
-    required this.user,
-  });
+  const BottomSheetPlayer({super.key, required this.user});
 
   @override
-  State<BottomSheetPlayer> createState() => BottomSheetPlayerState();
+  ConsumerState<BottomSheetPlayer> createState() => BottomSheetPlayerState();
 }
 
-class BottomSheetPlayerState extends State<BottomSheetPlayer> {
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  EscalationController escalationController = EscalationController.instance;
+class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
   bool isCapitan = false;
 
   @override
   void initState() {
     super.initState();
-    //RESGATAR CAPITÃO
-    isCapitan = escalationController.selectedPlayerCapitan == widget.user.id;
+    final team = ref.read(escalationTeamProvider);
+    isCapitan = team.selectedPlayerCapitan == widget.user.id;
   }
-  
-  //FUNÇÃO PARA ADICIONAR OU REMOVER JOGADOR DA ESCALAÇÃO
-  void setPlayerPosition(id, action){
-    //VEERIFICAR TIPO DE AÇÃO
-    if(action == 'setPosition'){
-      //SELECIONAR JOGADOR
-      escalationController.setPlayerEscalation(id);
-    }else{
-      //ATUALIZAR INDEX DE JOGADOR CAPITÃO
-      escalationController.setPlayerCapitan(id);
+
+  void setPlayerPosition(id, action) {
+    if (action == 'setPosition') {
+      ref.read(escalationSessionProvider.notifier).setPlayerEscalation(id);
+    } else {
+      ref.read(escalationTeamProvider.notifier).setPlayerCapitan(id);
     }
-    //FECHAR BOTTOM SHEET
     Navigator.of(context).pop();
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    
-    //RESGATAR PARTICIPANTE
-    UserModel user = widget.user;
-    
-    //RESGATAR DADOS DE JOGADOR DO PARTICIPANTE
-    PlayerModel player = user.player!;
+    final dimensions = MediaQuery.of(context).size;
+    final session = ref.watch(escalationSessionProvider);
+    final user = widget.user;
+    final PlayerModel player = user.player!;
+    final Map<String, dynamic> playerMap = player.toMap();
+    final String modality = session.event!.modality!.name;
+    final mainPos = player.getMainPosition(modality);
+    final List secondaryPositions = player.getSecondaryPositions(modality);
 
-    //RESGTAR JOGADOR COMO MAP
-    Map<String, dynamic> playerMap = player.toMap();
-    
-
-    //RESGATAR MODALIDADE DA PELADA
-    String modality = escalationController.event!.modality!.name;
-    
-    //RESGATAR POSIÇÕES DO JOGADOR
-    List<String> playerPositions = player.positions[escalationController.event!.modality!.name]!;
-    //REMOVER POSIÇÃO PRINCIPAL DO ARRAY
-    playerPositions.remove(player.mainPosition[escalationController.event!.modality!.name]);
-    
-    //LISTA DE METRICAS DO CARD
-    List<Map<String, dynamic>> metrics = [
-      {
-        'name':'price',
-        'label':'Valor de Mercado',
-        'icon': AppIcones.money_check_solid,
-        'price':true
-      },
-      {
-        'name':'valuation',
-        'label':'Valorização',
-        'icon': AppIcones.sort_amount_up_solid,
-        'price':false
-      },
-      {
-        'name':'points',
-        'label':'Última Pontuação',
-        'icon': AppIcones.calculator_solid,
-        'price':false
-      },
-      {
-        'name':'avarage',
-        'label':'Média',
-        'icon': AppIcones.chart_line_solid,
-        'price':false
-      },
-      {
-        'name':'games',
-        'label':'Jogos',
-        'icon': AppIcones.clipboard_solid,
-        'price':false
-      },
-      {
-        'name':'status',
-        'label':'Status',
-        'icon': AppIcones.user_checked_solid,
-        'price':false
-      },
+    final List<Map<String, dynamic>> metrics = [
+      {'name': 'price', 'label': 'Valor de Mercado', 'icon': AppIcones.money_check_solid, 'price': true},
+      {'name': 'valuation', 'label': 'Valorização', 'icon': AppIcones.sort_amount_up_solid, 'price': false},
+      {'name': 'points', 'label': 'Última Pontuação', 'icon': AppIcones.calculator_solid, 'price': false},
+      {'name': 'avarage', 'label': 'Média', 'icon': AppIcones.chart_line_solid, 'price': false},
+      {'name': 'games', 'label': 'Jogos', 'icon': AppIcones.clipboard_solid, 'price': false},
+      {'name': 'status', 'label': 'Status', 'icon': AppIcones.user_checked_solid, 'price': false},
     ];
 
-    return  Container(
-      height: ( dimensions.height / 2 ) + 60,
+    return Container(
+      height: (dimensions.height / 2) + 60,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
-            children:[ 
-              SizedBox(
-                child: Column(
-                  children: [
-                    ImgCircularWidget(
-                      size: 100,
-                      image: user.photo,
-                      borderColor: PlayerHelper.setColorPosition(player.mainPosition),
+            children: [
+              Column(
+                children: [
+                  ImgCircularWidget(
+                    size: 100,
+                    image: user.photo,
+                    borderColor: PlayerHelper.setColorPosition(mainPos?.alias),
+                  ),
+                  Text(
+                    UserHelper.getFullName(user),
+                    style: Theme.of(context).textTheme.titleSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text("@${user.userName}", style: Theme.of(context).textTheme.bodyMedium),
+                  if (mainPos != null) PositionWidget(position: mainPos.alias, mainPosition: true),
+                  Container(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: secondaryPositions.map((pos) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: PositionWidget(position: pos.alias, mainPosition: false),
+                        );
+                      }).toList(),
                     ),
-                    Text(
-                      UserHelper.getFullName(user),
-                      style: Theme.of(context).textTheme.titleSmall,
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      "@${user.userName}",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    PositionWidget(
-                      position: player.mainPosition[modality]!,
-                      mainPosition: true,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ...playerPositions.asMap().entries.map((entry){
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 2),
-                              child: PositionWidget(
-                                position: entry.value,
-                                mainPosition: false,
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-              if(isCapitan)...[
+              if (isCapitan) ...[
                 const Positioned(
                   top: 70,
                   left: 80,
@@ -178,51 +117,60 @@ class BottomSheetPlayerState extends State<BottomSheetPlayer> {
                     textSide: 10,
                   ),
                 ),
-              ]
-            ]
+              ],
+            ],
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: Wrap(
               spacing: 10,
-              children: [
-                ...metrics.asMap().entries.map((entry){
-                  //RESGATAR OBJETO DE METRICA
-                  final item = entry.value;
-                  //RESGATAR CHAVE IDENTIFICADORA DDO ITEM
-                  final name = item['name'];
-                  
-                  return Container(
-                    width: ( dimensions.width / 2 ) - 25,
-                    padding: const EdgeInsets.all(10),
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.grey_300.withAlpha(40),
-                      borderRadius: const BorderRadius.all(Radius.circular(5))
-                    ),
-                    child: Column(
-                      children: [
-                        if(name == 'status')...[
-                          Icon(
-                            AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['icon'],
-                            size: 30,
-                            color: AppHelper.setStatusPlayer(UserHelper.getParticipant(user.participants, escalationController.event!.id!)!.status)['color'],
-                          )
-                        ]else...[
-                          Text(
-                            "${playerMap['rating'][name]}",
-                            style: Theme.of(context).textTheme.titleSmall!.copyWith(color: AppHelper.setColorPontuation(playerMap['rating'][name])['color']),
-                          ),
-                        ],
+              children: metrics.map((item) {
+                final name = item['name'];
+                return Container(
+                  width: (dimensions.width / 2) - 25,
+                  padding: const EdgeInsets.all(10),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                    color: AppColors.grey_300.withAlpha(40),
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  ),
+                  child: Column(
+                    children: [
+                      if (name == 'status') ...[
+                        Icon(
+                          AppHelper.setStatusPlayer(
+                            UserHelper.getParticipant(
+                              user.participants,
+                              session.event!.id!,
+                            )!.status,
+                          )['icon'],
+                          size: 30,
+                          color: AppHelper.setStatusPlayer(
+                            UserHelper.getParticipant(
+                              user.participants,
+                              session.event!.id!,
+                            )!.status,
+                          )['color'],
+                        ),
+                      ] else ...[
                         Text(
-                          "${item['label']}",
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.bold),
+                          "${playerMap['rating'][name]}",
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: AppHelper.setColorPontuation(playerMap['rating'][name])['color'],
+                          ),
                         ),
                       ],
-                    )
-                  );
-                }),
-              ]
+                      Text(
+                        "${item['label']}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall!
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ),
           Row(

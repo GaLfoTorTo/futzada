@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         //SEÇÃO - CATEGORIAS
         const SectionCategoriesWidget(),
         //SEÇÃO - TASKS
-        if(!userController.profileCompleted)...[
+        if(!userController.profileCompleted && user.level != null)...[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: CardLevelWidget(
@@ -71,10 +71,10 @@ class _HomePageState extends State<HomePage> {
           )
         ],
         //SEÇÃO - TAREFAS
-        if(userController.tasks.isNotEmpty)...[
+        if(user.tasks?.isNotEmpty ?? false)...[
           SectionHomeWidget(
             title: "Tarefas",
-            options: userController.tasks,
+            options: user.tasks,
           )
         ],
         //SEÇÃO - EVENTO DO DIA

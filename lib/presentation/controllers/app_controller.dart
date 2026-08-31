@@ -37,7 +37,6 @@ class AppController extends ChangeNotifier {
     try {
       await registerSession(user);
       await registerEvents(user);
-      await registerLocation();
       userController.init();
       homeController.init();
       final session = sl<ProviderContainer>().read(appSessionProvider.notifier);

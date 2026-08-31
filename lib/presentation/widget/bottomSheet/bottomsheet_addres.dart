@@ -30,13 +30,6 @@ class BottomSheetAddress extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).dialogTheme.backgroundColor,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(15),
-          topRight: Radius.circular(15),
-        ),
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [

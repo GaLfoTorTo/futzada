@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
+import 'package:esportly/core/enum/enums.dart';
 import 'package:esportly/data/services/rating_service.dart';
 import 'package:esportly/data/models/player_model.dart';
+import 'package:esportly/data/models/position_model.dart';
 
 class PlayerService {
   //INSTANCIAR FAKER E RANDOM (TEMPORARIAMENTE)
@@ -13,27 +15,44 @@ class PlayerService {
 
   //FUNÇÃO DE GERAÇÃO DE JOGADOR
   PlayerModel generatePlayer(int i){
-    //DEFINIR PLAYER
-    return PlayerModel.fromMap({
-      'id': random.nextInt(100),
-      'userId': i,
-      'bestSide': random.nextBool() ? 'Right' : 'Left',
-      'type': faker.lorem.sentence().toString(),
-      'numer': random.nextInt(99),
-      'mainPosition': {
-        "Football": randomPosition("Football", random.nextInt(5)),
-        "Volleyball": randomPosition("Volleyball", random.nextInt(5)),
-        "Basketball": randomPosition("Basketball", random.nextInt(5)),
-      },
-      'positions': {
-        "Football": List.generate(random.nextInt(5), (i) => randomPosition("Football", random.nextInt(5))),
-        "Volleyball": List.generate(random.nextInt(5), (i) => randomPosition("Volleyball", random.nextInt(5))),
-        "Basketball": List.generate(random.nextInt(5), (i) => randomPosition("Basketball", random.nextInt(5))),
-      },
-      "rating" : null,//ratingService.generateRating(Roles.Player).toMap(),
-      "createdAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
-      "updatedAt" : faker.date.dateTime(minYear: 2024, maxYear: 2025),
-    });
+    final List<PositionModel> positions = [];
+    for (final modality in ["Football", "Volleyball", "Basketball"]) {
+      final mainAlias = randomPosition(modality, random.nextInt(5));
+      final mod = _modalityFromString(modality);
+      positions.add(PositionModel(
+        id: random.nextInt(100),
+        title: mainAlias,
+        alias: mainAlias,
+        modality: mod,
+        main: true,
+      ));
+      final extras = List.generate(random.nextInt(3), (_) => randomPosition(modality, random.nextInt(5)));
+      for (final alias in extras) {
+        if (alias == mainAlias) continue;
+        positions.add(PositionModel(
+          id: random.nextInt(100),
+          title: alias,
+          alias: alias,
+          modality: mod,
+          main: false,
+        ));
+      }
+    }
+    return PlayerModel(
+      id: random.nextInt(100),
+      bestSide: random.nextBool() ? 'Right' : 'Left',
+      type: faker.lorem.sentence().toString(),
+      number: random.nextInt(99),
+      positions: positions,
+    );
+  }
+
+  static Modality _modalityFromString(String modality) {
+    switch (modality) {
+      case "Volleyball": return Modality.Volleyball;
+      case "Basketball": return Modality.Basketball;
+      default: return Modality.Football;
+    }
   }
 
   //FUNÇÃO PARA GERAR JOGADORES PARA MERCADO (TEMPORARIAMENTE)

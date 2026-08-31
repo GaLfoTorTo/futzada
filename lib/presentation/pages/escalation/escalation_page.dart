@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/core/helpers/app_helper.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/presentation/controllers/showcase_controller.dart';
 import 'package:esportly/presentation/widget/showcase/wizard_widget.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
 import 'package:esportly/presentation/pages/escalation/error/erro_escalation_page.dart';
 import 'package:esportly/presentation/widget/buttons/float_button_escalation_widget.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_loading_widget.dart';
@@ -18,98 +23,79 @@ import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_dropdown_icon_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_formation_widget.dart';
 
-class EscalationPage extends StatefulWidget {  
-  const EscalationPage({
-    super.key,
-  });
+class EscalationPage extends ConsumerStatefulWidget {
+  const EscalationPage({super.key});
 
   @override
-  State<EscalationPage> createState() => EscalationPageState();
+  ConsumerState<EscalationPage> createState() => EscalationPageState();
 }
 
-class EscalationPageState extends State<EscalationPage> {
-  bool formationButton = true;
-  bool listButton = false;
-  String viewType = 'escalation';
-  //RESGATAR CONTROLLER DE ESCALAÇÃO
-  EscalationController escalationController = EscalationController.instance;
+class EscalationPageState extends ConsumerState<EscalationPage> {
   ShowcaseController showcaseController = ShowcaseController.instance;
+  String viewType = 'escalation';
+  late UserModel user;
+  List<EventModel> events = [];
+  bool showCap = false;
 
   @override
   void initState() {
     super.initState();
-    escalationController.init();
-    escalationController.addListener(_onControllerUpdate);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      user = sl<UserModel>(instanceName: 'user');
+      events = sl<List<EventModel>>(instanceName: 'events');
+      ref.read(escalationSessionProvider.notifier).init(events, user);
+    });
+    showcaseController.addListener(_onShowcaseUpdate);
   }
-
-  void _onControllerUpdate() => setState(() {});
 
   @override
   void dispose() {
-    escalationController.removeListener(_onControllerUpdate);
+    showcaseController.removeListener(_onShowcaseUpdate);
     super.dispose();
   }
 
-  //FUNÇÃO PARA SELECIONAR EVENTO
-  void selectEvent(id){
-    setState(() {
-      escalationController.setEvent(id);
-    });
-  }
-  
-  //FUNÇÃO PARA SELECIONAR TIPO DE VISUALIZAÇÃO
-  void selectView(type){
-    setState(() {
-      viewType = type;
-    });
-  }
-  
-  //FUNÇÃO PARA SELECIONAR FORMAÇÃO
-  void selectFormation(newValue){
-    setState(() {
-      escalationController.formation = newValue;
-    });
-  }
-  
-  //FUNÇÃO DE NEVEGAÇÃO PARA MERCADO
-  void goToMarket(BuildContext context){
-    escalationController.resetFilter();
-    context.push('/escalation/market');
-  }
+  //FUNÇÃO DE EXIBIÇÃO DE PAGINA NO SHOWCASE
+  void _onShowcaseUpdate() => setState(() {});
+
+  //FUNÇÃO DE SELEÇÃO DE EVENTO
+  void selectEvent(id) => ref.read(escalationSessionProvider.notifier).setEvent(id);
+
+  //FUNÇÃO DE SELEÇÃO DE VISUALIZAÇÃO
+  void selectView(type) => setState(() => viewType = type);
+
+  //FUNÇÃO DE SELEÇÃO DE FORMAÇÃO DA EQUIPE
+  void selectFormation(newValue) => ref.read(escalationSessionProvider.notifier).setFormation(newValue);
 
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
-    var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTOS DO USUARIO COMO MAP
-    List<Map<String, dynamic>> userEvents = escalationController.events.map((event){
-      return {'id': event.id, 'title' : event.title, 'photo': event.photo};
-    }).toList();
-    //DEFINIR COR A PARTIR DO TEMA
+    //RESGATAR INICIALIZAÇÃO DE PROVIDER DE ESCALAÇÃO
+    final managerSession = ref.watch(escalationSessionProvider);
+    final managerTeam = ref.watch(escalationTeamProvider);
+    final team = ref.watch(escalationTeamProvider);
+    //ESTADOS - ESTILIZAÇÃO
+    final dimensions = MediaQuery.of(context).size;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = isDark ? AppColors.dark_300 : AppColors.white;
-
-    final hasEvents = escalationController.events.isNotEmpty;
 
     return Scaffold(
       appBar: HeaderWidget(
         title: 'Escalação',
         leftAction: () => context.pop(),
-        rightAction: hasEvents ? () => goToMarket(context) : null,
-        rightIcon: hasEvents ? Icons.shopping_cart : null,
-        extraAction: hasEvents ? () => context.push('/escalation/historic') : null,
-        extraIcon: hasEvents ? Icons.history : null,
+        rightAction: events.isNotEmpty ? () => context.push('/escalation/market') : null,
+        rightIcon: events.isNotEmpty ? Icons.shopping_cart : null,
+        extraAction: events.isNotEmpty ? () => context.push('/escalation/historic') : null,
+        extraIcon: events.isNotEmpty ? Icons.history : null,
         shadow: false,
       ),
       body: SafeArea(
-        child: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
-          if(escalationController.isLoading){
+        child: Builder(builder: (_) {
+          if (managerSession.isLoading) {
             return const Center(child: IndicatorLoadingWidget());
           }
-          if(escalationController.hasError){
-            //EXIBIR DIALOG DE ERRO
+          if (managerSession.hasError) {
             return const ErroEscalationPage();
           }
+          
           return SingleChildScrollView(
             child: Column(
               spacing: 10,
@@ -129,27 +115,18 @@ class EscalationPageState extends State<EscalationPage> {
                       ),
                     ],
                   ),
-                  child: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
-                    //RESGATAR VALOR DE PATRIMONIO DO TECNICO
-                    var managerPatrimony = escalationController.managerPatrimony;
-                    //RESGATAR PREÇO DA EQUIPE DO TECNICO
-                    var managerTeamPrice = escalationController.managerTeamPrice;
-                    //RESGATAR VALORIZAÇÃO DO PATRIMONIO DO TECNICO
-                    var managerValuation = escalationController.managerValuation;
-                    if(!escalationController.isReady){
-                      return SizedBox.shrink();
-                    }
-
-                    return Row(
+                  child: managerSession.isReady
+                    ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
                           width: dimensions.width * 0.25,
-                          child: ButtonDropdownIconWidget(
-                            selectedItem: escalationController.event!.id,
-                            items: userEvents,
+                          child: ButtonDropdownIconWidget<EventModel>(
+                            selectedItem: managerSession.event!,
+                            items: events,
                             onChange: selectEvent,
+                            labelBuilder: (e) => e.title ?? '',
                             iconAfter: false,
                             backgroundColor: isDark ? AppColors.dark_300 : AppColors.white,
                           ),
@@ -158,7 +135,7 @@ class EscalationPageState extends State<EscalationPage> {
                           width: dimensions.width * 0.22,
                           child: PriceIndicatorWidget(
                             title: 'Preço da Equipe',
-                            value: '$managerTeamPrice'
+                            value: '${managerSession.price}',
                           ),
                         ),
                         SizedBox(
@@ -166,22 +143,22 @@ class EscalationPageState extends State<EscalationPage> {
                           child: Row(
                             children: [
                               PriceIndicatorWidget(
-                                value: '$managerPatrimony',
+                                value: '${managerSession.patrimony}',
                                 title: 'FutCoins',
                               ),
-                              if(managerValuation != 0.0)...[
+                              if (managerSession.valuation != 0.0) ...[
                                 Icon(
-                                  AppHelper.setColorPontuation(managerValuation)['icon'],
+                                  AppHelper.setColorPontuation(managerSession.valuation)['icon'],
                                   size: 20,
-                                  color: AppHelper.setColorPontuation(managerValuation)['color'],
+                                  color: AppHelper.setColorPontuation(managerSession.valuation)['color'],
                                 ),
                               ]
                             ],
                           ),
                         ),
                       ],
-                    );
-                  })
+                    )
+                  : const SizedBox.shrink(),
                 ),
                 Container(
                   width: dimensions.width,
@@ -189,14 +166,15 @@ class EscalationPageState extends State<EscalationPage> {
                   child: Row(
                     children: [
                       SizedBox(
-                        width: ( dimensions.width / 2 ) -10,
+                        width: (dimensions.width / 2) - 10,
                         child: ButtonFormationWidget(
-                          selectedFormation: escalationController.formation, 
-                          onChange: selectFormation
+                          selectedFormation: managerSession.formation,
+                          formations: managerSession.formations,
+                          onChange: selectFormation,
                         ),
                       ),
                       SizedBox(
-                        width: ( dimensions.width / 2 ) -10 ,
+                        width: (dimensions.width / 2) - 10,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           spacing: 10,
@@ -206,66 +184,55 @@ class EscalationPageState extends State<EscalationPage> {
                               child: ButtonIconWidget(
                                 padding: 20,
                                 iconSize: 20,
-                                icon: AppIcones.escalacao_outline, 
-                                iconColor: viewType == 'escalation' ? AppColors.blue_500 : AppColors.grey_500,
-                                backgroundColor: viewType == 'escalation' ? AppColors.green_300 : color,
-                                action: () => selectView('escalation')
+                                icon: AppIcones.escalacao_outline,
+                                iconColor: viewType == 'escalation'
+                                    ? AppColors.blue_500
+                                    : AppColors.grey_500,
+                                backgroundColor:
+                                    viewType == 'escalation' ? AppColors.green_300 : color,
+                                action: () => selectView('escalation'),
                               ),
                             ),
                             ButtonIconWidget(
                               padding: 20,
                               iconSize: 20,
-                              icon: AppIcones.clipboard_outline, 
+                              icon: AppIcones.clipboard_outline,
                               iconColor: viewType == 'list' ? AppColors.blue_500 : AppColors.grey_500,
                               backgroundColor: viewType == 'list' ? AppColors.green_300 : color,
-                              action: () => selectView('list')
-                            )
+                              action: () => selectView('list'),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
                 ),
-                //VERIFICAR TIPO DE VISUALIZAÇÃO (ESCALAÇÃO OU LISTA)
                 if (viewType == 'escalation') ...[
                   EscalationWidget(
                     width: dimensions.width - 80,
                     height: (dimensions.height / 2) + 50,
-                    category: escalationController.category,
-                    formation: escalationController.formation
+                    category: managerSession.category,
+                    formation: managerSession.formation,
                   ),
                   const SizedBox(height: 50),
                   const Text(
                     'Reservas',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  ReserveBankWidget(
-                    category: escalationController.category,
-                  ),
+                  ReserveBankWidget(category: managerSession.category),
                 ] else ...[
-                  const EscalationListWidget(
-                    title: 'Titulares',
-                    occupation: 'starters',
-                  ),
+                  const EscalationListWidget(title: 'Titulares', occupation: 'starters'),
                   const SizedBox(height: 20),
-                  const EscalationListWidget(
-                    title: 'Reservas',
-                    occupation: 'reserves',
-                  ),
+                  const EscalationListWidget(title: 'Reservas', occupation: 'reserves'),
                 ],
               ],
-            )
+            ),
           );
-        })
+        }),
       ),
-      floatingActionButton: ListenableBuilder(listenable: Listenable.merge([escalationController, showcaseController]), builder: (_, __){
-        //VERIFICAR SE EXISTEM PROXIMAS PARTIDAS
-        if(escalationController.isReady && !escalationController.starters.contains(null)) {
-          bool hasCapitan = escalationController.selectedPlayerCapitan != 0;
-          return FloatButtonEscalationWidget(hasCapitan: hasCapitan);
-        }
-        return const SizedBox.shrink();
-      })
+      floatingActionButton: managerTeam.selectedPlayerCapitan != 0
+          ? FloatButtonEscalationWidget(hasCapitan: team.selectedPlayerCapitan != 0)
+          : const SizedBox.shrink(),
     );
   }
 }

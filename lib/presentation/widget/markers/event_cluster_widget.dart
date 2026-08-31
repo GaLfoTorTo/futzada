@@ -155,7 +155,11 @@ class EventClusterWidget extends StatelessWidget {
             key: ValueKey("${marker.id}"),
             rotate: true,
             child: InkWell(
-              onTap: () => showModalBottomSheet(context: context, isScrollControlled: true, builder: (_) => BottomSheetEventExplore(events: eventsAtSamePlace)),
+              onTap: () => showModalBottomSheet(
+                context: context, 
+                isScrollControlled: true,
+                backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
+                builder: (_) => BottomSheetEventExplore(events: eventsAtSamePlace)),
               child: setEventWidget(marker, imgs: imgs, totalEvents: eventsAtSamePlace.length),
             )
           );

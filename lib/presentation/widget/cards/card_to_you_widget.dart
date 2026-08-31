@@ -16,11 +16,13 @@ class CardToYouWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //RESGATAR POSIÇÕES DO USUARIO
-    ValueNotifier<LatLng?> userLatLog = sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog');
+    final LatLng? userLatLon = sl.isRegistered<ValueNotifier<LatLng?>>(instanceName: 'userLatLog')
+        ? sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog').value
+        : null;
     //RESGATAR POSIÇÕES DO MARKER
     final eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     //RESGATAR DISTANCIA ATE O LOCAL
-    double distance = MapHelper.getDistance(userLatLog.value!, eventLatLon);
+    final double? distance = userLatLon != null ? MapHelper.getDistance(userLatLon, eventLatLon) : null;
           
     return Card(
       child: Container(
@@ -67,7 +69,7 @@ class CardToYouWidget extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
-                      "${distance.floor()} Km",
+                      distance != null ? "${distance.floor()} Km" : "— Km",
                       style: Theme.of(context).textTheme.headlineSmall!.copyWith(
                         color: AppColors.white
                       )

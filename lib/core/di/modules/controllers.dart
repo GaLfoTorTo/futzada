@@ -7,8 +7,6 @@ import 'package:esportly/presentation/controllers/showcase_controller.dart';
 import 'package:esportly/presentation/controllers/user_controller.dart';
 import 'package:esportly/presentation/controllers/home_controller.dart';
 import 'package:esportly/presentation/controllers/event_controller.dart';
-import 'package:esportly/presentation/controllers/escalation_controller.dart';
-import 'package:esportly/presentation/controllers/game_controller.dart';
 import 'package:esportly/presentation/controllers/rank_controller.dart';
 import 'package:esportly/presentation/controllers/explorer_controller.dart';
 import 'package:esportly/presentation/controllers/chat_controller.dart';
@@ -29,8 +27,6 @@ void registerInitControllers() {
 /// Controllers lazy — instanciados apenas quando chamados pela primeira vez
 void registerLazyControllers() {
   sl.registerLazySingleton<EventController>(() => EventController());
-  sl.registerLazySingleton<GameController>(() => GameController());
-  sl.registerLazySingleton<EscalationController>(() => EscalationController());
   sl.registerLazySingleton<StatisticsController>(() => StatisticsController());
   sl.registerLazySingleton<RankController>(() => RankController());
   sl.registerLazySingleton<ExplorerController>(() => ExplorerController());

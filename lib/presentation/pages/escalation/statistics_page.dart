@@ -1,7 +1,9 @@
+import 'package:esportly/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/presentation/controllers/statistics_controller.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
 import 'package:esportly/presentation/widget/cards/card_team_widget.dart';
@@ -21,24 +23,20 @@ class StatisticsPage extends StatefulWidget {
 class StatisticsPageState extends State<StatisticsPage> {
   //RESGATAR CONTROLLER DE ESCALAÇÃO
   StatisticsController statisticsController = StatisticsController.instance;
-
+  late List<EventModel> events = [];
   //FUNÇÃO PARA SELECIONAR EVENTO
   void selectEvent(id){
     setState(() {
       //SELECIONAR EVENTO
+      events = sl<List<EventModel>>(instanceName: 'events');
       statisticsController.setEvent(id);
-      //ATUALIZAR CONTROLLER
-          });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR EVENTOS DO USUARIO COMO MAP
-    List<Map<String, dynamic>> userEvents = statisticsController.userEvents.map((event){
-      return {'id': event.id, 'title' : event.title, 'photo': event.photo};
-    }).toList();
     //CONTROLLADOR DE BARRA DE ROLAGEM
     PageController teamsController = PageController();
 
@@ -74,13 +72,14 @@ class StatisticsPageState extends State<StatisticsPage> {
                   children: [
                     SizedBox(
                       width: dimensions.width * 0.4,
-                      child: ButtonDropdownIconWidget(
-                        selectedItem: statisticsController.event!.id,
-                        items: userEvents,
+                      child: ButtonDropdownIconWidget<EventModel>(
+                        selectedItem: statisticsController.event!,
+                        items: events,
                         menuWidth: dimensions.width * 0.4,
                         iconAfter: false,
                         backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
                         onChange: selectEvent,
+                        labelBuilder: (e) => e.title ?? '',
                       ),
                     ),
                   ],

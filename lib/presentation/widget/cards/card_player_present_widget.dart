@@ -58,9 +58,9 @@ class CardPlayerPresentWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    if(user.player != null)...[
+                    if(user.player != null && user.player!.getMainPosition(modality) != null)...[
                       PositionWidget(
-                        position: user.player!.mainPosition[modality]!,
+                        position: user.player!.getMainPosition(modality)!.alias,
                         mainPosition: true,
                         width: 35,
                         height: 25,

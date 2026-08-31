@@ -36,24 +36,28 @@ class ModalityHelper {
           "icon": Icons.sports_soccer_rounded,
           "texColor": AppColors.blue_500,
           "color": AppColors.green_300,
+          "bg": AppColors.green_700,
         };
       case "Volei":
         return {
           "icon": Icons.sports_volleyball_outlined,
           "texColor": AppColors.blue_500,
           "color": AppColors.yellow_500,
+          "bg": AppColors.yellow_700,
         };
       case "Basquete":
         return {
           "icon": Icons.sports_basketball_rounded,
           "texColor": AppColors.blue_500,
           "color": AppColors.orange_300,
+          "bg": AppColors.orange_700,
         };
       default:
         return {
           "icon": Icons.sports_soccer_rounded,
           "texColor": AppColors.white,
           "color": AppColors.green_300,
+          "bg": AppColors.green_700,
         };
     }
   }
@@ -66,54 +70,63 @@ class ModalityHelper {
           "icon": Icons.sports_soccer_rounded,
           "texColor": AppColors.blue_500,
           "color": AppColors.green_300,
+          "bg": AppColors.green_700,
           };
       case "Fut7":
         return {
           "icon": Icons.sports_soccer_sharp,
           "texColor": AppColors.white,
           "color": AppColors.green_300,
+          "bg": AppColors.green_700,
           };
       case "Futsal":
         return {
           "icon": Icons.sports_soccer_outlined,
           "texColor": AppColors.white,
           "color": AppColors.blue_300,
+          "bg": AppColors.blue_700,
           };
       case "Volei":
         return {
           "icon": Icons.sports_volleyball_rounded,
           "texColor": AppColors.blue_500,
           "color": AppColors.yellow_500,
+          "bg": AppColors.yellow_700,
           };
       case "Volei Praia":
         return {
           "icon": Icons.sports_volleyball_outlined,
           "texColor": AppColors.blue_500,
           "color": AppColors.bege_300,
+          "bg": AppColors.bege_700,
           };
       case "Fut Volei":
         return {
           "icon": Icons.sports_soccer_outlined,
           "texColor": AppColors.blue_500,
           "color": AppColors.bege_300,
+          "bg": AppColors.bege_700,
           };
       case "Basquete":
         return {
           "icon": Icons.sports_basketball_rounded,
           "texColor": AppColors.blue_500,
           "color": AppColors.orange_300,
+          "bg": AppColors.orange_700,
           };
       case "Streetball":
         return {
           "icon": Icons.sports_basketball_outlined,
           "texColor": AppColors.white,
           "color": AppColors.dark_300,
+          "bg": AppColors.dark_700,
           };
       default:
         return {
           "icon": Icons.sports,
           "texColor": AppColors.green_300,
           "color": AppColors.green_300,
+          "bg": AppColors.green_700,
           };
     }
   }
@@ -235,6 +248,7 @@ class ModalityHelper {
       case "Volei":
         return {
           "color" : AppColors.yellow_500,
+          "bg" : AppColors.yellow_700,
           "textColor" : AppColors.white,
           "image" : AppImages.cardVolleyball
           };
@@ -242,6 +256,7 @@ class ModalityHelper {
       case "Volei de Praia":
         return {
           "color" : AppColors.bege_300,
+          "bg" : AppColors.bege_700,
           "textColor" : AppColors.blue_500,
           "image" : AppImages.cardBeachVolleyball
           };
@@ -249,24 +264,28 @@ class ModalityHelper {
       case "Basquete":
         return {
           "color" : AppColors.orange_500,
+          "bg" : AppColors.orange_700,
           "textColor" : AppColors.white,
           "image" : AppImages.cardBasketball
           };
       case "Streetball":
         return {
           "color" : AppColors.dark_300,
+          "bg" : AppColors.dark_700,
           "textColor" : AppColors.white,
           "image" : AppImages.cardBasketball
           };
       case "Futsal":
         return {
           "color" : AppColors.blue_300,
+          "bg" : AppColors.blue_700,
           "textColor" : AppColors.white,
           "image" : AppImages.cardFootball
           };
       default:
         return {
           "color" : AppColors.green_300,
+          "bg" : AppColors.green_700,
           "textColor" : AppColors.white,
           "image" : AppImages.cardFootball
           };
