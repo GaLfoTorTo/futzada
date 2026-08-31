@@ -252,13 +252,19 @@ class ModalityHelper {
           "textColor" : AppColors.white,
           "image" : AppImages.cardVolleyball
           };
-      case "Fut Volei":
       case "Volei de Praia":
         return {
           "color" : AppColors.bege_300,
           "bg" : AppColors.bege_700,
           "textColor" : AppColors.blue_500,
           "image" : AppImages.cardBeachVolleyball
+          };
+      case "Fut Volei":
+        return {
+          "color" : AppColors.bege_300,
+          "bg" : AppColors.bege_700,
+          "textColor" : AppColors.blue_500,
+          "image" : AppImages.cardFutvolei
           };
       case "Basketball":
       case "Basquete":
@@ -273,14 +279,14 @@ class ModalityHelper {
           "color" : AppColors.dark_300,
           "bg" : AppColors.dark_700,
           "textColor" : AppColors.white,
-          "image" : AppImages.cardBasketball
+          "image" : AppImages.cardStreetball
           };
       case "Futsal":
         return {
           "color" : AppColors.blue_300,
           "bg" : AppColors.blue_700,
           "textColor" : AppColors.white,
-          "image" : AppImages.cardFootball
+          "image" : AppImages.cardFutsal
           };
       default:
         return {

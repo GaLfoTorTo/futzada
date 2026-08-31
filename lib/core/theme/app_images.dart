@@ -24,9 +24,12 @@ class AppImages {
   static const basketball = "assets/images/register/basketball.jpg";
   //IMAGENS PARA BACKGROUND DE CARDS
   static const cardFootball = "assets/images/cards/football_card.jpg";
+  static const cardFutsal = "assets/images/cards/futsal_card.jpg";
+  static const cardFutvolei = "assets/images/cards/futvolei_card.jpg";
   static const cardVolleyball = "assets/images/cards/volleyball_card.jpg";
   static const cardBeachVolleyball = "assets/images/cards/beach_volleyball_card.jpg";
   static const cardBasketball = "assets/images/cards/basketball_card.jpg";
+  static const cardStreetball = "assets/images/cards/streetball_card.png";
   //MAPEAMENTO DE IMAGENS DE CARD
   static Map<String, String> cards = {
     "Football": cardFootball,

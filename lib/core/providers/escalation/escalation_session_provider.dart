@@ -124,7 +124,7 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
 
   //FUNÇÃO DE BUSCA DE PARTICIPANTES DO EVENTO SELECIONADO
   Future<void> getParticipants() async {
-    final players = state.event!.participants;
+    final players = state.event!.participants?.where((p) => p.player != null).toList();
     ref.read(escalationMarketProvider.notifier).setPlayersMarket(players ?? []);
   }
 

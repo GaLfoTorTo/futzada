@@ -115,7 +115,6 @@ class CardPlayerMarketWidget extends ConsumerWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Row(
-                              spacing: 2,
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 if (mainPosition != null)
@@ -126,15 +125,12 @@ class CardPlayerMarketWidget extends ConsumerWidget {
                                     height: 25,
                                   ),
                                 ...secondaryPositions.map((pos) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                                    child: PositionWidget(
-                                      position: pos.alias,
-                                      mainPosition: false,
-                                      width: 30,
-                                      height: 20,
-                                      textSide: 10,
-                                    ),
+                                  return PositionWidget(
+                                    position: pos.alias,
+                                    mainPosition: false,
+                                    width: 25,
+                                    height: 20,
+                                    textSide: 8,
                                   );
                                 }),
                               ],
@@ -165,10 +161,10 @@ class CardPlayerMarketWidget extends ConsumerWidget {
                           child: Column(
                             children: [
                               Text(
-                                "${playerMap['rating'][key] ?? 0.0}",
+                                "${playerMap['ratings'][0][key] ?? 0.0}",
                                 style: Theme.of(context).textTheme.titleSmall!.copyWith(
                                   color: AppHelper.setColorPontuation(
-                                    playerMap['rating'][key],
+                                    playerMap['ratings'][0][key],
                                   )['color'],
                                 ),
                               ),
