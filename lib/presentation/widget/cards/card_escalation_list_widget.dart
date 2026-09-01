@@ -32,7 +32,7 @@ class CardEscalationListWidget extends ConsumerWidget {
     final session = ref.watch(escalationSessionProvider);
     final team = ref.watch(escalationTeamProvider);
     final int? i = ocupation == "starters" ? team.starters[index] : team.reserves[index];
-    final UserModel? resolvedUser = EventHelper.getUserEvent(session.event!, i!);
+    final UserModel? resolvedUser = i != null ? EventHelper.getUserEvent(session.event!, i) : null;
 
     return Card(
       child: Container(

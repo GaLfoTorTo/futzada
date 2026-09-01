@@ -1,3 +1,4 @@
+import 'package:esportly/core/providers/escalation/escalation_market_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,10 +51,11 @@ class ButtonPlayerWidget extends ConsumerWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
+          backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
           builder: (_) => BottomSheetPlayer(user: user),
         );
       } else {
-        //ref.read(escalationMarketProvider.notifier).setFilter('positions', [position]);
+        ref.read(escalationMarketProvider.notifier).setFilter('positions', [position]);
         context.push('/escalation/market');
       }
     }
@@ -100,10 +102,9 @@ class ButtonPlayerWidget extends ConsumerWidget {
               ),
               child: Text(
                 UserHelper.getFullName(user),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall!
-                    .copyWith(color: AppColors.white),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  color: AppColors.white
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

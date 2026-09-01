@@ -21,6 +21,8 @@ class PositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color = PlayerHelper.setColorPosition(position);
+    Color textColor = !['CAP','GOL','PIV'].contains(position.toUpperCase()) ? AppColors.white : AppColors.dark_700;
     
     return Stack(
       children: [ 
@@ -29,14 +31,14 @@ class PositionWidget extends StatelessWidget {
             width: width,
             height: height,
             decoration: BoxDecoration(
-              color: PlayerHelper.setColorPosition(position),
+              color: color,
               borderRadius: BorderRadius.circular(5),
             ),
             alignment: Alignment.center,
             child: Text(
               position.toUpperCase(),
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                color: !position.contains('GOL') || position.contains('PIV') ? AppColors.white : AppColors.dark_700,
+                color: textColor,
                 fontWeight: FontWeight.bold,
                 fontSize: textSide
               ),

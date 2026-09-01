@@ -75,49 +75,63 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Stack(
+          Column(
             children: [
-              Column(
+              Stack(
+                clipBehavior: Clip.none,
                 children: [
                   ImgCircularWidget(
                     size: 100,
                     image: user.photo,
                     borderColor: PlayerHelper.setColorPosition(mainPos?.alias),
                   ),
-                  Text(
-                    UserHelper.getFullName(user),
-                    style: Theme.of(context).textTheme.titleSmall,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text("@${user.userName}", style: Theme.of(context).textTheme.bodyMedium),
-                  if (mainPos != null) PositionWidget(position: mainPos.alias, mainPosition: true),
-                  Container(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: secondaryPositions.map((pos) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: PositionWidget(position: pos.alias, mainPosition: false),
-                        );
-                      }).toList(),
+                  if (isCapitan)
+                    const Positioned(
+                      bottom: 2,
+                      right: -4,
+                      child: PositionWidget(
+                        position: "cap",
+                        mainPosition: true,
+                        width: 22,
+                        height: 14,
+                        textSide: 7,
+                      ),
                     ),
-                  ),
                 ],
               ),
-              if (isCapitan) ...[
-                const Positioned(
-                  top: 70,
-                  left: 80,
-                  child: PositionWidget(
-                    position: "cap",
-                    mainPosition: true,
-                    width: 35,
-                    height: 25,
-                    textSide: 10,
-                  ),
+              Text(
+                UserHelper.getFullName(user),
+                style: Theme.of(context).textTheme.titleSmall,
+                textAlign: TextAlign.center,
+              ),
+              Text("@${user.userName}", style: Theme.of(context).textTheme.bodyMedium),
+              if (mainPos != null) ...[
+                PositionWidget(
+                  position: mainPos.alias,
+                  mainPosition: true,
+                  width: 40,
+                  height: 25,
+                  textSide: 10,
                 ),
               ],
+              Container(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: secondaryPositions.map((pos) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: PositionWidget(
+                        position: pos.alias,
+                        mainPosition: false,
+                        width: 30,
+                        height: 20,
+                        textSide: 10,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
           Padding(
@@ -144,7 +158,7 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
                               session.event!.id!,
                             )!.status,
                           )['icon'],
-                          size: 30,
+                          size: 20,
                           color: AppHelper.setStatusPlayer(
                             UserHelper.getParticipant(
                               user.participants,
@@ -154,9 +168,9 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
                         ),
                       ] else ...[
                         Text(
-                          "${playerMap['rating'][name]}",
+                          "${playerMap['ratings'][0][name]}",
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                            color: AppHelper.setColorPontuation(playerMap['rating'][name])['color'],
+                            color: AppHelper.setColorPontuation(playerMap['ratings'][0][name])['color'],
                           ),
                         ),
                       ],
@@ -183,7 +197,7 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
                 height: 30,
                 backgroundColor: AppColors.yellow_300,
                 textColor: AppColors.dark_500,
-                action: () => setPlayerPosition(player.id, 'setCapitan'),
+                action: () => setPlayerPosition(user.id, 'setCapitan'),
               ),
               ButtonTextWidget(
                 text: "Remover",
@@ -192,7 +206,7 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
                 height: 30,
                 backgroundColor: AppColors.red_300,
                 textColor: AppColors.white,
-                action: () => setPlayerPosition(player.id, 'setPosition'),
+                action: () => setPlayerPosition(user.id, 'setPosition'),
               ),
             ],
           ),

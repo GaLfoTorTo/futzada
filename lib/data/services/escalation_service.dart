@@ -22,14 +22,32 @@ class EscalationService {
     switch (category) {
       case 'Futebol':
         numSta = 11;
-        numRes = 5;
+        numRes = 5; // teto máximo de reservas
         break;
       case 'Fut7':
         numSta = 9;
-        numRes = 3;
+        numRes = 5; // round(9 × 0.6)
+        break;
       case 'Futsal':
         numSta = 6;
-        numRes = 2;
+        numRes = 4; // round(6 × 0.6)
+        break;
+      case 'Basquete':
+        numSta = 5;
+        numRes = 3; // round(5 × 0.6)
+        break;
+      case 'Streetball':
+        numSta = 3;
+        numRes = 2; // round(3 × 0.6)
+        break;
+      case 'Volei':
+        numSta = 6;
+        numRes = 4; // round(6 × 0.6)
+        break;
+      case 'Volei de Praia':
+      case 'Fut Volei':
+        numSta = 2;
+        numRes = 1; // round(2 × 0.6)
         break;
       default:
         numSta = 11;
@@ -48,10 +66,9 @@ class EscalationService {
 
   //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
   String getPositionName(int sectorIndex, String category, String formationString) {
-    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-    final formation = getFormation(formationString);
+    final formation = getFormationLayout(category, formationString);
     final totalGroups = formation.length;
-    
+
     switch (category) {
       case 'Futebol':
         return getFootballPosition(sectorIndex, totalGroups);
@@ -59,6 +76,13 @@ class EscalationService {
         return getFut7Position(sectorIndex, totalGroups);
       case 'Futsal':
         return getFutsalPosition(sectorIndex);
+      case 'Basquete':
+      case 'Streetball':
+        return getBasketballPosition(sectorIndex, totalGroups);
+      case 'Volei':
+      case 'Volei de Praia':
+      case 'Fut Volei':
+        return getVolleyballPosition(sectorIndex, totalGroups);
       default:
         return 'Jogador';
     }
@@ -66,8 +90,7 @@ class EscalationService {
 
   //FUNÇÃO PARA RESGATAR POSIÇÃO DO JOGADOR NA ESCALAÇÃO
   String getPositionEscalation(int index, String category, String formationString) {
-    //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
-    final formation = getFormation(formationString);
+    final formation = getFormationLayout(category, formationString);
     int sectorIndex = 0;
     //LOOP NO ARRAY DE FORMAÇÃOS
     for(int i = 0; i < formation.length; i++){
@@ -169,12 +192,73 @@ class EscalationService {
         return 'Jogador';
     }
   }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA BASQUETE / STREETBALL
+  String getBasketballPosition(int index, int totalGroups) {
+    if (totalGroups <= 3) {
+      switch (index) {
+        case 0:
+          return 'Ala';
+        case 1:
+          return 'Ala-Armador';
+        case 2:
+          return 'Armador';
+        default:
+          return 'Jogador';
+      }
+    } else {
+      switch (index) {
+        case 0:
+          return 'Pivô';
+        case 1:
+          return 'Ala-Pivô';
+        case 2:
+          return 'Ala';
+        case 3:
+          return 'Ala-Armador';
+        case 4:
+          return 'Armador';
+        default:
+          return 'Jogador';
+      }
+    }
+  }
+
+  //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA VÔLEI / VÔLEI DE PRAIA / FUTVÔLEI
+  String getVolleyballPosition(int index, int totalGroups) {
+    switch (index) {
+      case 0:
+        return 'Ponteiro';
+      case 1:
+        return 'Central';
+      case 2:
+        return 'Levantador';
+      case 3:
+        return 'Oposto';
+      default:
+        return 'Jogador';
+    }
+  }
   
-  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA
+  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA (FUTEBOL — mantida por compatibilidade)
   List<int> getFormation(String formation) {
     List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
     splitedFormation.insert(0, 1);
     return splitedFormation.reversed.toList();
+  }
+
+  //FUNÇÃO DE LAYOUT DE FORMAÇÃO CIENTE DA MODALIDADE
+  List<int> getFormationLayout(String category, String formationString) {
+    final parts = formationString.split('-').map(int.parse).toList();
+    switch (category) {
+      case 'Futebol':
+      case 'Fut7':
+      case 'Futsal':
+        parts.insert(0, 1);
+        return parts.reversed.toList();
+      default:
+        return parts.reversed.toList();
+    }
   }
 
   //FUNÇÃO DE OPÇÕES DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
@@ -191,7 +275,7 @@ class EscalationService {
           '3-2-4-1',
           '3-4-2-1',
           '5-3-2',
-          '5-4-1'
+          '5-4-1',
         ];
       case 'Fut7':
         return [
@@ -214,6 +298,39 @@ class EscalationService {
           '1-3',
           '1-1-2',
         ];
+      case 'Basquete':
+        return [
+          '2-3',
+          '3-2',
+          '1-3-1',
+          '2-1-2',
+          '1-2-2',
+          '2-2-1',
+        ];
+      case 'Streetball':
+        return [
+          '1-2',
+          '2-1',
+          '1-1-1',
+        ];
+      case 'Volei':
+        return [
+          '3-3',
+          '2-2-2',
+          '1-4-1',
+          '2-3-1',
+          '3-2-1',
+        ];
+      case 'Volei de Praia':
+        return [
+          '1-1',
+        ];
+      case 'Fut Volei':
+        return [
+          '1-1',
+          '2-1',
+          '1-2',
+        ];
       default:
         return [
           '4-3-3',
@@ -225,8 +342,73 @@ class EscalationService {
           '3-2-4-1',
           '3-4-2-1',
           '5-3-2',
-          '5-4-1'
+          '5-4-1',
         ];
+    }
+  }
+
+  //FUNÇÃO PARA RESGATAR ABREVIAÇÃO DA POSIÇÃO DO RESERVA
+  String getReservePosition(int index, String category) {
+    switch (category) {
+      case 'Futebol': // 5 reservas (teto máximo)
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
+      case 'Fut7': // 5 reservas
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
+      case 'Futsal': // 4 reservas
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'fix';
+          case 2: return 'ala';
+          case 3: return 'ala';
+          default: return 'ala';
+        }
+      case 'Basquete': // 3 reservas
+        switch (index) {
+          case 0: return 'arm';
+          case 1: return 'ala';
+          case 2: return 'piv';
+          default: return 'ala';
+        }
+      case 'Streetball': // 2 reservas
+        switch (index) {
+          case 0: return 'arm';
+          case 1: return 'ala';
+          default: return 'ala';
+        }
+      case 'Volei': // 4 reservas
+        switch (index) {
+          case 0: return 'lev';
+          case 1: return 'pon';
+          case 2: return 'cen';
+          case 3: return 'lib';
+          default: return 'pon';
+        }
+      case 'Volei de Praia':
+      case 'Fut Volei': // 1 reserva
+        return 'res';
+      default:
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
     }
   }
 

@@ -31,7 +31,7 @@ class EscalationSessionState {
     this.user,
     this.event,
     this.events = const [],
-    this.category = '',
+    this.category = 'Futebol',
     this.formations = const [],
     this.formation = '4-3-3',
     this.isReady = false,
@@ -102,14 +102,20 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
     state = state.copyWith(isLoading: false);
   }
 
-  //FUNÇÃO DE DEFINIÇÃO DE EVENTO DE MANIPULAÇÃO
+  //FUNÇÃO DE DEFINIÇÃO DE EVENTO ATUAL
   Future<void> setEvent(dynamic id) async {
     state = state.copyWith(isLoading: true);
     try {
       final event = state.events.firstWhere((e) => e.id == id);
       final category = event.gameConfig!.category;
       final formations = _escalationService.getFormations(category);
-      state = state.copyWith(event: event, category: category, formations: formations);
+      final formation = formations[0];
+      state = state.copyWith(
+        event: event, 
+        category: category, 
+        formations: formations, 
+        formation: formation
+      );
       //BUSCAR PARTICIPANTES DO EVENTO SELECIONADO
       getParticipants();
       //INFORMAÇÕES DO USUARIO
@@ -143,7 +149,7 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
         .firstOrNull; 
       final formation = escalation?.formation!;
       final startersList = escalation?.starters ?? _escalationService.setEscalation(state.category, 'starters');
-      final reservesList = escalation?.reserves ?? _escalationService.setEscalation(state.category, 'reserves');
+      final reservesList = _normalizeReserves(escalation?.reserves, state.category);
       ref.read(escalationTeamProvider.notifier).setLineup(startersList, reservesList);
       state = state.copyWith(
         formation: formation,
@@ -160,6 +166,17 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
     state = state.copyWith(isLoading: false);
   }
 
+  //NORMALIZA O TAMANHO DA LISTA DE RESERVAS AO MÁXIMO CORRETO DA CATEGORIA
+  //Evita que dados salvos com contagens antigas (ex: 7) sobrescrevam o teto atual
+  List<int?> _normalizeReserves(List<int?>? saved, String category) {
+    final canonical = _escalationService.setEscalation(category, 'reserves');
+    final target = canonical.length;
+    if (saved == null) return canonical;
+    if (saved.length == target) return saved;
+    if (saved.length > target) return saved.take(target).toList();
+    return [...saved, ...List<int?>.filled(target - saved.length, null)];
+  }
+
   //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO
   void setFormation(String formation) {
     state = state.copyWith(formation: formation);
@@ -169,19 +186,16 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
   void setPlayerEscalation(dynamic id) {
     final market = ref.read(escalationMarketProvider);
     final idx = market.playersMarket.indexWhere((p) => p.id == id);
-    final player = idx != -1 ? market.playersMarket[idx] : null;
-    if (player == null) {
-      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) AppHelper.feedbackMessage(ctx, 'Jogador não encontrado!');
-      return;
-    }
+    final user = market.playersMarket[idx];
+
     try {
       final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(id);
-      ref.read(escalationTeamProvider.notifier).setPlayerPosition(player);
-      calcTeamPrice(
-        state.user!.player!.ratings!.first.price!,
-        isEscaled ? 'remove' : 'add',
-      );
+      ref.read(escalationTeamProvider.notifier).setPlayerPosition(user);
+      final playerPrice = user.player?.ratings
+          ?.firstWhere((r) => r.eventId == state.event?.id, orElse: () => user.player!.ratings!.first)
+          .price ?? 0.0;
+      //CALCULAR PREÇO DO TIME
+      calcTeamPrice(playerPrice, isEscaled ? 'remove' : 'add');
     } catch (e) {
       final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
       if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));

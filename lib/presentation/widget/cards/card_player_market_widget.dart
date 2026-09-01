@@ -50,15 +50,15 @@ class CardPlayerMarketWidget extends ConsumerWidget {
 
     //FUNÇÃO DE DEFINIÇÃO DE BOTÕES
     Map<String, dynamic> setButtonBuy(PlayerModel player) {
-      final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(player.id!);
-      if (rating.price! > managerSession.patrimony) return {'text': 'Comprar', 'color': AppColors.grey_300, 'disabled': true};
+      final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(user.id!);
+      if (rating.price! > managerSession.patrimony) return {'text': 'Comprar', 'color': AppColors.green_100, 'disabled': true};
       if (isEscaled) return {'text': 'Vender', 'color': AppColors.red_300, 'disabled': false};
       return {'text': 'Comprar', 'color': AppColors.green_300, 'disabled': false};
     }
     
     //FUNÇÃO DE DEFINIÇÃO DE POSIÇÃO DO JOGADOR
-    void setPlayerPosition(uuid) {
-      ref.read(escalationSessionProvider.notifier).setPlayerEscalation(uuid);
+    void setPlayerPosition(id) {
+      ref.read(escalationSessionProvider.notifier).setPlayerEscalation(id);
       Navigator.of(context).pop();
     }
 
@@ -239,7 +239,7 @@ class CardPlayerMarketWidget extends ConsumerWidget {
                     textColor: AppColors.white,
                     backgroundColor: buttonConfig['color'],
                     disabled: buttonConfig['disabled'],
-                    action: () => setPlayerPosition(player.id),
+                    action: () => setPlayerPosition(user.id),
                   ),
                 ],
               ),

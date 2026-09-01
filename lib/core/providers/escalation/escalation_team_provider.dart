@@ -40,7 +40,7 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
   @override
   EscalationTeamState build() => const EscalationTeamState();
 
-  //FUNÇÃO DE EXIBIÇÃO DE LINEUP DE EQUIPE
+  //FUNÇÃO DE DEFINIÇÃO DE LINEUP DE EQUIPE
   void setLineup(List<int?> starters, List<int?> reserves) {
     state = state.copyWith(
       starters: List<int?>.from(starters),
@@ -53,18 +53,35 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
     state = state.copyWith(selectedPlayer: index, selectedOccupation: occupation);
   }
 
-  //FUNÇÃO DE DEFINIÇÃO DE POSIÇÃO DO JOGADOR
-  void setPlayerPosition(UserModel? player) {
+  //FUNÇÃO DE ESCALAÇÃO DE JOGADOR NA EQUIPE (TITULAR / RESERVA)
+  void setPlayerPosition(UserModel player) {
     final starters = List<int?>.from(state.starters);
     final reserves = List<int?>.from(state.reserves);
-    if (state.selectedOccupation == 'starters') {
-      starters[state.selectedPlayer] =
-          starters[state.selectedPlayer] == null ? player!.id : null;
+
+    final starterIdx = starters.indexOf(player.id);
+    final reserveIdx = reserves.indexOf(player.id);
+
+    if (starterIdx != -1) {
+      // REMOVE JOGADOR TITULAR
+      starters[starterIdx] = null;
+    } else if (reserveIdx != -1) {
+      // REMOVE JOGADOR RESERVA
+      reserves[reserveIdx] = null;
     } else {
-      reserves[state.selectedPlayer] =
-          starters[state.selectedPlayer] == null ? player!.id : null;
+      // ADICIONAR JOGADOR
+      if (state.selectedOccupation == 'starters') {
+        starters[state.selectedPlayer] = player.id;
+      } else {
+        reserves[state.selectedPlayer] = player.id;
+      }
     }
-    state = state.copyWith(starters: starters, reserves: reserves, selectedPlayer: 0, selectedOccupation: '');
+
+    state = state.copyWith(
+      starters: starters,
+      reserves: reserves,
+      selectedPlayer: 0,
+      selectedOccupation: '',
+    );
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE JOGADOR COMO CAPITÃO

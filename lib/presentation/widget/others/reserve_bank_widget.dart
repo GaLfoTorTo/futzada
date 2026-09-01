@@ -5,6 +5,7 @@ import 'package:esportly/core/providers/escalation/escalation_team_provider.dart
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/event_helper.dart';
+import 'package:esportly/data/services/escalation_service.dart';
 import 'package:esportly/presentation/widget/buttons/button_player_widget.dart';
 
 class ReserveBankWidget extends ConsumerWidget {
@@ -17,17 +18,7 @@ class ReserveBankWidget extends ConsumerWidget {
     final dimensions = MediaQuery.of(context).size;
     final session = ref.watch(escalationSessionProvider);
     final team = ref.watch(escalationTeamProvider);
-
-    String getReservePosition(int index) {
-      switch (index) {
-        case 0: return 'gol';
-        case 1: return 'zag';
-        case 2: return 'lat';
-        case 3: return 'mei';
-        case 4: return 'ata';
-        default: return 'ata';
-      }
-    }
+    final escalationService = EscalationService();
 
     return Card(
       child: Container(
@@ -45,7 +36,7 @@ class ReserveBankWidget extends ConsumerWidget {
             if (team.reserves[index] != null) {
               user = EventHelper.getUserEvent(session.event!, team.starters[index]!);
             }
-            final String position = getReservePosition(index);
+            final String position = escalationService.getReservePosition(index, category);
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
