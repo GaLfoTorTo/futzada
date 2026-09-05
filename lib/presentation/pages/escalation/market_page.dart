@@ -29,7 +29,11 @@ class MarketPageState extends ConsumerState<MarketPage> {
   }
 
   void selectFilter(String name, dynamic newValue) {
-    ref.read(escalationMarketProvider.notifier).setFilter(name, newValue);
+    final notifier = ref.read(escalationMarketProvider.notifier);
+    notifier.setFilter(name, newValue);
+    final event = ref.read(escalationSessionProvider).event;
+    final players = notifier.filterMarketPlayers(event!);
+    notifier.updatePlayersFiltered(players);
   }
 
   @override

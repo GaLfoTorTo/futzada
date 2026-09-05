@@ -5,8 +5,8 @@ import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/providers/game/game_session_provider.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
 import 'package:intl/intl.dart';
 
 class BottomSheetEventGames extends ConsumerWidget {
@@ -14,7 +14,7 @@ class BottomSheetEventGames extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final eventController = EventController.instance;
+    final event = ref.watch(eventSessionProvider.select((s) => s.event));
     final nextGames = ref.watch(gameScheduleProvider.select((s) => s.nextGames));
 
     return Container(
@@ -67,7 +67,7 @@ class BottomSheetEventGames extends ConsumerWidget {
                               padding: const EdgeInsets.only(right: 20),
                               child: ImgCircularWidget(
                                 size: 70,
-                                image: eventController.event.photo,
+                                image: event?.photo,
                                 element: "event",
                               ),
                             ),
@@ -87,7 +87,7 @@ class BottomSheetEventGames extends ConsumerWidget {
                                         child: Icon(AppIcones.marker_solid, size: 20, color: AppColors.grey_300),
                                       ),
                                       Text(
-                                        "${eventController.event.address!.state}",
+                                        "${event?.address?.state}",
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                           color: AppColors.grey_500,
                                           overflow: TextOverflow.ellipsis,

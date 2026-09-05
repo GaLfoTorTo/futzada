@@ -31,8 +31,12 @@ class CardEscalationListWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(escalationSessionProvider);
     final team = ref.watch(escalationTeamProvider);
-    final int? i = ocupation == "starters" ? team.starters[index] : team.reserves[index];
-    final UserModel? resolvedUser = i != null ? EventHelper.getUserEvent(session.event!, i) : null;
+    final int? i = ocupation == "starters" 
+      ? team.starters[index] 
+      : team.reserves[index];
+    final UserModel? resolvedUser = i != null 
+      ? EventHelper.getUserEvent(session.event!, i) 
+      : null;
 
     return Card(
       child: Container(
@@ -55,7 +59,7 @@ class CardEscalationListWidget extends ConsumerWidget {
                     ImgCircularWidget(
                       size: 70,
                       image: resolvedUser.photo,
-                      borderColor: PlayerHelper.setColorPosition(position),
+                      borderColor: PlayerHelper.setColorPosition(position.toUpperCase()),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,31 +71,42 @@ class CardEscalationListWidget extends ConsumerWidget {
                         Text(
                           "@${resolvedUser.userName}",
                           style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(color: AppColors.grey_300),
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: AppColors.grey_300),
                         ),
-                        PositionWidget(position: position, mainPosition: true),
+                        PositionWidget(
+                          width: 35,
+                          height: 20,
+                          textSide: 8,
+                          position: position, 
+                          mainPosition: true
+                        ),
                       ],
                     ),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Icon(
-                          AppHelper.setStatusPlayer(
-                            UserHelper.getParticipant(
-                              resolvedUser.participants,
-                              session.event!.id!,
-                            )!.status,
-                          )['icon'],
-                          color: AppHelper.setStatusPlayer(
-                            UserHelper.getParticipant(
-                              resolvedUser.participants,
-                              session.event!.id!,
-                            )!.status,
-                          )['color'],
-                          size: 30,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Icon(
+                              AppHelper.setStatusPlayer(
+                                UserHelper.getParticipant(
+                                  resolvedUser.participants,
+                                  session.event!.id!,
+                                )!.status,
+                              )['icon'],
+                              color: AppHelper.setStatusPlayer(
+                                UserHelper.getParticipant(
+                                  resolvedUser.participants,
+                                  session.event!.id!,
+                                )!.status,
+                              )['color'],
+                              size: 30,
+                            ),
+                          ),
+                        ]
                       ),
                     ),
                   ],

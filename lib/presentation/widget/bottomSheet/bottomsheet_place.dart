@@ -1,6 +1,5 @@
-
-import 'package:esportly/presentation/controllers/event_controller.dart';
 import 'package:esportly/data/models/address_model.dart';
+import 'package:esportly/presentation/controllers/event_controller.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:esportly/presentation/controllers/address_controller.dart';
@@ -20,10 +19,9 @@ class BottomSheetPlace extends StatefulWidget {
 }
 
 class BottomSheetPlayerState extends State<BottomSheetPlace> {
-  //RESGATAR CONTROLLER DE EVENTO
-  EventController eventController = EventController.instance;
   //RESGATAR CONTROLLER DE ENDEREÇOS
   AddressController addressController = AddressController.instance;
+  EventController eventController = EventController.instance;
   //CONTROLADOR DE CARREGAMENTO DE INFORMAÇÕES DO LOCAL
   bool isLoaded = false;
   //ESTADO DE ENDEREÇO
@@ -58,7 +56,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlace> {
         latitude: widget.marker['lat'] ?? '',
         longitude: widget.marker['lon'] ?? '',
       );
-      print(location);
+      
       //ADICIONAR ENDEREÇO AO MARKER
       addressController.sportPlaces.firstWhere((item) => item['id'] == widget.marker['id'])['address'] = location;
     }else{

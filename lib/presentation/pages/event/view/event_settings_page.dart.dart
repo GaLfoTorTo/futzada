@@ -8,6 +8,8 @@ import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/helpers/img_helper.dart';
 import 'package:esportly/core/helpers/event_helper.dart';
 import 'package:esportly/core/helpers/form_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/controllers/event_controller.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
 import 'package:esportly/presentation/widget/cards/card_colaborator.dart';
@@ -19,15 +21,14 @@ import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:esportly/presentation/widget/inputs/input_textarea_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
-class EventSettingsPage extends StatefulWidget {
+class EventSettingsPage extends ConsumerStatefulWidget {
   const EventSettingsPage({super.key});
 
   @override
-  State<EventSettingsPage> createState() => _EventSettingsPageState();
+  ConsumerState<EventSettingsPage> createState() => _EventSettingsPageState();
 }
 
-class _EventSettingsPageState extends State<EventSettingsPage> {
-  //DEFINIR CONTROLLERS
+class _EventSettingsPageState extends ConsumerState<EventSettingsPage> {
   EventController eventController = EventController.instance;
   late UserModel eventOrganizador;
   late List<UserModel?> eventCollaborators;
@@ -37,14 +38,14 @@ class _EventSettingsPageState extends State<EventSettingsPage> {
   IconData privacyIcon = Icons.lock_outline_rounded;
   bool notification = true;
 
-
   @override
   void initState() {
     super.initState();
-    eventController.initConfigTextControllers(eventController.event);
-    imageFile = eventController.event.photo != null ? File(eventController.event.photo!) : null;
-    eventOrganizador = EventHelper.getUserOrganizator(eventController.event);
-    eventCollaborators = EventHelper.getCollaborators(eventController.event);
+    final event = ref.read(eventSessionProvider).event!;
+    eventController.initConfigTextControllers(event);
+    imageFile = event.photo != null ? File(event.photo!) : null;
+    eventOrganizador = EventHelper.getUserOrganizator(event);
+    eventCollaborators = EventHelper.getCollaborators(event);
   }
 
   List<Map<String, dynamic>> settings = [

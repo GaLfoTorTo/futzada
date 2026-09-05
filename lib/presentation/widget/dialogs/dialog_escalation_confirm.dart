@@ -62,7 +62,9 @@ class DialogEscalationConfirm extends ConsumerWidget {
                         padding: const EdgeInsets.all(5),
                         child: Text(
                           session.formation,
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                            color: AppColors.blue_500
+                          ),
                         ),
                       ),
                     ],
@@ -167,7 +169,10 @@ class DialogEscalationConfirm extends ConsumerWidget {
               icon: AppIcones.save_solid,
               width: dimensions.width,
               height: 30,
-              action: () => Navigator.of(context).pop(),
+              action: () async {
+                Navigator.of(context).pop();
+                await ref.read(escalationSessionProvider.notifier).saveEscalation();
+              },
               backgroundColor: AppColors.green_300,
               textColor: AppColors.blue_500,
             ),

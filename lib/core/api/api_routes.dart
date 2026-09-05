@@ -24,6 +24,8 @@ class ApiRoutes {
   static const userInfo = 'user/info/';
   //ROTAS DE HOME
   static const home = 'home';
+  //ROTAS DE ESCALAÇÃO
+  static const escalationSave = 'escalation/save';
   //ROTAS DE EVENTO
   static const event = 'events/';
   static const events = 'events';

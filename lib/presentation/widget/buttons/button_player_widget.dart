@@ -55,7 +55,32 @@ class ButtonPlayerWidget extends ConsumerWidget {
           builder: (_) => BottomSheetPlayer(user: user),
         );
       } else {
-        ref.read(escalationMarketProvider.notifier).setFilter('positions', [position]);
+        final marketNotifier = ref.read(escalationMarketProvider.notifier);
+        marketNotifier.setFilter('positions', [position]);
+
+        if (occupation == 'reserves') {
+          // Calcular preço do titular mais barato para limitar o mercado de reservas
+          final team = ref.read(escalationTeamProvider);
+          final market = ref.read(escalationMarketProvider);
+          final eventId = session.event?.id;
+          final starterPrices = team.starters
+              .where((id) => id != null)
+              .map((id) {
+                final starter = market.playersMarket.where((u) => u.id == id).firstOrNull;
+                return starter?.player?.ratings
+                    ?.firstWhere((r) => r.eventId == eventId, orElse: () => starter.player!.ratings!.first)
+                    .price;
+              })
+              .whereType<double>()
+              .toList();
+          final cheapestPrice = starterPrices.isNotEmpty
+              ? starterPrices.reduce((a, b) => a < b ? a : b)
+              : null;
+          marketNotifier.setFilter('maxPrice', cheapestPrice);
+        } else {
+          marketNotifier.setFilter('maxPrice', null);
+        }
+
         context.push('/escalation/market');
       }
     }

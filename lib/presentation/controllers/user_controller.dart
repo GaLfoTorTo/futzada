@@ -19,9 +19,9 @@ class UserController extends ChangeNotifier {
 
   UserModel get user => sl<UserModel>(instanceName: 'user');
 
-  void init() {
+  Future<void> init() async {
+    await getInfo();
     isReady = true;
-    getInfo();
   }
 
   Future<void> getInfo() async {

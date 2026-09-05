@@ -1,39 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/widget/cards/card_rule.dart';
 
-class EventRulesPage extends StatefulWidget {
-  const EventRulesPage({
-    super.key,
-  });
+class EventRulesPage extends ConsumerStatefulWidget {
+  const EventRulesPage({super.key});
 
   @override
-  State<EventRulesPage> createState() => _EventRulesPageState();
+  ConsumerState<EventRulesPage> createState() => _EventRulesPageState();
 }
 
-class _EventRulesPageState extends State<EventRulesPage> {
-  //RESGATAR CONTROLLER DO EVENTO
-  EventController eventController = EventController.instance;
-  //CONTROLLADOR DE DESTAQUES
+class _EventRulesPageState extends ConsumerState<EventRulesPage> {
   late PageController inProgressController;
-  //ESTADO - EVENTO
   late EventModel event;
 
   @override
   void initState() {
     super.initState();
-    //RESGATAR EVENT
-    event = eventController.event;
-    //INICIALIZAR CONTROLLER DE PARTIDAS AO VIVO
+    event = ref.read(eventSessionProvider).event!;
     inProgressController = PageController();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
 
     return SingleChildScrollView(
@@ -42,44 +33,30 @@ class _EventRulesPageState extends State<EventRulesPage> {
         padding: const EdgeInsets.all(10),
         child: Column(
           spacing: 10,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Regras",
-              style: Theme.of(context).textTheme.titleMedium
-            ),
-            Text(
-              "As regras da pelada são definidas pelos organizadores afim de manter a qualidade e o controle sobre pelada. Consulte os organizadores e colaboradores em caso duvidas.",
-              style: Theme.of(context).textTheme.bodySmall,
-              textAlign: TextAlign.center,
-            ),
-            if(event.rules != null)...[
-              Column(
-                spacing: 10,
-                children: event.rules!.map((rule){
-                  return CardRule(
-                    rule: rule
-                  );
-                }).toList(),
-              )
+            if(event.rules != null && event.rules!.isNotEmpty)...[
+              ...event.rules!.map((rule) => CardRule(rule: rule)),
             ]else...[
               Column(
                 spacing: 50,
                 children: [
                   Text(
-                    "Nenhuma Regra Registrada",
+                    "A pelada ainda não registrou nenhuma regra",
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: AppColors.grey_500
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   Icon(
-                    Icons.assignment,
+                    Icons.rule_rounded,
                     size: 200,
                     color: AppColors.grey_500.withAlpha(50),
-                  )
+                  ),
                 ],
-              )
-            ]
-          ]
+              ),
+            ],
+          ],
         ),
       ),
     );

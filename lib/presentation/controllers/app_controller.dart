@@ -37,7 +37,7 @@ class AppController extends ChangeNotifier {
     try {
       await registerSession(user);
       await registerEvents(user);
-      userController.init();
+      await userController.init();
       homeController.init();
       final session = sl<ProviderContainer>().read(appSessionProvider.notifier);
       if (!AppStorage.hasData('firstLogin')) {

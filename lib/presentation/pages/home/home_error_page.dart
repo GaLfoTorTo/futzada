@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:esportly/core/theme/app_colors.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 
 class HomeErrorPage extends StatelessWidget {
@@ -7,6 +7,7 @@ class HomeErrorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = HomeController.instance;
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
     
@@ -17,8 +18,8 @@ class HomeErrorPage extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.white.withAlpha(50),
-            AppColors.white,
+            Theme.of(context).cardTheme.color!.withAlpha(50),
+            Theme.of(context).cardTheme.color!,
           ],
           begin: Alignment.topCenter,
           end: Alignment.center,
@@ -36,10 +37,10 @@ class HomeErrorPage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          const Icon(
+          Icon(
             Icons.no_cell_rounded,
             size: 200,
-            color: AppColors.blue_500,
+            color: Theme.of(context).iconTheme.color,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -56,7 +57,7 @@ class HomeErrorPage extends StatelessWidget {
                 width: dimensions.width,
                 icon: Icons.restart_alt_rounded,
                 iconSize: 30,
-                action: () {}
+                action: () => homeController.fetchHome(),
               ),
             ],
           )

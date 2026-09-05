@@ -6,15 +6,16 @@ import 'package:esportly/core/theme/app_icones.dart';
 class MarketService {  
   //ESTADO DE FILTRO PADRÃO DE MERCADO
   Map<String, dynamic> filtrosMarket = {
-    'status' : [PlayerStatus.Avaliable.name, PlayerStatus.Out.name, PlayerStatus.Doubt.name, PlayerStatus.None.name],
-    'price' : 'Maior preço',
-    'media' : '',
-    'game' : '',
-    'valorization' : '',
-    'lastPontuation' : '',
-    'nome' : '',
-    'bestSide' : '',
-    'positions' : [],
+    'status'          : [PlayerStatus.Avaliable.name, PlayerStatus.Out.name, PlayerStatus.Doubt.name, PlayerStatus.None.name],
+    'bestSide'        : [],
+    'positions'       : [],
+    'price'           : 'Maior preço',
+    'nome'            : null,
+    'media'           : null,
+    'game'            : null,
+    'valorization'    : null,
+    'lastPontuation'  : null,
+    'maxPrice'        : null,
   };
 
   //LISTA DE FILTROS DE METRICA DO MERCADO

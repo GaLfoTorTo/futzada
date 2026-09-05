@@ -50,10 +50,12 @@ class CardPlayerMarketWidget extends ConsumerWidget {
 
     //FUNÇÃO DE DEFINIÇÃO DE BOTÕES
     Map<String, dynamic> setButtonBuy(PlayerModel player) {
+      final team = ref.read(escalationTeamProvider);
+      final isReserve = team.selectedOccupation == 'reserves';
       final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(user.id!);
-      if (rating.price! > managerSession.patrimony) return {'text': 'Comprar', 'color': AppColors.green_100, 'disabled': true};
-      if (isEscaled) return {'text': 'Vender', 'color': AppColors.red_300, 'disabled': false};
-      return {'text': 'Comprar', 'color': AppColors.green_300, 'disabled': false};
+      if (isEscaled) return {'text': 'Remover', 'color': AppColors.red_300, 'disabled': false};
+      if (!isReserve && rating.price! > managerSession.patrimony) return {'text': 'Comprar', 'color': AppColors.green_100, 'disabled': true};
+      return {'text': isReserve ? 'Escalar' : 'Comprar', 'color': AppColors.green_300, 'disabled': false};
     }
     
     //FUNÇÃO DE DEFINIÇÃO DE POSIÇÃO DO JOGADOR

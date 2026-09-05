@@ -4,7 +4,6 @@ import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/player_helper.dart';
 import 'package:esportly/core/helpers/event_helper.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
-import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
 import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/data/models/user_model.dart';
@@ -20,7 +19,7 @@ class DialogCapitan extends ConsumerWidget {
     final dimensions = MediaQuery.of(context).size;
     final session = ref.watch(escalationSessionProvider);
     final team = ref.watch(escalationTeamProvider);
-    final escalationService = sl<EscalationService>();
+    final escalationService = EscalationService();
 
     void setCapitan(int? id) {
       ref.read(escalationTeamProvider.notifier).setPlayerCapitan(id ?? 0);
@@ -54,13 +53,12 @@ class DialogCapitan extends ConsumerWidget {
                 children: team.starters.map((i) {
                   final UserModel user = EventHelper.getUserEvent(session.event!, i!)!;
                   final int index = team.starters.indexOf(i);
-                  final String position = escalationService.getPositionEscalation(
+                  final String rawPosition = escalationService.getPositionEscalation(
                     index,
                     session.category,
                     session.formation,
                   );
-                  final String positionAlias =
-                      position.characters.getRange(0, 3).toLowerCase().toString();
+                  final String position = escalationService.getPositionAlias(rawPosition);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
@@ -71,13 +69,13 @@ class DialogCapitan extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Checkbox(
-                              value: user!.id == team.selectedPlayerCapitan,
+                              value: user.id == team.selectedPlayerCapitan,
                               onChanged: (bool? selected) => setCapitan(user.id),
                             ),
                             ImgCircularWidget(
                               size: 50,
                               image: user.photo,
-                              borderColor: PlayerHelper.setColorPosition(positionAlias),
+                              borderColor: PlayerHelper.setColorPosition(position),
                             ),
                             Container(
                               width: dimensions.width * 0.4,
@@ -96,9 +94,11 @@ class DialogCapitan extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: PositionWidget(position: positionAlias),
+                        PositionWidget(
+                          position: position,
+                          width: 35,
+                          height: 20,
+                          textSide: 8,
                         ),
                       ],
                     ),

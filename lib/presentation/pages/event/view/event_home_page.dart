@@ -19,21 +19,18 @@ import 'package:esportly/data/services/integration_map_service.dart';
 import 'package:esportly/presentation/widget/buttons/button_icon_widget.dart';
 import 'package:esportly/presentation/widget/bottomSheet/bottomsheet_map_travel.dart';
 import 'package:esportly/presentation/widget/text/expandable_text_widget.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/data/services/avaliation_service.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 
-class EventHomePage extends StatefulWidget {
-  
-  const EventHomePage({
-    super.key,
-  });
+class EventHomePage extends ConsumerStatefulWidget {
+  const EventHomePage({super.key});
 
   @override
-  State<EventHomePage> createState() => _EventHomePageState();
+  ConsumerState<EventHomePage> createState() => _EventHomePageState();
 }
 
-class _EventHomePageState extends State<EventHomePage> {
-  //DEFINIR CONTROLLERS
-  EventController eventController = EventController.instance;
+class _EventHomePageState extends ConsumerState<EventHomePage> {
   MapController mapController = MapController();
   late PageController highligtsController;
   //DEFINIR SERVIÇO DE CAMPO/QUADRA
@@ -62,8 +59,8 @@ class _EventHomePageState extends State<EventHomePage> {
   @override
   void initState() {
     super.initState();
-    event = eventController.event;
-    eventAvaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
+    event = ref.read(eventSessionProvider).event!;
+    eventAvaliations = AvaliationService().getRatingAvaliation(event.avaliations);
     eventLatLon = LatLng(event.address!.latitude!, event.address!.longitude!);
     eventOrganizador = EventHelper.getUserOrganizator(event);
     eventDate = DateHelper.getEventDate(event.date!);
@@ -84,8 +81,8 @@ class _EventHomePageState extends State<EventHomePage> {
     //RESGATAR TEMPO
     timeTravelMode = MapHelper.getTravelTime(distance, travelMode['speed']);
     timeTravel = MapHelper.setTimeTravel(timeTravelMode);
-    //ATUALIZAR METODO DE VIAGEM DO CONTROLLER
-    eventController.travelMode = travelMode['type'];
+    //ATUALIZAR METODO DE VIAGEM NO PROVIDER
+    ref.read(eventSessionProvider.notifier).setTravelMode(travelMode['type']);
   }
     
   @override
@@ -490,7 +487,7 @@ class _EventHomePageState extends State<EventHomePage> {
               height: dimensions.height * 0.25,
               margin: const EdgeInsets.symmetric(vertical: 20.0),
               color: AppColors.grey_300,
-              child: ListenableBuilder(listenable: eventController, builder: (_, __){
+              child: Builder(builder: (_) {
                 //EXIBIR LOADING DE CARREGAMENTO DO MAPA
                 if (!isMapLoaded) {
                   return Center(
@@ -579,17 +576,18 @@ class _EventHomePageState extends State<EventHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               spacing: 20,
               children: [
-                ListenableBuilder(listenable: eventController, builder: (_, __){
-                return Column(
+                Consumer(builder: (_, ref, __) {
+                  final travelModeType = ref.watch(eventSessionProvider.select((s) => s.travelMode));
+                  return Column(
                     children: [
                       ButtonIconWidget(
-                        icon: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode)['icon'],
+                        icon: MapHelper.transports.firstWhere((e) => e['type'] == travelModeType)['icon'],
                         iconSize: 30,
                         padding: 15,
                         iconColor: modalityColor,
                         backgroundColor: modalityColor.withAlpha(50),
                         action: () => showModalBottomSheet(
-                          context: context, 
+                          context: context,
                           backgroundColor: Theme.of(context).dialogTheme.backgroundColor,
                           builder: (_) => const BottomSheetMapTravel()
                         )
@@ -610,7 +608,9 @@ class _EventHomePageState extends State<EventHomePage> {
                     ],
                   );
                 }),
-                Column(
+                Consumer(builder: (_, ref, __) {
+                  final travelModeType = ref.watch(eventSessionProvider.select((s) => s.travelMode));
+                  return Column(
                   children: [
                     ButtonIconWidget(
                       icon: Icons.directions,
@@ -620,7 +620,7 @@ class _EventHomePageState extends State<EventHomePage> {
                       backgroundColor: modalityColor.withAlpha(50),
                       action: () => IntegrationRouteService.openDialogApps(
                         event.address!,
-                        travelModel: MapHelper.transports.firstWhere((e) => e['type'] == eventController.travelMode)['type']
+                        travelModel: MapHelper.transports.firstWhere((e) => e['type'] == travelModeType)['type']
                       ),
                     ),
                     Padding(
@@ -637,7 +637,8 @@ class _EventHomePageState extends State<EventHomePage> {
                       ),
                     ),
                   ],
-                ),
+                  );
+                }),
               ],
             ),
             const Divider(),

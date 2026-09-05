@@ -44,7 +44,7 @@ class ApiClient {
 
   // POST —
   Future<ApiResponse> post(String route, Map<String, dynamic> data) async {
-    final body = await _buildBody(data);
+    final body = await _buildBody(_toSnakeCase(data));
     final resp = await _dio.post(route, data: body);
     storeToken(resp);
     final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
@@ -57,7 +57,7 @@ class ApiClient {
 
   // PATCH
   Future<ApiResponse> patch(String route, Map<String, dynamic> data) async {
-    final resp = await _dio.patch(route, data: data);
+    final resp = await _dio.patch(route, data: _toSnakeCase(data));
     storeToken(resp);
     final respData = resp.data is Map ? Map<String, dynamic>.from(resp.data as Map) : <String, dynamic>{};
     return ApiResponse(
@@ -77,6 +77,22 @@ class ApiClient {
       status: resp.statusCode ?? 200,
       message: respData['message'] as String?,
     );
+  }
+
+  // CONVERTE CHAVES CAMELCASE PARA SNAKE_CASE RECURSIVAMENTE
+  Map<String, dynamic> _toSnakeCase(Map<String, dynamic> data) {
+    return data.map((key, value) {
+      final snakeKey = key.replaceAllMapped(
+        RegExp(r'([A-Z])'),
+        (m) => '_${m[0]!.toLowerCase()}',
+      );
+      final snakeValue = switch (value) {
+        Map<String, dynamic> v => _toSnakeCase(v),
+        List l => l.map((e) => e is Map<String, dynamic> ? _toSnakeCase(e) : e).toList(),
+        _ => value,
+      };
+      return MapEntry(snakeKey, snakeValue);
+    });
   }
 
   // FUNÇÃO DE MONTAGEM DE BODY DE REQUISIÇÃO (COM E SEM UPLOAD DE ARQUIVOS)

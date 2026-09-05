@@ -6,7 +6,7 @@ import 'package:esportly/core/helpers/img_helper.dart';
 import 'package:esportly/core/helpers/date_helper.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/services/avaliation_service.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
@@ -34,8 +34,8 @@ class CardEventListWidget extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        //DEFINIR EVENTO ATUAL NO CONTROLLER E NAVEGAR
-        EventController.instance.setSelectedEvent(event);
+        //DEFINIR EVENTO ATUAL NO PROVIDER E NAVEGAR
+        ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
         context.go('/event/view');
       },
       child: Card(

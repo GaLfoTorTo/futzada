@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/data/models/news_model.dart';
 import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/services/news_service.dart';
 import 'package:esportly/core/theme/app_colors.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
 import 'package:esportly/core/helpers/event_helper.dart';
 import 'package:esportly/core/helpers/img_helper.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:intl/intl.dart';
 
-class EventNewsPage extends StatelessWidget {
-  const EventNewsPage({
-    super.key,
-  });
+class EventNewsPage extends ConsumerWidget {
+  const EventNewsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
+  Widget build(BuildContext context, WidgetRef ref) {
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DO EVENTO
-    EventController eventController = EventController.instance;
-    //ESTADO - EVENTO
-    List<NewsModel>? news = eventController.event.news;
+    final EventModel event = ref.watch(eventSessionProvider.select((s) => s.event!));
+    final NewsService newsService = NewsService();
+    final List<NewsModel>? news = event.news;
 
     return SingleChildScrollView(
       child: Container(
@@ -43,11 +42,9 @@ class EventNewsPage extends StatelessWidget {
               Column(
                 spacing: 10,
                 children: news.map((eventNew){
-                  //RESGATAR NOTICIA
-                  Map<String, dynamic> newsEvent = eventController.newsService.getEventNews(eventNew.type);
-                  //RESGATAR AUTHOR
-                  UserModel? user = EventHelper.getUserEvent(eventController.event, eventNew.userId!);
-                  
+                  final Map<String, dynamic> newsEvent = newsService.getEventNews(eventNew.type);
+                  final UserModel? user = EventHelper.getUserEvent(event, eventNew.userId!);
+
                   return TimelineTile(
                     alignment: TimelineAlign.start,
                     lineXY: 0.2,
@@ -123,7 +120,7 @@ class EventNewsPage extends StatelessWidget {
                                     border: Border.all(color: newsEvent['color'], width: 2)
                                   ),
                                   child: CircleAvatar(
-                                    backgroundImage: eventNew.userId != null 
+                                    backgroundImage: eventNew.userId != null
                                       ? ImgHelper.getUserImg(user?.photo)
                                       : ImgHelper.getEventImg(null),
                                   ),

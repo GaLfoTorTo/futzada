@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:esportly/core/helpers/img_helper.dart';
@@ -48,7 +48,7 @@ class _GamesDayPageState extends ConsumerState<GamesDayPage> {
   Widget build(BuildContext context) {
     final dimensions = MediaQuery.of(context).size;
     final schedule = ref.watch(gameScheduleProvider);
-    final EventModel event = EventController.instance.event;
+    final EventModel event = ref.watch(eventSessionProvider.select((s) => s.event!));
 
     Color modalityColor = ModalityHelper.getEventModalityColor(
       event.gameConfig?.category ?? event.modality!.name,

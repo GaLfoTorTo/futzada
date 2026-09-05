@@ -8,7 +8,6 @@ import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
-import 'package:esportly/core/providers/escalation/escalation_team_provider.dart';
 import 'package:esportly/presentation/controllers/showcase_controller.dart';
 import 'package:esportly/presentation/widget/showcase/wizard_widget.dart';
 import 'package:esportly/presentation/pages/escalation/error/erro_escalation_page.dart';
@@ -70,8 +69,6 @@ class EscalationPageState extends ConsumerState<EscalationPage> {
   Widget build(BuildContext context) {
     //RESGATAR INICIALIZAÇÃO DE PROVIDER DE ESCALAÇÃO
     final managerSession = ref.watch(escalationSessionProvider);
-    final managerTeam = ref.watch(escalationTeamProvider);
-    final team = ref.watch(escalationTeamProvider);
     //ESTADOS - ESTILIZAÇÃO
     final dimensions = MediaQuery.of(context).size;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -230,9 +227,7 @@ class EscalationPageState extends ConsumerState<EscalationPage> {
           );
         }),
       ),
-      floatingActionButton: managerTeam.selectedPlayerCapitan != 0
-          ? FloatButtonEscalationWidget(hasCapitan: team.selectedPlayerCapitan != 0)
-          : const SizedBox.shrink(),
+      floatingActionButton: const FloatButtonEscalationWidget(),
     );
   }
 }

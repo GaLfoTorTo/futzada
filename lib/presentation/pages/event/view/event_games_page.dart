@@ -5,7 +5,7 @@ import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/date_helper.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/widget/cards/card_game_widget.dart';
 import 'package:esportly/presentation/widget/cards/card_game_live_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
@@ -22,7 +22,6 @@ class EventGamesPage extends ConsumerStatefulWidget {
 }
 
 class _EventGamesPageState extends ConsumerState<EventGamesPage> {
-  EventController eventController = EventController.instance;
   late PageController inProgressController;
   late EventModel event;
   late String eventDate;
@@ -32,7 +31,7 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
   @override
   void initState() {
     super.initState();
-    event = eventController.event;
+    event = ref.read(eventSessionProvider).event!;
     modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     inProgressController = PageController();

@@ -84,7 +84,7 @@ mixin EventRegisterMixin on ChangeNotifier {
     final eventController = this as EventController;
     return GameConfigModel(
       category: category,
-      eventId: eventController.event.id!,
+      eventId: eventController.currentEvent?.id ?? 0,
       duration: int.parse(durationController.text),
       playersPerTeam: int.parse(playersPerTeamController.text),
       config: {

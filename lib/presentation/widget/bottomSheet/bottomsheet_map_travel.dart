@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/map_helper.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 
-class BottomSheetMapTravel extends StatelessWidget {
-  const BottomSheetMapTravel({
-    super.key,
-  });
+class BottomSheetMapTravel extends ConsumerWidget {
+  const BottomSheetMapTravel({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DO EVENTO
-    EventController eventController = EventController.instance;
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(15),
       child: SingleChildScrollView(
@@ -46,7 +42,7 @@ class BottomSheetMapTravel extends StatelessWidget {
                   item['label'],
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                onTap: () => eventController.travelMode = item['type']
+                onTap: () => ref.read(eventSessionProvider.notifier).setTravelMode(item['type'])
               );
             })
           ],

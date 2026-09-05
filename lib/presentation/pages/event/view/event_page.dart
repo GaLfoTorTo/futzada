@@ -8,9 +8,10 @@ import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/data/services/avaliation_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/pages/event/view/event_home_page.dart';
 import 'package:esportly/presentation/pages/event/view/event_private_page.dart';
 import 'package:esportly/presentation/pages/event/view/event_games_page.dart';
@@ -33,9 +34,7 @@ class EventPage extends ConsumerStatefulWidget {
 }
 
 class _EventPageState extends ConsumerState<EventPage> with SingleTickerProviderStateMixin {
-  //CONTROLLERS
-  EventController eventController = EventController.instance;
-  //ESTADOS - USUARIO E EVENTO
+  //ESTADO - USUARIO
   UserModel user = sl<UserModel>(instanceName: 'user');
   late EventModel event;
   //CONTROLLER - TABS
@@ -56,9 +55,10 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
   void initState() {
     super.initState();
     //GARANTIR QUE EXISTE UM EVENTO SELECIONADO (auto-seleciona o primeiro se necessário)
-    eventController.init();
-    if (!eventController.hasEvent) return;
-    event = eventController.event;
+    ref.read(eventSessionProvider.notifier).init();
+    final session = ref.read(eventSessionProvider);
+    if (!session.hasEvent) return;
+    event = session.event!;
     //VERIFICAR SE USUARIO ESTA PARTICIPANDO DO EVENTO ATUAL
     isParticipant = event.participants!.any((p) => p.id == user.id);
     //INICIALIZAR CONTROLLER DE TAB
@@ -66,11 +66,11 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
     //ATUALIZAR ITEMS DO EVENTOS
     modalityImage = ImgHelper.getEventImg(event.photo);
     eventPrivacy = event.privacy!.name;
-    eventAvaliations = eventController.avaliationService.getRatingAvaliation(event.avaliations);
+    eventAvaliations = AvaliationService().getRatingAvaliation(event.avaliations);
     modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
     modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    //DEFINIR EVENTO ATUAL NO CONTROLLER
-    eventController.setSelectedEvent(event);
+    //SINCRONIZAR EVENTO NO PROVIDER (garante que gameSessionProvider está em sincronia)
+    ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
     AppHelper.isImageDark(modalityImage).then((isDark) {
       setState(() {

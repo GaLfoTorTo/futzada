@@ -1,21 +1,20 @@
 import 'package:esportly/presentation/pages/event/error/erro_event_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/widget/cards/card_event_list_widget.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
 
-class EventListPage extends StatelessWidget {
+class EventListPage extends ConsumerWidget {
   const EventListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR CONTROLLER DE EVENTO
-    EventController eventController = EventController.instance;
-    //BUSCAR SUGESTÕES DE EVENTOS
-    List<EventModel> suggestions = [];//eventController.getSuggestions();
-    
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<EventModel> events = ref.watch(eventSessionProvider.select((s) => s.events));
+    final List<EventModel> suggestions = [];
+
     return Scaffold(
       appBar: HeaderWidget(
         title: "Minhas Peladas",
@@ -27,7 +26,7 @@ class EventListPage extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if(eventController.events.isEmpty)...[
+              if(events.isEmpty)...[
                 const ErroEventPage()
               ]else...[
                 Text(
@@ -36,8 +35,8 @@ class EventListPage extends StatelessWidget {
                 ),
                 Column(
                   spacing: 10,
-                  children: eventController.events.map((event) {
-                    return  CardEventListWidget(event: event);
+                  children: events.map((event) {
+                    return CardEventListWidget(event: event);
                   }).toList(),
                 ),
                 if(suggestions.isNotEmpty)...[
@@ -48,7 +47,7 @@ class EventListPage extends StatelessWidget {
                   Column(
                     spacing: 10,
                     children: suggestions.map((suggestion) {
-                      return  CardEventListWidget(event: suggestion);
+                      return CardEventListWidget(event: suggestion);
                     }).toList(),
                   ),
                 ]
@@ -57,6 +56,6 @@ class EventListPage extends StatelessWidget {
           ),
         ),
       ),
-    ); 
+    );
   }
 }

@@ -21,7 +21,7 @@ class PositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color color = PlayerHelper.setColorPosition(position);
+    Color color = PlayerHelper.setColorPosition(position.toUpperCase());
     Color textColor = !['CAP','GOL','PIV'].contains(position.toUpperCase()) ? AppColors.white : AppColors.dark_700;
     
     return Stack(

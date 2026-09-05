@@ -1,18 +1,38 @@
 import 'package:esportly/core/api/api_client.dart';
 import 'package:esportly/core/api/api_routes.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/core/di/service_locator.dart';
+import 'package:go_router/go_router.dart';
 
 class EscalationService {
   //CLIENTE HTTP
   ApiClient apiClient = sl<ApiClient>();
   
+  /*___________________________________________________ 
+  
+  REQUISIÇÕES
+  ____________________________________________________
+  */
+
   //REQUISIÇÃO - BUSCA DE PARTICIPANTS DO EVENTO
   Future<List<UserModel?>> participantsFetch(int id) async{
-    //BUSCAR USUARIO
     final resp = await apiClient.get(ApiRoutes.getUrl("${ApiRoutes.eventParticipants}/$id"));
     return resp.data.map<UserModel?>((json) => UserModel.fromJson(json)).toList();
   }
+
+  //REQUISIÇÃO - SALVAR ESCALAÇÃO
+  Future<void> saveEscalation(Map<String, dynamic> data) async {
+    final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+    final resp = await apiClient.post(ApiRoutes.getUrl(ApiRoutes.escalationSave), data);
+    AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(resp));
+  }
+
+  /*___________________________________________________ 
+
+  UTILITARIOS
+  ____________________________________________________
+  */
 
   //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
   List<int?> setEscalation(String category, String occupation) {
@@ -64,6 +84,145 @@ class EscalationService {
     }
   }
 
+  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
+  List<int> setFormation(qtd){
+    switch (qtd) {
+      case 4:
+        //SETORES PARA 4 JOGADORES
+        return [0, 2, 1];
+      case 5:
+        //SETORES PARA 5 JOGADORES
+        return [1, 2, 1];
+      case 6:
+        //SETORES PARA 6 JOGADORES
+        return [1, 2, 2];
+      case 7:
+        //SETORES PARA 7 JOGADORES
+        return [1, 3, 2];
+      case 8:
+        //SETORES PARA 8 JOGADORES
+        return [2, 3, 2];
+      case 9:
+        //SETORES PARA 9 JOGADORES
+        return [2, 3, 3];
+      case 10:
+        //SETORES PARA 10 JOGADORES
+        return [3, 3, 3];
+      case 11:
+        //SETORES PARA 11 JOGADORES
+        return [3, 4, 4];
+      default:
+        return [3, 4, 4];
+    }
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA (FUTEBOL — mantida por compatibilidade)
+  List<int> getFormation(String formation) {
+    List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
+    splitedFormation.insert(0, 1);
+    return splitedFormation.reversed.toList();
+  }
+
+  //FUNÇÃO DE OPÇÕES DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
+  List<String> getFormations(String category){
+    switch (category) {
+      case 'Futebol':
+        return [
+          '4-3-3',
+          '4-1-2-3',
+          '4-2-1-3',
+          '4-2-3-1',
+          '4-4-2',
+          '3-4-3',
+          '3-2-4-1',
+          '3-4-2-1',
+          '5-3-2',
+          '5-4-1',
+        ];
+      case 'Fut7':
+        return [
+          '3-1-2',
+          '3-2-1',
+          '3-0-3',
+          '2-1-3',
+          '2-1-2-1',
+          '2-2-2',
+          '2-3-1',
+          '1-4-1',
+          '1-3-2',
+          '1-2-3',
+        ];
+      case 'Futsal':
+        return [
+          '2-0-2',
+          '2-1-1',
+          '1-2-1',
+          '1-3',
+          '1-1-2',
+        ];
+      case 'Basquete':
+        return [
+          '2-3',
+          '3-2',
+          '1-3-1',
+          '2-1-2',
+          '1-2-2',
+          '2-2-1',
+        ];
+      case 'Streetball':
+        return [
+          '1-2',
+          '2-1',
+          '1-1-1',
+        ];
+      case 'Volei':
+        return [
+          '3-3',
+          '2-2-2',
+          '1-4-1',
+          '2-3-1',
+          '3-2-1',
+        ];
+      case 'Volei de Praia':
+        return [
+          '1-1',
+        ];
+      case 'Fut Volei':
+        return [
+          '1-1',
+          '2-1',
+          '1-2',
+        ];
+      default:
+        return [
+          '4-3-3',
+          '4-1-2-3',
+          '4-2-1-3',
+          '4-2-3-1',
+          '4-4-2',
+          '3-4-3',
+          '3-2-4-1',
+          '3-4-2-1',
+          '5-3-2',
+          '5-4-1',
+        ];
+    }
+  }
+
+  //FUNÇÃO DE LAYOUT DE FORMAÇÃO CIENTE DA MODALIDADE
+  List<int> getFormationLayout(String category, String formationString) {
+    final parts = formationString.split('-').map(int.parse).toList();
+    switch (category) {
+      case 'Futebol':
+      case 'Fut7':
+      case 'Futsal':
+        parts.insert(0, 1);
+        return parts.reversed.toList();
+      default:
+        return parts.reversed.toList();
+    }
+  }
+
   //FUNÇÃO PARE DEFINIR NOME DE POSIÇÃO
   String getPositionName(int sectorIndex, String category, String formationString) {
     final formation = getFormationLayout(category, formationString);
@@ -105,6 +264,71 @@ class EscalationService {
       }
     }
     return getPositionName(sectorIndex, category, formationString);
+  }
+
+    //FUNÇÃO PARA RESGATAR ABREVIAÇÃO DA POSIÇÃO DO RESERVA
+  String getReservePosition(int index, String category) {
+    switch (category) {
+      case 'Futebol': // 5 reservas (teto máximo)
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
+      case 'Fut7': // 5 reservas
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
+      case 'Futsal': // 4 reservas
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'fix';
+          case 2: return 'ala';
+          case 3: return 'ala';
+          default: return 'ala';
+        }
+      case 'Basquete': // 3 reservas
+        switch (index) {
+          case 0: return 'arm';
+          case 1: return 'ala';
+          case 2: return 'piv';
+          default: return 'ala';
+        }
+      case 'Streetball': // 2 reservas
+        switch (index) {
+          case 0: return 'arm';
+          case 1: return 'ala';
+          default: return 'ala';
+        }
+      case 'Volei': // 4 reservas
+        switch (index) {
+          case 0: return 'lev';
+          case 1: return 'pon';
+          case 2: return 'cen';
+          case 3: return 'lib';
+          default: return 'pon';
+        }
+      case 'Volei de Praia':
+      case 'Fut Volei': // 1 reserva
+        return 'res';
+      default:
+        switch (index) {
+          case 0: return 'gol';
+          case 1: return 'zag';
+          case 2: return 'lat';
+          case 3: return 'mei';
+          case 4: return 'ata';
+          default: return 'ata';
+        }
+    }
   }
 
   //FUNÇÃO PARA SELECIONAR NOME DA POSIÇÃO PARA FUTEBOL
@@ -239,208 +463,49 @@ class EscalationService {
         return 'Jogador';
     }
   }
-  
-  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO POR CATEGORIA (FUTEBOL — mantida por compatibilidade)
-  List<int> getFormation(String formation) {
-    List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
-    splitedFormation.insert(0, 1);
-    return splitedFormation.reversed.toList();
-  }
 
-  //FUNÇÃO DE LAYOUT DE FORMAÇÃO CIENTE DA MODALIDADE
-  List<int> getFormationLayout(String category, String formationString) {
-    final parts = formationString.split('-').map(int.parse).toList();
-    switch (category) {
-      case 'Futebol':
-      case 'Fut7':
-      case 'Futsal':
-        parts.insert(0, 1);
-        return parts.reversed.toList();
-      default:
-        return parts.reversed.toList();
-    }
-  }
-
-  //FUNÇÃO DE OPÇÕES DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
-  List<String> getFormations(String category){
-    switch (category) {
-      case 'Futebol':
-        return [
-          '4-3-3',
-          '4-1-2-3',
-          '4-2-1-3',
-          '4-2-3-1',
-          '4-4-2',
-          '3-4-3',
-          '3-2-4-1',
-          '3-4-2-1',
-          '5-3-2',
-          '5-4-1',
-        ];
-      case 'Fut7':
-        return [
-          '3-1-2',
-          '3-2-1',
-          '3-0-3',
-          '2-1-3',
-          '2-1-2-1',
-          '2-2-2',
-          '2-3-1',
-          '1-4-1',
-          '1-3-2',
-          '1-2-3',
-        ];
-      case 'Futsal':
-        return [
-          '2-0-2',
-          '2-1-1',
-          '1-2-1',
-          '1-3',
-          '1-1-2',
-        ];
-      case 'Basquete':
-        return [
-          '2-3',
-          '3-2',
-          '1-3-1',
-          '2-1-2',
-          '1-2-2',
-          '2-2-1',
-        ];
-      case 'Streetball':
-        return [
-          '1-2',
-          '2-1',
-          '1-1-1',
-        ];
-      case 'Volei':
-        return [
-          '3-3',
-          '2-2-2',
-          '1-4-1',
-          '2-3-1',
-          '3-2-1',
-        ];
-      case 'Volei de Praia':
-        return [
-          '1-1',
-        ];
-      case 'Fut Volei':
-        return [
-          '1-1',
-          '2-1',
-          '1-2',
-        ];
-      default:
-        return [
-          '4-3-3',
-          '4-1-2-3',
-          '4-2-1-3',
-          '4-2-3-1',
-          '4-4-2',
-          '3-4-3',
-          '3-2-4-1',
-          '3-4-2-1',
-          '5-3-2',
-          '5-4-1',
-        ];
-    }
-  }
-
-  //FUNÇÃO PARA RESGATAR ABREVIAÇÃO DA POSIÇÃO DO RESERVA
-  String getReservePosition(int index, String category) {
-    switch (category) {
-      case 'Futebol': // 5 reservas (teto máximo)
-        switch (index) {
-          case 0: return 'gol';
-          case 1: return 'zag';
-          case 2: return 'lat';
-          case 3: return 'mei';
-          case 4: return 'ata';
-          default: return 'ata';
-        }
-      case 'Fut7': // 5 reservas
-        switch (index) {
-          case 0: return 'gol';
-          case 1: return 'zag';
-          case 2: return 'lat';
-          case 3: return 'mei';
-          case 4: return 'ata';
-          default: return 'ata';
-        }
-      case 'Futsal': // 4 reservas
-        switch (index) {
-          case 0: return 'gol';
-          case 1: return 'fix';
-          case 2: return 'ala';
-          case 3: return 'ala';
-          default: return 'ala';
-        }
-      case 'Basquete': // 3 reservas
-        switch (index) {
-          case 0: return 'arm';
-          case 1: return 'ala';
-          case 2: return 'piv';
-          default: return 'ala';
-        }
-      case 'Streetball': // 2 reservas
-        switch (index) {
-          case 0: return 'arm';
-          case 1: return 'ala';
-          default: return 'ala';
-        }
-      case 'Volei': // 4 reservas
-        switch (index) {
-          case 0: return 'lev';
-          case 1: return 'pon';
-          case 2: return 'cen';
-          case 3: return 'lib';
-          default: return 'pon';
-        }
-      case 'Volei de Praia':
-      case 'Fut Volei': // 1 reserva
-        return 'res';
-      default:
-        switch (index) {
-          case 0: return 'gol';
-          case 1: return 'zag';
-          case 2: return 'lat';
-          case 3: return 'mei';
-          case 4: return 'ata';
-          default: return 'ata';
-        }
-    }
-  }
-
-  //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
-  List<int> setFormation(qtd){
-    switch (qtd) {
-      case 4:
-        //SETORES PARA 4 JOGADORES
-        return [0, 2, 1];
-      case 5:
-        //SETORES PARA 5 JOGADORES
-        return [1, 2, 1];
-      case 6:
-        //SETORES PARA 6 JOGADORES
-        return [1, 2, 2];
-      case 7:
-        //SETORES PARA 7 JOGADORES
-        return [1, 3, 2];
-      case 8:
-        //SETORES PARA 8 JOGADORES
-        return [2, 3, 2];
-      case 9:
-        //SETORES PARA 9 JOGADORES
-        return [2, 3, 3];
-      case 10:
-        //SETORES PARA 10 JOGADORES
-        return [3, 3, 3];
-      case 11:
-        //SETORES PARA 11 JOGADORES
-        return [3, 4, 4];
-      default:
-        return [3, 4, 4];
-    }
+  // Converte qualquer nome completo ou alias (maiúsculo/minúsculo) para alias maiúsculo padronizado.
+  String getPositionAlias(String position) {
+    const _map = {
+      // Nomes completos (retornados por getPositionName)
+      'Atacante'    : 'ATA',
+      'Meio-Campo'  : 'MEI',
+      'Zagueiro'    : 'ZAG',
+      'Zagueiros'   : 'ZAG',
+      'Goleiro'     : 'GOL',
+      'Lateral'     : 'LAT',
+      'Pivô'        : 'PIV',
+      'Ala'         : 'ALA',
+      'Fixo'        : 'FIX',
+      'Ala-Armador' : 'ALM',
+      'Armador'     : 'ARM',
+      'Ala-Pivô'    : 'ALP',
+      'Ponteiro'    : 'PON',
+      'Central'     : 'CEN',
+      'Levantador'  : 'LEV',
+      'Oposto'      : 'OPO',
+      'Libero'      : 'LIB',
+      'Jogador'     : 'JOG',
+      'Reserva'     : 'RES',
+      // Aliases minúsculos (retornados por getReservePosition)
+      'ata' : 'ATA',
+      'mei' : 'MEI',
+      'zag' : 'ZAG',
+      'gol' : 'GOL',
+      'lat' : 'LAT',
+      'piv' : 'PIV',
+      'ala' : 'ALA',
+      'fix' : 'FIX',
+      'alm' : 'ALM',
+      'arm' : 'ARM',
+      'alp' : 'ALP',
+      'pon' : 'PON',
+      'cen' : 'CEN',
+      'lev' : 'LEV',
+      'opo' : 'OPO',
+      'lib' : 'LIB',
+      'res' : 'RES',
+    };
+    return _map[position] ?? position.toUpperCase();
   }
 }

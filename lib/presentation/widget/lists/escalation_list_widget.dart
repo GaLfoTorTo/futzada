@@ -15,12 +15,6 @@ class EscalationListWidget extends ConsumerWidget {
     required this.occupation,
   });
 
-  String _positionAlias(String position) {
-    final part = position.split('-').first;
-    final len = part.length.clamp(0, 3);
-    return part.characters.getRange(0, len).toLowerCase().toString();
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(escalationSessionProvider);
@@ -41,22 +35,25 @@ class EscalationListWidget extends ConsumerWidget {
           children: slots.asMap().entries.map((entry) {
             final index = entry.key;
 
-            final String position = occupation == "starters"
+            final String rawPosition = occupation == "starters"
                 ? escalationService.getPositionEscalation(
                     index,
                     session.category,
                     session.formation,
                   )
-                : escalationService.getReservePosition(index, session.category);
+                : escalationService.getReservePosition(
+                    index,
+                    session.category,
+                  );
 
-            final String positionAlias = _positionAlias(position);
+            final String position = escalationService.getPositionAlias(rawPosition);
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: CardEscalationListWidget(
                 user: null,
                 index: index,
-                position: positionAlias,
+                position: position,
                 ocupation: occupation,
               ),
             );

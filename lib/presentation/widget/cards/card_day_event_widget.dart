@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_images.dart';
@@ -198,7 +198,7 @@ class CardDayEventWidget extends ConsumerWidget {
                 ),
                 ButtonTextWidget(
                   action: () {
-                    EventController.instance.setSelectedEvent(event);
+                    ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
                     context.go('/games/day');
                   },
                   width: 80,

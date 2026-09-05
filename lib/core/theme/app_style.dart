@@ -210,7 +210,12 @@ class AppStyle {
   static CheckboxThemeData get checkBoxTheme => CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
     checkColor: const WidgetStatePropertyAll(AppColors.white),
-    fillColor: WidgetStatePropertyAll(primaryColor),
+    fillColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) {
+        return primaryColor;
+      }
+      return Colors.transparent;
+    }),
   );
 
   //INPUT LIGHT THEME

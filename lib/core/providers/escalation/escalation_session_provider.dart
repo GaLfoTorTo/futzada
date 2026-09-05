@@ -117,7 +117,7 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
         formation: formation
       );
       //BUSCAR PARTICIPANTES DO EVENTO SELECIONADO
-      getParticipants();
+      await getParticipants();
       //INFORMAÇÕES DO USUARIO
       setUserInfo();
     } catch (e) {
@@ -130,8 +130,15 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
 
   //FUNÇÃO DE BUSCA DE PARTICIPANTES DO EVENTO SELECIONADO
   Future<void> getParticipants() async {
-    final players = state.event!.participants?.where((p) => p.player != null).toList();
-    ref.read(escalationMarketProvider.notifier).setPlayersMarket(players ?? []);
+    final local = state.event!.participants;
+    final List<UserModel> players;
+    if (local != null && local.isNotEmpty) {
+      players = local.where((p) => p.player != null).toList();
+    } else {
+      final fetched = await _escalationService.participantsFetch(state.event!.id!);
+      players = fetched.whereType<UserModel>().where((p) => p.player != null).toList();
+    }
+    ref.read(escalationMarketProvider.notifier).setPlayersMarket(players);
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE INFORMAÇÕES DE TECNICO DO USUARIO PARA O EVENTO SELECIONADO
@@ -166,17 +173,6 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
     state = state.copyWith(isLoading: false);
   }
 
-  //NORMALIZA O TAMANHO DA LISTA DE RESERVAS AO MÁXIMO CORRETO DA CATEGORIA
-  //Evita que dados salvos com contagens antigas (ex: 7) sobrescrevam o teto atual
-  List<int?> _normalizeReserves(List<int?>? saved, String category) {
-    final canonical = _escalationService.setEscalation(category, 'reserves');
-    final target = canonical.length;
-    if (saved == null) return canonical;
-    if (saved.length == target) return saved;
-    if (saved.length > target) return saved.take(target).toList();
-    return [...saved, ...List<int?>.filled(target - saved.length, null)];
-  }
-
   //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO
   void setFormation(String formation) {
     state = state.copyWith(formation: formation);
@@ -185,21 +181,64 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
   //FUNÇÃO DE DEFINIÇÃO DE JOGADOR NA ESCALAÇÃO
   void setPlayerEscalation(dynamic id) {
     final market = ref.read(escalationMarketProvider);
+    final team = ref.read(escalationTeamProvider);
+    final isReserve = team.selectedOccupation == 'reserves';
     final idx = market.playersMarket.indexWhere((p) => p.id == id);
     final user = market.playersMarket[idx];
 
     try {
       final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(id);
       ref.read(escalationTeamProvider.notifier).setPlayerPosition(user);
-      final playerPrice = user.player?.ratings
-          ?.firstWhere((r) => r.eventId == state.event?.id, orElse: () => user.player!.ratings!.first)
-          .price ?? 0.0;
-      //CALCULAR PREÇO DO TIME
-      calcTeamPrice(playerPrice, isEscaled ? 'remove' : 'add');
+      // Reservas não debitam nem creditam o patrimônio
+      if (!isReserve) {
+        final playerPrice = user.player?.ratings
+            ?.firstWhere((r) => r.eventId == state.event?.id, orElse: () => user.player!.ratings!.first)
+            .price ?? 0.0;
+        calcTeamPrice(playerPrice, isEscaled ? 'remove' : 'add');
+      }
     } catch (e) {
       final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
       if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
+  }
+
+  //FUNÇÃO DE SALVAMENTO DA ESCALAÇÃO NA API
+  Future<void> saveEscalation() async {
+    final team = ref.read(escalationTeamProvider);
+    state = state.copyWith(isLoading: true);
+    try {
+      await _escalationService.saveEscalation({
+        'escalation': {
+          'event_id':   state.event?.id,
+          'manager_id': state.user?.manager?.id,
+          'formation':  state.formation,
+          'starters':   team.starters,
+          'reserves':   team.reserves,
+          'capitan':    team.selectedPlayerCapitan,
+        },
+        'economy': {
+          'event_id':   state.event?.id,
+          'manager_id': state.user?.manager?.id,
+          'price':      state.price,
+          'patrimony':  state.patrimony,
+        }
+      });
+    } catch (e) {
+      print(e);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
+    state = state.copyWith(isLoading: false);
+  }
+
+  //NORMALIZA O TAMANHO DA LISTA DE RESERVAS AO MÁXIMO CORRETO DA CATEGORIA
+  List<int?> _normalizeReserves(List<int?>? saved, String category) {
+    final canonical = _escalationService.setEscalation(category, 'reserves');
+    final target = canonical.length;
+    if (saved == null) return canonical;
+    if (saved.length == target) return saved;
+    if (saved.length > target) return saved.take(target).toList();
+    return [...saved, ...List<int?>.filled(target - saved.length, null)];
   }
 
   //FUNÇÃO DE CALCULO DE PREÇO DA EQUIPE

@@ -5,7 +5,7 @@ import 'package:esportly/core/helpers/date_helper.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/game_model.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/pages/event/error/erro_historic_game_page.dart';
 import 'package:esportly/presentation/widget/skeletons/skeleton_games_widget.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
@@ -19,7 +19,6 @@ class EventHistoricPage extends ConsumerStatefulWidget {
 }
 
 class _EventHistoricPageState extends ConsumerState<EventHistoricPage> with SingleTickerProviderStateMixin {
-  EventController eventController = EventController.instance;
   late EventModel event;
   late TabController _tabController;
   List<String?> tabs = [];
@@ -27,7 +26,7 @@ class _EventHistoricPageState extends ConsumerState<EventHistoricPage> with Sing
   @override
   void initState() {
     super.initState();
-    event = eventController.event;
+    event = ref.read(eventSessionProvider).event!;
     final finishedGames = ref.read(gameScheduleProvider).finishedGames;
     if (finishedGames.isNotEmpty) {
       tabs = finishedGames.keys.toList();

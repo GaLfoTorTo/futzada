@@ -1,3 +1,4 @@
+import 'package:esportly/data/models/participant_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/data/models/event_model.dart';
@@ -64,17 +65,23 @@ class EscalationMarketNotifier extends Notifier<EscalationMarketState> {
   
   //FUNÇÃO DE DEFINIÇÃO DE FILTROS
   void setFilter(String name, dynamic newValue) {
-    final filters = Map<String, dynamic>.from(state.filtrosMarket);
+    final filters = state.filtrosMarket;
     //FILTRAR PARA POSIÇÕES
-    if (name == 'positions' && newValue is List<String>) {
-      filters[name] = newValue;
+    if (name == 'positions') {
+      if (newValue is List<String>) {
+        filters[name] = newValue;
+      } else if (newValue is String) {
+        final arr = List<String>.from(filters[name] as List);
+        if (arr.contains(newValue)) {
+          arr.remove(newValue);
+        } else {
+          arr.add(newValue);
+        }
+        filters[name] = arr;
+      }
     }
-    //FILTRAR PARA MELHOR PÉ
-    if (name == 'bestSide') {
-      filters[name] = newValue != filters[name] ? newValue : '';
-    }
-    //DEMAIS FILTROS
-    if (name != 'positions' && name != 'status' && name != 'bestSide') {
+    //FILTRAR PARA STATUS
+    if (name == 'status') {
       final arr = List<String>.from(filters[name] as List);
       if (arr.contains(newValue)) {
         arr.remove(newValue);
@@ -83,90 +90,112 @@ class EscalationMarketNotifier extends Notifier<EscalationMarketState> {
       }
       filters[name] = arr;
     }
+    //FILTRAR PARA MELHOR LADO
+    if (name == 'bestSide') {
+      filters[name] = newValue != filters[name] ? newValue : '';
+    }
+    //DEMAIS FILTROS (seleção única)
+    if (!['positions', 'status', 'bestSide'].contains(name)) {
+      filters[name] = newValue;
+    }
 
     state = state.copyWith(filtrosMarket: filters);
   }
-  
+
+  //FUNÇÃO DE ATUALIZAÇÃO DE JOGADORES FILTRADOS
+  void updatePlayersFiltered(List<UserModel> filtered) {
+    state = state.copyWith(playersFiltered: filtered);
+  }
+
   //FUNÇÃO DE FILTRO DE JOGADORES
-  List<UserModel> filterMarketPlayers(EventModel? event) {
-    if (event == null) return [];
+  List<UserModel> filterMarketPlayers(EventModel event) {
     final filters = state.filtrosMarket;
-    final participants = List<UserModel>.from(state.playersMarket);
+    final participants = state.playersMarket;
     if (participants.isEmpty) return [];
 
-    List<UserModel> filteredPlayers = participants.where((item) {
-      final user = event.participants!.firstWhere((p) => p.id == item.id);
-      if (user.player != null) {
-        final PlayerModel player = user.player!;
-        if (filters['status'] != null && filters['status'] != 'Todos') {
-          final selectedStatus = List<String>.from(filters['status']);
-          final hasStatus = selectedStatus.any(
-            (status) => user.participants?.any((p) => p.status.name == status) ?? false,
-          );
-          if (!hasStatus) return false;
+    List<UserModel> filteredPlayers = participants.where((user) {
+      if (user.player == null) return false;
+      final ParticipantModel participant = user.participants!.first;
+      final PlayerModel player = user.player!;
+
+      //FILTRO DE STATUS
+      if (filters['status'] != null) {
+        final selectedStatus = List<String>.from(filters['status']);
+        if (selectedStatus.isNotEmpty) {
+          if (!selectedStatus.contains(participant.status.name)) return false;
         }
-        if (filters['search'] != null && filters['search'] != '') {
-          final nome = (filters['search'] as String).toLowerCase();
-          if (!user.userName!.toLowerCase().contains(nome) &&
-              !user.firstName!.toLowerCase().contains(nome) &&
-              !user.lastName!.toLowerCase().contains(nome)) {
-            return false;
-          }
-        }
-        if (filters['bestSide'] != null &&
-            filters['bestSide'] != '' &&
-            player.bestSide != filters['bestSide']) {
+      }
+      //FILTRO DE PESQUISA
+      if (filters['search'] != null) {
+        final nome = (filters['search'] as String).toLowerCase();
+        if (!user.userName!.toLowerCase().contains(nome) &&
+            !user.firstName!.toLowerCase().contains(nome) &&
+            !user.lastName!.toLowerCase().contains(nome)) {
           return false;
         }
-        if (filters['positions'] != null &&
-            (filters['positions'] as List).isNotEmpty) {
-          final selectedPositions = List<String>.from(filters['positions']);
-          final playerPositions = player.getPositionsByModality(event.modality!.name);
-          final hasPosition = selectedPositions.any(
-            (pos) => playerPositions.any((p) => p.alias == pos),
-          );
-          if (!hasPosition) return false;
-        }
-        return true;
       }
-      return false;
+      //FILTRO MELHOR LADO
+      if (filters['bestSide'] != null && (filters['positions'] as List).isNotEmpty) {
+        return player.bestSide == filters['bestSide'];
+      }
+      //FILTRO DE POSIÇÃO
+      if (filters['positions'] != null && (filters['positions'] as List).isNotEmpty) {
+        final selectedPositions = List<String>.from(filters['positions']);
+        if (!selectedPositions.any((pos) => player.positions.any((p) => p.alias == pos))) {
+          return false;
+        }
+      }
+      //FILTRO DE PREÇO MÁXIMO (reservas)
+      if (filters['maxPrice'] != null) {
+        final maxPrice = (filters['maxPrice'] as num).toDouble();
+        final playerPrice = player.ratings
+            ?.firstWhere((r) => r.eventId == event.id, orElse: () => player.ratings!.first)
+            .price ?? double.infinity;
+        if (playerPrice > maxPrice) return false;
+      }
+      return true;
     }).toList();
-
+    
     return _filterMetricsPlayer(filteredPlayers, event);
   }
 
   //FUNÇÃO DE FILTRO DE METRICAS
   List<UserModel> _filterMetricsPlayer(List<UserModel> participants, EventModel event) {
     final filters = state.filtrosMarket;
-    if (filters['price'] != null && filters['price'] != '') {
+    //FILTRO DE PREÇO
+    if (filters['price'] != null) {
       participants.sort((a, b) {
         final aPrice = a.player?.ratings?.firstWhere((r) => r.eventId == event.id).price ?? 0;
         final bPrice = b.player?.ratings?.firstWhere((r) => r.eventId == event.id).price ?? 0;
         return filters['price'] == 'Maior preço' ? bPrice.compareTo(aPrice) : aPrice.compareTo(bPrice);
       });
     }
-    if (filters['media'] != null && filters['media'] != '') {
+    //FILTRO DE MÉDIA
+    if (filters['media'] != null) {
       participants.sort((a, b) {
         final aAvg = a.player?.ratings?.firstWhere((r) => r.eventId == event.id).avarage ?? 0;
         final bAvg = b.player?.ratings?.firstWhere((r) => r.eventId == event.id).avarage ?? 0;
         return filters['media'] == 'Maior média' ? bAvg.compareTo(aAvg) : aAvg.compareTo(bAvg);
       });
     }
-    if (filters['game'] != null && filters['game'] != '') {
+    //FILTRO DE NUMERO DE PARTIDAS
+    if (filters['game'] != null) {
       participants.sort((a, b) {
         final aGames = a.player?.ratings?.firstWhere((r) => r.eventId == event.id).games ?? 0;
         final bGames = b.player?.ratings?.firstWhere((r) => r.eventId == event.id).games ?? 0;
         return filters['game'] == 'Mais jogos' ? bGames.compareTo(aGames) : aGames.compareTo(bGames);
       });
     }
-    if (filters['valorization'] != null && filters['valorization'] != '') {
+    //FILTRO DE VALORIZAÇÃO
+    if (filters['valorization'] != null) {
       participants.sort((a, b) {
         final aVal = a.player?.ratings?.firstWhere((r) => r.eventId == event.id).valuation ?? 0;
         final bVal = b.player?.ratings?.firstWhere((r) => r.eventId == event.id).valuation ?? 0;
         return filters['valorization'] == 'Maior valorização' ? bVal.compareTo(aVal) : aVal.compareTo(bVal);
       });
     }
-    if (filters['lastPontuation'] != null && filters['lastPontuation'] != '') {
+    //FILTRO DE ULTIMA PONTUAÇÃO
+    if (filters['lastPontuation'] != null) {
       participants.sort((a, b) {
         final aPoints = a.player?.ratings?.firstWhere((r) => r.eventId == event.id).points ?? 0;
         final bPoints = b.player?.ratings?.firstWhere((r) => r.eventId == event.id).points ?? 0;

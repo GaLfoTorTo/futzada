@@ -37,21 +37,50 @@ class ButtonDropdownMultiWidget extends StatefulWidget {
   });
 
   @override
-  State<ButtonDropdownMultiWidget> createState() => ButtonDropdownMultiWidgetState();
+  State<ButtonDropdownMultiWidget> createState() => _ButtonDropdownMultiWidgetState();
 }
 
-class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
-  bool isMenuOpen = false;
+class _ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
+  bool _isMenuOpen = false;
+  late List<dynamic> _localSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _localSelected = List.from(widget.selectedItems);
+  }
+
+  @override
+  void didUpdateWidget(ButtonDropdownMultiWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_isMenuOpen) {
+      _localSelected = List.from(widget.selectedItems);
+    }
+  }
+
+  void _toggle(String id, StateSetter menuSetState) {
+    menuSetState(() {
+      if (_localSelected.contains(id)) {
+        _localSelected.remove(id);
+      } else {
+        _localSelected.add(id);
+      }
+    });
+    widget.onChanged(id);
+  }
+
+  Map<String, dynamic>? get _firstSelectedItem {
+    if (_localSelected.isEmpty) return null;
+    try {
+      return widget.items.firstWhere((item) => item['id'] == _localSelected[0]) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final hint = widget.selectedItems.isNotEmpty
-        ? widget.items.firstWhere((item) => item['id'] == widget.selectedItems[0])
-        : null;
-
-    void setItems(String value) {
-      widget.onChanged(value);
-    }
+    final hint = _firstSelectedItem;
 
     return Container(
       width: widget.width,
@@ -64,69 +93,68 @@ class ButtonDropdownMultiWidgetState extends State<ButtonDropdownMultiWidget> {
         ),
         borderRadius: BorderRadius.circular(5),
       ),
-      child: DropdownButton2<dynamic>(
+      child: DropdownButton2<String>(
         isExpanded: true,
         value: null,
-        onChanged: (optionValue) => setItems(optionValue),
+        onChanged: (_) {},
         customButton: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              hint != null ? hint['title']! : 'Status',
+              hint != null ? hint['title'] as String : 'Status',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: widget.textSize),
             ),
-            if (hint != null)
-              Icon(hint['icon'], color: hint['color'], size: widget.iconSize),
+            if (hint != null && widget.showIcon && hint['icon'] != null)
+              Icon(hint['icon'] as IconData, color: hint['color'] as Color?, size: widget.iconSize),
           ],
         ),
-        onMenuStateChange: (isOpen) => setState(() => isMenuOpen = isOpen),
+        onMenuStateChange: (isOpen) => setState(() => _isMenuOpen = isOpen),
         dropdownStyleData: DropdownStyleData(
           width: widget.menuWidth ?? widget.width,
           decoration: BoxDecoration(
-            color: widget.color,
+            color: Theme.of(context).cardTheme.color,
             borderRadius: const BorderRadius.all(Radius.circular(5)),
           ),
         ),
         iconStyleData: const IconStyleData(icon: SizedBox.shrink(), iconSize: 0),
         alignment: widget.alignment != 'center' ? Alignment.centerLeft : Alignment.center,
-        underline: Container(height: 0),
-        items: widget.items.map<DropdownMenuItem<dynamic>>((item) {
-          final optionValue = item is Map<String, dynamic> ? item['id'] : item;
-          final optionTitle = item is Map<String, dynamic> ? item['title'] : item;
+        underline: const SizedBox.shrink(),
+        items: widget.items.map<DropdownMenuItem<String>>((rawItem) {
+          final item = rawItem as Map<String, dynamic>;
+          final id = item['id'] as String;
+          final title = item['title'] as String;
 
-          return DropdownMenuItem<dynamic>(
-            value: optionValue,
+          return DropdownMenuItem<String>(
+            value: id,
             child: StatefulBuilder(
               builder: (context, menuSetState) {
-                final isSelected = widget.selectedItems.contains(optionValue);
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (isMenuOpen) ...[
-                      Checkbox(
-                        value: isSelected,
-                        onChanged: (bool? selected) => setItems(optionValue),
+                final isSelected = _localSelected.contains(id);
+                return InkWell(
+                  onTap: () => _toggle(id, menuSetState),
+                  child: Row(
+                    children: [
+                      IgnorePointer(
+                        child: Checkbox(
+                          value: isSelected,
+                          onChanged: null,
+                        ),
                       ),
-                    ],
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 5),
+                      Expanded(
                         child: Text(
-                          optionTitle.toString(),
+                          title,
                           style: TextStyle(
-                            color: widget.textColor,
+                            color: Theme.of(context).textTheme.bodyMedium!.color,
                             fontSize: widget.textSize,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ),
-                    ),
-                    if (item is Map<String, dynamic> && item.containsKey('photo')) ...[
-                      ImgCircularWidget(size: widget.iconSize!, image: item['photo']),
-                    ] else if (item is Map<String, dynamic> && item.containsKey('icon')) ...[
-                      Icon(item['icon'], color: item['color'], size: widget.iconSize),
+                      if (item.containsKey('photo'))
+                        ImgCircularWidget(size: widget.iconSize!, image: item['photo'])
+                      else if (item.containsKey('icon') && item['icon'] != null)
+                        Icon(item['icon'] as IconData, color: item['color'] as Color?, size: widget.iconSize),
                     ],
-                  ],
+                  ),
                 );
               },
             ),

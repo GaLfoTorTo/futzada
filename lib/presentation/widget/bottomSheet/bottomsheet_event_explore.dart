@@ -7,14 +7,15 @@ import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/controllers/map_controller.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
 import 'package:esportly/presentation/widget/images/img_group_circle_widget.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_avaliacao_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class BottomSheetEventExplore extends StatelessWidget {
+class BottomSheetEventExplore extends ConsumerWidget {
   final List<EventModel> events;
   const BottomSheetEventExplore({
     super.key,
@@ -22,10 +23,9 @@ class BottomSheetEventExplore extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
-    EventController eventController = EventController.instance;
     MapWidgetController mapWidgetController = MapWidgetController.instance;
     PageController pageController = PageController();
     //DEFINIR ALTURA DO DIALOG
@@ -443,7 +443,7 @@ class BottomSheetEventExplore extends StatelessWidget {
                         text: "Ver Pelada",
                         action: () => {
                           //DEFINIR EVENTO ATUAL NO CONTROLLER
-                          eventController.setSelectedEvent(event),
+                          ref.read(eventSessionProvider.notifier).setSelectedEvent(event),
                           //NAVEGAR PARA PAGINA DO EVENTO
                           context.go('/event/view')
                         },

@@ -1,52 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/enum/enums.dart';
 import 'package:esportly/presentation/pages/event/error/erro_participants_page.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_size.dart';
-import 'package:esportly/presentation/controllers/event_controller.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
+import 'package:esportly/core/providers/event/event_participants_provider.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 import 'package:esportly/presentation/widget/badges/position_widget.dart';
 import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
 import 'package:go_router/go_router.dart';
 
-class EventParticipantsPage extends StatelessWidget {
+class EventParticipantsPage extends ConsumerWidget {
   const EventParticipantsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    //RESGATAR DIMENSÕES DO DISPOSITIVO
+  Widget build(BuildContext context, WidgetRef ref) {
     var dimensions = MediaQuery.of(context).size;
-    //RESGATAR CONTROLLER DE RANK E EVENTO
-    EventController eventController = EventController.instance;
+    final EventModel event = ref.watch(eventSessionProvider.select((s) => s.event!));
+    final participantsState = ref.watch(eventParticipantsProvider);
+    final participantsNotifier = ref.read(eventParticipantsProvider.notifier);
 
-    IconData setRole(List<String>? roles){
-      //VERIFICAR SE PARTICIPANTE CONTEM ALGUMA DEFINIÇÃO DE ATUAÇÃO
-      if(roles != null){
-        //VERIFICAR SE PARTICIPANTE E O ORGANIZADOR
-        if(roles.contains(Roles.Organizator.name)){
-          return AppIcones.user_shield_solid;
-        }
-        //VERIFICAR SE PARTICIPANTE E COLABORADOR
-        if(roles.contains(Roles.Colaborator.name)){
-          return AppIcones.user_cog_solid;
-        }
-        //VERIFICAR SE PARTICIPANTE E JOGADOR
-        if(roles.contains(Roles.Player.name)){
-          return AppIcones.foot_futebol_solid;
-        }
-        //VERIFICAR SE PARTICIPANTE E TECNICO
-        if(roles.contains(Roles.Manager.name)){
-          return AppIcones.clipboard_solid;
-        }
+    // Inicializa participantes a partir do evento caso o provider ainda não tenha sido populado
+    if (participantsState.participants.values.every((l) => l?.isEmpty ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        participantsNotifier.setParticipants(event.participants);
+      });
+    }
+
+    IconData setRole(List<String>? roles) {
+      if (roles != null) {
+        if (roles.contains(Roles.Organizator.name)) return AppIcones.user_shield_solid;
+        if (roles.contains(Roles.Colaborator.name)) return AppIcones.user_cog_solid;
+        if (roles.contains(Roles.Player.name)) return AppIcones.foot_futebol_solid;
+        if (roles.contains(Roles.Manager.name)) return AppIcones.clipboard_solid;
       }
-      //RETORNO PADRÃO
       return AppIcones.user_solid;
     }
 
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         width: dimensions.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,17 +55,15 @@ class EventParticipantsPage extends StatelessWidget {
                 hint: 'Pesquisa',
                 backgroundColor: AppColors.grey_300.withAlpha(50),
                 prefixIcon: AppIcones.search_solid,
-                textController: eventController.pesquisaController,
+                textController: participantsNotifier.pesquisaController,
                 type: TextInputType.text,
               ),
             ),
-            ...eventController.participants.entries.map((item) {
-              String key = item.key;
-              var participants = item.value;
-              //VERIFICAR SE PELADA CONTEM PARTICIPANTES
-              if(participants == null){
-                return const ErroParticipantsPage();
-              }
+            ...participantsState.participants.entries.map((item) {
+              final String key = item.key;
+              final participants = item.value;
+              if (participants == null) return const ErroParticipantsPage();
+
               return Padding(
                 padding: const EdgeInsets.all(10),
                 child: Column(
@@ -78,14 +72,10 @@ class EventParticipantsPage extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text(
-                        key,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                      child: Text(key, style: Theme.of(context).textTheme.titleMedium),
                     ),
-                    ...participants.map((user){
-                      //RESGATAR TIPO DE PARTICIPANT
-                      var iconRole = setRole(UserHelper.getParticipant(user.participants, eventController.event.id!)?.role);
+                    ...participants.map((user) {
+                      final iconRole = setRole(UserHelper.getParticipant(user.participants, event.id!)?.role);
                       return TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,
@@ -128,9 +118,9 @@ class EventParticipantsPage extends StatelessWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        if (user.player!.getMainPosition(eventController.event.modality!.name) != null)
+                                        if (user.player!.getMainPosition(event.modality!.name) != null)
                                           PositionWidget(
-                                            position: user.player!.getMainPosition(eventController.event.modality!.name)!.alias,
+                                            position: user.player!.getMainPosition(event.modality!.name)!.alias,
                                             mainPosition: true,
                                             width: 35,
                                             height: 25,

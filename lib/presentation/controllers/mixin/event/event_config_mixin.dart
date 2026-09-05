@@ -156,7 +156,7 @@ mixin EventConfigMixin on ChangeNotifier {
     final eventController = this as EventController;
     return GameConfigModel(
       category: eventController.categoryController.text,
-      eventId: eventController.event.id!,
+      eventId: eventController.currentEvent?.id ?? 0,
       duration: int.parse(durationController.text),
       points: int.parse(pointsController.text),
       playersPerTeam: int.parse(playersPerTeamController.text),
