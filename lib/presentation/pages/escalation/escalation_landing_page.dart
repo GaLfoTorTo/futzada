@@ -18,7 +18,7 @@ class EscalationLandingPage extends StatelessWidget {
       buttonFirstIcon: AppIcones.clipboard_solid,
       buttonSecoundText: 'Estatísticas',
       buttonSecoundIcon: Icons.add_chart,
-      buttonFirstAction: () => context.go('/escalation/team'),
+      buttonFirstAction: () => context.go('/escalation/list'),
       buttonSecoundAction: () => context.go('/escalation/statistics'),
     );
   }

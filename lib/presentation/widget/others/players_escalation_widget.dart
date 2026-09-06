@@ -12,11 +12,15 @@ import 'package:esportly/presentation/widget/buttons/button_player_widget.dart';
 class PlayersEscalationWidget extends ConsumerWidget {
   final double? width;
   final double? height;
+  final String category;
+  final String formation;
 
   const PlayersEscalationWidget({
     super.key,
     this.width = 342,
     this.height = 518,
+    this.category = "Futebol",
+    this.formation = '4-3-3',
   });
 
   //ALTURA DO CONTAINER AJUSTADA POR FAMÍLIA DE ESPORTE
@@ -64,7 +68,8 @@ class PlayersEscalationWidget extends ConsumerWidget {
     return part.characters.getRange(0, len).toLowerCase().toString();
   }
 
-  List<Widget> _buildPlayers(EscalationSessionState managerSession, EscalationTeamState team) {
+  //FUNÇÃO DE CONSTRUÇÃO E DISTRIBUIÇÃO DOS JOGADORES NA FORMAÇÃO
+  List<Widget> _buildPlayers(EscalationSessionState managerSession, EscalationTeamState teamSession) {
     final escalationService = EscalationService();
     final formations = escalationService.getFormationLayout(managerSession.category, managerSession.formation);
     final players = <Widget>[];
@@ -84,13 +89,13 @@ class PlayersEscalationWidget extends ConsumerWidget {
                 managerSession.formation,
               );
               UserModel? user;
-              if (playerIndex < team.starters.length && team.starters[playerIndex] != null) {
-                user = EventHelper.getUserEvent(managerSession.event!, team.starters[playerIndex]!);
+              if (playerIndex < teamSession.starters.length && teamSession.starters[playerIndex] != null) {
+                user = EventHelper.getUserEvent(managerSession.event!, teamSession.starters[playerIndex]!);
               }
               final String positionAlias = _positionAlias(position);
               final borderColor = PlayerHelper.setColorPosition(positionAlias);
 
-              if (team.selectedPlayerCapitan == user?.id) {
+              if (teamSession.capitan == user?.id) {
                 return Stack(
                   children: [
                     ButtonPlayerWidget(
@@ -140,24 +145,16 @@ class PlayersEscalationWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final managerSession = ref.watch(escalationSessionProvider);
-    final team = ref.watch(escalationTeamProvider);
-
-    if (!managerSession.isReady || team.starters.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final formations = EscalationService().getFormationLayout(
-      managerSession.category,
-      managerSession.formation,
-    );
+    final teamSession = ref.watch(escalationTeamProvider);
+    final formations = EscalationService().getFormationLayout(category, formation);
 
     return Container(
       width: width,
-      height: _courtHeight(managerSession.category),
+      height: _courtHeight(category),
       padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: _columnAlignment(formations.length),
-        children: _buildPlayers(managerSession, team),
+        children: _buildPlayers(managerSession, teamSession),
       ),
     );
   }

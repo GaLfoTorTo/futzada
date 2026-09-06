@@ -50,17 +50,21 @@ class CardPlayerMarketWidget extends ConsumerWidget {
 
     //FUNÇÃO DE DEFINIÇÃO DE BOTÕES
     Map<String, dynamic> setButtonBuy(PlayerModel player) {
-      final team = ref.read(escalationTeamProvider);
-      final isReserve = team.selectedOccupation == 'reserves';
-      final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(user.id!);
-      if (isEscaled) return {'text': 'Remover', 'color': AppColors.red_300, 'disabled': false};
-      if (!isReserve && rating.price! > managerSession.patrimony) return {'text': 'Comprar', 'color': AppColors.green_100, 'disabled': true};
-      return {'text': isReserve ? 'Escalar' : 'Comprar', 'color': AppColors.green_300, 'disabled': false};
+      /* final team = ref.read(escalationTeamProvider);
+      final isReserve = team.selectedOccupation == 'reserves'; */
+      final disabled = rating.price! > managerSession.economy;
+      final escaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(user.id!);
+      return {
+        'text': escaled ? 'Vender' : 'Comprar', 
+        'textColor': escaled ? AppColors.white : AppColors.blue_500, 
+        'color': disabled ? ( escaled ? AppColors.red_100 : AppColors.green_100) : ( escaled ? AppColors.red_500 : AppColors.green_300), 
+        'disabled': disabled
+      };
     }
     
     //FUNÇÃO DE DEFINIÇÃO DE POSIÇÃO DO JOGADOR
     void setPlayerPosition(id) {
-      ref.read(escalationSessionProvider.notifier).setPlayerEscalation(id);
+      ref.read(escalationTeamProvider.notifier).setPlayerEscalation(id);
       Navigator.of(context).pop();
     }
 
@@ -238,7 +242,7 @@ class CardPlayerMarketWidget extends ConsumerWidget {
                     text: buttonConfig['text'],
                     height: 30,
                     width: (dimensions.width * 0.3) - 10,
-                    textColor: AppColors.white,
+                    textColor: buttonConfig['textColor'],
                     backgroundColor: buttonConfig['color'],
                     disabled: buttonConfig['disabled'],
                     action: () => setPlayerPosition(user.id),

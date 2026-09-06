@@ -9,7 +9,7 @@ class HistoricPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final session = ref.watch(escalationSessionProvider);
+    final managerSession = ref.watch(escalationSessionProvider);
 
     return Scaffold(
       appBar: HeaderWidget(
@@ -21,7 +21,7 @@ class HistoricPage extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
-              children: session.escalations.map((entry) {
+              children: [].map((entry) {
                 return Container();
               }).toList(),
             ),

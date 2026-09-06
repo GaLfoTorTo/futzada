@@ -1,3 +1,4 @@
+import 'package:esportly/presentation/pages/escalation/escalation_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -97,6 +98,10 @@ class AppRoutes {
               path: '/escalation',
               pageBuilder: (_, __) => const NoTransitionPage(child: EscalationLandingPage()),
               routes: [
+                GoRoute(
+                  path: 'list',
+                  pageBuilder: (_, __) => transitionToLeft(const EscalationListPage()),
+                ),
                 GoRoute(
                   path: 'team',
                   pageBuilder: (_, __) => transitionToLeft(const EscalationPage()),

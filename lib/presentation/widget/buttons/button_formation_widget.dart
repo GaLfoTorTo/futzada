@@ -32,7 +32,7 @@ class ButtonFormationWidget extends StatelessWidget {
         return DropdownMenuItem<String>(
           value: item,
           child: Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               color: AppColors.green_300,
               borderRadius: BorderRadius.all(Radius.circular(10)),

@@ -92,7 +92,13 @@ class EscalationMarketNotifier extends Notifier<EscalationMarketState> {
     }
     //FILTRAR PARA MELHOR LADO
     if (name == 'bestSide') {
-      filters[name] = newValue != filters[name] ? newValue : '';
+      final arr = List<String>.from(filters[name] as List);
+      if (arr.contains(newValue)) {
+        arr.remove(newValue);
+      } else {
+        arr.add(newValue);
+      }
+      filters[name] = arr;
     }
     //DEMAIS FILTROS (seleção única)
     if (!['positions', 'status', 'bestSide'].contains(name)) {
@@ -135,15 +141,14 @@ class EscalationMarketNotifier extends Notifier<EscalationMarketState> {
         }
       }
       //FILTRO MELHOR LADO
-      if (filters['bestSide'] != null && (filters['positions'] as List).isNotEmpty) {
-        return player.bestSide == filters['bestSide'];
+      if (filters['bestSide'] != null) {
+        final selectedSides = List<String>.from(filters['bestSide'] as List);
+        if (selectedSides.isNotEmpty && selectedSides.contains(player.bestSide)) return false;
       }
       //FILTRO DE POSIÇÃO
-      if (filters['positions'] != null && (filters['positions'] as List).isNotEmpty) {
+      if (filters['positions'] != null) {
         final selectedPositions = List<String>.from(filters['positions']);
-        if (!selectedPositions.any((pos) => player.positions.any((p) => p.alias == pos))) {
-          return false;
-        }
+        if (selectedPositions.isNotEmpty && selectedPositions.any((pos) => player.positions.any((p) => p.alias == pos))) return false;
       }
       //FILTRO DE PREÇO MÁXIMO (reservas)
       if (filters['maxPrice'] != null) {
@@ -155,7 +160,6 @@ class EscalationMarketNotifier extends Notifier<EscalationMarketState> {
       }
       return true;
     }).toList();
-    
     return _filterMetricsPlayer(filteredPlayers, event);
   }
 

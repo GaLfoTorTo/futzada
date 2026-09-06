@@ -22,10 +22,10 @@ class EscalationSessionState {
   final bool isLoading;
   final bool hasError;
   final bool canManager;
-  final double patrimony;
+  final double economy;
   final double price;
   final double valuation;
-  final List<Map<String, dynamic>> escalations;
+  final Map<String, dynamic> escalation;
 
   const EscalationSessionState({
     this.user,
@@ -38,10 +38,10 @@ class EscalationSessionState {
     this.isLoading = false,
     this.hasError = false,
     this.canManager = false,
-    this.patrimony = 100.0,
+    this.economy = 100.0,
     this.price = 0.0,
     this.valuation = 0.0,
-    this.escalations = const [],
+    this.escalation = const {},
   });
 
   EscalationSessionState copyWith({
@@ -55,10 +55,9 @@ class EscalationSessionState {
     bool? isLoading,
     bool? hasError,
     bool? canManager,
-    double? patrimony,
+    double? economy,
     double? price,
     double? valuation,
-    List<Map<String, dynamic>>? escalations,
   }) => EscalationSessionState(
     event: event ?? this.event,
     events: events ?? this.events,
@@ -70,10 +69,9 @@ class EscalationSessionState {
     isLoading: isLoading ?? this.isLoading,
     hasError: hasError ?? this.hasError,
     canManager: canManager ?? this.canManager,
-    patrimony: patrimony ?? this.patrimony,
+    economy: economy ?? this.economy,
     price: price ?? this.price,
     valuation: valuation ?? this.valuation,
-    escalations: escalations ?? this.escalations,
   );
 }
 
@@ -84,123 +82,12 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
   @override
   EscalationSessionState build() => const EscalationSessionState();
 
-  //FUNÇÃO DE INICIALIZAÇÃO DE PROVIDER DE ESCALÇÃO
-  Future<void> init(List<EventModel> events, UserModel user) async {
-    state = state.copyWith(isLoading: true, events: events, user: user);
-    try {
-      if (events.isNotEmpty) {
-        await setEvent(events.first.id);
-        state = state.copyWith(isReady: true);
-      } else {
-        state = state.copyWith(hasError: true);
-      }
-    } catch (e) {
-      state = state.copyWith(hasError: true);
-      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
-    }
-    state = state.copyWith(isLoading: false);
-  }
+  /* 
+  _________________________________________
 
-  //FUNÇÃO DE DEFINIÇÃO DE EVENTO ATUAL
-  Future<void> setEvent(dynamic id) async {
-    state = state.copyWith(isLoading: true);
-    try {
-      final event = state.events.firstWhere((e) => e.id == id);
-      final category = event.gameConfig!.category;
-      final formations = _escalationService.getFormations(category);
-      final formation = formations[0];
-      state = state.copyWith(
-        event: event, 
-        category: category, 
-        formations: formations, 
-        formation: formation
-      );
-      //BUSCAR PARTICIPANTES DO EVENTO SELECIONADO
-      await getParticipants();
-      //INFORMAÇÕES DO USUARIO
-      setUserInfo();
-    } catch (e) {
-      state = state.copyWith(hasError: true);
-      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
-    }
-    state = state.copyWith(isLoading: false);
-  }
-
-  //FUNÇÃO DE BUSCA DE PARTICIPANTES DO EVENTO SELECIONADO
-  Future<void> getParticipants() async {
-    final local = state.event!.participants;
-    final List<UserModel> players;
-    if (local != null && local.isNotEmpty) {
-      players = local.where((p) => p.player != null).toList();
-    } else {
-      final fetched = await _escalationService.participantsFetch(state.event!.id!);
-      players = fetched.whereType<UserModel>().where((p) => p.player != null).toList();
-    }
-    ref.read(escalationMarketProvider.notifier).setPlayersMarket(players);
-  }
-
-  //FUNÇÃO DE DEFINIÇÃO DE INFORMAÇÕES DE TECNICO DO USUARIO PARA O EVENTO SELECIONADO
-  void setUserInfo() {
-    state = state.copyWith(isLoading: true);
-    final UserModel user = state.user!;
-    try {
-      final EscalationModel? escalation = (user.manager?.escalations ?? [])
-        .where((e) => e.eventId == state.event!.id)
-        .toList()
-        .firstOrNull; 
-      final EconomyModel? economy = (user.manager?.economies ?? [])
-        .where((e) => e.eventId == state.event!.id)
-        .toList()
-        .firstOrNull; 
-      final formation = escalation?.formation!;
-      final startersList = escalation?.starters ?? _escalationService.setEscalation(state.category, 'starters');
-      final reservesList = _normalizeReserves(escalation?.reserves, state.category);
-      ref.read(escalationTeamProvider.notifier).setLineup(startersList, reservesList);
-      state = state.copyWith(
-        formation: formation,
-        patrimony: economy?.patrimony ?? 100.0,
-        price: economy?.price ?? 0.0,
-        valuation: economy?.valuation ?? 0.0,
-      );
-    } catch (e, stacktrace) {
-      print("erro user: ${e} \n ${stacktrace}");
-      state = state.copyWith(hasError: true);
-      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
-    }
-    state = state.copyWith(isLoading: false);
-  }
-
-  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO
-  void setFormation(String formation) {
-    state = state.copyWith(formation: formation);
-  }
-
-  //FUNÇÃO DE DEFINIÇÃO DE JOGADOR NA ESCALAÇÃO
-  void setPlayerEscalation(dynamic id) {
-    final market = ref.read(escalationMarketProvider);
-    final team = ref.read(escalationTeamProvider);
-    final isReserve = team.selectedOccupation == 'reserves';
-    final idx = market.playersMarket.indexWhere((p) => p.id == id);
-    final user = market.playersMarket[idx];
-
-    try {
-      final isEscaled = ref.read(escalationTeamProvider.notifier).findPlayerEscalation(id);
-      ref.read(escalationTeamProvider.notifier).setPlayerPosition(user);
-      // Reservas não debitam nem creditam o patrimônio
-      if (!isReserve) {
-        final playerPrice = user.player?.ratings
-            ?.firstWhere((r) => r.eventId == state.event?.id, orElse: () => user.player!.ratings!.first)
-            .price ?? 0.0;
-        calcTeamPrice(playerPrice, isEscaled ? 'remove' : 'add');
-      }
-    } catch (e) {
-      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
-      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
-    }
-  }
+  REQUISIÇÕES
+  _________________________________________
+  */
 
   //FUNÇÃO DE SALVAMENTO DA ESCALAÇÃO NA API
   Future<void> saveEscalation() async {
@@ -214,13 +101,13 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
           'formation':  state.formation,
           'starters':   team.starters,
           'reserves':   team.reserves,
-          'capitan':    team.selectedPlayerCapitan,
+          'capitan':    team.capitan,
         },
         'economy': {
           'event_id':   state.event?.id,
           'manager_id': state.user?.manager?.id,
           'price':      state.price,
-          'patrimony':  state.patrimony,
+          'economy':  state.economy,
         }
       });
     } catch (e) {
@@ -231,30 +118,116 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
     state = state.copyWith(isLoading: false);
   }
 
-  //NORMALIZA O TAMANHO DA LISTA DE RESERVAS AO MÁXIMO CORRETO DA CATEGORIA
-  List<int?> _normalizeReserves(List<int?>? saved, String category) {
-    final canonical = _escalationService.setEscalation(category, 'reserves');
-    final target = canonical.length;
-    if (saved == null) return canonical;
-    if (saved.length == target) return saved;
-    if (saved.length > target) return saved.take(target).toList();
-    return [...saved, ...List<int?>.filled(target - saved.length, null)];
+  /* 
+  _________________________________________
+
+  SETTERS
+  _________________________________________
+  */
+  
+  //FUNÇÃO DE INICIALIZAÇÃO DE PROVIDER DE ESCALÇÃO
+  Future<void> init(List<EventModel>? events, UserModel user) async {
+    try {
+      state = state.copyWith(isLoading: true, user: user);
+      //VERIFICAR SE USUARIO ESTA HABILITADO COMO TECNICO
+      if(user.manager == null) {
+        state = state.copyWith(
+          hasError: true,
+          isLoading: false,
+          canManager: false,
+        );
+        return;
+      }
+      //VERIFICAR SE USUARIO ESTA REGISTRADO EM ALGUM EVENTO
+      if((events?.isEmpty ?? false)){
+        state = state.copyWith(
+          isLoading: false, 
+          hasError: true
+        );
+        return;
+      }
+      state = state.copyWith(events: events!);
+    } catch (e) {
+      state = state.copyWith(hasError: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
+    state = state.copyWith(isLoading: false);
   }
 
-  //FUNÇÃO DE CALCULO DE PREÇO DA EQUIPE
-  void calcTeamPrice(double playerPrice, String action) {
-    final rounded = double.parse(playerPrice.toStringAsFixed(2));
-    if (action == 'add') {
+  //FUNÇÃO DE DEFINIÇÃO DE EVENTO ATUAL
+  Future<void> setEvent(EventModel event) async {
+    try {
+      final category = event.gameConfig!.category;
+      final formations = _escalationService.formations[category];
+      final formation  = _escalationService.formations[category]!.first;
       state = state.copyWith(
-        price: double.parse((state.price + rounded).toStringAsFixed(2)),
-        patrimony: double.parse((state.patrimony - rounded).toStringAsFixed(2)),
+        event: event, 
+        category: category, 
+        formations: formations, 
+        formation: formation
       );
-    } else {
-      state = state.copyWith(
-        price: double.parse((state.price - rounded).toStringAsFixed(2)),
-        patrimony: double.parse((state.patrimony + rounded).toStringAsFixed(2)),
-      );
+      await setUserInfo();
+      await setParticipants();
+    } catch (e) {
+      print(e);
+      state = state.copyWith(hasError: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE INFORMAÇÕES DE TECNICO DO USUARIO PARA O EVENTO SELECIONADO
+  Future<void> setUserInfo() async {
+    try {
+      //USUARIO
+      final UserModel user = state.user!;
+      //ESCALAÇÃO DO USUARIO
+      final EscalationModel? escalation = (user.manager?.escalations ?? [])
+        .where((e) => e.eventId == state.event!.id)
+        .toList()
+        .firstOrNull;
+      //ECONOMIA DO USUARIO
+      final EconomyModel? economy = (user.manager?.economies ?? [])
+        .where((e) => e.eventId == state.event!.id)
+        .toList()
+        .firstOrNull; 
+      //DEFINIR TITULARES E RESERVAS
+      ref.read(escalationTeamProvider.notifier).setLineup(
+        escalation?.starters ?? [], 
+        escalation?.reserves ?? [], 
+        state.category
+      );
+      //ATUALIZAR ESTADO
+      state = state.copyWith(
+        formation: escalation?.formation ?? state.formation,
+        economy: economy?.patrimony ?? state.economy,
+        price: economy?.price ?? state.price,
+        valuation: economy?.valuation ?? state.valuation,
+      );
+    } catch (e) {
+      state = state.copyWith(hasError: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
+  }
+
+  //FUNÇÃO DE BUSCA DE PARTICIPANTES DO EVENTO SELECIONADO
+  Future<void> setParticipants() async {
+    final local = state.event!.participants;
+    final List<UserModel> players;
+    if (local != null && local.isNotEmpty) {
+      players = local.where((p) => p.player != null).toList();
+    } else {
+      final fetched = await _escalationService.participantsFetch(state.event!.id!);
+      players = fetched.whereType<UserModel>().where((p) => p.player != null).toList();
+    }
+    ref.read(escalationMarketProvider.notifier).setPlayersMarket(players);
+  }
+
+  //FUNÇÃO DE DEFINIÇÃO DE FORMAÇÃO
+  void setFormation(String formation) {
+    state = state.copyWith(formation: formation);
   }
 }
 

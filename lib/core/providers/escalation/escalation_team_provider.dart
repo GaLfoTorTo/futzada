@@ -1,8 +1,10 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/core/helpers/app_helper.dart';
-import 'package:esportly/data/models/user_model.dart';
+import 'package:esportly/core/providers/escalation/escalation_market_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
+import 'package:esportly/data/services/escalation_service.dart';
 
 //ESTADO - EQUIPE DE ESCALAÇÃO
 class EscalationTeamState {
@@ -10,14 +12,14 @@ class EscalationTeamState {
   final List<int?> reserves;
   final int selectedPlayer;
   final String selectedOccupation;
-  final int selectedPlayerCapitan;
+  final int capitan;
 
   const EscalationTeamState({
     this.starters = const [],
     this.reserves = const [],
     this.selectedPlayer = 0,
     this.selectedOccupation = '',
-    this.selectedPlayerCapitan = 0,
+    this.capitan = 0,
   });
 
   EscalationTeamState copyWith({
@@ -25,26 +27,29 @@ class EscalationTeamState {
     List<int?>? reserves,
     int? selectedPlayer,
     String? selectedOccupation,
-    int? selectedPlayerCapitan,
+    int? capitan,
   }) => EscalationTeamState(
     starters: starters ?? this.starters,
     reserves: reserves ?? this.reserves,
     selectedPlayer: selectedPlayer ?? this.selectedPlayer,
     selectedOccupation: selectedOccupation ?? this.selectedOccupation,
-    selectedPlayerCapitan: selectedPlayerCapitan ?? this.selectedPlayerCapitan,
+    capitan: capitan ?? this.capitan,
   );
 }
 
 //NOTIFICADOR - EQUIPE DE ESCALAÇÃO
 class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
+  
   @override
   EscalationTeamState build() => const EscalationTeamState();
+  final EscalationService _escalationService = EscalationService();
 
   //FUNÇÃO DE DEFINIÇÃO DE LINEUP DE EQUIPE
-  void setLineup(List<int?> starters, List<int?> reserves) {
+  void setLineup(List<int?> starters, List<int?> reserves, String category) {
+    final num = _escalationService.numPlayers[category];
     state = state.copyWith(
-      starters: List<int?>.from(starters),
-      reserves: List<int?>.from(reserves),
+      starters: starters.isNotEmpty ? starters : List<int?>.filled(num!['starters']!, null),
+      reserves: reserves.isNotEmpty ? reserves : List<int?>.filled(num!['reserves']!, null),
     );
   }
 
@@ -54,34 +59,59 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
   }
 
   //FUNÇÃO DE ESCALAÇÃO DE JOGADOR NA EQUIPE (TITULAR / RESERVA)
-  void setPlayerPosition(UserModel player) {
-    final starters = List<int?>.from(state.starters);
-    final reserves = List<int?>.from(state.reserves);
+  void setPlayerEscalation(int id) {
+    final marketSession = ref.read(escalationMarketProvider);
+    final managerSession = ref.read(escalationSessionProvider);
+    
+    //LISTA DE ESCALADOS
+    List<int?> starters = state.starters;
+    List<int?> reserves = state.reserves;
 
-    final starterIdx = starters.indexOf(player.id);
-    final reserveIdx = reserves.indexOf(player.id);
+    //INDEX DE ID NA LISTA
+    final starterIdx = starters.indexOf(id);
+    final reserveIdx = reserves.indexOf(id);
+    
+    //BUSCAR USUARIO
+    final user = marketSession.playersMarket.firstWhere((u) => u.id == id);
 
-    if (starterIdx != -1) {
-      // REMOVE JOGADOR TITULAR
-      starters[starterIdx] = null;
-    } else if (reserveIdx != -1) {
-      // REMOVE JOGADOR RESERVA
-      reserves[reserveIdx] = null;
-    } else {
-      // ADICIONAR JOGADOR
-      if (state.selectedOccupation == 'starters') {
-        starters[state.selectedPlayer] = player.id;
-      } else {
-        reserves[state.selectedPlayer] = player.id;
+    final isEscaled = findPlayerEscalation(id);
+    try {
+      //RESERVAS NÃO DEBITMA DO PATRIMONIO
+      if (isEscaled) {
+        final price = user.player?.ratings?.firstWhere((r) => 
+          r.eventId == managerSession.event?.id, 
+          orElse: () => user.player!.ratings!.first).price ?? 0.0;
+        //CALCULAR GASTO DE ECONOMIA
+        calcEconomy(price, isEscaled ? 'remove' : 'add');
       }
-    }
 
-    state = state.copyWith(
-      starters: starters,
-      reserves: reserves,
-      selectedPlayer: 0,
-      selectedOccupation: '',
-    );
+      if (starterIdx != -1) {
+        // REMOVE JOGADOR TITULAR
+        starters[starterIdx] = null;
+      } else if (reserveIdx != -1) {
+        // REMOVE JOGADOR RESERVA
+        reserves[reserveIdx] = null;
+      } else {
+        // ADICIONAR JOGADOR
+        if (state.selectedOccupation == 'starters') {
+          starters[state.selectedPlayer] = id;
+        } else {
+          reserves[state.selectedPlayer] = id;
+        }
+      }
+
+      state = state.copyWith(
+        starters: starters,
+        reserves: reserves,
+        selectedPlayer: 0,
+        selectedOccupation: '',
+      );
+    } catch (e, stacktrace) {
+      print(e);
+      print(stacktrace);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE JOGADOR COMO CAPITÃO
@@ -89,7 +119,7 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
     try {
       if (findPlayerEscalation(id)) {
         state = state.copyWith(
-          selectedPlayerCapitan: state.selectedPlayerCapitan == id ? 0 : id,
+          capitan: state.capitan == id ? 0 : id,
         );
       }
     } catch (e) {
@@ -102,6 +132,24 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
   bool findPlayerEscalation(int id) {
     return state.starters.any((p) => p != null && p == id) ||
         state.reserves.any((p) => p != null && p == id);
+  }
+
+  //FUNÇÃO DE CALCULO DE PREÇO DA EQUIPE
+  void calcEconomy(double price, String action) {
+    final managerSession = ref.read(escalationSessionProvider);
+    final sessionNotifier = ref.read(escalationSessionProvider.notifier);
+    final rounded = double.parse(price.toStringAsFixed(2));
+    if (action == 'add') {
+      sessionNotifier.state = managerSession.copyWith(
+        price: double.parse((managerSession.price + rounded).toStringAsFixed(2)),
+        economy: double.parse((managerSession.economy - rounded).toStringAsFixed(2)),
+      );
+    } else {
+      sessionNotifier.state = managerSession.copyWith(
+        price: double.parse((managerSession.price - rounded).toStringAsFixed(2)),
+        economy: double.parse((managerSession.economy + rounded).toStringAsFixed(2)),
+      );
+    }
   }
 }
 

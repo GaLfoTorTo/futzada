@@ -69,7 +69,7 @@ class DialogCapitan extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Checkbox(
-                              value: user.id == team.selectedPlayerCapitan,
+                              value: user.id == team.capitan,
                               onChanged: (bool? selected) => setCapitan(user.id),
                             ),
                             ImgCircularWidget(

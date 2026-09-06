@@ -20,9 +20,7 @@ class EscalationWidget extends StatelessWidget {
 
   Widget _renderField() {
     return Container(
-      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: AppColors.green_300,
         border: Border.all(color: AppColors.white, width: 5),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
@@ -50,7 +48,10 @@ class EscalationWidget extends StatelessWidget {
             ..rotateX(-0.7),
           child: _renderField(),
         ),
-        const PlayersEscalationWidget(),
+        PlayersEscalationWidget(
+          category: category,
+          formation: formation,
+        ),
       ],
     );
   }

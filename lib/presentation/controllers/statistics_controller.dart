@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/data/services/manager_service.dart';
 import 'package:esportly/data/services/escalation_service.dart';
 import 'package:esportly/data/services/market_service.dart';
 import 'package:esportly/data/services/participant_service.dart';
@@ -14,7 +13,6 @@ abstract class StatisticsBase {
   EscalationService get escalationService;
   ParticipantService get participantService;
   MarketService get marketService;
-  ManagerService get managerService;
 
   //GETTER - USUÁRIO E EVENTOS
   UserModel get user;
@@ -39,8 +37,6 @@ class StatisticsController extends ChangeNotifier implements StatisticsBase {
   final ParticipantService participantService = ParticipantService();
   @override
   final MarketService marketService = MarketService();
-  @override
-  final ManagerService managerService = ManagerService();
   //ESTADOS
   @override
   UserModel user = sl<UserModel>(instanceName: 'user');

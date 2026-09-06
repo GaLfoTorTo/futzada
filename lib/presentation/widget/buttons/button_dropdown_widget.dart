@@ -8,6 +8,7 @@ class ButtonDropdownWidget extends StatelessWidget {
   final List<dynamic> items;
   final Function onChange;
   final double? width;
+  final double? height;
   final double? menuHeight;
   final double? menuWidth;
   final double? textSize;
@@ -23,6 +24,7 @@ class ButtonDropdownWidget extends StatelessWidget {
     required this.items,
     required this.onChange,
     this.width = 150,
+    this.height = 50,
     this.menuWidth = 170,
     this.menuHeight = 200,
     this.textSize = AppSize.fontXs,
@@ -51,7 +53,7 @@ class ButtonDropdownWidget extends StatelessWidget {
 
     return Container(
       width: width,
-      height: 50,
+      height: height,
       decoration: BoxDecoration(
         color: color ?? Colors.transparent,
         borderRadius: BorderRadius.circular(5),

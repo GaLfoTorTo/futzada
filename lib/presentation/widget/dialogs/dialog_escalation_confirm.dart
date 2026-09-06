@@ -21,7 +21,7 @@ class DialogEscalationConfirm extends ConsumerWidget {
     final session = ref.watch(escalationSessionProvider);
     final team = ref.watch(escalationTeamProvider);
 
-    final int i = team.starters.firstWhere((p) => p == team.selectedPlayerCapitan)!;
+    final int i = team.starters.firstWhere((p) => p == team.capitan)!;
     final UserModel capitan = EventHelper.getUserEvent(session.event!, i)!;
 
     return Dialog(

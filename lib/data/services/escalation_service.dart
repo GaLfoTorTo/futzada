@@ -8,8 +8,133 @@ import 'package:go_router/go_router.dart';
 class EscalationService {
   //CLIENTE HTTP
   ApiClient apiClient = sl<ApiClient>();
+
+  //POSIÇÕES
+  final positions = {
+    'Atacante'    : 'ATA',
+    'Meio-Campo'  : 'MEI',
+    'Zagueiro'    : 'ZAG',
+    'Zagueiros'   : 'ZAG',
+    'Goleiro'     : 'GOL',
+    'Lateral'     : 'LAT',
+    'Pivô'        : 'PIV',
+    'Ala'         : 'ALA',
+    'Fixo'        : 'FIX',
+    'Ala-Armador' : 'ALM',
+    'Armador'     : 'ARM',
+    'Ala-Pivô'    : 'ALP',
+    'Ponteiro'    : 'PON',
+    'Central'     : 'CEN',
+    'Levantador'  : 'LEV',
+    'Oposto'      : 'OPO',
+    'Libero'      : 'LIB',
+    'Jogador'     : 'JOG',
+    'Reserva'     : 'RES',
+  };
   
-  /*___________________________________________________ 
+  //FORMAÇÕES
+  final formations = {
+    'Futebol': [
+      '4-3-3',
+      '4-1-2-3',
+      '4-2-1-3',
+      '4-2-3-1',
+      '4-4-2',
+      '3-4-3',
+      '3-2-4-1',
+      '3-4-2-1',
+      '5-3-2',
+      '5-4-1',
+    ],
+    'Fut7': [
+      '3-1-2',
+      '3-2-1',
+      '3-0-3',
+      '2-1-3',
+      '2-1-2-1',
+      '2-2-2',
+      '2-3-1',
+      '1-4-1',
+      '1-3-2',
+      '1-2-3',
+    ],
+    'Futsal': [
+      '2-0-2',
+      '2-1-1',
+      '1-2-1',
+      '1-3',
+      '1-1-2',
+    ],
+    'Basquete': [
+      '2-3',
+      '3-2',
+      '1-3-1',
+      '2-1-2',
+      '1-2-2',
+      '2-2-1',
+    ],
+    'Streetball': [
+      '1-1',
+      '2-1',
+      '1-2',
+    ],
+    'Volei': [
+      '3-3',
+      '2-2-2',
+      '1-4-1',
+      '2-3-1',
+      '3-2-1',
+    ],
+    'Volei de Praia': [
+      '1-1',
+      '2-1',
+      '1-2',
+    ],
+    'Fut Volei': [
+      '1-1',
+      '2-1',
+      '1-2',
+    ],
+  };
+  
+  //FORMAÇÕES
+  final numPlayers = {
+    'Futebol': {
+      'starters': 11,
+      'reserves': 5,
+    },
+    'Fut7': {
+      'starters': 9,
+      'reserves': 5,
+    },
+    'Futsal': {
+      'starters': 6,
+      'reserves': 5,
+    },
+    'Basquete': {
+      'starters': 5,
+      'reserves': 3,
+    },
+    'Streetball': {
+      'starters': 3,
+      'reserves': 2,
+    },
+    'Volei': {
+      'starters': 6,
+      'reserves': 3,
+    },
+    'Volei de Praia': {
+      'starters': 2,
+      'reserves': 2,
+    },
+    'Fut Volei': {
+      'starters': 2,
+      'reserves': 2,
+    },
+  };
+  
+  /*
+  ____________________________________________________
   
   REQUISIÇÕES
   ____________________________________________________
@@ -34,55 +159,6 @@ class EscalationService {
   ____________________________________________________
   */
 
-  //FUNÇÃO PARA INICIALIZAR ESCALAÇÃO COM VALORES NULOS
-  List<int?> setEscalation(String category, String occupation) {
-    //VARIAVEL DE CONTROLE DE QUANTIDADE DE JOGADORES POR CATEGORIA
-    int numSta;
-    int numRes;
-    switch (category) {
-      case 'Futebol':
-        numSta = 11;
-        numRes = 5; // teto máximo de reservas
-        break;
-      case 'Fut7':
-        numSta = 9;
-        numRes = 5; // round(9 × 0.6)
-        break;
-      case 'Futsal':
-        numSta = 6;
-        numRes = 4; // round(6 × 0.6)
-        break;
-      case 'Basquete':
-        numSta = 5;
-        numRes = 3; // round(5 × 0.6)
-        break;
-      case 'Streetball':
-        numSta = 3;
-        numRes = 2; // round(3 × 0.6)
-        break;
-      case 'Volei':
-        numSta = 6;
-        numRes = 4; // round(6 × 0.6)
-        break;
-      case 'Volei de Praia':
-      case 'Fut Volei':
-        numSta = 2;
-        numRes = 1; // round(2 × 0.6)
-        break;
-      default:
-        numSta = 11;
-        numRes = 5;
-        break;
-    }
-    //RETORNAR ESCALAÇÃO
-    if(occupation == 'starters'){
-      //INICIALIZAR TITULARES COM VALORES NULOS
-      return List<int?>.filled(numSta, null);
-    } else {
-      //INICIALIZAR RESERVAS COM VALORES NULOS
-      return List<int?>.filled(numRes, null);
-    }
-  }
 
   //FUNÇÃO QUE DEFINE A FORMAÇÃO NA AMOSTRAGEM DO CAMPO APARTIR DA QUANTIDADE DE JOGADORES DEFINA
   List<int> setFormation(qtd){
@@ -121,92 +197,6 @@ class EscalationService {
     List<int> splitedFormation = formation.split('-').map((i) => int.parse(i)).toList();
     splitedFormation.insert(0, 1);
     return splitedFormation.reversed.toList();
-  }
-
-  //FUNÇÃO DE OPÇÕES DE FORMAÇÃO DEPENDENDO DA CATEGORIA DA PELADA
-  List<String> getFormations(String category){
-    switch (category) {
-      case 'Futebol':
-        return [
-          '4-3-3',
-          '4-1-2-3',
-          '4-2-1-3',
-          '4-2-3-1',
-          '4-4-2',
-          '3-4-3',
-          '3-2-4-1',
-          '3-4-2-1',
-          '5-3-2',
-          '5-4-1',
-        ];
-      case 'Fut7':
-        return [
-          '3-1-2',
-          '3-2-1',
-          '3-0-3',
-          '2-1-3',
-          '2-1-2-1',
-          '2-2-2',
-          '2-3-1',
-          '1-4-1',
-          '1-3-2',
-          '1-2-3',
-        ];
-      case 'Futsal':
-        return [
-          '2-0-2',
-          '2-1-1',
-          '1-2-1',
-          '1-3',
-          '1-1-2',
-        ];
-      case 'Basquete':
-        return [
-          '2-3',
-          '3-2',
-          '1-3-1',
-          '2-1-2',
-          '1-2-2',
-          '2-2-1',
-        ];
-      case 'Streetball':
-        return [
-          '1-2',
-          '2-1',
-          '1-1-1',
-        ];
-      case 'Volei':
-        return [
-          '3-3',
-          '2-2-2',
-          '1-4-1',
-          '2-3-1',
-          '3-2-1',
-        ];
-      case 'Volei de Praia':
-        return [
-          '1-1',
-        ];
-      case 'Fut Volei':
-        return [
-          '1-1',
-          '2-1',
-          '1-2',
-        ];
-      default:
-        return [
-          '4-3-3',
-          '4-1-2-3',
-          '4-2-1-3',
-          '4-2-3-1',
-          '4-4-2',
-          '3-4-3',
-          '3-2-4-1',
-          '3-4-2-1',
-          '5-3-2',
-          '5-4-1',
-        ];
-    }
   }
 
   //FUNÇÃO DE LAYOUT DE FORMAÇÃO CIENTE DA MODALIDADE
@@ -487,24 +477,6 @@ class EscalationService {
       'Libero'      : 'LIB',
       'Jogador'     : 'JOG',
       'Reserva'     : 'RES',
-      // Aliases minúsculos (retornados por getReservePosition)
-      'ata' : 'ATA',
-      'mei' : 'MEI',
-      'zag' : 'ZAG',
-      'gol' : 'GOL',
-      'lat' : 'LAT',
-      'piv' : 'PIV',
-      'ala' : 'ALA',
-      'fix' : 'FIX',
-      'alm' : 'ALM',
-      'arm' : 'ARM',
-      'alp' : 'ALP',
-      'pon' : 'PON',
-      'cen' : 'CEN',
-      'lev' : 'LEV',
-      'opo' : 'OPO',
-      'lib' : 'LIB',
-      'res' : 'RES',
     };
     return _map[position] ?? position.toUpperCase();
   }

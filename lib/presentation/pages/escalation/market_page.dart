@@ -88,6 +88,7 @@ class MarketPageState extends ConsumerState<MarketPage> {
                           onChange: (newValue) => selectFilter('price', newValue),
                           textSize: AppSize.fontMd,
                           width: (dimensions.width / 3) - 10,
+                          height: 30,
                         ),
                         const SizedBox(
                           height: 50,

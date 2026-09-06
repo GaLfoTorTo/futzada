@@ -29,12 +29,12 @@ class BottomSheetPlayerState extends ConsumerState<BottomSheetPlayer> {
   void initState() {
     super.initState();
     final team = ref.read(escalationTeamProvider);
-    isCapitan = team.selectedPlayerCapitan == widget.user.id;
+    isCapitan = team.capitan == widget.user.id;
   }
 
   void setPlayerPosition(id, action) {
     if (action == 'setPosition') {
-      ref.read(escalationSessionProvider.notifier).setPlayerEscalation(id);
+      ref.read(escalationTeamProvider.notifier).setPlayerEscalation(id);
     } else {
       ref.read(escalationTeamProvider.notifier).setPlayerCapitan(id);
     }
