@@ -82,7 +82,7 @@ class BottomSheetEventExplore extends ConsumerWidget {
                   ? event.participants!.firstWhere(
                       (user) {
                         final participation = user.participants?.where((p) => p.eventId == event.id);
-                        return participation != null && participation.isNotEmpty && (participation.first.role?.contains("Organizator") ?? false);
+                        return participation != null && participation.isNotEmpty && (participation.first.roles?.contains("Organizator") ?? false);
                       },
                       orElse: () => event.participants!.first,
                     )
@@ -106,7 +106,7 @@ class BottomSheetEventExplore extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   image: DecorationImage(
-                                    image: ImgHelper.getEventImg(event.photo),
+                                    image: ImgHelper.getEventImg(event),
                                     fit: BoxFit.cover
                                   )
                                 ),
@@ -443,7 +443,7 @@ class BottomSheetEventExplore extends ConsumerWidget {
                         text: "Ver Pelada",
                         action: () => {
                           //DEFINIR EVENTO ATUAL NO CONTROLLER
-                          ref.read(eventSessionProvider.notifier).setSelectedEvent(event),
+                          ref.read(eventSessionProvider.notifier).setEvent(event),
                           //NAVEGAR PARA PAGINA DO EVENTO
                           context.go('/event/view')
                         },

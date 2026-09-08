@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/core/di/service_locator.dart';
-import 'package:esportly/core/di/modules/session.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/data/models/user_model.dart';
-import 'package:esportly/data/services/firebase/firebase_service.dart';
 import 'package:esportly/presentation/pages/home/home_page.dart';
 import 'package:esportly/presentation/pages/home/home_error_page.dart';
 import 'package:esportly/presentation/widget/bars/header_widget.dart';
@@ -25,13 +23,9 @@ class _HomeBaseState extends State<HomeBase> {
   @override
   void initState() {
     super.initState();
-    _requestPermissions();
-  }
-
-  Future<void> _requestPermissions() async {
-    final locationGranted = await registerLocation();
-    await FirebaseService().initFirebaseMessaging();
-    if (mounted && locationGranted) homeController.fetchHome();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.fetchHome();
+    });
   }
 
   @override

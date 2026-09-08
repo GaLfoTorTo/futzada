@@ -8,7 +8,7 @@ class ParticipantModel {
   int id;
   int userId;
   int eventId;
-  List<String>? role;
+  List<String>? roles;
   List<String>? permissions;
   PlayerStatus status;
   DateTime? createdAt;
@@ -19,7 +19,7 @@ class ParticipantModel {
     required this.id,
     required this.userId,
     required this.eventId,
-    required this.role,
+    required this.roles,
     required this.permissions,
     this.status = PlayerStatus.Avaliable,
     required this.createdAt,
@@ -31,7 +31,7 @@ class ParticipantModel {
     int? id,
     int? userId,
     int? eventId,
-    List<String>? role,
+    List<String>? roles,
     List<String>? permissions,
     PlayerStatus? status,
     DateTime? createdAt,
@@ -42,7 +42,7 @@ class ParticipantModel {
       id: this.id,
       userId: this.userId,
       eventId: this.eventId,
-      role: role ?? this.role,
+      roles: roles ?? this.roles,
       permissions: permissions ?? this.permissions,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
@@ -56,7 +56,7 @@ class ParticipantModel {
       'id': id,
       'userId': userId,
       'eventId': eventId,
-      'role': role,
+      'roles': roles,
       'permissions': permissions,
       'status': status.name,
       'createdAt': createdAt?.toIso8601String(),
@@ -70,13 +70,16 @@ class ParticipantModel {
       id: map['id'] as int,
       userId: map['userId'] as int,
       eventId: map['eventId'] as int,
-      role: map['role'] != null 
-        ? List<String>.from((map['role'] as List<dynamic>)) 
+      roles: map['roles'] != null
+        ? List<String>.from(map['roles'] is String ? json.decode(map['roles']) : map['roles'])
         : null,
-      permissions: map['permissions'] != null 
-        ? List<String>.from((map['permissions'] as List<dynamic>)) 
+      permissions: map['permissions'] != null
+        ? List<String>.from(map['permissions'] is String ? json.decode(map['permissions']) : map['permissions'])
         : null,
-      status: PlayerStatus.values.firstWhere((e) => e.name == map['status'] as String),
+      status: PlayerStatus.values.firstWhere(
+        (e) => e.name == map['status'],
+        orElse: () => PlayerStatus.None,
+      ),
       createdAt: DateHelper.parseDate(map['createdAt']),
       updatedAt: DateHelper.parseDate(map['updatedAt']),
       deletedAt: DateHelper.parseDate(map['deletedAt']),
@@ -89,7 +92,7 @@ class ParticipantModel {
 
   @override
   String toString() {
-    return 'ParticipantModel(id: $id, userId: $userId, eventId: $eventId, role: $role, permissions: $permissions, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'ParticipantModel(id: $id, userId: $userId, eventId: $eventId, roles: $roles, permissions: $permissions, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
   }
 
   @override
@@ -100,7 +103,7 @@ class ParticipantModel {
       other.id == id &&
       other.userId == userId &&
       other.eventId == eventId &&
-      listEquals(other.role, role) &&
+      listEquals(other.roles, roles) &&
       listEquals(other.permissions, permissions) &&
       other.status == status &&
       other.createdAt == createdAt &&
@@ -114,7 +117,7 @@ class ParticipantModel {
       id.hashCode ^
       userId.hashCode ^
       eventId.hashCode ^
-      role.hashCode ^
+      roles.hashCode ^
       permissions.hashCode ^
       status.hashCode ^
       createdAt.hashCode ^

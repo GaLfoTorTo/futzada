@@ -5,18 +5,34 @@ import 'package:esportly/data/services/rank_service.dart';
 
 //ESTADO - RANKING DO EVENTO
 class EventRankState {
+  final bool ready;
+  final bool error;
+  final bool loading;
+  final EventModel? event;
   final List<UserModel> topRanking;
   final String type;
 
   const EventRankState({
+    this.ready = false,
+    this.error = false,
+    this.loading = false,
+    this.event,
     this.topRanking = const [],
     this.type = 'Artilheiros',
   });
 
   EventRankState copyWith({
+    bool? ready,
+    bool? error,
+    bool? loading,
+    EventModel? event,
     List<UserModel>? topRanking,
     String? type,
   }) => EventRankState(
+    ready: ready ?? this.ready,
+    error: error ?? this.error,
+    loading: loading ?? this.loading,
+    event: event ?? this.event,
     topRanking: topRanking ?? this.topRanking,
     type: type ?? this.type,
   );
@@ -28,6 +44,27 @@ class EventRankNotifier extends Notifier<EventRankState> {
 
   @override
   EventRankState build() => const EventRankState();
+
+  void init(EventModel event){
+    state = state.copyWith(event: event);
+  }
+
+  EventRankState _buildRanking(EventModel event) {
+    if (event.participants == null || event.participants!.isEmpty) return const EventRankState();
+    final participants = event.participants!
+        .where((u) => u.participants?.isNotEmpty ?? false)
+        .map((u) => u.participants!.first)
+        .toList();
+    if (participants.isEmpty) return const EventRankState();
+    final generated = _rankService.generateRank(
+      participants.length.clamp(0, 10),
+      participants,
+    );
+    final ranked = generated
+        .map((p) => event.participants!.firstWhere((u) => u.participants!.first == p))
+        .toList();
+    return EventRankState(topRanking: ranked);
+  }
 
   //DEFINE O TIPO DE RANKING EXIBIDO (ex.: 'Artilheiros', 'Assistências')
   void setType(String type) {
@@ -41,21 +78,7 @@ class EventRankNotifier extends Notifier<EventRankState> {
 
   //GERA UM RANKING A PARTIR DOS PARTICIPANTES DO EVENTO
   void generateRanking(EventModel event) {
-    if (event.participants == null || event.participants!.isEmpty) return;
-    final participants = event.participants!
-        .where((u) => u.participants?.isNotEmpty ?? false)
-        .map((u) => u.participants!.first)
-        .toList();
-    if (participants.isEmpty) return;
-    final generated = _rankService.generateRank(
-      participants.length.clamp(0, 10),
-      participants,
-    );
-    // Reconstrói a lista de UserModel a partir dos participantes gerados
-    final ranked = generated
-        .map((p) => event.participants!.firstWhere((u) => u.participants!.first == p))
-        .toList();
-    state = state.copyWith(topRanking: ranked);
+    state = _buildRanking(event);
   }
 
   //LIMPA O RANKING

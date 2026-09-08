@@ -17,7 +17,7 @@ class UserHelper {
     return null;
   }
   
-  static RatingModel getRating(PlayerModel player, int eventId){
-    return player.ratings!.firstWhere((r) => r.eventId == eventId);
+  static RatingModel? getRating(PlayerModel player, int eventId){
+    return player.ratings?.firstWhere((r) => r.eventId == eventId, orElse: () => player.ratings!.first);
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:esportly/core/di/modules/session.dart';
 import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/data/services/firebase/firebase_service.dart';
 import 'package:esportly/core/providers/navigation_provider.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
@@ -86,11 +88,27 @@ class HomeController extends ChangeNotifier implements HomeBase {
   @override
   final List<Map<String, dynamic>> partidas = [];
 
-  void init() {
+  //FUNÇÃO DE RESET — deve ser chamada no logout para limpar dados da sessão anterior
+  void reset() {
+    _isReady = false;
+    _isLoading = false;
+    _hasError = false;
+    ads.clear();
+    toYou.clear();
+    nearby.clear();
+    popular.clear();
+    live.clear();
+    today.clear();
+    suggestionFriends.clear();
+    ranking.clear();
+    partidas.clear();
+    notifyListeners();
+  }
+
+  //FUNÇÃO DE INICIALIZAÇÃO DE CONTROLLER
+  Future<void> init() async {
     //BUSCAR EVENTOS DO USUARIO
     events = sl<List<EventModel>>(instanceName: 'events');
-    isReady = true;
-    fetchHome();
   }
 
   //FUNÇÃO PARA BUSCA INFORMAÇÕES DA HOME PAGE
@@ -98,12 +116,14 @@ class HomeController extends ChangeNotifier implements HomeBase {
     isLoading = true;
     //EXECUTAR BUSCA DE DADOS PARA HOME PAGE
     try {
+      await requestPermissions();
       //PREENCHER LISTAS COM OS DADOS RESGATADOS
       final resp = await homeService.fetchHome();
       //SEPARA DADOS
       handleRequest(resp);
       //ATUALIZAR ESTADO DE CARREGAMENTO
       isLoading = false;
+      isReady = true;
       sl<ProviderContainer>().read(navReadyProvider.notifier).state = true;
     } catch (e, stackTrace) {
       hasError = true;
@@ -137,5 +157,11 @@ class HomeController extends ChangeNotifier implements HomeBase {
     partidas.addAll(resp['partidas']         as List<Map<String, dynamic>>? ?? []);
     suggestionFriends.addAll(resp['friends'] as List<UserModel>? ?? []);
     notifyListeners();
+  }
+
+  //FUNÇÃO DE REQUISIÇÃO DE PERMISSÕES
+  Future<void> requestPermissions() async {
+    await registerLocation();
+    await FirebaseService().initFirebaseMessaging();
   }
 }

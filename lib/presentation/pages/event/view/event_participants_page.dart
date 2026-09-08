@@ -75,7 +75,7 @@ class EventParticipantsPage extends ConsumerWidget {
                       child: Text(key, style: Theme.of(context).textTheme.titleMedium),
                     ),
                     ...participants.map((user) {
-                      final iconRole = setRole(UserHelper.getParticipant(user.participants, event.id!)?.role);
+                      final iconRole = setRole(UserHelper.getParticipant(user.participants, event.id!)?.roles);
                       return TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_300 : AppColors.white,

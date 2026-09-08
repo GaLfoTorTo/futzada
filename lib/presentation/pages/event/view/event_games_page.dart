@@ -9,7 +9,6 @@ import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/presentation/widget/cards/card_game_widget.dart';
 import 'package:esportly/presentation/widget/cards/card_game_live_widget.dart';
 import 'package:esportly/presentation/widget/buttons/button_text_widget.dart';
-import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
 import 'package:esportly/presentation/widget/skeletons/skeleton_games_widget.dart';
 import 'package:esportly/presentation/pages/event/error/erro_game_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -96,7 +95,11 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                               borderRadius: BorderRadius.circular(20),
                               color: AppColors.red_300,
                             ),
-                            child: const IndicatorLiveWidget(size: 15, color: AppColors.white),
+                            child: const Icon(
+                              Icons.sensors,
+                              size: 15,
+                              color: AppColors.white
+                            ),
                           ),
                         ],
                       ),

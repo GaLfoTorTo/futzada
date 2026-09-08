@@ -76,7 +76,7 @@ class BottomSheetPlayerState extends State<BottomSheetPlace> {
         color = AppColors.orange_300;
         icon = AppIcones.basquete_ball_solid;
       case 'Volei':
-      case 'Volei de Praia':
+      case 'Volei de praia':
         //DEFINIR COR E ICONE PARA TIPO VOLEI
         color = widget.marker['sport'] == "Volei" ? AppColors.yellow_300 : AppColors.bege_300;
         icon = AppIcones.volei_ball_solid;

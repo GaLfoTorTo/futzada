@@ -33,7 +33,7 @@ class ReserveBankWidget extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: players.asMap().entries.map((item) {
-            UserModel? user = managerSession.playersMarket.firstWhere((i) => i.id == item.value);
+            UserModel? user = managerSession.playersMarket.where((i) => i.id == item.value).firstOrNull;
             final String position = escalationService.getReservePosition(item.key, category);
 
             return Column(

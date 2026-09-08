@@ -41,10 +41,10 @@ class EscalationListPageState extends ConsumerState<EscalationListPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Builder(builder: (_) {
-            if (managerSession.isLoading) {
+            if (managerSession.loading) {
               return const Center(child: IndicatorLoadingWidget());
             }
-            if (managerSession.hasError) {
+            if (managerSession.error) {
               return const ErroEscalationPage();
             }
             return Padding(
@@ -63,8 +63,7 @@ class EscalationListPageState extends ConsumerState<EscalationListPage> {
                   );
                 }).toList()),
             );
-            }
-          ),
+          }),
         ),
       ),
     );

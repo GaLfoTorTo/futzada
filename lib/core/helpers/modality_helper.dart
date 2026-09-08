@@ -15,7 +15,7 @@ class ModalityHelper {
         return large != null && large ? AppIcones.futsal_xl : AppIcones.futsal_sm;
       case 'Volei':
         return large != null && large ? AppIcones.volei_xl : AppIcones.volei_sm;
-      case 'Volei de Praia':
+      case 'Volei de praia':
         return large != null && large ? AppIcones.volei_areia_xl : AppIcones.volei_areia_sm;
       case 'Fut Volei':
         return large != null && large ? AppIcones.volei_areia_xl : AppIcones.volei_areia_sm;
@@ -150,7 +150,7 @@ class ModalityHelper {
         case 0:
           return "Volei";
         case 1:
-          return "Volei de Praia";
+          return "Volei de praia";
         case 2:
           return "Fut Volei";
         default:
@@ -203,7 +203,7 @@ class ModalityHelper {
           "maxPlayers" : 6,
           "divisions" : 1,
         };
-      case "Volei de Praia":
+      case "Volei de praia":
         return {
           "qtdPlayers" : 2,
           "minPlayers" :  2,
@@ -247,22 +247,22 @@ class ModalityHelper {
       case "Volleyball":
       case "Volei":
         return {
-          "color" : AppColors.yellow_500,
-          "bg" : AppColors.yellow_700,
+          "color" : AppColors.yellow_300,
+          "bg" : AppColors.yellow_500,
           "textColor" : AppColors.white,
           "image" : AppImages.cardVolleyball
           };
-      case "Volei de Praia":
+      case "Volei de praia":
         return {
           "color" : AppColors.bege_300,
-          "bg" : AppColors.bege_700,
+          "bg" : AppColors.bege_500,
           "textColor" : AppColors.blue_500,
           "image" : AppImages.cardBeachVolleyball
           };
       case "Fut Volei":
         return {
           "color" : AppColors.bege_300,
-          "bg" : AppColors.bege_700,
+          "bg" : AppColors.bege_500,
           "textColor" : AppColors.blue_500,
           "image" : AppImages.cardFutvolei
           };
@@ -284,14 +284,14 @@ class ModalityHelper {
       case "Futsal":
         return {
           "color" : AppColors.blue_300,
-          "bg" : AppColors.blue_700,
+          "bg" : AppColors.blue_500,
           "textColor" : AppColors.white,
           "image" : AppImages.cardFutsal
           };
       default:
         return {
           "color" : AppColors.green_300,
-          "bg" : AppColors.green_700,
+          "bg" : AppColors.green_500,
           "textColor" : AppColors.white,
           "image" : AppImages.cardFootball
           };

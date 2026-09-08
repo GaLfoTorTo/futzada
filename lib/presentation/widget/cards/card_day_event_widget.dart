@@ -132,7 +132,7 @@ class CardDayEventWidget extends ConsumerWidget {
                           size: 25,
                         ),
                         Text(
-                          "${event.startTime!} - ${event.endTime!}",
+                          "${event.startTime!.substring(0,5)} - ${event.endTime!.substring(0,5)}",
                           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                             color: modalityTextColor
                           )
@@ -151,17 +151,27 @@ class CardDayEventWidget extends ConsumerWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "${event.address?.street}",
-                              style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                                color: modalityTextColor
-                              )
+                            SizedBox(
+                              width: dimensions.width * 0.7,
+                              child: Text(
+                                "${event.address?.street}",
+                                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                  color: modalityTextColor
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
-                            Text(
-                              "${event.address?.city}/${event.address?.state}",
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                color: modalityTextColor
-                              )
+                            SizedBox(
+                              width: dimensions.width * 0.7,
+                              child: Text(
+                                "${event.address?.city}/${event.address?.state}",
+                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  color: modalityTextColor
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                           ],
                         ),
@@ -198,7 +208,7 @@ class CardDayEventWidget extends ConsumerWidget {
                 ),
                 ButtonTextWidget(
                   action: () {
-                    ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
+                    ref.read(eventSessionProvider.notifier).setEvent(event);
                     context.go('/games/day');
                   },
                   width: 80,

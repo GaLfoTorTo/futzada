@@ -403,7 +403,7 @@ class _GameRandomTeamsPageState extends ConsumerState<GameRandomTeamsPage> {
                                   );
                                 },
                                 children: participantsPresent
-                                    .where((p) => UserHelper.getParticipant(p.participants, event.id!)?.role?.contains("Player") == true)
+                                    .where((p) => UserHelper.getParticipant(p.participants, event.id!)?.roles?.contains("Player") == true)
                                     .take(qtdPlayers * 2)
                                     .map((user) {
                                   return Row(

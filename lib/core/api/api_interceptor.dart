@@ -18,7 +18,7 @@ class ApiInterceptor extends Interceptor {
       if (AppStorage.hasData("token")) AppStorage.remove("token");
       
       // NAVEGAR PARA LOGIN
-      session.setAuthenticated();
+      session.setUnauthenticated();
       
       // REJEITAR REQUISIÇÃO
       handler.reject(err);

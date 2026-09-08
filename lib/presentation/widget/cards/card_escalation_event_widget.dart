@@ -46,7 +46,7 @@ class CardEscalationEventWidget extends ConsumerWidget {
               image: DecorationImage(
                 image: event.photo == null
                     ? AssetImage(modalityImage) as ImageProvider
-                    : ImgHelper.getEventImg(event.photo),
+                    : ImgHelper.getEventImg(event),
                 fit: BoxFit.cover,
               ),
             ),

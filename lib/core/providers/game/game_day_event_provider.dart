@@ -35,7 +35,7 @@ class GameDayEventNotifier extends Notifier<GameDayEventState> {
     final present = <UserModel>[];
     for (final user in event!.participants!) {
       final participant = UserHelper.getParticipant(user.participants, event.id!);
-      if (user.player != null && participant != null && participant.role!.contains('Player')) {
+      if (user.player != null && participant != null && participant.roles!.contains('Player')) {
         present.add(user);
       }
     }

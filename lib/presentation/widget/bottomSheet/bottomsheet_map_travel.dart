@@ -1,8 +1,8 @@
+import 'package:esportly/core/providers/event/event_overview_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/helpers/map_helper.dart';
-import 'package:esportly/core/providers/event/event_session_provider.dart';
 
 class BottomSheetMapTravel extends ConsumerWidget {
   const BottomSheetMapTravel({super.key});
@@ -42,7 +42,7 @@ class BottomSheetMapTravel extends ConsumerWidget {
                   item['label'],
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                onTap: () => ref.read(eventSessionProvider.notifier).setTravelMode(item['type'])
+                onTap: () => ref.read(eventOverviewProvider.notifier).setTravelMode(item['type'])
               );
             })
           ],

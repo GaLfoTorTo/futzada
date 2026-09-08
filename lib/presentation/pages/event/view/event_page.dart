@@ -12,7 +12,7 @@ import 'package:esportly/data/services/avaliation_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/core/providers/event/event_session_provider.dart';
-import 'package:esportly/presentation/pages/event/view/event_home_page.dart';
+import 'package:esportly/presentation/pages/event/view/event_overview_page.dart';
 import 'package:esportly/presentation/pages/event/view/event_private_page.dart';
 import 'package:esportly/presentation/pages/event/view/event_games_page.dart';
 import 'package:esportly/presentation/pages/event/view/event_rank_page.dart';
@@ -36,59 +36,23 @@ class EventPage extends ConsumerStatefulWidget {
 class _EventPageState extends ConsumerState<EventPage> with SingleTickerProviderStateMixin {
   //ESTADO - USUARIO
   UserModel user = sl<UserModel>(instanceName: 'user');
-  late EventModel event;
   //CONTROLLER - TABS
-  late final TabController tabController;
+  late final TabController tabController = TabController(length: 6, vsync: this);
   int tabIndex = 0;
-  //ESTADOS - ITEMS DO EVENTO
-  bool isParticipant = false;
-  late ImageProvider modalityImage;
-  late String eventPrivacy;
-  late double eventAvaliations;
   //ESTADO - IMAGENS DA PELADA
   bool brightness = false;
   Color textColor = AppColors.white;
-  late Color modalityColor;
-  late Color modalityTextColor;
 
-  @override
-  void initState() {
-    super.initState();
-    //GARANTIR QUE EXISTE UM EVENTO SELECIONADO (auto-seleciona o primeiro se necessário)
-    ref.read(eventSessionProvider.notifier).init();
-    final session = ref.read(eventSessionProvider);
-    if (!session.hasEvent) return;
-    event = session.event!;
-    //VERIFICAR SE USUARIO ESTA PARTICIPANDO DO EVENTO ATUAL
-    isParticipant = event.participants!.any((p) => p.id == user.id);
-    //INICIALIZAR CONTROLLER DE TAB
-    tabController = TabController(length: 6, vsync: this);
-    //ATUALIZAR ITEMS DO EVENTOS
-    modalityImage = ImgHelper.getEventImg(event.photo);
-    eventPrivacy = event.privacy!.name;
-    eventAvaliations = AvaliationService().getRatingAvaliation(event.avaliations);
-    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
-    //SINCRONIZAR EVENTO NO PROVIDER (garante que gameSessionProvider está em sincronia)
-    ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
-    //ANALISE BRILHO DA IMAGEM DO EVENTO
-    AppHelper.isImageDark(modalityImage).then((isDark) {
-      setState(() {
-        brightness = isDark;
-        textColor = isDark ? AppColors.blue_500 : AppColors.white;
-      });
-    });
-  }
-
-  PreferredSizeWidget setHeaderBar(index){
+  //FUNÇÃO DE DEFINIÇÃO DE HEADER
+  PreferredSizeWidget setHeaderBar(index, privacy, color){
     if(index == 0){
       return HeaderGlassWidget(
         title: "Pelada",
         leftAction: () => context.pop(),
-        rightIcon: eventPrivacy == 'Public' 
+        rightIcon: privacy == 'Public' 
           ? AppIcones.cog_solid 
           : null,
-        rightAction: () => eventPrivacy == 'Public' 
+        rightAction: () => privacy == 'Public' 
           ? context.push('/event/view/settings') 
           : null,
         brightness: brightness,
@@ -97,12 +61,12 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
 
     return HeaderWidget(
       title: "Pelada",
-      backgroundColor: modalityColor,
+      backgroundColor: color,
       leftAction: () => context.pop(),
-      rightIcon: eventPrivacy == 'Public' 
+      rightIcon: privacy == 'Public' 
         ? AppIcones.cog_solid 
         : null,
-      rightAction: () => eventPrivacy == 'Public' 
+      rightAction: () => privacy == 'Public' 
         ? context.push('/event/view/settings') 
         : null,
       extraIcon: tabController.index == 1 
@@ -119,6 +83,20 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     //RESGATAR DIMENSÕES DO DISPOSITIVO
     var dimensions = MediaQuery.of(context).size;
+    final eventSession = ref.read(eventSessionProvider);
+    //BUSCAR EVENTO
+    EventModel event = eventSession.event!;
+    double avaliations = AvaliationService().getRatingAvaliation(event.avaliations);
+    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
+    Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    ImageProvider modalityImage = ImgHelper.getEventImg(event);
+    //ANALISE BRILHO DA IMAGEM DO EVENTO
+    AppHelper.isImageDark(modalityImage).then((isDark) {
+      setState(() {
+        brightness = isDark;
+        textColor = isDark ? AppColors.blue_500 : AppColors.white;
+      });
+    });
     //LISTA DE TABS
     List<String> tabs = [
       'Visão Geral',
@@ -133,7 +111,11 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
     final hasGames = ref.watch(gameScheduleProvider.select((s) => s.hasGames));
 
     return Scaffold(
-      appBar: setHeaderBar(tabController.index),
+      appBar: setHeaderBar(
+        tabController.index,
+        eventSession.privacy,
+        modalityColor
+      ),
       extendBodyBehindAppBar: tabController.index == 0,
       body:
         Column(
@@ -155,7 +137,10 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [AppColors.dark_700.withAlpha(50), AppColors.dark_700.withAlpha(200)]
+                          colors: [
+                            AppColors.dark_700.withAlpha(50), 
+                            AppColors.dark_700.withAlpha(200)
+                          ]
                         )
                       ),
                     ),
@@ -177,7 +162,7 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 5.0),
                                 child: Text(
-                                  eventAvaliations.toStringAsFixed(1),
+                                  avaliations.toStringAsFixed(1),
                                   style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                     color: textColor
                                   ),
@@ -223,7 +208,7 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
                 ),
               ),
             ],
-            if(isParticipant || eventPrivacy == "Public")...[
+            if(eventSession.participant || eventSession.privacy == "Public")...[
               Container(
                 color: Theme.of(context).brightness == Brightness.dark ? Theme.of(context).scaffoldBackgroundColor : AppColors.white,
                 child: TabBar(
@@ -283,19 +268,19 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
                 ),
               ),
               Expanded(
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: tabController,
-                children: const [
-                  EventHomePage(),
-                  EventGamesPage(),
-                  EventRankPage(),
-                  EventParticipantsPage(),
-                  EventRulesPage(),
-                  EventNewsPage(),
-                ],
-              ),
-            ), 
+                child: TabBarView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: tabController,
+                  children: const [
+                    EventOverviewPage(),
+                    EventGamesPage(),
+                    EventRankPage(),
+                    EventParticipantsPage(),
+                    EventRulesPage(),
+                    EventNewsPage(),
+                  ],
+                ),
+              ), 
             ]else...[
               const EventPrivatePage()
             ]

@@ -42,7 +42,7 @@ class MarkersHelper {
           'icon' : AppIcones.volei_ball_solid,
         };
 
-      case 'Volei de Praia':
+      case 'Volei de praia':
         return {
           'color': AppColors.bege_300,
           'icon' : AppIcones.volei_ball_solid,

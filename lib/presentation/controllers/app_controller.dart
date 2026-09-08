@@ -31,6 +31,15 @@ class AppController extends ChangeNotifier {
   bool get hasError => _hasError;
   set hasError(bool v) { _hasError = v; notifyListeners(); }
 
+  //FUNÇÃO DE RESET — deve ser chamada no logout antes de registrar nova sessão
+  void reset() {
+    _isReady = false;
+    _homeReady = false;
+    _isLoading = false;
+    _hasError = false;
+    notifyListeners();
+  }
+
   //FUNÇÃO DE INICIALIZAÇÃO DE APP GERAL
   Future<void> init(UserModel user) async {
     isLoading = true;
@@ -38,7 +47,7 @@ class AppController extends ChangeNotifier {
       await registerSession(user);
       await registerEvents(user);
       await userController.init();
-      homeController.init();
+      await homeController.init();
       final session = sl<ProviderContainer>().read(appSessionProvider.notifier);
       if (!AppStorage.hasData('firstLogin')) {
         session.setFirstLogin();

@@ -32,12 +32,17 @@ class CardPlayerMarketWidget extends ConsumerWidget {
     final managerSession = ref.watch(escalationSessionProvider);
     final PlayerModel player = user.player!;
     final RatingModel rating = player.ratings != null && player.ratings!.isNotEmpty
-      ? player.ratings![0] : 
-      RatingModel(
+      ? player.ratings![0] 
+      : RatingModel(
         id: 1,
         eventId: participant.eventId,
         userId: user.id,
         role: Roles.Player,
+        points: 0.0,
+        avarage: 0.0,
+        valuation: 0.0,
+        price: 0.0,
+        games: 0,
       );
     final Map<String, dynamic> playerMap = player.toMap();
     final String modality = managerSession.event!.modality!.name;

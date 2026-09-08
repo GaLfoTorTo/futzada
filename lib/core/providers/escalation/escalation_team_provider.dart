@@ -45,11 +45,12 @@ class EscalationTeamNotifier extends Notifier<EscalationTeamState> {
   final EscalationService _escalationService = EscalationService();
 
   //FUNÇÃO DE DEFINIÇÃO DE LINEUP DE EQUIPE
-  void setLineup(List<int?> starters, List<int?> reserves, String category) {
+  void setLineup(List<int?> starters, List<int?> reserves, String category, {int capitan = 0}) {
     final num = _escalationService.numPlayers[category];
-    state = state.copyWith(
+    state = EscalationTeamState(
       starters: starters.isNotEmpty ? starters : List<int?>.filled(num!['starters']!, null),
       reserves: reserves.isNotEmpty ? reserves : List<int?>.filled(num!['reserves']!, null),
+      capitan: capitan,
     );
   }
 

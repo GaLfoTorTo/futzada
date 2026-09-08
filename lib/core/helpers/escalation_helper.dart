@@ -3,7 +3,7 @@ class EscalationHelper {
   static List<int> getFormation(String category, int playersLen){
     switch (category) {
       case "Volei":
-      case "Volei de Praia":
+      case "Volei de praia":
       case "Fut Volei":
         switch(playersLen){
           case 2:

@@ -17,7 +17,7 @@ class _SectionCategoriesWidgetState extends State<SectionCategoriesWidget> {
     {'category': 'Fut7',         'icon': AppIcones.futebol_ball_solid,  'active': false, 'color': AppColors.green_300},
     {'category': 'Futsal',       'icon': Icons.sports_soccer,           'active': false, 'color': AppColors.blue_300},
     {'category': 'Volei',        'icon': AppIcones.volei_ball_solid,    'active': false, 'color': AppColors.yellow_300},
-    {'category': 'Volei de Praia','icon': Icons.sports_volleyball,      'active': false, 'color': AppColors.bege_500},
+    {'category': 'Volei de praia','icon': Icons.sports_volleyball,      'active': false, 'color': AppColors.bege_500},
     {'category': 'Fut Volei',    'icon': AppIcones.volei_ball_solid,    'active': false, 'color': AppColors.bege_500},
     {'category': 'Basquete',     'icon': AppIcones.basquete_ball_solid, 'active': false, 'color': AppColors.orange_500},
     {'category': 'Streetball',   'icon': Icons.sports_basketball,       'active': false, 'color': AppColors.dark_300},

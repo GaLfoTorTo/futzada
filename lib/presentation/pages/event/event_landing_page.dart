@@ -1,10 +1,30 @@
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
+import 'package:esportly/data/models/event_model.dart';
+import 'package:esportly/data/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:esportly/core/theme/app_images.dart';
 import 'package:esportly/presentation/pages/presentation_page.dart';
 
-class EventLandingPage extends StatelessWidget {
+class EventLandingPage extends ConsumerStatefulWidget {
   const EventLandingPage({super.key});
+  
+  @override
+  ConsumerState<EventLandingPage> createState() => EscalationListPageState();
+}
+
+class EscalationListPageState extends ConsumerState<EventLandingPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = sl<UserModel>(instanceName: 'user');
+      final events = sl<List<EventModel>>(instanceName: 'events');
+      ref.read(eventSessionProvider.notifier).init(events, user);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

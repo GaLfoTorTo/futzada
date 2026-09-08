@@ -92,10 +92,10 @@ class ButtonPlayerWidget extends ConsumerWidget {
 
       if (user != null) {
         final PlayerModel player = user.player!;
-        final RatingModel rating = UserHelper.getRating(player, session.event!.id!);
+        final RatingModel? rating = UserHelper.getRating(player, session.event!.id!);
 
         return [
-          if (rating.points != null) ...[
+          if (rating?.points != null) ...[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 5),
               decoration: BoxDecoration(
@@ -110,7 +110,7 @@ class ButtonPlayerWidget extends ConsumerWidget {
                   ),
                 ],
               ),
-              child: IndicatorValuationWidget(points: rating.points),
+              child: IndicatorValuationWidget(points: rating?.points),
             ),
           ],
           InkWell(

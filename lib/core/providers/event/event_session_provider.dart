@@ -1,70 +1,114 @@
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/providers/event/event_overview_provider.dart';
+import 'package:esportly/core/providers/event/event_participants_provider.dart';
+import 'package:esportly/core/providers/event/event_rank_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:go_router/go_router.dart';
 
 //ESTADO - SESSÃO DO EVENTO
 class EventSessionState {
-  final EventModel? event;
-  final String travelMode;
-  final List<EventModel> events;
+  final bool ready;
+  final bool error;
+  final bool loading;
   final UserModel? user;
+  final EventModel? event;
+  final List<EventModel> events;
+  final bool participant;
+  final String privacy;
 
   const EventSessionState({
-    this.event,
-    this.travelMode = 'walking',
-    this.events = const [],
+    this.ready = false,
+    this.error = false,
+    this.loading = false,
     this.user,
+    this.event,
+    this.events = const [],
+    this.participant = false,
+    this.privacy = 'Public',
   });
 
-  bool get hasEvent => event != null;
-
   EventSessionState copyWith({
-    EventModel? event,
-    String? travelMode,
-    List<EventModel>? events,
+    bool? ready,
+    bool? error,
+    bool? loading,
     UserModel? user,
+    EventModel? event,
+    List<EventModel>? events,
+    bool? participant,
+    String? privacy,
   }) => EventSessionState(
-    event: event ?? this.event,
-    travelMode: travelMode ?? this.travelMode,
-    events: events ?? this.events,
+    ready: ready ?? this.ready,
+    error: error ?? this.error,
+    loading: loading ?? this.loading,
     user: user ?? this.user,
+    event: event ?? this.event,
+    events: events ?? this.events,
+    participant: participant ?? this.participant,
+    privacy: privacy ?? this.privacy,
   );
 }
 
 //NOTIFICADOR - SESSÃO DO EVENTO
 class EventSessionNotifier extends Notifier<EventSessionState> {
   @override
-  EventSessionState build() => EventSessionState(
-    events: sl.isRegistered<List<EventModel>>(instanceName: 'events')
-        ? sl<List<EventModel>>(instanceName: 'events')
-        : const [],
-    user: sl.isRegistered<UserModel>(instanceName: 'user')
-        ? sl<UserModel>(instanceName: 'user')
-        : null,
-  );
+  EventSessionState build() => const EventSessionState();
 
-  //FUNÇÃO DE DEFINIÇÃO DO EVENTO SELECIONADO
-  void setSelectedEvent(EventModel event) {
-    state = state.copyWith(event: event);
-    ref.read(gameSessionProvider.notifier).setEvent(event);
+  //FUNÇÃO DE RESET COMPLETO — limpa estado próprio e invalida providers dependentes
+  void reset() {
+    ref.invalidate(eventRankProvider);
+    ref.invalidate(eventOverviewProvider);
+    ref.invalidate(eventParticipantsProvider);
+    state = const EventSessionState();
   }
 
-  //FUNÇÃO DE DEFINIÇÃO DO MODO DE VIAGEM
-  void setTravelMode(String mode) {
-    state = state.copyWith(travelMode: mode);
-  }
-
-  //FUNÇÃO DE INICIALIZAÇÃO (auto-seleciona o primeiro evento se necessário)
-  void init() {
-    if (!state.hasEvent && state.events.isNotEmpty) {
-      setSelectedEvent(state.events.first);
+  //FUNÇÃO DE INICIALIZAÇÃO DE PROVIDER DE ESCALÇÃO
+  Future<void> init(List<EventModel>? events, UserModel user) async {
+    reset();
+    try {
+      state = state.copyWith(loading: true, user: user);
+      //VERIFICAR SE USUARIO ESTA REGISTRADO EM ALGUM EVENTO
+      if((events?.isEmpty ?? false)){
+        state = state.copyWith(
+          loading: false, 
+          error: true
+        );
+        return;
+      }
+      state = state.copyWith(events: events!);
+    } catch (e) {
+      state = state.copyWith(error: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
+    state = state.copyWith(loading: false);
   }
+
+  //FUNÇÃO DE SELEÇÃO DE EVENTO DE EVENTO
+  Future<void> setEvent(EventModel event) async {
+    state = state.copyWith(loading: true);
+    try {
+      state = state.copyWith(
+        event: event,
+        participant: event.participants?.where((p) => p.id == state.user!.id).firstOrNull != null,
+        privacy: event.privacy!.name
+      );
+      ref.read(eventOverviewProvider.notifier).init(event);
+      ref.invalidate(eventParticipantsProvider);
+      ref.invalidate(eventRankProvider);
+      if(state.participant) ref.read(gameSessionProvider.notifier).setEvent(event);
+    } catch (e) {
+      state = state.copyWith(error: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
+    state = state.copyWith(loading: false);
+  }
+
 }
 
 //PROVIDER - SESSÃO DO EVENTO
-final eventSessionProvider = NotifierProvider<EventSessionNotifier, EventSessionState>(
-  EventSessionNotifier.new,
-);
+final eventSessionProvider = NotifierProvider<EventSessionNotifier, EventSessionState>(EventSessionNotifier.new);

@@ -13,7 +13,7 @@ class EventHelper {
   static UserModel getUserOrganizator(EventModel event){
     return event.participants!.firstWhere((u){
       final participant = u.participants!.where((p) => p.eventId == event.id).first;
-      return participant.role!.contains("Organizator");
+      return participant.roles!.contains("Organizator");
     });
   }
   
@@ -21,16 +21,24 @@ class EventHelper {
   static List<UserModel?> getCollaborators(EventModel event){
     final arr = event.participants!.where((u){
       final item = u.participants!.where((p) => p.eventId == event.id).first;
-      return item.role!.contains("Colaborator");
+      return item.roles!.contains("Colaborator");
     }).toList();
     return arr;
   }
   
+  static double getAvaliation(EventModel event){
+    double num = 0.0;
+    if(event.avaliations?.isEmpty ?? false) return num;
+    event.avaliations!.map((a){
+      num += a.avaliation!;
+    });
+    return num / event.avaliations!.length;
+  }
   //FUNÇÃO PARA RESGATAR JOGADOR DO EVENTO
   static UserModel getUserPlayer(EventModel event, int userId){
     return event.participants!.firstWhere((u){
       final participant = u.participants!.where((p) => p.eventId == event.id).first;
-      return participant.role!.contains("Player");
+      return participant.roles!.contains("Player");
     });
   }
   
@@ -38,7 +46,7 @@ class EventHelper {
   static UserModel getUserManager(EventModel event){
     return event.participants!.firstWhere((u){
       final participant = u.participants!.where((p) => p.eventId == event.id).first;
-      return participant.role!.contains("Manager");
+      return participant.roles!.contains("Manager");
     });
   }
 

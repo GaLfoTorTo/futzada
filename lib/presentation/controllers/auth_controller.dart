@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,11 +8,16 @@ import 'package:esportly/core/di/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:esportly/core/storage/app_storage.dart';
 import 'package:esportly/core/providers/app_session_provider.dart';
+import 'package:esportly/core/providers/navigation_provider.dart';
+import 'package:esportly/core/providers/event/event_session_provider.dart';
+import 'package:esportly/core/providers/game/game_session_provider.dart';
+import 'package:esportly/core/providers/escalation/escalation_session_provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:esportly/data/services/auth_service.dart';
 import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/presentation/controllers/app_controller.dart';
+import 'package:esportly/presentation/controllers/home_controller.dart';
 import 'package:esportly/presentation/controllers/theme_controller.dart';
 
 class AuthController{
@@ -65,12 +71,24 @@ class AuthController{
 
   //FUNÇÃO DE LIMPEZA DE SESSÃO
   Future<void> clearUser() async{
+    //LIMPAR SINGLETONS DE SESSÃO DO GETIT
     if (sl.isRegistered<UserModel>(instanceName: 'user')) sl.unregister<UserModel>(instanceName: 'user');
     if (sl.isRegistered<List<EventModel>>(instanceName: 'events')) sl.unregister<List<EventModel>>(instanceName: 'events');
-    if (sl.isRegistered<Position>(instanceName: 'position')) sl.unregister<Position>(instanceName: 'position');
-    if (sl.isRegistered<LatLng>(instanceName: 'latlng')) sl.unregister<LatLng>(instanceName: 'latlng');
-    if (sl.isRegistered<Map<String, dynamic>>(instanceName: 'location')) sl.unregister<Map<String, dynamic>>(instanceName: 'location');
-    //REMOVER USUSARIO LOCAL
+    if (sl.isRegistered<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey')) sl.unregister<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey');
+    //LOCALIZAÇÃO — nomes reais usados em registerLocation()
+    if (sl.isRegistered<Position>()) sl.unregister<Position>();
+    if (sl.isRegistered<ValueNotifier<LatLng?>>(instanceName: 'userLatLog')) sl.unregister<ValueNotifier<LatLng?>>(instanceName: 'userLatLog');
+    if (sl.isRegistered<Map<String, dynamic>>(instanceName: 'userLocation')) sl.unregister<Map<String, dynamic>>(instanceName: 'userLocation');
+    //RESETAR CONTROLLERS PERSISTENTES (lazy singletons que sobrevivem entre sessões)
+    sl<AppController>().reset();
+    sl<HomeController>().reset();
+    //INVALIDAR PROVIDERS RIVERPOD COM ESTADO DO USUÁRIO
+    final container = sl<ProviderContainer>();
+    container.invalidate(eventSessionProvider);
+    container.invalidate(gameSessionProvider);
+    container.invalidate(escalationSessionProvider);
+    container.invalidate(navReadyProvider);
+    //REMOVER USUARIO LOCAL
     await removeUser();
   }
 

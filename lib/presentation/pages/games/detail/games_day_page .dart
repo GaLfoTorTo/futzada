@@ -56,7 +56,7 @@ class _GamesDayPageState extends ConsumerState<GamesDayPage> {
 
     final highlightsPlayers = event.participants!
         .take(3)
-        .where((u) => u.participants!.any((p) => p.role!.contains("Player")));
+        .where((u) => u.participants!.any((p) => p.roles!.contains("Player")));
 
     return Scaffold(
       appBar: HeaderWidget(

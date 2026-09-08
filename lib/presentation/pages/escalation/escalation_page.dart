@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
-import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/core/helpers/app_helper.dart';
 import 'package:esportly/core/helpers/img_helper.dart';
 import 'package:esportly/core/helpers/modality_helper.dart';
@@ -32,8 +30,6 @@ class EscalationPageState extends ConsumerState<EscalationPage> {
   ShowcaseController showcaseController = ShowcaseController.instance;
   String viewType = 'escalation';
   bool showCap = false;
-
-  List<EventModel> get events => sl<List<EventModel>>(instanceName: 'events');
 
   @override
   void initState() {
@@ -80,10 +76,10 @@ class EscalationPageState extends ConsumerState<EscalationPage> {
       appBar: HeaderWidget(
         title: 'Escalação',
         leftAction: () => context.pop(),
-        rightAction: events.isNotEmpty ? () => context.push('/escalation/market') : null,
-        rightIcon: events.isNotEmpty ? Icons.shopping_cart : null,
-        extraAction: events.isNotEmpty ? () => context.push('/escalation/historic') : null,
-        extraIcon: events.isNotEmpty ? Icons.history : null,
+        rightAction: () => context.push('/escalation/market'),
+        rightIcon: Icons.shopping_cart,
+        extraAction: () => context.push('/escalation/historic'),
+        extraIcon: Icons.history,
         shadow: false,
       ),
       body: SafeArea(
@@ -110,29 +106,34 @@ class EscalationPageState extends ConsumerState<EscalationPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      spacing: 10,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            image: DecorationImage(
-                              image: event.photo == null
-                                  ? AssetImage(modalityImage) as ImageProvider
-                                  : ImgHelper.getEventImg(event.photo),
-                              fit: BoxFit.cover,
+                    SizedBox(
+                      width: dimensions.width * 0.25,
+                      child: Row(
+                        spacing: 10,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50),
+                              image: DecorationImage(
+                                image: event.photo == null
+                                    ? AssetImage(modalityImage) as ImageProvider
+                                    : ImgHelper.getEventImg(event),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          event.title!,
-                          style: Theme.of(context).textTheme.displayMedium,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ],
+                          Expanded(
+                            child: Text(
+                              event.title!,
+                              style: Theme.of(context).textTheme.displayMedium,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(
                       width: dimensions.width * 0.22,

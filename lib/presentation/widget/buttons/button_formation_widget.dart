@@ -15,7 +15,7 @@ class ButtonFormationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final validValue = formations.contains(selectedFormation) ? selectedFormation : null;
+    final validValue = formations.contains(selectedFormation) ? selectedFormation : formations[0];
     return DropdownButton<String>(
       value: validValue,
       onChanged: (String? newValue) => onChange(newValue),

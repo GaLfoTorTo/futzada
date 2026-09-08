@@ -16,7 +16,10 @@ Future<void> registerSession(UserModel user) async {
   //RE-REGISTRO: permitir registrar novamente após logout
   if (sl.isRegistered<UserModel>()) sl.unregister<UserModel>();
   sl.registerSingleton<UserModel>(instanceName: 'user', user);
-  //REGISTRAR CHAVE DE SCAFFOLD
+  //REGISTRAR CHAVE DE SCAFFOLD (re-registro seguro após logout)
+  if (sl.isRegistered<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey')) {
+    sl.unregister<GlobalKey<ScaffoldState>>(instanceName: 'scaffoldKey');
+  }
   sl.registerSingleton<GlobalKey<ScaffoldState>>(GlobalKey<ScaffoldState>(), instanceName: 'scaffoldKey');
 }
 

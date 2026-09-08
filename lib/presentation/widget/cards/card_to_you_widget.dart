@@ -29,7 +29,7 @@ class CardToYouWidget extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
-            image: ImgHelper.getEventImg(event.photo),
+            image: ImgHelper.getEventImg(event),
             fit: BoxFit.cover,
           ),
         ),

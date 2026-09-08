@@ -12,7 +12,6 @@ import 'package:esportly/core/providers/game/game_session_provider.dart';
 import 'package:esportly/core/providers/game/game_match_provider.dart';
 import 'package:esportly/presentation/widget/animated/animated_ellipsis.dart';
 import 'package:esportly/presentation/widget/others/timer_counter_widget.dart';
-import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
 
 class CardGameLiveWidget extends ConsumerStatefulWidget {
   final EventModel event;
@@ -88,7 +87,11 @@ class _CardGameLiveWidgetState extends ConsumerState<CardGameLiveWidget> {
               ),
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
-                child: IndicatorLiveWidget(size: 15, color: AppColors.white),
+                child: const Icon(
+                  Icons.sensors,
+                  size: 15,
+                  color: AppColors.white
+                ),
               ),
             ),
             Text(

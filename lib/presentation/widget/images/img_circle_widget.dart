@@ -19,7 +19,7 @@ class ImgCircularWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ImageProvider getImg(){
-      if(element == "event") return ImgHelper.getEventImg(image);
+      if(element == "event") return ImgHelper.getEventImg(null);
       return ImgHelper.getUserImg(image);
     }
 

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:esportly/core/helpers/modality_helper.dart';
+import 'package:esportly/data/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
@@ -9,12 +11,15 @@ import 'package:image_picker/image_picker.dart';
 
 class ImgHelper {
   //FUNÇÃO PARA RESGATAR IMAGEM DO EVENTO
-  static ImageProvider getEventImg(String? photo){
+  static ImageProvider getEventImg(EventModel? event){
     //RESGATAR IMAGEM DA PELADA
-    final imgProvider = photo != null && photo.startsWith('http')
-      ? CachedNetworkImageProvider(photo)
-      : const AssetImage(AppImages.cardFootball) as ImageProvider;
-      return imgProvider;
+    if(event != null){
+      final imgProvider = event?.photo != null
+        ? CachedNetworkImageProvider(event!.photo!)
+        : AssetImage(ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image']) as ImageProvider;
+        return imgProvider;
+    }
+    return const AssetImage(AppImages.cardFootball) as ImageProvider;
   }
 
   //FUNÇÃO PARA RESGATAR IMAGEM DO USUARIO

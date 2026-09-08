@@ -1,62 +1,105 @@
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/event_helper.dart';
+import 'package:esportly/core/helpers/map_helper.dart';
+import 'package:esportly/data/models/user_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/data/repositories/event_repository.dart';
+import 'package:latlong2/latlong.dart';
 
 //ESTADO - VISÃO GERAL / SUGESTÕES DE EVENTOS
 class EventOverviewState {
-  final List<EventModel> suggestions;
-  final bool isLoading;
-  final String? error;
+  final bool ready;
+  final bool error;
+  final bool loading;
+  final EventModel? event;
+  final double? avaliation;
+  final LatLng? latLon;
+  final UserModel? organizador;
+  final String travelMode;
+  final double travelDistance;
+  final String travelTime;
 
   const EventOverviewState({
-    this.suggestions = const [],
-    this.isLoading = false,
-    this.error,
+    this.ready = false,
+    this.error = false,
+    this.loading = false,
+    this.event,
+    this.avaliation = 0.0,
+    this.latLon,
+    this.organizador,
+    this.travelMode = 'walking',
+    this.travelDistance = 0,
+    this.travelTime = '',
   });
 
   EventOverviewState copyWith({
-    List<EventModel>? suggestions,
-    bool? isLoading,
-    String? error,
+    bool? ready,
+    bool? error,
+    bool? loading,
+    EventModel? event,
+    double? avaliation,
+    LatLng? latLon,
+    UserModel? organizador,
+    String? travelMode,
+    double? travelDistance,
+    String? travelTime,
   }) => EventOverviewState(
-    suggestions: suggestions ?? this.suggestions,
-    isLoading: isLoading ?? this.isLoading,
-    error: error,
+    ready: ready ?? this.ready,
+    error: error ?? this.error,
+    loading: loading ?? this.loading,
+    event: event ?? this.event,
+    avaliation: avaliation ?? this.avaliation,
+    latLon: latLon ?? this.latLon,
+    organizador: organizador ?? this.organizador,
+    travelMode: travelMode ?? this.travelMode,
+    travelDistance: travelDistance ?? this.travelDistance,
+    travelTime: travelTime ?? this.travelTime,
   );
 }
 
 //NOTIFICADOR - VISÃO GERAL
 class EventOverviewNotifier extends Notifier<EventOverviewState> {
-  EventRepository get _repository => EventRepository();
 
   @override
   EventOverviewState build() => const EventOverviewState();
 
-  //BUSCA SUGESTÕES DE EVENTOS DO SERVIDOR
-  Future<void> loadSuggestions() async {
-    if (state.isLoading) return;
-    state = state.copyWith(isLoading: true, error: null);
+  //FUNÇÃO DE INICIALIZAÇÃO — chamada via setEvent do eventSessionProvider
+  void init(EventModel event) {
+    final latLon = LatLng(event.address!.latitude!, event.address!.longitude!);
+
+    final (distance, time) = _computeTravel(latLon, 'walking');
+
+    state = state.copyWith(
+      event: event,
+      avaliation: EventHelper.getAvaliation(event),
+      organizador: EventHelper.getUserOrganizator(event),
+      latLon: latLon,
+      travelDistance: distance,
+      travelTime: time,
+    );
+  }
+
+  (double, String) _computeTravel(LatLng? eventLatLon, String mode) {
+    if (eventLatLon == null) return (0, '');
     try {
-      final events = await _repository.getEvents();
-      state = state.copyWith(
-        suggestions: events ?? [],
-        isLoading: false,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      final userLatLon = sl<ValueNotifier<LatLng?>>(instanceName: 'userLatLog').value;
+      if (userLatLon == null) return (0, '');
+      final distance = MapHelper.getDistance(userLatLon, eventLatLon);
+      final transport = MapHelper.transports.firstWhere((e) => e['type'] == mode);
+      final duration = MapHelper.getTravelTime(distance, transport['speed'] as int);
+      return (distance, MapHelper.setTimeTravel(duration));
+    } catch (_) {
+      return (0, '');
     }
   }
 
-  //LIMPA AS SUGESTÕES CARREGADAS
-  void clearSuggestions() {
-    state = const EventOverviewState();
+  //FUNÇÃO DE DEFINIÇÃO DO MODO DE VIAGEM
+  void setTravelMode(String mode) {
+    final (_, time) = _computeTravel(state.latLon, mode);
+    state = state.copyWith(travelMode: mode, travelTime: time);
   }
 }
 
 //PROVIDER - VISÃO GERAL DO EVENTO
-final eventOverviewProvider = NotifierProvider<EventOverviewNotifier, EventOverviewState>(
-  EventOverviewNotifier.new,
-);
+final eventOverviewProvider = NotifierProvider<EventOverviewNotifier, EventOverviewState>(EventOverviewNotifier.new);

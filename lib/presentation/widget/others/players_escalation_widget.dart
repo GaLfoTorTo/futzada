@@ -30,7 +30,7 @@ class PlayersEscalationWidget extends ConsumerWidget {
       case 'Streetball':
         return height! + 10;
       case 'Volei':
-      case 'Volei de Praia':
+      case 'Volei de praia':
       case 'Fut Volei':
         return height! + 30;
       default:
@@ -72,8 +72,78 @@ class PlayersEscalationWidget extends ConsumerWidget {
   List<Widget> _buildPlayers(EscalationSessionState managerSession, EscalationTeamState teamSession) {
     final escalationService = EscalationService();
     final formations = escalationService.getFormationLayout(managerSession.category, managerSession.formation);
+    final totalPlayers = formations.fold(0, (sum, n) => sum + n);
     final players = <Widget>[];
     int playerIndex = -1;
+
+    // Para formações com exatamente 2 integrantes distribuídos em grupos separados,
+    // agrupa todos numa única Row horizontal
+    if (totalPlayers == 2 && formations.length > 1) {
+      final rowChildren = <Widget>[];
+      formations.asMap().forEach((sectorIndex, _) {
+        playerIndex++;
+        final String position = escalationService.getPositionName(
+          sectorIndex,
+          managerSession.category,
+          managerSession.formation,
+        );
+        UserModel? user;
+        if (playerIndex < teamSession.starters.length && teamSession.starters[playerIndex] != null) {
+          user = EventHelper.getUserEvent(managerSession.event!, teamSession.starters[playerIndex]!);
+        }
+        final String positionAlias = _positionAlias(position);
+        final borderColor = PlayerHelper.setColorPosition(positionAlias);
+
+        if (teamSession.capitan == user?.id) {
+          rowChildren.add(Stack(
+            children: [
+              ButtonPlayerWidget(
+                index: playerIndex,
+                grupoPosition: sectorIndex,
+                occupation: 'starters',
+                position: positionAlias,
+                user: user,
+                capitan: true,
+                size: 60,
+                borderColor: borderColor,
+                showName: true,
+              ),
+              const Positioned(
+                top: 50,
+                left: 0,
+                child: PositionWidget(
+                  position: "CAP",
+                  mainPosition: true,
+                  width: 35,
+                  height: 25,
+                  textSide: 10,
+                ),
+              ),
+            ],
+          ));
+        } else {
+          rowChildren.add(ButtonPlayerWidget(
+            index: playerIndex,
+            grupoPosition: sectorIndex,
+            occupation: 'starters',
+            position: positionAlias,
+            user: user,
+            size: 60,
+            borderColor: borderColor,
+            showName: true,
+          ));
+        }
+      });
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: rowChildren,
+          ),
+        ),
+      ];
+    }
 
     formations.asMap().forEach((sectorIndex, playersInGroup) {
       players.add(

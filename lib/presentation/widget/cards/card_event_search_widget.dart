@@ -10,7 +10,6 @@ import 'package:esportly/data/services/avaliation_service.dart';
 import 'package:esportly/core/providers/event/event_session_provider.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/presentation/widget/indicators/indicator_avaliacao_widget.dart';
-import 'package:esportly/presentation/widget/indicators/indicator_live_widget.dart';
 
 class CardEventSearchWidget extends ConsumerWidget {
   final EventModel event;
@@ -34,7 +33,7 @@ class CardEventSearchWidget extends ConsumerWidget {
     return InkWell(
       onTap: () {
         //DEFINIR EVENTO ATUAL NO PROVIDER E NAVEGAR
-        ref.read(eventSessionProvider.notifier).setSelectedEvent(event);
+        ref.read(eventSessionProvider.notifier).setEvent(event);
         context.go('/event/view');
       },
       child: Card(
@@ -71,7 +70,7 @@ class CardEventSearchWidget extends ConsumerWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                        image: ImgHelper.getEventImg(event.photo),
+                        image: ImgHelper.getEventImg(event),
                         fit: BoxFit.cover
                       )
                     ),
@@ -109,9 +108,10 @@ class CardEventSearchWidget extends ConsumerWidget {
                                 ]
                               ),
                               if(hasInProgress)...[
-                                const IndicatorLiveWidget(
+                                const Icon(
+                                  Icons.sensors,
                                   size: 15,
-                                  color: AppColors.red_300,
+                                  color: AppColors.red_300
                                 ),
                               ]
                             ],

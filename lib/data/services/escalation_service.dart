@@ -85,7 +85,7 @@ class EscalationService {
       '2-3-1',
       '3-2-1',
     ],
-    'Volei de Praia': [
+    'Volei de praia': [
       '1-1',
       '2-1',
       '1-2',
@@ -123,7 +123,7 @@ class EscalationService {
       'starters': 6,
       'reserves': 3,
     },
-    'Volei de Praia': {
+    'Volei de praia': {
       'starters': 2,
       'reserves': 2,
     },
@@ -229,7 +229,7 @@ class EscalationService {
       case 'Streetball':
         return getBasketballPosition(sectorIndex, totalGroups);
       case 'Volei':
-      case 'Volei de Praia':
+      case 'Volei de praia':
       case 'Fut Volei':
         return getVolleyballPosition(sectorIndex, totalGroups);
       default:
@@ -306,7 +306,7 @@ class EscalationService {
           case 3: return 'lib';
           default: return 'pon';
         }
-      case 'Volei de Praia':
+      case 'Volei de praia':
       case 'Fut Volei': // 1 reserva
         return 'res';
       default:
