@@ -55,7 +55,7 @@ class _EventHistoricPageState extends ConsumerState<EventHistoricPage> with Sing
       ),
       body: SafeArea(
         child: Builder(builder: (_) {
-          if (!schedule.loadHistoricGames) {
+          if (!schedule.loading) {
             return const SkeletonGamesWidget();
           }
 

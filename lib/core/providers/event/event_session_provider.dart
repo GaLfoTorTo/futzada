@@ -1,7 +1,9 @@
 import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/providers/event/event_news_provider.dart';
 import 'package:esportly/core/providers/event/event_overview_provider.dart';
 import 'package:esportly/core/providers/event/event_participants_provider.dart';
 import 'package:esportly/core/providers/event/event_rank_provider.dart';
+import 'package:esportly/core/providers/event/event_rules_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/di/service_locator.dart';
 import 'package:esportly/data/models/event_model.dart';
@@ -58,7 +60,7 @@ class EventSessionNotifier extends Notifier<EventSessionState> {
   EventSessionState build() => const EventSessionState();
 
   //FUNÇÃO DE RESET COMPLETO — limpa estado próprio e invalida providers dependentes
-  void reset() {
+  void dispose() {
     ref.invalidate(eventRankProvider);
     ref.invalidate(eventOverviewProvider);
     ref.invalidate(eventParticipantsProvider);
@@ -67,7 +69,8 @@ class EventSessionNotifier extends Notifier<EventSessionState> {
 
   //FUNÇÃO DE INICIALIZAÇÃO DE PROVIDER DE ESCALÇÃO
   Future<void> init(List<EventModel>? events, UserModel user) async {
-    reset();
+    //ENCERRAR PROVIDER NA MEMORIA
+    dispose();
     try {
       state = state.copyWith(loading: true, user: user);
       //VERIFICAR SE USUARIO ESTA REGISTRADO EM ALGUM EVENTO
@@ -96,10 +99,14 @@ class EventSessionNotifier extends Notifier<EventSessionState> {
         participant: event.participants?.where((p) => p.id == state.user!.id).firstOrNull != null,
         privacy: event.privacy!.name
       );
+      //INICIALIZAR PROVIDERS SECUNDARIOS DE EVENTO
       ref.read(eventOverviewProvider.notifier).init(event);
-      ref.invalidate(eventParticipantsProvider);
-      ref.invalidate(eventRankProvider);
-      if(state.participant) ref.read(gameSessionProvider.notifier).setEvent(event);
+      ref.read(eventParticipantsProvider.notifier).init(event);
+      ref.read(eventRankProvider.notifier).init(event);
+      ref.read(eventRulesProvider.notifier).init(event);
+      ref.read(eventNewsProvider.notifier).init(event);
+      //INICIALIZAR PROVIDER DE PARTIDAS
+      if(state.participant) ref.read(gameSessionProvider.notifier).init(event);
     } catch (e) {
       state = state.copyWith(error: true);
       final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
@@ -107,7 +114,6 @@ class EventSessionNotifier extends Notifier<EventSessionState> {
     }
     state = state.copyWith(loading: false);
   }
-
 }
 
 //PROVIDER - SESSÃO DO EVENTO

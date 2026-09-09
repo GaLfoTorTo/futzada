@@ -81,7 +81,7 @@ class _CardGameWidgetState extends ConsumerState<CardGameWidget> {
         //VERIFICAR SE CLICK ESTA HABILITADO
         if(propNavigate) {
           //DEFINIR PARTIDA ATUAL
-          ref.read(gameSessionProvider.notifier).setCurrentGame(widget.game);
+          ref.read(gameSessionProvider.notifier).setGame(widget.game);
           //NAVEGAR PARA PAGINA DE DETALHES DO JOGO
           context.go('/games/overview');
         }

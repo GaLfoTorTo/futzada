@@ -124,17 +124,11 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
   SETTERS
   _________________________________________
   */
-  
-  //FUNÇÃO DE RESET COMPLETO — limpa estado próprio e invalida providers dependentes
-  void reset() {
-    ref.invalidate(escalationTeamProvider);
-    ref.invalidate(escalationMarketProvider);
-    state = const EscalationSessionState();
-  }
 
   //FUNÇÃO DE INICIALIZAÇÃO DE PROVIDER DE ESCALÇÃO
-  Future<void> init(List<EventModel>? events, UserModel user) async {
-    reset();
+  void init(List<EventModel>? events, UserModel user) {
+    //ENCERRAR PROVIDER NA MEMORIA
+    dispose();
     try {
       state = state.copyWith(loading: true, user: user);
       //VERIFICAR SE USUARIO ESTA HABILITADO COMO TECNICO
@@ -161,6 +155,13 @@ class EscalationSessionNotifier extends Notifier<EscalationSessionState> {
       if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
     }
     state = state.copyWith(loading: false);
+  }
+
+  //FUNÇÃO DE RESET COMPLETO — limpa estado próprio e invalida providers dependentes
+  void dispose() {
+    ref.invalidate(escalationTeamProvider);
+    ref.invalidate(escalationMarketProvider);
+    state = const EscalationSessionState();
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE EVENTO ATUAL

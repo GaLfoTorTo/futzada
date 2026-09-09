@@ -170,11 +170,14 @@ class EventNewsPage extends ConsumerWidget {
                       color: AppColors.grey_500
                     ),
                   ),
-                  Icon(
-                    Icons.history_rounded,
-                    size: 200,
-                    color: AppColors.grey_500.withAlpha(50),
-                  )
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 100),
+                    child: Icon(
+                      Icons.history_rounded,
+                      size: 150, 
+                      color: AppColors.grey_300.withAlpha(50), 
+                    ),
+                  ),
                 ],
               )
             ]

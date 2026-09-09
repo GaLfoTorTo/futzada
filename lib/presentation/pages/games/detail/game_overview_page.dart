@@ -168,7 +168,7 @@ class GameOverviewPage extends ConsumerWidget {
                     }).toList(),
                   ),
                 ),
-                if (session.currentGameConfig?.config!["hasRefereer"] ?? false) ...[
+                if (session.config?.config!["hasRefereer"] ?? false) ...[
                   const Divider(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),

@@ -54,7 +54,7 @@ class _GameConfigPageState extends ConsumerState<GameConfigPage> {
   void initState() {
     super.initState();
     final session = ref.read(gameSessionProvider);
-    final config = session.currentGameConfig!;
+    final config = session.config!;
     final game = session.currentGame!;
     final event = session.event!;
 

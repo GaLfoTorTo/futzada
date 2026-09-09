@@ -23,7 +23,7 @@ class _BottomSheetEscalationState extends ConsumerState<BottomSheetEscalation> {
   @override
   Widget build(BuildContext context) {
     var dimensions = MediaQuery.of(context).size;
-    final category = ref.watch(gameSessionProvider.select((s) => s.currentGameConfig?.category ?? ''));
+    final category = ref.watch(gameSessionProvider.select((s) => s.config?.category ?? ''));
 
     return Container(
       height: dimensions.height * 0.75,

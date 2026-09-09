@@ -23,32 +23,26 @@ class EventGamesPage extends ConsumerStatefulWidget {
 class _EventGamesPageState extends ConsumerState<EventGamesPage> {
   late PageController inProgressController;
   late EventModel event;
-  late String eventDate;
-  late Color modalityColor;
-  late Color modalityTextColor;
+  late String date;
 
   @override
   void initState() {
     super.initState();
     event = ref.read(eventSessionProvider).event!;
-    modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
     inProgressController = PageController();
-    eventDate = DateHelper.getDateLabel(ref.read(gameScheduleProvider).eventDate!);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final schedule = ref.read(gameScheduleProvider);
-      if (schedule.nextGames.isEmpty && schedule.finishedGames.isEmpty) {
-        await ref.read(gameScheduleProvider.notifier).setGamesEvent(event);
-        await ref.read(gameScheduleProvider.notifier).getHistoricGames(event);
-      }
-    });
+    date = DateHelper.getDateLabel(ref.read(gameScheduleProvider).date!);
   }
 
   @override
   Widget build(BuildContext context) {
     var dimensions = MediaQuery.of(context).size;
-    final schedule = ref.watch(gameScheduleProvider);
+    final gameSession = ref.watch(gameScheduleProvider);
     final isToday = ref.read(gameScheduleProvider.notifier).isToday();
+
+    //ESTADO - ITEMS EVENTO
+    final modalityMap = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name);
+    Color modalityColor = modalityMap['color'];
+    Color modalityTextColor = modalityMap['textColor'];
 
     return SingleChildScrollView(
       child: Container(
@@ -69,20 +63,16 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
             Builder(builder: (_) {
               List<Widget> listGames = [];
 
-              if (!schedule.loadGames) {
+              if (!gameSession.loading) {
                 return const SkeletonGamesWidget();
               }
 
-              if (!schedule.hasGames) {
-                return ErroGamePage(
-                  function: () async {
-                    await ref.read(gameScheduleProvider.notifier).setGamesEvent(event);
-                  },
-                );
+              if (!gameSession.hasGames) {
+                return ErroGamePage();
               }
 
-              if (schedule.eventDate != null && isToday) {
-                if (schedule.inProgressGames.isNotEmpty) {
+              if (gameSession.date != null && isToday) {
+                if (gameSession.inProgressGames.isNotEmpty) {
                   listGames.addAll([
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -109,18 +99,18 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                       child: PageView(
                         controller: inProgressController,
                         children: [
-                          ...schedule.inProgressGames.take(3).map((game) {
+                          ...gameSession.inProgressGames.take(3).map((game) {
                             return CardGameLiveWidget(event: event, game: game!);
                           }),
                         ],
                       ),
                     ),
-                    if (schedule.inProgressGames.length > 1) ...[
+                    if (gameSession.inProgressGames.length > 1) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: SmoothPageIndicator(
                           controller: inProgressController,
-                          count: schedule.inProgressGames.length < 3 ? schedule.inProgressGames.length : 3,
+                          count: gameSession.inProgressGames.length < 3 ? gameSession.inProgressGames.length : 3,
                           effect: const ExpandingDotsEffect(
                             dotHeight: 8,
                             dotWidth: 8,
@@ -134,7 +124,7 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                   ]);
                 }
 
-                if (schedule.nextGames.isNotEmpty) {
+                if (gameSession.nextGames.isNotEmpty) {
                   listGames.addAll([
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -143,7 +133,7 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
-                            'Próximas partidas  - $eventDate',
+                            'Próximas partidas  - $date',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ],
@@ -151,24 +141,24 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                     ),
                     Column(
                       spacing: 20,
-                      children: schedule.nextGames.asMap().entries.take(5).map((item) {
+                      children: gameSession.nextGames.asMap().entries.take(5).map((item) {
                         final key = item.key;
                         final game = item.value;
                         return CardGameWidget(
                           width: dimensions.width - 10,
                           event: event,
                           game: game!,
-                          gameDate: eventDate,
+                          gameDate: date,
                           navigate: key < 1,
                           active: key < 1,
                         );
                       }).toList(),
                     ),
                     ButtonTextWidget(
-                      text: "Ver Mais ${schedule.nextGames.length}",
+                      text: "Ver Mais ${gameSession.nextGames.length}",
                       width: 120,
                       height: 20,
-                      textColor: modalityColor,
+                      textColor: modalityTextColor,
                       backgroundColor: modalityColor.withAlpha(20),
                       action: () => {},
                     ),
@@ -176,9 +166,9 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                 }
               }
 
-              if (schedule.scheduledGames.isNotEmpty && schedule.scheduledGames.length < 4) {
-                if (schedule.scheduledGames.isEmpty) return const SizedBox.shrink();
-                eventDate = DateHelper.getDateLabel(schedule.scheduledGames.first!.startTime!);
+              if (gameSession.scheduledGames.isNotEmpty && gameSession.scheduledGames.length < 4) {
+                if (gameSession.scheduledGames.isEmpty) return const SizedBox.shrink();
+                date = DateHelper.getDateLabel(gameSession.scheduledGames.first!.startTime!);
                 listGames.addAll([
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -187,7 +177,7 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          'Partidas Agendadas - $eventDate',
+                          'Partidas Agendadas - $date',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                       ],
@@ -196,19 +186,19 @@ class _EventGamesPageState extends ConsumerState<EventGamesPage> {
                   Column(
                     spacing: 20,
                     children: [
-                      ...schedule.scheduledGames.take(10).map((game) {
+                      ...gameSession.scheduledGames.take(10).map((game) {
                         return CardGameWidget(
                           width: dimensions.width - 10,
                           event: event,
                           game: game!,
-                          gameDate: eventDate,
+                          gameDate: date,
                           active: false,
                         );
                       }),
                     ],
                   ),
                   ButtonTextWidget(
-                    text: "Ver Mais ${schedule.scheduledGames.length}",
+                    text: "Ver Mais ${gameSession.scheduledGames.length}",
                     width: 100,
                     height: 20,
                     textColor: AppColors.green_300,

@@ -1,3 +1,8 @@
+import 'package:esportly/core/di/service_locator.dart';
+import 'package:esportly/core/helpers/app_helper.dart';
+import 'package:esportly/core/providers/game/game_day_event_provider.dart';
+import 'package:esportly/core/providers/game/game_stopwatch_provider.dart';
+import 'package:esportly/core/providers/game/game_stream_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/game_config_model.dart';
@@ -7,27 +12,40 @@ import 'package:esportly/data/models/user_model.dart';
 import 'package:esportly/core/providers/game/game_match_provider.dart';
 import 'package:esportly/core/providers/game/game_schedule_provider.dart';
 import 'package:esportly/core/providers/game/game_votes_provider.dart';
+import 'package:go_router/go_router.dart';
 
 //ESTADO - GAME SESSION
 class GameSessionState {
+  final bool ready;
+  final bool error;
+  final bool loading;
   final EventModel? event;
   final GameModel? currentGame;
-  final GameConfigModel? currentGameConfig;
+  final GameConfigModel? config;
 
   const GameSessionState({
+    this.ready = false,
+    this.error = false,
+    this.loading = false,
     this.event,
     this.currentGame,
-    this.currentGameConfig,
+    this.config,
   });
 
   GameSessionState copyWith({
+    bool? ready,
+    bool? error,
+    bool? loading,
     EventModel? event,
     GameModel? currentGame,
-    GameConfigModel? currentGameConfig,
+    GameConfigModel? config,
   }) => GameSessionState(
+    ready: ready ?? this.ready,
+    error: error ?? this.error,
+    loading: loading ?? this.loading,
     event: event ?? this.event,
     currentGame: currentGame ?? this.currentGame,
-    currentGameConfig: currentGameConfig ?? this.currentGameConfig,
+    config: config ?? this.config,
   );
 }
 
@@ -36,23 +54,45 @@ class GameSessionNotifier extends Notifier<GameSessionState> {
   @override
   GameSessionState build() => const GameSessionState();
 
-  //FUNÇÃO DE DEFINIÇÃO DE EVENTO DA PARTIDA
-  void setEvent(EventModel event) {
-    state = state.copyWith(
-      event: event,
-      currentGameConfig: event.gameConfig,
-    );
+  //FUNÇÃO INICIALIZAÇÃO
+  void init(EventModel event) {
+    //ENCERRAR PROVIDER NA MEMORIA
+    dispose();
+    try {
+      state = state.copyWith(loading: true);
+      state = state.copyWith(
+        event: event,
+        config: event.gameConfig,
+      );
+      ref.read(gameScheduleProvider.notifier).init(event);
+    } catch (e) {
+      state = state.copyWith(error: true);
+      final ctx = sl<GoRouter>().routerDelegate.navigatorKey.currentContext;
+      if (ctx != null) AppHelper.feedbackMessage(ctx, AppHelper.extractErrorMessage(e));
+    }
+    state = state.copyWith(loading: false);
+  }
+
+  //FUNÇÃO DE RESET COMPLETO
+  void dispose() {
+    ref.invalidate(gameDayEventProvider);
+    ref.invalidate(gameMatchProvider);
+    ref.invalidate(gameScheduleProvider);
+    ref.invalidate(gameVotesProvider);
+    ref.invalidate(gameStopwatchProvider);
+    ref.invalidate(gameStreamProvider);
+    state = const GameSessionState();
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE PARTIDA ATUAL
-  void setCurrentGame(GameModel game) {
+  void setGame(GameModel game) {
     state = state.copyWith(currentGame: game);
     ref.read(gameMatchProvider.notifier).setTeamsFromGame(game);
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE CONFIGURAÇÕES DE PARTIDA
   void setGameConfig(GameConfigModel config) {
-    state = state.copyWith(currentGameConfig: config);
+    state = state.copyWith(config: config);
   }
 
   //FUNÇÃO DE APLICAÇÃO DE CONFIGURAÇÕES DE PARTIDA
@@ -74,14 +114,14 @@ class GameSessionNotifier extends Notifier<GameSessionState> {
     required int startTimeMinutes,
     UserModel? refereer,
   }) {
-    if (state.currentGameConfig == null || state.currentGame == null || state.event == null) return;
+    if (state.config == null || state.currentGame == null || state.event == null) return;
 
     final newConfig = GameConfigModel(
-      id: state.currentGameConfig!.id,
+      id: state.config!.id,
       eventId: state.event!.id!,
       category: categoryText,
-      duration: int.tryParse(durationText) ?? state.currentGameConfig!.duration,
-      playersPerTeam: int.tryParse(playersPerTeamText) ?? state.currentGameConfig!.playersPerTeam,
+      duration: int.tryParse(durationText) ?? state.config!.duration,
+      playersPerTeam: int.tryParse(playersPerTeamText) ?? state.config!.playersPerTeam,
       config: {
         'hasTwoHalves': bool.tryParse(hasTwoHalvesText) ?? false,
         'hasExtraTime': bool.tryParse(hasExtraTimeText) ?? false,
@@ -120,7 +160,7 @@ class GameSessionNotifier extends Notifier<GameSessionState> {
       teams: [newTeamA, newTeamB],
     );
 
-    state = state.copyWith(currentGameConfig: newConfig, currentGame: updatedGame);
+    state = state.copyWith(config: newConfig, currentGame: updatedGame);
 
     ref.read(gameMatchProvider.notifier).updateTeams(newTeamA, newTeamB);
     ref.read(gameScheduleProvider.notifier).updateGameInSchedule(updatedGame);
@@ -129,7 +169,7 @@ class GameSessionNotifier extends Notifier<GameSessionState> {
 
   //FUNÇÃO DE VERIFICAÇÃO DE PARTIDA OK
   bool checkGame(GameModel? game) {
-    if (state.currentGameConfig != null) return false;
+    if (state.config != null) return false;
     if (game?.teams?.length == 2) {
       final a = game!.teams![0].players;
       final b = game.teams![1].players;

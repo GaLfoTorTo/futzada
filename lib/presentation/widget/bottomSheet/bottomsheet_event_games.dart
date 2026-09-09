@@ -55,7 +55,7 @@ class BottomSheetEventGames extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 5.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      ref.read(gameSessionProvider.notifier).setCurrentGame(game);
+                      ref.read(gameSessionProvider.notifier).setGame(game);
                       Navigator.of(context).pop();
                       context.go('/games/overview');
                     },

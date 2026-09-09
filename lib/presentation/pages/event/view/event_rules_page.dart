@@ -38,22 +38,29 @@ class _EventRulesPageState extends ConsumerState<EventRulesPage> {
             if(event.rules != null && event.rules!.isNotEmpty)...[
               ...event.rules!.map((rule) => CardRule(rule: rule)),
             ]else...[
-              Column(
-                spacing: 50,
-                children: [
-                  Text(
-                    "A pelada ainda não registrou nenhuma regra",
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: AppColors.grey_500
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Text(
+                      "Nenhuma regra adicionada",
+                      style: Theme.of(context).textTheme.titleMedium
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  Icon(
-                    Icons.rule_rounded,
-                    size: 200,
-                    color: AppColors.grey_500.withAlpha(50),
-                  ),
-                ],
+                    Text(
+                      "A pelada não tem nenhuma regra definda até o momento. acione o organizador da pelada ou os colaboradores para adicionar regras a pelada.",
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 100),
+                      child: Icon(
+                        Icons.rule_sharp,
+                        size: 150, 
+                        color: AppColors.grey_300.withAlpha(50), 
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ],

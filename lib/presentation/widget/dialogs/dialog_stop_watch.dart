@@ -67,7 +67,7 @@ class _StopWatchDialogState extends ConsumerState<StopWatchDialog> {
     }
 
     Duration getDuration() {
-      final config = session.currentGameConfig;
+      final config = session.config;
       final game = session.currentGame;
       if (config?.duration != null) return Duration(minutes: config!.duration!);
       if (game?.duration != null) return Duration(minutes: game!.duration!);

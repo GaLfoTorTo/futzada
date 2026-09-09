@@ -50,7 +50,7 @@ class _GameRandomTeamsPageState extends ConsumerState<GameRandomTeamsPage> {
     modalityColor = ModalityHelper.getEventModalityColor(
       event.gameConfig?.category ?? event.modality!.name,
     )['color'];
-    qtdPlayers = session.currentGameConfig?.playersPerTeam ?? 0;
+    qtdPlayers = session.config?.playersPerTeam ?? 0;
 
     teamANameController = TextEditingController(text: match.teamA.name ?? 'Time 1');
     teamBNameController = TextEditingController(text: match.teamB.name ?? 'Time 2');

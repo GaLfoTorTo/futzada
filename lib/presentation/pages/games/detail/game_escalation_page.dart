@@ -64,14 +64,14 @@ class GameEscalationPage extends ConsumerWidget {
                   Stack(
                     alignment: Alignment.center,
                     children: [
-                      LineupWidget(category: session.currentGameConfig!.category),
+                      LineupWidget(category: session.config!.category),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             height: 400,
                             child: PlayersLineupWidget(
-                              category: session.currentGameConfig!.category,
+                              category: session.config!.category,
                               players: teamA.players,
                               command: "Home",
                               showPlayerName: true,
@@ -80,7 +80,7 @@ class GameEscalationPage extends ConsumerWidget {
                           SizedBox(
                             height: 400,
                             child: PlayersLineupWidget(
-                              category: session.currentGameConfig!.category,
+                              category: session.config!.category,
                               players: teamB.players,
                               command: "Away",
                               showPlayerName: true,

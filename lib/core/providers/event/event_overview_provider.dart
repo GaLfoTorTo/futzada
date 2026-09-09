@@ -64,7 +64,7 @@ class EventOverviewNotifier extends Notifier<EventOverviewState> {
   @override
   EventOverviewState build() => const EventOverviewState();
 
-  //FUNÇÃO DE INICIALIZAÇÃO — chamada via setEvent do eventSessionProvider
+  //FUNÇÃO DE INICIALIZAÇÃO
   void init(EventModel event) {
     final latLon = LatLng(event.address!.latitude!, event.address!.longitude!);
 
@@ -80,6 +80,13 @@ class EventOverviewNotifier extends Notifier<EventOverviewState> {
     );
   }
 
+  //FUNÇÃO DE DEFINIÇÃO DO MODO DE VIAGEM
+  void setTravelMode(String mode) {
+    final (_, time) = _computeTravel(state.latLon, mode);
+    state = state.copyWith(travelMode: mode, travelTime: time);
+  }
+
+  //FUNÇÃO DE CALCULO DE VIAGEM
   (double, String) _computeTravel(LatLng? eventLatLon, String mode) {
     if (eventLatLon == null) return (0, '');
     try {
@@ -94,11 +101,6 @@ class EventOverviewNotifier extends Notifier<EventOverviewState> {
     }
   }
 
-  //FUNÇÃO DE DEFINIÇÃO DO MODO DE VIAGEM
-  void setTravelMode(String mode) {
-    final (_, time) = _computeTravel(state.latLon, mode);
-    state = state.copyWith(travelMode: mode, travelTime: time);
-  }
 }
 
 //PROVIDER - VISÃO GERAL DO EVENTO

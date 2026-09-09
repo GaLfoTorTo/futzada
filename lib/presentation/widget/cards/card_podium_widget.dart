@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
-import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
+import 'package:esportly/core/helpers/modality_helper.dart';
 import 'package:esportly/presentation/widget/others/podium_widget.dart';
 
 class CardPodiumWidget extends StatelessWidget {
@@ -23,8 +22,10 @@ class CardPodiumWidget extends StatelessWidget {
     var dimensions = MediaQuery.of(context).size;
 
     //ESTADO - ITEMS EVENTO
-    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    String modalityImage = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['image'];
+    final modalityMap = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name);
+    String modalityImage = modalityMap['image'];
+    Color modalityColor = modalityMap['color'];
+    Color modalityTextColor = modalityMap['textColor'];
     
     return Container(
       width: dimensions.width,
@@ -52,7 +53,7 @@ class CardPodiumWidget extends StatelessWidget {
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  color: AppColors.blue_500
+                  color: modalityTextColor
                 ),
               ),
             ),
@@ -80,18 +81,18 @@ class CardPodiumWidget extends StatelessWidget {
                 Text(
                   "Nenhum ranking definido!",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: AppColors.blue_500
+                    color: modalityTextColor
                   ),
                 ),
-                const Icon(
+                Icon(
                   AppIcones.medal_solid,
-                  color: AppColors.blue_500,
+                  color: modalityTextColor,
                   size: 100,
                 ),
                 Text(
                   "Os rankings serão definidos a partir das partidas disputadas na pelada.",
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: AppColors.blue_500
+                    color: modalityTextColor
                   ),
                   textAlign: TextAlign.center,
                 ),

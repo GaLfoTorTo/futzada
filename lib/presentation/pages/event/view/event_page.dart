@@ -44,7 +44,7 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
   Color textColor = AppColors.white;
 
   //FUNÇÃO DE DEFINIÇÃO DE HEADER
-  PreferredSizeWidget setHeaderBar(index, privacy, color){
+  PreferredSizeWidget setHeaderBar(index, privacy, bgColor, textColor){
     if(index == 0){
       return HeaderGlassWidget(
         title: "Pelada",
@@ -61,7 +61,8 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
 
     return HeaderWidget(
       title: "Pelada",
-      backgroundColor: color,
+      backgroundColor: bgColor,
+      textColor: textColor,
       leftAction: () => context.pop(),
       rightIcon: privacy == 'Public' 
         ? AppIcones.cog_solid 
@@ -87,8 +88,9 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
     //BUSCAR EVENTO
     EventModel event = eventSession.event!;
     double avaliations = AvaliationService().getRatingAvaliation(event.avaliations);
-    Color modalityColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['color'];
-    Color modalityTextColor = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name)['textColor'];
+    final modalityMap = ModalityHelper.getEventModalityColor(event.gameConfig?.category ?? event.modality!.name);
+    Color modalityColor = modalityMap['color'];
+    Color modalityTextColor = modalityMap['textColor'];
     ImageProvider modalityImage = ImgHelper.getEventImg(event);
     //ANALISE BRILHO DA IMAGEM DO EVENTO
     AppHelper.isImageDark(modalityImage).then((isDark) {
@@ -114,7 +116,8 @@ class _EventPageState extends ConsumerState<EventPage> with SingleTickerProvider
       appBar: setHeaderBar(
         tabController.index,
         eventSession.privacy,
-        modalityColor
+        modalityColor,
+        modalityTextColor
       ),
       extendBodyBehindAppBar: tabController.index == 0,
       body:

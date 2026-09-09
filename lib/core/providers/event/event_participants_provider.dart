@@ -1,7 +1,6 @@
-import 'package:esportly/data/models/event_model.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/core/enum/enums.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/user_model.dart';
 
 //ESTADO - PARTICIPANTES DO EVENTO
@@ -18,7 +17,7 @@ class EventParticipantsState {
     this.loading = false,
     this.event,
     this.participants = const {
-      'Organizador': [],
+      'Organizador':   [],
       'Colaboradores': [],
       'Participantes': [],
     },
@@ -41,18 +40,22 @@ class EventParticipantsState {
 
 //NOTIFICADOR - PARTICIPANTES DO EVENTO
 class EventParticipantsNotifier extends Notifier<EventParticipantsState> {
-  final TextEditingController pesquisaController = TextEditingController();
 
   @override
   EventParticipantsState build() => const EventParticipantsState();
 
-  void init(EventModel event){
-    state = state.copyWith(event: event);
+  //FUNÇÃO DE INICIALIZAÇÃO
+  void init(EventModel event){ 
+    state = state.copyWith(
+      event: event,
+      participants: setParticipants(event.participants)
+    );
   }
 
-  EventParticipantsState _categorize(List<UserModel>? participants) {
+  //FUNÇÃO DE CATEGORIZAÇÃO DE PARTICIPANTES
+  Map<String, List<UserModel>?> setParticipants(List<UserModel>? participants) {
     final Map<String, List<UserModel>?> map = {
-      'Organizador': [],
+      'Organizador':   [],
       'Colaboradores': [],
       'Participantes': [],
     };
@@ -69,12 +72,7 @@ class EventParticipantsNotifier extends Notifier<EventParticipantsState> {
         }
       }
     }
-    return EventParticipantsState(participants: map);
-  }
-
-  //FUNÇÃO DE CATEGORIZAÇÃO DE PARTICIPANTES
-  void setParticipants(List<UserModel>? participants) {
-    state = _categorize(participants);
+    return map;
   }
 }
 

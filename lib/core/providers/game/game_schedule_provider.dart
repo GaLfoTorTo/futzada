@@ -1,51 +1,59 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:esportly/data/models/event_model.dart';
 import 'package:esportly/data/models/game_model.dart';
-import 'package:esportly/data/services/game_service.dart';
+import 'package:esportly/data/repositories/event_repository.dart';
 
 //ESTADO - GAME SCHEDULE
 class GameScheduleState {
-  final bool loadGames;
+  final bool ready;
+  final bool error;
+  final bool loading;
   final bool hasGames;
-  final bool loadHistoricGames;
-  final int qtdView;
-  final DateTime? eventDate;
+  final EventModel? event;
+  final int qtd;
+  final DateTime? date;
+  final List<GameModel?> scheduledGames;
   final List<GameModel?> inProgressGames;
   final List<GameModel?> nextGames;
-  final List<GameModel?> scheduledGames;
   final Map<String, List<GameModel>?> finishedGames;
 
   const GameScheduleState({
-    this.loadGames = false,
-    this.hasGames = true,
-    this.loadHistoricGames = false,
-    this.qtdView = 3,
-    this.eventDate,
-    this.inProgressGames = const [],
+    this.ready = false,
+    this.error = false,
+    this.loading = false,
+    this.hasGames = false,
+    this.event,
+    this.qtd = 3,
+    this.date,
     this.nextGames = const [],
+    this.inProgressGames = const [],
     this.scheduledGames = const [],
     this.finishedGames = const {},
   });
 
   GameScheduleState copyWith({
-    bool? loadGames,
+    bool? ready,
+    bool? error,
+    bool? loading,
     bool? hasGames,
-    bool? loadHistoricGames,
-    int? qtdView,
-    DateTime? eventDate,
-    List<GameModel?>? inProgressGames,
+    EventModel? event,
+    int? qtd,
+    DateTime? date,
     List<GameModel?>? nextGames,
+    List<GameModel?>? inProgressGames,
     List<GameModel?>? scheduledGames,
     Map<String, List<GameModel>?>? finishedGames,
   }) => GameScheduleState(
-    loadGames: loadGames ?? this.loadGames,
+    ready: ready ?? this.ready,
+    error: error ?? this.error,
+    loading: loading ?? this.loading,
     hasGames: hasGames ?? this.hasGames,
-    loadHistoricGames: loadHistoricGames ?? this.loadHistoricGames,
-    qtdView: qtdView ?? this.qtdView,
-    eventDate: eventDate ?? this.eventDate,
-    inProgressGames: inProgressGames ?? this.inProgressGames,
+    event: event ?? this.event,
+    qtd: qtd ?? this.qtd,
+    date: date ?? this.date,
     nextGames: nextGames ?? this.nextGames,
+    inProgressGames: inProgressGames ?? this.inProgressGames,
     scheduledGames: scheduledGames ?? this.scheduledGames,
     finishedGames: finishedGames ?? this.finishedGames,
   );
@@ -53,61 +61,65 @@ class GameScheduleState {
 
 //NOTIFICADOR - GAME SCHEDULER
 class GameScheduleNotifier extends Notifier<GameScheduleState> {
-  late final GameService _gameService;
+  final EventRepository _eventRepository = EventRepository();
 
   @override
-  GameScheduleState build() {
-    _gameService = GameService();
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return GameScheduleState(eventDate: today);
+  GameScheduleState build() => const GameScheduleState();
+
+  //FUNÇÃO DE INICIALIZACAO
+  void init(EventModel event) async{
+    state = state.copyWith(
+      event: event,
+      loading: true,
+      date: DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+    );
+    //BUSCAR / GERAR PARTIDAS DO EVENTO
+    await getGames();
   }
 
   //FUNÇÃO DE VERIFICAÇÃO DE PARTIDA HOJE
   bool isToday() {
-    final eventDate = state.eventDate;
-    if (eventDate == null) return false;
-    final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    return today.isAtSameMomentAs(eventDate);
+    const weekdayMap = {1: 'seg', 2: 'ter', 3: 'qua', 4: 'qui', 5: 'sex', 6: 'sab', 7: 'dom'};
+    final date = state.event!.date!;
+    final todayLabel = weekdayMap[state.date!.weekday];
+    return date.contains(todayLabel);
   }
 
   //FUNÇÃO DE DEFINIÇÃO DE PARITDA DO EVENTO
-  Future<bool> setGamesEvent(EventModel event) async {
-    state = state.copyWith(loadGames: false);
+  Future<void> getGames() async {
     try {
       await Future.delayed(const Duration(seconds: 3));
-      final games = _gameService.getListGames(event);
-      if (games.isNotEmpty) {
+      final List<GameModel>? games = await _eventRepository.getGamesEvent(state.event!.id!);
+      if (games != null) {
         if (isToday()) {
-          state = state.copyWith(nextGames: games, hasGames: true, loadGames: true);
+          state = state.copyWith(nextGames: games, hasGames: true, loading: true);
         } else {
-          state = state.copyWith(scheduledGames: games, hasGames: true, loadGames: true);
+          state = state.copyWith(scheduledGames: games, hasGames: true, loading: true);
         }
       } else {
-        state = state.copyWith(hasGames: false, loadGames: true);
+        state = state.copyWith(hasGames: false, loading: false);
       }
-      return true;
     } catch (_) {
-      state = state.copyWith(hasGames: false, loadGames: true);
-      return false;
+      state = state.copyWith(hasGames: false, loading: false);
     }
   }
 
   //FUNÇÃO DE BUSCA DE HISTÓRICO DE PARTIDAS DO EVENTO
   Future<bool> getHistoricGames(EventModel event) async {
-    state = state.copyWith(loadHistoricGames: false);
+    state = state.copyWith(loading: false);
     try {
-      await Future.delayed(const Duration(seconds: 3));
-      final games = _gameService.getListGames(event);
+      final games = await _eventRepository.geHistoricEvent(state.event!.id!);
       final Map<String, List<GameModel>> mapGames = {};
-      for (final item in games) {
-        if (item == null) continue;
-        final key = DateFormat('d/MM').format(item.createdAt!);
-        mapGames.putIfAbsent(key, () => []).add(item);
+      if(games != null){
+        for (final item in games) {
+          final key = DateFormat('d/MM').format(item.createdAt!);
+          mapGames.putIfAbsent(key, () => []).add(item);
+        }
       }
-      state = state.copyWith(finishedGames: mapGames, loadHistoricGames: true);
+      state = state.copyWith(finishedGames: mapGames, loading: true);
       return true;
     } catch (_) {
-      state = state.copyWith(loadHistoricGames: true);
+      state = state.copyWith(loading: true);
       return false;
     }
   }
@@ -131,6 +143,7 @@ class GameScheduleNotifier extends Notifier<GameScheduleState> {
       nextGames: state.nextGames.where((g) => g?.id != game.id).toList(),
     );
   }
+  
   //FUNÇÃO DE REMOVER PARTIDA DE EM PROGRESSO
   void removeFromInProgress(GameModel game) {
     state = state.copyWith(
@@ -157,12 +170,12 @@ class GameScheduleNotifier extends Notifier<GameScheduleState> {
 
   //FUNÇÃO DE DEFINIÇÃO DE VISUALIZAÇÃO DE PARTIDAS
   void setView(bool expand, int totalGames) {
-    final current = state.qtdView;
+    final current = state.qtd;
     if (expand) {
       final diff = totalGames - current;
-      state = state.copyWith(qtdView: diff > 3 ? current + 3 : current + diff);
+      state = state.copyWith(qtd: diff > 3 ? current + 3 : current + diff);
     } else {
-      state = state.copyWith(qtdView: current - 3 > 3 ? current - 3 : 3);
+      state = state.copyWith(qtd: current - 3 > 3 ? current - 3 : 3);
     }
   }
 }

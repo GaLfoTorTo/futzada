@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:esportly/core/enum/enums.dart';
-import 'package:esportly/presentation/pages/event/error/erro_participants_page.dart';
 import 'package:esportly/core/theme/app_colors.dart';
 import 'package:esportly/core/theme/app_icones.dart';
 import 'package:esportly/core/theme/app_size.dart';
 import 'package:esportly/data/models/event_model.dart';
-import 'package:esportly/core/providers/event/event_session_provider.dart';
-import 'package:esportly/core/providers/event/event_participants_provider.dart';
 import 'package:esportly/core/helpers/user_helper.dart';
+import 'package:esportly/core/providers/event/event_participants_provider.dart';
 import 'package:esportly/presentation/widget/images/img_circle_widget.dart';
 import 'package:esportly/presentation/widget/badges/position_widget.dart';
 import 'package:esportly/presentation/widget/inputs/input_text_widget.dart';
-import 'package:go_router/go_router.dart';
+import 'package:esportly/presentation/pages/event/error/erro_participants_page.dart';
 
 class EventParticipantsPage extends ConsumerWidget {
   const EventParticipantsPage({super.key});
@@ -20,17 +19,11 @@ class EventParticipantsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var dimensions = MediaQuery.of(context).size;
-    final EventModel event = ref.watch(eventSessionProvider.select((s) => s.event!));
-    final participantsState = ref.watch(eventParticipantsProvider);
-    final participantsNotifier = ref.read(eventParticipantsProvider.notifier);
+    final TextEditingController pesquisaController = TextEditingController();
+    final EventModel event = ref.read(eventParticipantsProvider).event!;
+    final participants = ref.read(eventParticipantsProvider).participants;
 
-    // Inicializa participantes a partir do evento caso o provider ainda não tenha sido populado
-    if (participantsState.participants.values.every((l) => l?.isEmpty ?? true)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        participantsNotifier.setParticipants(event.participants);
-      });
-    }
-
+    //FUNÇÃO DE DEFINIÇÃO DE PERFIS
     IconData setRole(List<String>? roles) {
       if (roles != null) {
         if (roles.contains(Roles.Organizator.name)) return AppIcones.user_shield_solid;
@@ -48,18 +41,18 @@ class EventParticipantsPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              color: Theme.of(context).brightness == Brightness.dark ? AppColors.dark_700 : AppColors.white,
+              color:Theme.of(context).cardTheme.color,
               padding: const EdgeInsets.all(10),
               child: InputTextWidget(
                 name: 'search',
                 hint: 'Pesquisa',
                 backgroundColor: AppColors.grey_300.withAlpha(50),
                 prefixIcon: AppIcones.search_solid,
-                textController: participantsNotifier.pesquisaController,
+                textController: pesquisaController,
                 type: TextInputType.text,
               ),
             ),
-            ...participantsState.participants.entries.map((item) {
+            ...participants.entries.map((item) {
               final String key = item.key;
               final participants = item.value;
               if (participants == null) return const ErroParticipantsPage();
@@ -118,7 +111,7 @@ class EventParticipantsPage extends ConsumerWidget {
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        if (user.player!.getMainPosition(event.modality!.name) != null)
+                                        if (user.player != null && user.player!.getMainPosition(event.modality!.name) != null)
                                           PositionWidget(
                                             position: user.player!.getMainPosition(event.modality!.name)!.alias,
                                             mainPosition: true,

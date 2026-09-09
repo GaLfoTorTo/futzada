@@ -6,6 +6,7 @@ import 'package:esportly/presentation/widget/showcase/wizard_widget.dart';
 class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   final String? title;
   final Color? backgroundColor;
+  final Color? textColor;
   final VoidCallback? leftAction;
   final IconData? leftIcon;
   final VoidCallback? rightAction;
@@ -22,6 +23,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
     super.key, 
     this.title,
     this.backgroundColor,
+    this.textColor,
     this.leftAction, 
     this.leftIcon = Icons.arrow_back_rounded, 
     this.rightAction, 
@@ -39,19 +41,24 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
   Widget build(BuildContext context) {
 
     return AppBar(
-      backgroundColor: brightness ? Colors.transparent : ( backgroundColor ?? Theme.of(context).primaryColor),
+      backgroundColor: brightness 
+        ? Colors.transparent 
+        : ( backgroundColor ?? Theme.of(context).primaryColor),
       title: title != null 
         ? Text(
           title!,
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: AppColors.blue_500
+            color: textColor ?? AppColors.blue_500
           ),
         )
         : null ,
       leading: WizardWidget(
         elementKey: 'menu',
         child: IconButton(
-          icon: Icon(leftIcon),
+          icon: Icon(
+            leftIcon,
+            color: textColor ?? AppColors.blue_500,
+          ),
           onPressed: leftAction
         ),
       ),
@@ -60,7 +67,10 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
           WizardWidget(
             elementKey: 'chat',
             child: IconButton(
-              icon: Icon(extraIcon),
+              icon: Icon(
+                extraIcon,
+                color: textColor ?? AppColors.blue_500
+              ),
               onPressed: extraAction!,
             ),
           )
@@ -74,6 +84,7 @@ class HeaderWidget extends StatelessWidget implements PreferredSizeWidget{
                 backgroundImage: ImgHelper.getUserImg(photo),
               )
               : Icon(rightIcon),
+              color: textColor ?? AppColors.blue_500,
               onPressed: rightAction!,
             ),
           )
